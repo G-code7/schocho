@@ -1,0 +1,5 @@
+# Backup files
+*.backup
+
+# Shopify temp files
+config/settings_data.old.json
