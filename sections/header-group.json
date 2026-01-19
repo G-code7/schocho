@@ -1,1 +1,122 @@
-{"type":"header","name":"Header","sections":{"header_announcements_Y8P6fj":{"type":"header-announcements","blocks":{"announcement_GgkfyX":{"type":"_announcement","settings":{"text":"Shop our latest arrivals!","link":"","font":"var(--font-body--family)","font_size":"1rem","weight":"","letter_spacing":"normal","case":"none"},"blocks":{}}},"block_order":["announcement_GgkfyX"],"name":"t:names.announcement_bar","settings":{"speed":5,"section_width":"full-width","color_scheme":"scheme-4","divider_width":0,"padding-block-start":16,"padding-block-end":12}},"header_section":{"type":"header","blocks":{"header-logo":{"type":"_header-logo","static":true,"settings":{"hide_logo_on_home_page":false,"padding-block-start":5,"padding-block-end":0,"padding-inline-start":0,"padding-inline-end":0},"blocks":{}},"header-menu":{"type":"_header-menu","static":true,"settings":{"menu":"main-menu","color_scheme":"","type_font_primary_size":"1rem","menu_font_style":"inverse","type_font_primary_link":"heading","type_case_primary_link":"none","menu_style":"featured_collections","featured_products_aspect_ratio":"4 \/ 5","featured_collections_aspect_ratio":"16 \/ 9","image_border_radius":0,"navigation_bar":false,"color_scheme_navigation_bar":"","drawer_accordion":false,"drawer_accordion_expand_first":false,"drawer_dividers":false},"blocks":{}}},"custom_css":["\/* LOGO SOBRESALIENDO DEL HEADER *\/.header-logo__image-container {position: relative; height: 40px; top: -10px; \/* Ajusta aquí cuánto quieres que sobresalga *\/ z-index: 20;}"," \/* Ajusta el header para que no empuje el contenido *\/#header-component .header__wrapper {padding-bottom: 35px; \/* mismo valor que arriba *\/}"],"settings":{"logo_position":"left","menu_position":"center","menu_row":"top","show_search":false,"search_position":"right","search_row":"top","show_country":false,"country_selector_style":false,"show_language":false,"localization_font":"heading","localization_font_size":"1rem","localization_position":"right","localization_row":"top","section_width":"full-width","section_height":"standard","enable_sticky_header":"scroll-up","divider_width":0,"divider_size":"page-width","border_width":5,"color_scheme_top":"scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703","color_scheme_bottom":"","color_scheme_transparent":"scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703","enable_transparent_header_home":false,"home_color_scheme":"default","enable_transparent_header_product":false,"product_color_scheme":"default","enable_transparent_header_collection":false,"collection_color_scheme":"default"}}},"order":["header_announcements_Y8P6fj","header_section"]}
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "header_announcements_Y8P6fj": {
+      "type": "header-announcements",
+      "blocks": {
+        "announcement_GgkfyX": {
+          "type": "_announcement",
+          "settings": {
+            "text": "Shop our latest arrivals!",
+            "link": "",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "weight": "",
+            "letter_spacing": "normal",
+            "case": "none"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "announcement_GgkfyX"
+      ],
+      "name": "t:names.announcement_bar",
+      "settings": {
+        "speed": 5,
+        "section_width": "full-width",
+        "color_scheme": "scheme-4",
+        "divider_width": 0,
+        "padding-block-start": 16,
+        "padding-block-end": 12
+      }
+    },
+    "header_section": {
+      "type": "header",
+      "blocks": {
+        "header-logo": {
+          "type": "_header-logo",
+          "static": true,
+          "settings": {
+            "hide_logo_on_home_page": false,
+            "padding-block-start": 5,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "header-menu": {
+          "type": "_header-menu",
+          "static": true,
+          "settings": {
+            "menu": "main-menu",
+            "color_scheme": "",
+            "type_font_primary_size": "1rem",
+            "menu_font_style": "inverse",
+            "type_font_primary_link": "heading",
+            "type_case_primary_link": "none",
+            "menu_style": "featured_collections",
+            "featured_products_aspect_ratio": "4 / 5",
+            "featured_collections_aspect_ratio": "16 / 9",
+            "image_border_radius": 0,
+            "navigation_bar": false,
+            "color_scheme_navigation_bar": "",
+            "drawer_accordion": false,
+            "drawer_accordion_expand_first": false,
+            "drawer_dividers": false
+          },
+          "blocks": {}
+        }
+      },
+      "custom_css": [
+        "/* LOGO SOBRESALIENDO DEL HEADER */",
+        ".header-logo__image-container {",
+        "  position: relative;",
+        "  top: 30px; /* Ajusta aquí cuánto quieres que sobresalga */",
+        "  z-index: 20;",
+        "}",
+        "",
+        "/* Ajusta el header para que no empuje el contenido */",
+        "#header-component {",
+        "  padding-bottom: 30px; /* mismo valor que arriba */",
+        "}"
+      ],
+      "settings": {
+        "logo_position": "left",
+        "menu_position": "center",
+        "menu_row": "top",
+        "show_search": false,
+        "search_position": "right",
+        "search_row": "top",
+        "show_country": false,
+        "country_selector_style": false,
+        "show_language": false,
+        "localization_font": "heading",
+        "localization_font_size": "1rem",
+        "localization_position": "right",
+        "localization_row": "top",
+        "section_width": "full-width",
+        "section_height": "standard",
+        "enable_sticky_header": "scroll-up",
+        "divider_width": 0,
+        "divider_size": "page-width",
+        "border_width": 5,
+        "color_scheme_top": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
+        "color_scheme_bottom": "",
+        "color_scheme_transparent": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
+        "enable_transparent_header_home": false,
+        "home_color_scheme": "default",
+        "enable_transparent_header_product": false,
+        "product_color_scheme": "default",
+        "enable_transparent_header_collection": false,
+        "collection_color_scheme": "default"
+      }
+    }
+  },
+  "order": [
+    "header_announcements_Y8P6fj",
+    "header_section"
+  ]
+}
