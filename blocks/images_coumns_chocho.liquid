@@ -1,0 +1,994 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-values-section-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-values-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Header Section */
+  .ai-values-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.header_alignment }};
+    margin-bottom: {{ block.settings.header_margin_bottom }}px;
+  }
+
+  .ai-values-title-{{ ai_gen_id }} {
+    margin: 0 0 16px 0;
+    font-size: {{ block.settings.section_title_size }}px;
+    font-weight: {{ block.settings.section_title_weight }};
+    color: {{ block.settings.section_title_color }};
+    text-transform: {{ block.settings.section_title_transform }};
+    letter-spacing: {{ block.settings.section_title_letter_spacing }}px;
+  }
+
+  .ai-values-subtitle-{{ ai_gen_id }} {
+    margin: 0 0 32px 0;
+    font-size: {{ block.settings.section_subtitle_size }}px;
+    color: {{ block.settings.section_subtitle_color }};
+    line-height: 1.6;
+    max-width: 800px;
+    {% if block.settings.header_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% endif %}
+  }
+
+  /* Grid Layout */
+  .ai-values-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    margin-bottom: {{ block.settings.cta_margin_top }}px;
+  }
+
+  /* Card Styles */
+  .ai-values-card-{{ ai_gen_id }} {
+    position: relative;
+    background-color: transparent;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: {{ block.settings.card_shadow }};
+    transition: all 0.3s ease;
+    cursor: pointer;
+    aspect-ratio: {{ block.settings.image_aspect_ratio }};
+  }
+
+  .ai-values-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: {{ block.settings.card_hover_shadow }};
+  }
+
+  .ai-values-card-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .ai-values-card-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-values-card-{{ ai_gen_id }}:hover .ai-values-card-image-{{ ai_gen_id }} {
+    transform: scale(1.1);
+  }
+
+  .ai-values-card-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-values-card-placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+
+  /* Card Title Overlay */
+  .ai-values-card-title-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: {{ block.settings.card_title_padding_vertical }}px {{ block.settings.card_title_padding_horizontal }}px;
+    background: {{ block.settings.card_title_background }};
+    z-index: 1;
+  }
+
+  .ai-values-card-title-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.card_title_size }}px;
+    font-weight: {{ block.settings.card_title_weight }};
+    color: {{ block.settings.card_title_color }};
+    line-height: 1.3;
+    text-align: {{ block.settings.card_text_align }};
+    text-shadow: {{ block.settings.card_title_text_shadow }};
+  }
+
+  /* Hover Overlay */
+  .ai-values-card-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: {{ block.settings.overlay_background }};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.overlay_padding }}px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 2;
+  }
+
+  .ai-values-card-{{ ai_gen_id }}:hover .ai-values-card-overlay-{{ ai_gen_id }} {
+    opacity: {{ block.settings.overlay_opacity }};
+    visibility: visible;
+  }
+
+  .ai-values-overlay-title-{{ ai_gen_id }} {
+    margin: 0 0 16px 0;
+    font-size: {{ block.settings.overlay_title_size }}px;
+    font-weight: {{ block.settings.overlay_title_weight }};
+    color: {{ block.settings.overlay_title_color }};
+    text-align: center;
+  }
+
+  .ai-values-overlay-message-{{ ai_gen_id }} {
+    margin: 0;
+    font-size: {{ block.settings.overlay_message_size }}px;
+    color: {{ block.settings.overlay_message_color }};
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  /* CTA Button */
+  .ai-values-cta-wrapper-{{ ai_gen_id }} {
+    text-align: {{ block.settings.cta_alignment }};
+    margin-top: {{ block.settings.cta_margin_top }}px;
+  }
+
+  .ai-values-cta-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.cta_padding_vertical }}px {{ block.settings.cta_padding_horizontal }}px;
+    background-color: {{ block.settings.cta_background }};
+    color: {{ block.settings.cta_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.cta_border_radius }}px;
+    font-size: {{ block.settings.cta_font_size }}px;
+    font-weight: {{ block.settings.cta_font_weight }};
+    text-transform: {{ block.settings.cta_text_transform }};
+    letter-spacing: {{ block.settings.cta_letter_spacing }}px;
+    transition: all 0.3s ease;
+    border: {{ block.settings.cta_border_width }}px solid {{ block.settings.cta_border_color }};
+  }
+
+  .ai-values-cta-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.cta_hover_background }};
+    color: {{ block.settings.cta_hover_text_color }};
+    border-color: {{ block.settings.cta_hover_border_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Responsive Design */
+  @media screen and (max-width: 989px) {
+    .ai-values-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+      gap: {{ block.settings.grid_gap_tablet }}px;
+    }
+
+    .ai-values-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.section_title_size | times: 0.85 }}px;
+    }
+
+    .ai-values-card-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.card_title_size | times: 0.9 }}px;
+    }
+    
+    .ai-values-card-{{ ai_gen_id }} {
+      aspect-ratio: {{ block.settings.image_aspect_ratio_tablet }};
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-values-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.grid_gap_mobile }}px;
+    }
+    
+    .ai-values-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.section_title_size | times: 0.75 }}px;
+    }
+
+    .ai-values-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.section_subtitle_size | times: 0.9 }}px;
+    }
+
+    .ai-values-card-title-overlay-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_title_padding_vertical | times: 0.8 }}px {{ block.settings.card_title_padding_horizontal | times: 0.8 }}px;
+    }
+
+    .ai-values-cta-button-{{ ai_gen_id }} {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .ai-values-card-{{ ai_gen_id }} {
+      aspect-ratio: {{ block.settings.image_aspect_ratio_mobile }};
+    }
+  }
+{% endstyle %}
+
+<div class="ai-values-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-values-container-{{ ai_gen_id }}">
+    
+    {% comment %} Section Header {% endcomment %}
+    {% if block.settings.section_title != blank or block.settings.section_subtitle != blank %}
+      <div class="ai-values-header-{{ ai_gen_id }}">
+        {% if block.settings.section_title != blank %}
+          <h2 class="ai-values-title-{{ ai_gen_id }}">
+            {{ block.settings.section_title }}
+          </h2>
+        {% endif %}
+        
+        {% if block.settings.section_subtitle != blank %}
+          <p class="ai-values-subtitle-{{ ai_gen_id }}">
+            {{ block.settings.section_subtitle }}
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% comment %} Cards Grid {% endcomment %}
+    <div class="ai-values-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign image_key = 'card_' | append: i | append: '_image'
+          assign title_key = 'card_' | append: i | append: '_title'
+          assign overlay_title_key = 'card_' | append: i | append: '_overlay_title'
+          assign overlay_message_key = 'card_' | append: i | append: '_overlay_message'
+          assign link_key = 'card_' | append: i | append: '_link'
+          
+          assign card_image = block.settings[image_key]
+          assign card_title = block.settings[title_key]
+          assign overlay_title = block.settings[overlay_title_key]
+          assign overlay_message = block.settings[overlay_message_key]
+          assign card_link = block.settings[link_key]
+        %}
+
+        <div class="ai-values-card-{{ ai_gen_id }}">
+          {% if card_link != blank %}
+            <a href="{{ card_link }}" style="text-decoration: none; color: inherit; display: block; width: 100%; height: 100%;">
+          {% endif %}
+          
+          {% comment %} Card Image {% endcomment %}
+          <div class="ai-values-card-image-wrapper-{{ ai_gen_id }}">
+            {% if card_image %}
+              <img
+                src="{{ card_image | image_url: width: 800 }}"
+                alt="{{ card_image.alt | default: card_title | escape }}"
+                loading="lazy"
+                width="{{ card_image.width }}"
+                height="{{ card_image.height }}"
+                class="ai-values-card-image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-values-card-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+            
+            {% comment %} Card Title Overlay {% endcomment %}
+            {% if card_title != blank %}
+              <div class="ai-values-card-title-overlay-{{ ai_gen_id }}">
+                <h3 class="ai-values-card-title-{{ ai_gen_id }}">
+                  {{ card_title }}
+                </h3>
+              </div>
+            {% endif %}
+          </div>
+
+          {% comment %} Hover Overlay {% endcomment %}
+          {% if overlay_title != blank or overlay_message != blank %}
+            <div class="ai-values-card-overlay-{{ ai_gen_id }}">
+              {% if overlay_title != blank %}
+                <h3 class="ai-values-overlay-title-{{ ai_gen_id }}">
+                  {{ overlay_title }}
+                </h3>
+              {% endif %}
+              
+              {% if overlay_message != blank %}
+                <p class="ai-values-overlay-message-{{ ai_gen_id }}">
+                  {{ overlay_message }}
+                </p>
+              {% endif %}
+            </div>
+          {% endif %}
+          
+          {% if card_link != blank %}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    {% comment %} CTA Button {% endcomment %}
+    {% if block.settings.cta_text != blank %}
+      <div class="ai-values-cta-wrapper-{{ ai_gen_id }}">
+        <a 
+          href="{{ block.settings.cta_link | default: '#' }}" 
+          class="ai-values-cta-button-{{ ai_gen_id }}"
+        >
+          {{ block.settings.cta_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Values Cards Section",
+  "tag": "section",
+  "class": "values-cards-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "OUR VALUES"
+    },
+    {
+      "type": "textarea",
+      "id": "section_subtitle",
+      "label": "Section Subtitle",
+      "default": "PRONTO CHOCHOS is made with one pure ingredient that delivers complete plant-based protein."
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header Alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Header Bottom Margin",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Section Title Typography"
+    },
+    {
+      "type": "range",
+      "id": "section_title_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Title Font Size",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "section_title_weight",
+      "label": "Title Font Weight",
+      "options": [
+        {"value": "400", "label": "Regular"},
+        {"value": "600", "label": "Semi Bold"},
+        {"value": "700", "label": "Bold"},
+        {"value": "800", "label": "Extra Bold"}
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "section_title_transform",
+      "label": "Title Text Transform",
+      "options": [
+        {"value": "none", "label": "None"},
+        {"value": "uppercase", "label": "Uppercase"},
+        {"value": "lowercase", "label": "Lowercase"},
+        {"value": "capitalize", "label": "Capitalize"}
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "section_title_letter_spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "label": "Title Letter Spacing",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "Title Color",
+      "default": "#2c1d4e"
+    },
+    {
+      "type": "range",
+      "id": "section_subtitle_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle Font Size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "section_subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Section Padding Top",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "unit": "px",
+      "label": "Section Padding Bottom",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid Gap (Desktop)",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_tablet",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid Gap (Tablet)",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid Gap (Mobile)",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Image Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image Aspect Ratio (Desktop)",
+      "options": [
+        {"value": "1 / 1", "label": "Square (1:1)"},
+        {"value": "4 / 3", "label": "Standard (4:3)"},
+        {"value": "16 / 9", "label": "Wide (16:9)"},
+        {"value": "3 / 4", "label": "Portrait (3:4)"},
+        {"value": "3 / 2", "label": "Classic (3:2)"}
+      ],
+      "default": "4 / 3"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio_tablet",
+      "label": "Image Aspect Ratio (Tablet)",
+      "options": [
+        {"value": "1 / 1", "label": "Square (1:1)"},
+        {"value": "4 / 3", "label": "Standard (4:3)"},
+        {"value": "16 / 9", "label": "Wide (16:9)"},
+        {"value": "3 / 4", "label": "Portrait (3:4)"},
+        {"value": "3 / 2", "label": "Classic (3:2)"}
+      ],
+      "default": "4 / 3"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio_mobile",
+      "label": "Image Aspect Ratio (Mobile)",
+      "options": [
+        {"value": "1 / 1", "label": "Square (1:1)"},
+        {"value": "4 / 3", "label": "Standard (4:3)"},
+        {"value": "16 / 9", "label": "Wide (16:9)"},
+        {"value": "3 / 4", "label": "Portrait (3:4)"},
+        {"value": "3 / 2", "label": "Classic (3:2)"}
+      ],
+      "default": "3 / 4"
+    },
+    {
+      "type": "header",
+      "content": "Card Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Border Radius",
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "card_shadow",
+      "label": "Card Shadow",
+      "default": "0 4px 6px rgba(0, 0, 0, 0.1)"
+    },
+    {
+      "type": "text",
+      "id": "card_hover_shadow",
+      "label": "Card Hover Shadow",
+      "default": "0 12px 24px rgba(0, 0, 0, 0.15)"
+    },
+    {
+      "type": "select",
+      "id": "card_text_align",
+      "label": "Card Text Alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Card Title Settings"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Title Size",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Card Title Weight",
+      "options": [
+        {"value": "400", "label": "Regular"},
+        {"value": "500", "label": "Medium"},
+        {"value": "600", "label": "Semi Bold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "600"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card Title Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "card_title_background",
+      "label": "Card Title Background",
+      "default": "linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0) 100%)"
+    },
+    {
+      "type": "range",
+      "id": "card_title_padding_vertical",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Title Padding Vertical",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_title_padding_horizontal",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Title Padding Horizontal",
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "card_title_text_shadow",
+      "label": "Title Text Shadow",
+      "default": "0 2px 4px rgba(0, 0, 0, 0.5)",
+      "info": "CSS text-shadow property (e.g., '0 2px 4px rgba(0,0,0,0.5)')"
+    },
+    {
+      "type": "header",
+      "content": "Hover Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_background",
+      "label": "Overlay Background Color",
+      "default": "#2c1d4e"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0.5,
+      "max": 1,
+      "step": 0.1,
+      "label": "Overlay Opacity",
+      "default": 0.9
+    },
+    {
+      "type": "range",
+      "id": "overlay_padding",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Overlay Padding",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "overlay_title_size",
+      "min": 18,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Overlay Title Size",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "overlay_title_weight",
+      "label": "Overlay Title Weight",
+      "options": [
+        {"value": "400", "label": "Regular"},
+        {"value": "600", "label": "Semi Bold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "overlay_title_color",
+      "label": "Overlay Title Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_message_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Overlay Message Size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "overlay_message_color",
+      "label": "Overlay Message Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "CTA Button"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Button Text",
+      "default": "VIEW MORE"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "select",
+      "id": "cta_alignment",
+      "label": "CTA Alignment",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "center", "label": "Center"},
+        {"value": "right", "label": "Right"}
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "cta_margin_top",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "CTA Margin Top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_vertical",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "CTA Padding Vertical",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_horizontal",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "CTA Padding Horizontal",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "cta_background",
+      "label": "CTA Background Color",
+      "default": "#2c1d4e"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "cta_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "CTA Font Size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "cta_font_weight",
+      "label": "CTA Font Weight",
+      "options": [
+        {"value": "400", "label": "Regular"},
+        {"value": "600", "label": "Semi Bold"},
+        {"value": "700", "label": "Bold"}
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "cta_text_transform",
+      "label": "CTA Text Transform",
+      "options": [
+        {"value": "none", "label": "None"},
+        {"value": "uppercase", "label": "Uppercase"},
+        {"value": "lowercase", "label": "Lowercase"},
+        {"value": "capitalize", "label": "Capitalize"}
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "cta_letter_spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "label": "CTA Letter Spacing",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "cta_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "CTA Border Radius",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "cta_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "CTA Border Width",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "cta_border_color",
+      "label": "CTA Border Color",
+      "default": "#2c1d4e"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_background",
+      "label": "CTA Hover Background",
+      "default": "#1a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_text_color",
+      "label": "CTA Hover Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cta_hover_border_color",
+      "label": "CTA Hover Border Color",
+      "default": "#1a0f2e"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Card Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Card Title",
+      "default": "Regenerative for the planet"
+    },
+    {
+      "type": "text",
+      "id": "card_1_overlay_title",
+      "label": "Overlay Title",
+      "default": "Regenerative"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_overlay_message",
+      "label": "Overlay Message",
+      "default": "We work with farmers who practice regenerative agriculture to restore soil health and biodiversity."
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Card Link (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Card Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Card Title",
+      "default": "Crafted by honoring tradition"
+    },
+    {
+      "type": "text",
+      "id": "card_2_overlay_title",
+      "label": "Overlay Title",
+      "default": "Traditional Methods"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_overlay_message",
+      "label": "Overlay Message",
+      "default": "Our products honor centuries-old traditions while embracing modern quality standards."
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Card Link (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Card Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Card Title",
+      "default": "Thoughtful Sourcing & preparation"
+    },
+    {
+      "type": "text",
+      "id": "card_3_overlay_title",
+      "label": "Overlay Title",
+      "default": "Ethical Sourcing"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_overlay_message",
+      "label": "Overlay Message",
+      "default": "Every ingredient is carefully sourced from trusted partners who share our commitment to quality."
+    },
+    {
+      "type": "url",
+      "id": "card_3_link",
+      "label": "Card Link (optional)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Values Cards Section"
+    }
+  ]
+}
+{% endschema %}

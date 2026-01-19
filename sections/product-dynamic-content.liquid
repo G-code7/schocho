@@ -1,0 +1,830 @@
+{% doc %}
+  @prompt
+    Bloque de producto dinámico para Shopify con:
+    - Claims/badges desde metafield (custom.claims)
+    - Acordeones dinámicos desde metafields
+    - Estilos completamente personalizables
+    - Compatible con tema Wonder Wellness
+{% enddoc %}
+
+{% assign block_id = block.id | replace: '_', '' | replace: '-', '' | downcase %}
+
+{%- comment -%} ===== OBTENER DATOS DE METAFIELDS ===== {%- endcomment -%}
+
+{%- comment -%} Claims - Lista de texto {%- endcomment -%}
+{% assign claims_raw = product.metafields.custom.claims.value %}
+{% if claims_raw == blank %}
+  {% assign claims_raw = product.metafields.custom.claims %}
+{% endif %}
+
+{%- comment -%} Acordeones - Metafields individuales {%- endcomment -%}
+{% assign accordion_1_title = product.metafields.custom.accordion_1_title.value | default: product.metafields.custom.accordion_1_title %}
+{% assign accordion_1_content = product.metafields.custom.accordion_1_content.value | default: product.metafields.custom.accordion_1_content %}
+{% assign accordion_2_title = product.metafields.custom.accordion_2_title.value | default: product.metafields.custom.accordion_2_title %}
+{% assign accordion_2_content = product.metafields.custom.accordion_2_content.value | default: product.metafields.custom.accordion_2_content %}
+{% assign accordion_3_title = product.metafields.custom.accordion_3_title.value | default: product.metafields.custom.accordion_3_title %}
+{% assign accordion_3_content = product.metafields.custom.accordion_3_content.value | default: product.metafields.custom.accordion_3_content %}
+{% assign accordion_4_title = product.metafields.custom.accordion_4_title.value | default: product.metafields.custom.accordion_4_title %}
+{% assign accordion_4_content = product.metafields.custom.accordion_4_content.value | default: product.metafields.custom.accordion_4_content %}
+{% assign accordion_5_title = product.metafields.custom.accordion_5_title.value | default: product.metafields.custom.accordion_5_title %}
+{% assign accordion_5_content = product.metafields.custom.accordion_5_content.value | default: product.metafields.custom.accordion_5_content %}
+
+{%- comment -%} ===== DEBUG MODE ===== {%- endcomment -%}
+{% if block.settings.debug_mode %}
+<div style="background: #fff3cd; border: 2px solid #ffc107; padding: 16px; margin: 16px 0; font-family: monospace; font-size: 12px; border-radius: 8px;">
+  <strong>🔍 DEBUG - Product Metafields</strong><br><br>
+  
+  <strong>CLAIMS (custom.claims):</strong><br>
+  - Raw: {{ product.metafields.custom.claims }}<br>
+  - Value: {{ product.metafields.custom.claims.value }}<br>
+  - Type: {{ product.metafields.custom.claims.type }}<br>
+  - Size: {{ claims_raw.size }}<br>
+  <br>
+  
+  <strong>ACCORDION 1:</strong><br>
+  - Title: {{ accordion_1_title }}<br>
+  - Content: {{ accordion_1_content | truncate: 50 }}<br>
+  <br>
+  
+  <strong>ACCORDION 2:</strong><br>
+  - Title: {{ accordion_2_title }}<br>
+  - Content: {{ accordion_2_content | truncate: 50 }}<br>
+  <br>
+  
+  <strong>ALL PRODUCT METAFIELDS:</strong><br>
+  {% for metafield in product.metafields.custom %}
+    - {{ metafield[0] }}: {{ metafield[1] | truncate: 100 }}<br>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% style %}
+/* ===== VARIABLES CSS ===== */
+.pdp-dynamic-{{ block_id }} {
+  /* Claims */
+  --claims-bg: {{ block.settings.claims_bg_color }};
+  --claims-text: {{ block.settings.claims_text_color }};
+  --claims-border: {{ block.settings.claims_border_color }};
+  --claims-font-size: {{ block.settings.claims_font_size }}px;
+  --claims-padding-x: {{ block.settings.claims_padding_horizontal }}px;
+  --claims-padding-y: {{ block.settings.claims_padding_vertical }}px;
+  --claims-gap: {{ block.settings.claims_gap }}px;
+  --claims-radius: {{ block.settings.claims_border_radius }}px;
+  
+  /* Acordeones */
+  --accordion-bg: {{ block.settings.accordion_bg_color }};
+  --accordion-title-color: {{ block.settings.accordion_title_color }};
+  --accordion-title-size: {{ block.settings.accordion_title_font_size }}px;
+  --accordion-content-color: {{ block.settings.accordion_content_color }};
+  --accordion-content-size: {{ block.settings.accordion_content_font_size }}px;
+  --accordion-border: {{ block.settings.accordion_border_color }};
+  --accordion-icon-color: {{ block.settings.accordion_icon_color }};
+  --accordion-padding: {{ block.settings.accordion_padding }}px;
+  --accordion-gap: {{ block.settings.accordion_gap }}px;
+  
+  /* Sección */
+  --section-padding-top: {{ block.settings.section_padding_top }}px;
+  --section-padding-bottom: {{ block.settings.section_padding_bottom }}px;
+}
+
+/* ===== CLAIMS BADGES ===== */
+.pdp-claims-{{ block_id }} {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--claims-gap);
+  padding-top: var(--section-padding-top);
+  padding-bottom: var(--section-padding-bottom);
+}
+
+.pdp-claim-badge-{{ block_id }} {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--claims-padding-y) var(--claims-padding-x);
+  background: var(--claims-bg);
+  color: var(--claims-text);
+  font-size: var(--claims-font-size);
+  font-weight: {{ block.settings.claims_font_weight }};
+  border-radius: var(--claims-radius);
+  border: 1px solid var(--claims-border);
+  text-transform: {{ block.settings.claims_text_transform }};
+  letter-spacing: {{ block.settings.claims_letter_spacing }}px;
+  transition: all 0.2s ease;
+}
+
+{% if block.settings.claims_style == 'pill' %}
+.pdp-claim-badge-{{ block_id }} {
+  border-radius: 50px;
+}
+{% elsif block.settings.claims_style == 'outline' %}
+.pdp-claim-badge-{{ block_id }} {
+  background: transparent;
+  border-width: 2px;
+}
+{% elsif block.settings.claims_style == 'soft' %}
+.pdp-claim-badge-{{ block_id }} {
+  background: {{ block.settings.claims_bg_color | color_modify: 'alpha', 0.15 }};
+  border-color: transparent;
+}
+{% endif %}
+
+.pdp-claim-badge-{{ block_id }}:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.pdp-claim-icon-{{ block_id }} {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ===== ACORDEONES ===== */
+.pdp-accordions-{{ block_id }} {
+  display: flex;
+  flex-direction: column;
+  gap: var(--accordion-gap);
+  padding-top: var(--section-padding-top);
+  padding-bottom: var(--section-padding-bottom);
+}
+
+.pdp-accordion-item-{{ block_id }} {
+  background: var(--accordion-bg);
+  border: 1px solid var(--accordion-border);
+  border-radius: {{ block.settings.accordion_border_radius }}px;
+  overflow: hidden;
+}
+
+{% if block.settings.accordion_style == 'bordered' %}
+.pdp-accordion-item-{{ block_id }} {
+  border-left: 3px solid {{ block.settings.accordion_accent_color }};
+}
+{% elsif block.settings.accordion_style == 'minimal' %}
+.pdp-accordion-item-{{ block_id }} {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--accordion-border);
+  border-radius: 0;
+}
+{% endif %}
+
+.pdp-accordion-trigger-{{ block_id }} {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--accordion-padding);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.pdp-accordion-trigger-{{ block_id }}:hover {
+  background: {{ block.settings.accordion_bg_color | color_modify: 'alpha', 0.5 }};
+}
+
+.pdp-accordion-title-{{ block_id }} {
+  color: var(--accordion-title-color);
+  font-size: var(--accordion-title-size);
+  font-weight: {{ block.settings.accordion_title_weight }};
+  margin: 0;
+  text-transform: {{ block.settings.accordion_title_transform }};
+}
+
+.pdp-accordion-icon-{{ block_id }} {
+  width: 20px;
+  height: 20px;
+  color: var(--accordion-icon-color);
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.pdp-accordion-item-{{ block_id }}[open] .pdp-accordion-icon-{{ block_id }} {
+  transform: rotate(45deg);
+}
+
+.pdp-accordion-content-{{ block_id }} {
+  padding: 0 var(--accordion-padding) var(--accordion-padding);
+  color: var(--accordion-content-color);
+  font-size: var(--accordion-content-size);
+  line-height: 1.6;
+}
+
+.pdp-accordion-content-{{ block_id }} p {
+  margin: 0 0 1em;
+}
+
+.pdp-accordion-content-{{ block_id }} p:last-child {
+  margin-bottom: 0;
+}
+
+.pdp-accordion-content-{{ block_id }} ul,
+.pdp-accordion-content-{{ block_id }} ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+}
+
+.pdp-accordion-content-{{ block_id }} li {
+  margin-bottom: 0.5em;
+}
+
+/* ===== ANIMACIÓN DE APERTURA ===== */
+.pdp-accordion-content-wrapper-{{ block_id }} {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.pdp-accordion-item-{{ block_id }}[open] .pdp-accordion-content-wrapper-{{ block_id }} {
+  grid-template-rows: 1fr;
+}
+
+.pdp-accordion-content-inner-{{ block_id }} {
+  overflow: hidden;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 749px) {
+  .pdp-claims-{{ block_id }} {
+    justify-content: {{ block.settings.claims_mobile_align }};
+  }
+  
+  .pdp-claim-badge-{{ block_id }} {
+    font-size: calc(var(--claims-font-size) * 0.9);
+  }
+  
+  .pdp-accordion-title-{{ block_id }} {
+    font-size: calc(var(--accordion-title-size) * 0.9);
+  }
+}
+
+/* ===== REDUCIR MOVIMIENTO ===== */
+@media (prefers-reduced-motion: reduce) {
+  .pdp-claim-badge-{{ block_id }},
+  .pdp-accordion-icon-{{ block_id }},
+  .pdp-accordion-content-wrapper-{{ block_id }} {
+    transition: none;
+  }
+  
+  .pdp-claim-badge-{{ block_id }}:hover {
+    transform: none;
+  }
+}
+{% endstyle %}
+
+<div class="pdp-dynamic-{{ block_id }}">
+  
+  {%- comment -%} ===== SECCIÓN CLAIMS ===== {%- endcomment -%}
+  {% if block.settings.show_claims %}
+    {% if claims_raw != blank and claims_raw.size > 0 %}
+      <div class="pdp-claims-{{ block_id }}">
+        {% for claim in claims_raw %}
+          {% if claim != blank %}
+            <span class="pdp-claim-badge-{{ block_id }}">
+              {% if block.settings.claims_show_icon %}
+                <svg class="pdp-claim-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  {% case block.settings.claims_icon %}
+                    {% when 'check' %}
+                      <path d="M20 6L9 17l-5-5"/>
+                    {% when 'leaf' %}
+                      <path d="M12 22c4-4 8-7 8-12 0-3.5-2.5-6-6-6-2 0-4 1.5-4 4s2 4 4 4c-4 0-8 4-8 10"/>
+                    {% when 'star' %}
+                      <polygon points="12,2 15,9 22,9 17,14 19,22 12,18 5,22 7,14 2,9 9,9"/>
+                    {% when 'shield' %}
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    {% when 'heart' %}
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  {% endcase %}
+                </svg>
+              {% endif %}
+              {{ claim | strip }}
+            </span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% elsif block.settings.claims_fallback != blank %}
+      {%- comment -%} Fallback: usar texto del schema si no hay metafield {%- endcomment -%}
+      {% assign fallback_claims = block.settings.claims_fallback | split: ',' %}
+      <div class="pdp-claims-{{ block_id }}">
+        {% for claim in fallback_claims %}
+          {% assign clean_claim = claim | strip %}
+          {% if clean_claim != blank %}
+            <span class="pdp-claim-badge-{{ block_id }}">
+              {% if block.settings.claims_show_icon %}
+                <svg class="pdp-claim-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  {% case block.settings.claims_icon %}
+                    {% when 'check' %}
+                      <path d="M20 6L9 17l-5-5"/>
+                    {% when 'leaf' %}
+                      <path d="M12 22c4-4 8-7 8-12 0-3.5-2.5-6-6-6-2 0-4 1.5-4 4s2 4 4 4c-4 0-8 4-8 10"/>
+                    {% when 'star' %}
+                      <polygon points="12,2 15,9 22,9 17,14 19,22 12,18 5,22 7,14 2,9 9,9"/>
+                    {% when 'shield' %}
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    {% when 'heart' %}
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  {% endcase %}
+                </svg>
+              {% endif %}
+              {{ clean_claim }}
+            </span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endif %}
+  
+  {%- comment -%} ===== SECCIÓN ACORDEONES ===== {%- endcomment -%}
+  {% if block.settings.show_accordions %}
+    {% assign has_accordions = false %}
+    {% if accordion_1_title != blank or accordion_2_title != blank or accordion_3_title != blank or accordion_4_title != blank or accordion_5_title != blank %}
+      {% assign has_accordions = true %}
+    {% endif %}
+    
+    {% if has_accordions %}
+      <div class="pdp-accordions-{{ block_id }}">
+        
+        {%- comment -%} Acordeón 1 {%- endcomment -%}
+        {% if accordion_1_title != blank %}
+          <details class="pdp-accordion-item-{{ block_id }}" {% if block.settings.accordion_1_open %}open{% endif %}>
+            <summary class="pdp-accordion-trigger-{{ block_id }}">
+              <span class="pdp-accordion-title-{{ block_id }}">{{ accordion_1_title }}</span>
+              <svg class="pdp-accordion-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </summary>
+            <div class="pdp-accordion-content-wrapper-{{ block_id }}">
+              <div class="pdp-accordion-content-inner-{{ block_id }}">
+                <div class="pdp-accordion-content-{{ block_id }}">
+                  {{ accordion_1_content | newline_to_br }}
+                </div>
+              </div>
+            </div>
+          </details>
+        {% endif %}
+        
+        {%- comment -%} Acordeón 2 {%- endcomment -%}
+        {% if accordion_2_title != blank %}
+          <details class="pdp-accordion-item-{{ block_id }}" {% if block.settings.accordion_2_open %}open{% endif %}>
+            <summary class="pdp-accordion-trigger-{{ block_id }}">
+              <span class="pdp-accordion-title-{{ block_id }}">{{ accordion_2_title }}</span>
+              <svg class="pdp-accordion-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </summary>
+            <div class="pdp-accordion-content-wrapper-{{ block_id }}">
+              <div class="pdp-accordion-content-inner-{{ block_id }}">
+                <div class="pdp-accordion-content-{{ block_id }}">
+                  {{ accordion_2_content | newline_to_br }}
+                </div>
+              </div>
+            </div>
+          </details>
+        {% endif %}
+        
+        {%- comment -%} Acordeón 3 {%- endcomment -%}
+        {% if accordion_3_title != blank %}
+          <details class="pdp-accordion-item-{{ block_id }}" {% if block.settings.accordion_3_open %}open{% endif %}>
+            <summary class="pdp-accordion-trigger-{{ block_id }}">
+              <span class="pdp-accordion-title-{{ block_id }}">{{ accordion_3_title }}</span>
+              <svg class="pdp-accordion-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </summary>
+            <div class="pdp-accordion-content-wrapper-{{ block_id }}">
+              <div class="pdp-accordion-content-inner-{{ block_id }}">
+                <div class="pdp-accordion-content-{{ block_id }}">
+                  {{ accordion_3_content | newline_to_br }}
+                </div>
+              </div>
+            </div>
+          </details>
+        {% endif %}
+        
+        {%- comment -%} Acordeón 4 {%- endcomment -%}
+        {% if accordion_4_title != blank %}
+          <details class="pdp-accordion-item-{{ block_id }}" {% if block.settings.accordion_4_open %}open{% endif %}>
+            <summary class="pdp-accordion-trigger-{{ block_id }}">
+              <span class="pdp-accordion-title-{{ block_id }}">{{ accordion_4_title }}</span>
+              <svg class="pdp-accordion-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </summary>
+            <div class="pdp-accordion-content-wrapper-{{ block_id }}">
+              <div class="pdp-accordion-content-inner-{{ block_id }}">
+                <div class="pdp-accordion-content-{{ block_id }}">
+                  {{ accordion_4_content | newline_to_br }}
+                </div>
+              </div>
+            </div>
+          </details>
+        {% endif %}
+        
+        {%- comment -%} Acordeón 5 {%- endcomment -%}
+        {% if accordion_5_title != blank %}
+          <details class="pdp-accordion-item-{{ block_id }}" {% if block.settings.accordion_5_open %}open{% endif %}>
+            <summary class="pdp-accordion-trigger-{{ block_id }}">
+              <span class="pdp-accordion-title-{{ block_id }}">{{ accordion_5_title }}</span>
+              <svg class="pdp-accordion-icon-{{ block_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </summary>
+            <div class="pdp-accordion-content-wrapper-{{ block_id }}">
+              <div class="pdp-accordion-content-inner-{{ block_id }}">
+                <div class="pdp-accordion-content-{{ block_id }}">
+                  {{ accordion_5_content | newline_to_br }}
+                </div>
+              </div>
+            </div>
+          </details>
+        {% endif %}
+        
+      </div>
+    {% endif %}
+  {% endif %}
+  
+</div>
+
+{% schema %}
+{
+  "name": "Dynamic Product Content",
+  "tag": "div",
+  "class": "pdp-dynamic-content-block",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🔧 Debug"
+    },
+    {
+      "type": "checkbox",
+      "id": "debug_mode",
+      "label": "Activar modo debug",
+      "default": false,
+      "info": "Muestra información de los metafields para diagnóstico"
+    },
+    {
+      "type": "header",
+      "content": "━━━ CLAIMS / BADGES ━━━"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_claims",
+      "label": "Mostrar claims",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "claims_fallback",
+      "label": "Claims de respaldo",
+      "info": "Separados por coma. Se usan si el metafield está vacío. Ej: Gluten-free, Non-GMO, Vegan",
+      "placeholder": "Gluten-free, Non-GMO, Dairy-free"
+    },
+    {
+      "type": "select",
+      "id": "claims_style",
+      "label": "Estilo de badges",
+      "options": [
+        { "value": "solid", "label": "Sólido" },
+        { "value": "outline", "label": "Contorno" },
+        { "value": "soft", "label": "Suave" },
+        { "value": "pill", "label": "Pill/Cápsula" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "checkbox",
+      "id": "claims_show_icon",
+      "label": "Mostrar icono",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "claims_icon",
+      "label": "Tipo de icono",
+      "options": [
+        { "value": "check", "label": "✓ Check" },
+        { "value": "leaf", "label": "🌿 Hoja" },
+        { "value": "star", "label": "⭐ Estrella" },
+        { "value": "shield", "label": "🛡️ Escudo" },
+        { "value": "heart", "label": "❤️ Corazón" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "color",
+      "id": "claims_bg_color",
+      "label": "Color de fondo",
+      "default": "#f0f5f0"
+    },
+    {
+      "type": "color",
+      "id": "claims_text_color",
+      "label": "Color de texto",
+      "default": "#2d5a3d"
+    },
+    {
+      "type": "color",
+      "id": "claims_border_color",
+      "label": "Color de borde",
+      "default": "#c8dcc8"
+    },
+    {
+      "type": "range",
+      "id": "claims_font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de fuente",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "claims_font_weight",
+      "label": "Peso de fuente",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "select",
+      "id": "claims_text_transform",
+      "label": "Transformación de texto",
+      "options": [
+        { "value": "none", "label": "Normal" },
+        { "value": "uppercase", "label": "MAYÚSCULAS" },
+        { "value": "lowercase", "label": "minúsculas" },
+        { "value": "capitalize", "label": "Capitalizar" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "claims_letter_spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "unit": "px",
+      "label": "Espaciado de letras",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "claims_padding_horizontal",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding horizontal",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "claims_padding_vertical",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding vertical",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "claims_gap",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre badges",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "claims_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio de borde",
+      "default": 6
+    },
+    {
+      "type": "select",
+      "id": "claims_mobile_align",
+      "label": "Alineación en móvil",
+      "options": [
+        { "value": "flex-start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Derecha" }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ACORDEONES ━━━"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_accordions",
+      "label": "Mostrar acordeones",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "accordion_style",
+      "label": "Estilo de acordeones",
+      "options": [
+        { "value": "card", "label": "Card con borde" },
+        { "value": "bordered", "label": "Borde lateral de acento" },
+        { "value": "minimal", "label": "Minimal (solo línea inferior)" }
+      ],
+      "default": "minimal"
+    },
+    {
+      "type": "color",
+      "id": "accordion_accent_color",
+      "label": "Color de acento",
+      "default": "#2d5a3d",
+      "info": "Para estilo 'Borde lateral'"
+    },
+    {
+      "type": "color",
+      "id": "accordion_bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accordion_border_color",
+      "label": "Color de borde",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "range",
+      "id": "accordion_border_radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio de borde",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "accordion_title_color",
+      "label": "Color de título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "accordion_title_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de título",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "accordion_title_weight",
+      "label": "Peso de título",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "accordion_title_transform",
+      "label": "Transformación de título",
+      "options": [
+        { "value": "none", "label": "Normal" },
+        { "value": "uppercase", "label": "MAYÚSCULAS" },
+        { "value": "capitalize", "label": "Capitalizar" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "accordion_content_color",
+      "label": "Color de contenido",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "accordion_content_font_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de contenido",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "accordion_icon_color",
+      "label": "Color de icono",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "accordion_padding",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding interno",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "accordion_gap",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre acordeones",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Estado inicial de acordeones"
+    },
+    {
+      "type": "checkbox",
+      "id": "accordion_1_open",
+      "label": "Acordeón 1 abierto por defecto",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "accordion_2_open",
+      "label": "Acordeón 2 abierto por defecto",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "accordion_3_open",
+      "label": "Acordeón 3 abierto por defecto",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "accordion_4_open",
+      "label": "Acordeón 4 abierto por defecto",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "accordion_5_open",
+      "label": "Acordeón 5 abierto por defecto",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "━━━ ESPACIADO ━━━"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding superior",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic Product Content",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

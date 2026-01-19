@@ -1,0 +1,42 @@
+<div class="page-about">
+  <div class="page-width">
+    <div class="grid">
+      <div class="grid__item medium-up--five-sixths medium-up--push-one-twelfth">
+        <div class="section-header text-center">
+          <h1>{{ page.title }}</h1>
+        </div>
+
+        <div class="rte">
+          {{ page.content }}
+        </div>
+
+        {% comment %} Aquí puedes agregar más contenido personalizado {% endcomment %}
+        <div class="about-features">
+          <div class="grid">
+            <div class="grid__item medium-up--one-third">
+              <h3>Misión</h3>
+              <p>Texto sobre la misión de la empresa.</p>
+            </div>
+            <div class="grid__item medium-up--one-third">
+              <h3>Visión</h3>
+              <p>Texto sobre la visión.</p>
+            </div>
+            <div class="grid__item medium-up--one-third">
+              <h3>Valores</h3>
+              <p>Texto sobre los valores.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .page-about {
+    padding: 50px 0;
+  }
+  .about-features {
+    margin-top: 50px;
+  }
+</style>

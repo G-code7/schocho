@@ -1,0 +1,726 @@
+{% doc %}
+  @prompt
+    FAQ/Collapsible component estilo Wonder Wellness
+    - Icono + que rota a × cuando está abierto
+    - Ancho configurable
+    - Estilos minimalistas y limpios
+    - Soporte para múltiples items desde metafield o manual
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-{{ ai_gen_id }} {
+    --faq-max-width: {{ block.settings.max_width }}px;
+    --faq-bg: {{ block.settings.background_color }};
+    --faq-text: {{ block.settings.text_color }};
+    --faq-title-color: {{ block.settings.title_color }};
+    --faq-title-size: {{ block.settings.title_size }}px;
+    --faq-content-size: {{ block.settings.content_size }}px;
+    --faq-border-color: {{ block.settings.border_color }};
+    --faq-icon-color: {{ block.settings.icon_color }};
+    --faq-icon-size: {{ block.settings.icon_size }}px;
+    --faq-padding-y: {{ block.settings.item_padding_y }}px;
+    --faq-gap: {{ block.settings.section_gap }}px;
+
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_y }}px 0;
+    background-color: var(--faq-bg);
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: var(--faq-max-width);
+    margin: 0 auto;
+    padding: 0 {{ block.settings.container_padding }}px;
+  }
+
+  /* Section Title */
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.header_align }};
+    margin-bottom: var(--faq-gap);
+  }
+
+  .ai-faq-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.section_title_size }}px;
+    font-weight: {{ block.settings.section_title_weight }};
+    color: var(--faq-title-color);
+    margin: 0;
+    {% if block.settings.section_title_uppercase %}
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    {% endif %}
+  }
+
+  /* FAQ List */
+  .ai-faq-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* FAQ Item */
+  .ai-faq-item-{{ ai_gen_id }} {
+    border-bottom: {{ block.settings.border_width }}px solid var(--faq-border-color);
+    {% if block.settings.show_top_border %}
+    border-top: {{ block.settings.border_width }}px solid var(--faq-border-color);
+    margin-top: -{{ block.settings.border_width }}px;
+    {% endif %}
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}:first-child {
+    {% if block.settings.show_top_border %}
+    margin-top: 0;
+    {% endif %}
+  }
+
+  /* Trigger/Header */
+  .ai-faq-trigger-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding: var(--faq-padding-y) 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-faq-trigger-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    flex: 1;
+    font-size: var(--faq-title-size);
+    font-weight: {{ block.settings.title_weight }};
+    color: var(--faq-title-color);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* Icon */
+  .ai-faq-icon-{{ ai_gen_id }} {
+    position: relative;
+    width: var(--faq-icon-size);
+    height: var(--faq-icon-size);
+    flex-shrink: 0;
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }} span {
+    position: absolute;
+    background-color: var(--faq-icon-color);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Horizontal bar */
+  .ai-faq-icon-{{ ai_gen_id }} .ai-faq-bar-h-{{ ai_gen_id }} {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: {{ block.settings.icon_thickness }}px;
+    transform: translateY(-50%);
+  }
+
+  /* Vertical bar */
+  .ai-faq-icon-{{ ai_gen_id }} .ai-faq-bar-v-{{ ai_gen_id }} {
+    top: 0;
+    left: 50%;
+    width: {{ block.settings.icon_thickness }}px;
+    height: 100%;
+    transform: translateX(-50%);
+  }
+
+  /* Open state - rotate to X */
+  .ai-faq-item-{{ ai_gen_id }}[open] .ai-faq-bar-v-{{ ai_gen_id }} {
+    transform: translateX(-50%) rotate(90deg);
+    opacity: 0;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}[open] .ai-faq-bar-h-{{ ai_gen_id }} {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  /* Content */
+  .ai-faq-content-{{ ai_gen_id }} {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}[open] .ai-faq-content-{{ ai_gen_id }} {
+    max-height: 1000px;
+    opacity: 1;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    padding-bottom: var(--faq-padding-y);
+    font-size: var(--faq-content-size);
+    color: var(--faq-text);
+    line-height: 1.7;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} p {
+    margin: 0 0 1em 0;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} ul,
+  .ai-faq-answer-{{ ai_gen_id }} ol {
+    margin: 0 0 1em 0;
+    padding-left: 1.5em;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} li {
+    margin-bottom: 0.5em;
+  }
+
+  /* Mobile */
+  @media screen and (max-width: 749px) {
+    .ai-faq-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_y_mobile }}px 0;
+    }
+
+    .ai-faq-question-{{ ai_gen_id }} {
+      font-size: calc(var(--faq-title-size) - 2px);
+    }
+
+    .ai-faq-answer-{{ ai_gen_id }} {
+      font-size: calc(var(--faq-content-size) - 1px);
+    }
+
+    .ai-faq-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.section_title_size }}px - 4px);
+    }
+  }
+{% endstyle %}
+
+<div class="ai-faq-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    
+    {% if block.settings.section_title != blank %}
+      <div class="ai-faq-header-{{ ai_gen_id }}">
+        <h2 class="ai-faq-title-{{ ai_gen_id }}">{{ block.settings.section_title }}</h2>
+      </div>
+    {% endif %}
+
+    <div class="ai-faq-list-{{ ai_gen_id }}" role="list">
+      {%- liquid
+        # Check for metafield FAQ data
+        assign faq_metafield = product.metafields.custom.faq.value | default: page.metafields.custom.faq.value
+        assign has_metafield_faq = false
+        
+        if faq_metafield != blank and faq_metafield.size > 0
+          assign has_metafield_faq = true
+        endif
+      -%}
+
+      {% if has_metafield_faq %}
+        {%- comment -%} Render from metafield {%- endcomment -%}
+        {% for item in faq_metafield %}
+          <details 
+            class="ai-faq-item-{{ ai_gen_id }}"
+            {% if forloop.first and block.settings.first_open %}open{% endif %}
+          >
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ item.title | default: item.question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">
+                {{ item.content | default: item.answer }}
+              </div>
+            </div>
+          </details>
+        {% endfor %}
+      {% else %}
+        {%- comment -%} Render manual items from settings {%- endcomment -%}
+        {% if block.settings.faq_1_question != blank %}
+          <details 
+            class="ai-faq-item-{{ ai_gen_id }}"
+            {% if block.settings.first_open %}open{% endif %}
+          >
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ block.settings.faq_1_question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ block.settings.faq_1_answer }}</div>
+            </div>
+          </details>
+        {% endif %}
+
+        {% if block.settings.faq_2_question != blank %}
+          <details class="ai-faq-item-{{ ai_gen_id }}">
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ block.settings.faq_2_question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ block.settings.faq_2_answer }}</div>
+            </div>
+          </details>
+        {% endif %}
+
+        {% if block.settings.faq_3_question != blank %}
+          <details class="ai-faq-item-{{ ai_gen_id }}">
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ block.settings.faq_3_question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ block.settings.faq_3_answer }}</div>
+            </div>
+          </details>
+        {% endif %}
+
+        {% if block.settings.faq_4_question != blank %}
+          <details class="ai-faq-item-{{ ai_gen_id }}">
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ block.settings.faq_4_question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ block.settings.faq_4_answer }}</div>
+            </div>
+          </details>
+        {% endif %}
+
+        {% if block.settings.faq_5_question != blank %}
+          <details class="ai-faq-item-{{ ai_gen_id }}">
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ block.settings.faq_5_question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ block.settings.faq_5_answer }}</div>
+            </div>
+          </details>
+        {% endif %}
+
+        {% if block.settings.faq_6_question != blank %}
+          <details class="ai-faq-item-{{ ai_gen_id }}">
+            <summary class="ai-faq-trigger-{{ ai_gen_id }}">
+              <span class="ai-faq-question-{{ ai_gen_id }}">{{ block.settings.faq_6_question }}</span>
+              <div class="ai-faq-icon-{{ ai_gen_id }}" aria-hidden="true">
+                <span class="ai-faq-bar-h-{{ ai_gen_id }}"></span>
+                <span class="ai-faq-bar-v-{{ ai_gen_id }}"></span>
+              </div>
+            </summary>
+            <div class="ai-faq-content-{{ ai_gen_id }}">
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ block.settings.faq_6_answer }}</div>
+            </div>
+          </details>
+        {% endif %}
+      {% endif %}
+
+      {%- comment -%} Empty state for editor {%- endcomment -%}
+      {% unless has_metafield_faq %}
+        {% if block.settings.faq_1_question == blank and block.settings.faq_2_question == blank %}
+          <div style="padding: 40px; text-align: center; color: #999; font-style: italic; border: 1px dashed #ccc; border-radius: 8px;">
+            Add FAQ items in block settings or use metafield custom.faq
+          </div>
+        {% endif %}
+      {% endunless %}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const container = document.querySelector('.ai-faq-list-{{ ai_gen_id }}');
+    if (!container) return;
+    
+    const singleOpen = {{ block.settings.single_open | default: false }};
+    
+    if (singleOpen) {
+      const items = container.querySelectorAll('.ai-faq-item-{{ ai_gen_id }}');
+      
+      items.forEach(item => {
+        item.addEventListener('toggle', function(e) {
+          if (this.open) {
+            items.forEach(other => {
+              if (other !== this && other.open) {
+                other.open = false;
+              }
+            });
+          }
+        });
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Collapsible",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "── Layout ──"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "label": "Container padding",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_padding_y",
+      "label": "Section padding (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_y_mobile",
+      "label": "Section padding (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_gap",
+      "label": "Gap between title and items",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "── Section Title ──"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "range",
+      "id": "section_title_size",
+      "label": "Title size",
+      "min": 18,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "section_title_weight",
+      "label": "Title weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_title_uppercase",
+      "label": "Uppercase",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "header_align",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "── Colors ──"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Question color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Answer color",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "── Typography ──"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Question size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Question weight",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "label": "Answer size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "── Items Style ──"
+    },
+    {
+      "type": "range",
+      "id": "item_padding_y",
+      "label": "Item padding",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_border",
+      "label": "Show top border on items",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "── Icon ──"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "icon_thickness",
+      "label": "Icon thickness",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "── Behavior ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "single_open",
+      "label": "Only one open at a time",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "first_open",
+      "label": "First item open by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "── FAQ Item 1 ──"
+    },
+    {
+      "type": "text",
+      "id": "faq_1_question",
+      "label": "Question",
+      "default": "Are Wellness supplements safe to use?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_1_answer",
+      "label": "Answer",
+      "default": "<p>Absolutely! All our products are manufactured in certified facilities and meet strict safety and quality standards. We recommend consulting your healthcare provider if you have specific health conditions or are taking medications.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── FAQ Item 2 ──"
+    },
+    {
+      "type": "text",
+      "id": "faq_2_question",
+      "label": "Question",
+      "default": "How should I store my supplements?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_2_answer",
+      "label": "Answer",
+      "default": "<p>To ensure the freshness and effectiveness of our products, store them in a cool, dry place away from direct sunlight. Always keep them out of reach of children.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── FAQ Item 3 ──"
+    },
+    {
+      "type": "text",
+      "id": "faq_3_question",
+      "label": "Question",
+      "default": "Do you offer international shipping?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_3_answer",
+      "label": "Answer",
+      "default": "<p>Yes, we ship worldwide! Shipping costs and delivery times may vary depending on your location. You can find more details on our Shipping Policy page.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── FAQ Item 4 ──"
+    },
+    {
+      "type": "text",
+      "id": "faq_4_question",
+      "label": "Question",
+      "default": "What is your return policy?"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_4_answer",
+      "label": "Answer",
+      "default": "<p>We offer a 30-day satisfaction guarantee. If you're not completely happy with your purchase, you can return it for a refund or exchange. Please visit our Return Policy page for more details.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── FAQ Item 5 ──"
+    },
+    {
+      "type": "text",
+      "id": "faq_5_question",
+      "label": "Question"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_5_answer",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "── FAQ Item 6 ──"
+    },
+    {
+      "type": "text",
+      "id": "faq_6_question",
+      "label": "Question"
+    },
+    {
+      "type": "richtext",
+      "id": "faq_6_answer",
+      "label": "Answer"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Collapsible"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,613 @@
+{% doc %}
+  @prompt
+    a section for  blog posts.  my blog is named recipes.  so i need  to select witch blog is. 
+      i want aan slider  with a max  o 6-7  blogpost or recipes
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-blog-slider-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: 40px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-blog-slider-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-blog-slider-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.heading_alignment }};
+    margin-bottom: 32px;
+  }
+
+  .ai-blog-slider-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    margin: 0 0 12px 0;
+  }
+
+  .ai-blog-slider-subheading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.subheading_size }}px;
+    margin: 0;
+  }
+
+  .ai-blog-slider-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-blog-slider-track-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.card_gap }}px;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-blog-slider-card-{{ ai_gen_id }} {
+    flex: 0 0 calc((100% - {{ block.settings.card_gap | times: 2 }}px) / 3);
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .ai-blog-slider-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+  }
+
+  .ai-blog-slider-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 66.67%;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-blog-slider-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-blog-slider-image-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-blog-slider-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  .ai-blog-slider-content-{{ ai_gen_id }} {
+    padding: 20px;
+  }
+
+  .ai-blog-slider-date-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+
+  .ai-blog-slider-title-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+  }
+
+  .ai-blog-slider-excerpt-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .ai-blog-slider-link-{{ ai_gen_id }} {
+    display: inline-block;
+    color: {{ block.settings.link_color }};
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .ai-blog-slider-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.link_hover_color }};
+  }
+
+  .ai-blog-slider-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .ai-blog-slider-button-{{ ai_gen_id }} {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_color }};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .ai-blog-slider-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_color }};
+  }
+
+  .ai-blog-slider-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-blog-slider-dots-{{ ai_gen_id }} {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ai-blog-slider-dot-{{ ai_gen_id }} {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: {{ block.settings.button_background }};
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+  }
+
+  .ai-blog-slider-dot-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.button_hover_background }};
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .ai-blog-slider-empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: {{ block.settings.text_color }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-blog-slider-card-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - {{ block.settings.card_gap }}px) / 2);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-blog-slider-card-{{ ai_gen_id }} {
+      flex: 0 0 100%;
+    }
+
+    .ai-blog-slider-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<blog-slider-{{ ai_gen_id }}
+  class="ai-blog-slider-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-blog-slider-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank or block.settings.subheading != blank %}
+      <div class="ai-blog-slider-header-{{ ai_gen_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="ai-blog-slider-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+        {% if block.settings.subheading != blank %}
+          <p class="ai-blog-slider-subheading-{{ ai_gen_id }}">{{ block.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.blog != blank %}
+      {% assign articles = block.settings.blog.articles | limit: block.settings.max_posts %}
+      
+      {% if articles.size > 0 %}
+        <div class="ai-blog-slider-wrapper-{{ ai_gen_id }}">
+          <div class="ai-blog-slider-track-{{ ai_gen_id }}" data-slider-track>
+            {% for article in articles %}
+              <div class="ai-blog-slider-card-{{ ai_gen_id }}">
+                <div class="ai-blog-slider-image-wrapper-{{ ai_gen_id }}">
+                  {% if article.image %}
+                    <img
+                      src="{{ article.image | image_url: width: 600 }}"
+                      alt="{{ article.image.alt | escape }}"
+                      class="ai-blog-slider-image-{{ ai_gen_id }}"
+                      loading="lazy"
+                      width="600"
+                      height="400"
+                    >
+                  {% else %}
+                    <div class="ai-blog-slider-image-placeholder-{{ ai_gen_id }}">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="ai-blog-slider-content-{{ ai_gen_id }}">
+                  {% if block.settings.show_date %}
+                    <div class="ai-blog-slider-date-{{ ai_gen_id }}">
+                      {{ article.published_at | date: '%B %d, %Y' }}
+                    </div>
+                  {% endif %}
+                  <h3 class="ai-blog-slider-title-{{ ai_gen_id }}">
+                    {{ article.title }}
+                  </h3>
+                  {% if block.settings.show_excerpt %}
+                    <div class="ai-blog-slider-excerpt-{{ ai_gen_id }}">
+                      {{ article.excerpt_or_content | strip_html | truncate: 120 }}
+                    </div>
+                  {% endif %}
+                  <a href="{{ article.url }}" class="ai-blog-slider-link-{{ ai_gen_id }}">
+                    {{ block.settings.read_more_text }}
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if articles.size > 3 %}
+          <div class="ai-blog-slider-controls-{{ ai_gen_id }}">
+            <button
+              class="ai-blog-slider-button-{{ ai_gen_id }}"
+              data-slider-prev
+              aria-label="Previous slide"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="12 4 6 10 12 16"></polyline>
+              </svg>
+            </button>
+            <div class="ai-blog-slider-dots-{{ ai_gen_id }}" data-slider-dots></div>
+            <button
+              class="ai-blog-slider-button-{{ ai_gen_id }}"
+              data-slider-next
+              aria-label="Next slide"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="8 4 14 10 8 16"></polyline>
+              </svg>
+            </button>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="ai-blog-slider-empty-{{ ai_gen_id }}">
+          <p>No articles found in this blog.</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="ai-blog-slider-empty-{{ ai_gen_id }}">
+        <p>Please select a blog to display articles.</p>
+      </div>
+    {% endif %}
+  </div>
+</blog-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BlogSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.slidesPerView = 3;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('[data-slider-track]');
+        this.prevButton = this.querySelector('[data-slider-prev]');
+        this.nextButton = this.querySelector('[data-slider-next]');
+        this.dotsContainer = this.querySelector('[data-slider-dots]');
+
+        if (!this.track) return;
+
+        this.cards = Array.from(this.track.children);
+        this.totalSlides = this.cards.length;
+
+        this.updateSlidesPerView();
+        this.createDots();
+        this.setupEventListeners();
+        this.updateSlider();
+
+        window.addEventListener('resize', () => {
+          this.updateSlidesPerView();
+          this.createDots();
+          this.updateSlider();
+        });
+      }
+
+      updateSlidesPerView() {
+        if (window.innerWidth <= 749) {
+          this.slidesPerView = 1;
+        } else if (window.innerWidth <= 989) {
+          this.slidesPerView = 2;
+        } else {
+          this.slidesPerView = 3;
+        }
+      }
+
+      createDots() {
+        if (!this.dotsContainer) return;
+
+        this.dotsContainer.innerHTML = '';
+        this.maxSlide = Math.max(0, this.totalSlides - this.slidesPerView);
+
+        for (let i = 0; i <= this.maxSlide; i++) {
+          const dot = document.createElement('button');
+          dot.classList.add('ai-blog-slider-dot-{{ ai_gen_id }}');
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          dot.addEventListener('click', () => this.goToSlide(i));
+          this.dotsContainer.appendChild(dot);
+        }
+
+        this.dots = Array.from(this.dotsContainer.children);
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.prevSlide());
+        }
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.nextSlide());
+        }
+      }
+
+      goToSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.maxSlide));
+        this.updateSlider();
+      }
+
+      prevSlide() {
+        this.goToSlide(this.currentSlide - 1);
+      }
+
+      nextSlide() {
+        this.goToSlide(this.currentSlide + 1);
+      }
+
+      updateSlider() {
+        const translateX = -(this.currentSlide * (100 / this.slidesPerView));
+        this.track.style.transform = 'translateX(' + translateX + '%)';
+
+        if (this.dots) {
+          this.dots.forEach((dot, index) => {
+            if (index === this.currentSlide) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
+
+        if (this.prevButton) {
+          this.prevButton.disabled = this.currentSlide === 0;
+        }
+
+        if (this.nextButton) {
+          this.nextButton.disabled = this.currentSlide >= this.maxSlide;
+        }
+      }
+    }
+
+    customElements.define('blog-slider-{{ ai_gen_id }}', BlogSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Blog post slider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Blog selection"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "max_posts",
+      "min": 3,
+      "max": 7,
+      "step": 1,
+      "label": "Maximum posts",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest Recipes"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover our newest culinary creations"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Card settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show publish date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "read_more_text",
+      "label": "Read more text",
+      "default": "Read more"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link",
+      "default": "#372352"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover",
+      "default": "#ff4315"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button icon",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#372352"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover icon",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog post slider"
+    }
+  ]
+}
+{% endschema %}

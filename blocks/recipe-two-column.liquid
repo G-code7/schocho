@@ -1,0 +1,1147 @@
+{% doc %}
+  @prompt
+    Componente de recetas para Shopify con soporte para:
+    - Metafields: recipes.ingredients y recipe.products (list.product_reference)
+    - Múltiples estilos visuales personalizables
+    - Cards de producto en formato horizontal (imagen izq, info der)
+    - Diseño responsive con columnas configurables
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ===== BASE LAYOUT ===== */
+  .ai-recipe-{{ ai_gen_id }} {
+    --recipe-gap: {{ block.settings.column_gap }}px;
+    --recipe-gap-mobile: {{ block.settings.column_gap_mobile }}px;
+    --recipe-section-gap: {{ block.settings.section_gap }}px;
+    --recipe-bg: {{ block.settings.section_background }};
+    --recipe-padding: {{ block.settings.section_padding }}px;
+    --recipe-radius: {{ block.settings.section_border_radius }}px;
+    --recipe-border: {{ block.settings.section_border_width }}px solid {{ block.settings.section_border_color }};
+    --recipe-title-color: {{ block.settings.title_color }};
+    --recipe-title-size: {{ block.settings.title_size }}px;
+    --recipe-text-color: {{ block.settings.text_color }};
+    --recipe-text-size: {{ block.settings.text_size }}px;
+    --recipe-accent: {{ block.settings.accent_color }};
+
+    display: block;
+    width: 100%;
+  }
+
+  .ai-recipe-container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: minmax(280px, {{ block.settings.left_column_width }}%) 1fr;
+    gap: var(--recipe-gap);
+    width: 100%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-recipe-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: var(--recipe-gap-mobile);
+    }
+
+    .ai-recipe-left-{{ ai_gen_id }} {
+      order: {{ block.settings.mobile_products_position }};
+    }
+  }
+
+  .ai-recipe-left-{{ ai_gen_id }},
+  .ai-recipe-right-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: var(--recipe-section-gap);
+  }
+
+  /* ===== SECTION CARDS ===== */
+  .ai-recipe-section-{{ ai_gen_id }} {
+    background: var(--recipe-bg);
+    padding: var(--recipe-padding);
+    border-radius: var(--recipe-radius);
+    border: var(--recipe-border);
+    {% if block.settings.card_shadow %}
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    {% endif %}
+  }
+
+  .ai-recipe-section-title-{{ ai_gen_id }} {
+    color: var(--recipe-title-color);
+    font-size: var(--recipe-title-size);
+    font-weight: 600;
+    margin: 0 0 {{ block.settings.title_spacing }}px 0;
+    {% if block.settings.title_style == 'underline' %}
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--recipe-accent);
+    {% elsif block.settings.title_style == 'accent_bg' %}
+    background: var(--recipe-accent);
+    color: #fff;
+    padding: 8px 12px;
+    margin: calc(var(--recipe-padding) * -1);
+    margin-bottom: {{ block.settings.title_spacing }}px;
+    border-radius: var(--recipe-radius) var(--recipe-radius) 0 0;
+    {% endif %}
+  }
+
+  /* ===== PRODUCTS SECTION - HORIZONTAL LAYOUT ===== */
+  .ai-recipe-products-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.product_gap }}px;
+  }
+
+  /* Product Card - Horizontal Style */
+  .ai-recipe-product-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.product_internal_gap }}px;
+    background: {{ block.settings.product_card_bg }};
+    border-radius: {{ block.settings.product_card_radius }}px;
+    padding: {{ block.settings.product_card_padding }}px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    {% if block.settings.product_card_border %}
+    border: 1px solid {{ block.settings.section_border_color }};
+    {% endif %}
+    {% if block.settings.product_card_shadow %}
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    {% endif %}
+  }
+
+  .ai-recipe-product-{{ ai_gen_id }}:hover {
+    {% if block.settings.product_hover_effect == 'shadow' %}
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    {% elsif block.settings.product_hover_effect == 'lift' %}
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    {% elsif block.settings.product_hover_effect == 'border' %}
+    border-color: var(--recipe-accent);
+    {% endif %}
+  }
+
+  /* Product Image - Left Side */
+  .ai-recipe-product-image-wrap-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.product_image_size }}px;
+    height: {{ block.settings.product_image_size }}px;
+  }
+
+  .ai-recipe-product-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: {{ block.settings.product_image_radius }}px;
+    background: #f5f5f5;
+  }
+
+  .ai-recipe-product-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border-radius: {{ block.settings.product_image_radius }}px;
+  }
+
+  /* Product Info - Right Side */
+  .ai-recipe-product-info-{{ ai_gen_id }} {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .ai-recipe-product-title-{{ ai_gen_id }} {
+    color: {{ block.settings.product_title_color }};
+    font-size: {{ block.settings.product_title_size }}px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.3;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ai-recipe-product-link-{{ ai_gen_id }}:hover .ai-recipe-product-title-{{ ai_gen_id }} {
+    color: var(--recipe-accent);
+  }
+
+  .ai-recipe-product-price-{{ ai_gen_id }} {
+    color: {{ block.settings.product_price_color }};
+    font-size: {{ block.settings.product_price_size }}px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ai-recipe-product-price-compare-{{ ai_gen_id }} {
+    text-decoration: line-through;
+    color: #999;
+    font-size: calc({{ block.settings.product_price_size }}px - 2px);
+    font-weight: 400;
+  }
+
+  /* Add to Cart Button */
+  .ai-recipe-product-actions-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .ai-recipe-add-btn-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--recipe-accent);
+    color: {{ block.settings.add_btn_text_color }};
+    border: none;
+    border-radius: {{ block.settings.add_btn_radius }}px;
+    padding: {{ block.settings.add_btn_padding_y }}px {{ block.settings.add_btn_padding_x }}px;
+    font-size: {{ block.settings.add_btn_font_size }}px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .ai-recipe-add-btn-{{ ai_gen_id }}:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
+
+  .ai-recipe-add-btn-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-recipe-add-btn-{{ ai_gen_id }} svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Icon-only button style */
+  {% if block.settings.add_btn_style == 'icon_only' %}
+  .ai-recipe-add-btn-{{ ai_gen_id }} {
+    padding: {{ block.settings.add_btn_padding_y }}px;
+    border-radius: 50%;
+  }
+  .ai-recipe-add-btn-{{ ai_gen_id }} .ai-recipe-btn-text-{{ ai_gen_id }} {
+    display: none;
+  }
+  {% elsif block.settings.add_btn_style == 'text_only' %}
+  .ai-recipe-add-btn-{{ ai_gen_id }} svg {
+    display: none;
+  }
+  {% endif %}
+
+  /* ===== INGREDIENTS SECTION ===== */
+  .ai-recipe-ingredients-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.list_item_gap }}px;
+  }
+
+  .ai-recipe-ingredient-{{ ai_gen_id }} {
+    color: var(--recipe-text-color);
+    font-size: var(--recipe-text-size);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ai-recipe-ingredient-{{ ai_gen_id }}::before {
+    content: '';
+    flex-shrink: 0;
+    {% if block.settings.bullet_style == 'circle' %}
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    background: var(--recipe-accent);
+    border-radius: 50%;
+    {% elsif block.settings.bullet_style == 'square' %}
+    width: 8px;
+    height: 8px;
+    margin-top: 6px;
+    background: var(--recipe-accent);
+    border-radius: 2px;
+    {% elsif block.settings.bullet_style == 'check' %}
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23{{ block.settings.accent_color | remove: '#' }}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    {% elsif block.settings.bullet_style == 'dash' %}
+    width: 12px;
+    height: 2px;
+    margin-top: 10px;
+    background: var(--recipe-accent);
+    border-radius: 1px;
+    {% elsif block.settings.bullet_style == 'none' %}
+    display: none;
+    {% endif %}
+  }
+
+  /* ===== CONTENT SECTION ===== */
+  .ai-recipe-content-{{ ai_gen_id }} {
+    color: {{ block.settings.content_text_color }};
+    font-size: {{ block.settings.content_text_size }}px;
+    line-height: 1.7;
+  }
+
+  .ai-recipe-content-{{ ai_gen_id }} h1,
+  .ai-recipe-content-{{ ai_gen_id }} h2,
+  .ai-recipe-content-{{ ai_gen_id }} h3,
+  .ai-recipe-content-{{ ai_gen_id }} h4 {
+    color: {{ block.settings.content_heading_color }};
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  .ai-recipe-content-{{ ai_gen_id }} h1:first-child,
+  .ai-recipe-content-{{ ai_gen_id }} h2:first-child,
+  .ai-recipe-content-{{ ai_gen_id }} h3:first-child,
+  .ai-recipe-content-{{ ai_gen_id }} h4:first-child {
+    margin-top: 0;
+  }
+
+  .ai-recipe-content-{{ ai_gen_id }} p {
+    margin-bottom: 1em;
+  }
+
+  .ai-recipe-content-{{ ai_gen_id }} ul,
+  .ai-recipe-content-{{ ai_gen_id }} ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+  }
+
+  .ai-recipe-content-{{ ai_gen_id }} li {
+    margin-bottom: 0.5em;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .ai-recipe-empty-{{ ai_gen_id }} {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+
+  /* ===== STYLE VARIANTS ===== */
+  {% if block.settings.layout_style == 'stacked' %}
+  .ai-recipe-container-{{ ai_gen_id }} {
+    grid-template-columns: 1fr;
+  }
+  {% elsif block.settings.layout_style == 'reversed' %}
+  .ai-recipe-container-{{ ai_gen_id }} {
+    grid-template-columns: 1fr minmax(280px, {{ block.settings.left_column_width }}%);
+  }
+  .ai-recipe-left-{{ ai_gen_id }} {
+    order: 2;
+  }
+  {% endif %}
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media screen and (max-width: 749px) {
+    .ai-recipe-product-{{ ai_gen_id }} {
+      gap: {{ block.settings.product_internal_gap_mobile }}px;
+      padding: {{ block.settings.product_card_padding_mobile }}px;
+    }
+
+    .ai-recipe-product-image-wrap-{{ ai_gen_id }} {
+      width: {{ block.settings.product_image_size_mobile }}px;
+      height: {{ block.settings.product_image_size_mobile }}px;
+    }
+
+    .ai-recipe-product-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.product_title_size }}px - 1px);
+    }
+
+    {% if block.settings.mobile_btn_icon_only %}
+    .ai-recipe-add-btn-{{ ai_gen_id }} {
+      padding: {{ block.settings.add_btn_padding_y }}px;
+      border-radius: 50%;
+    }
+    .ai-recipe-add-btn-{{ ai_gen_id }} .ai-recipe-btn-text-{{ ai_gen_id }} {
+      display: none;
+    }
+    {% endif %}
+  }
+{% endstyle %}
+
+<div class="ai-recipe-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-recipe-container-{{ ai_gen_id }}">
+    {%- comment -%} ========== LEFT COLUMN: Products + Ingredients ========== {%- endcomment -%}
+    <div class="ai-recipe-left-{{ ai_gen_id }}">
+      
+      {%- comment -%} ===== PRODUCTS SECTION ===== {%- endcomment -%}
+      {% if block.settings.show_products %}
+        <div class="ai-recipe-section-{{ ai_gen_id }}">
+          {% if block.settings.products_title != blank %}
+            <h3 class="ai-recipe-section-title-{{ ai_gen_id }}">{{ block.settings.products_title }}</h3>
+          {% endif %}
+
+          {%- liquid
+            assign recipe_products = article.metafields.recipe.products.value
+            assign has_products = false
+
+            if recipe_products != blank and recipe_products.size > 0
+              assign has_products = true
+            endif
+          -%}
+
+          {% if has_products %}
+            <div class="ai-recipe-products-{{ ai_gen_id }}">
+              {% for product in recipe_products %}
+                {% if product != blank and product != empty %}
+                  <div class="ai-recipe-product-{{ ai_gen_id }}">
+                    {%- comment -%} Product Image - Left {%- endcomment -%}
+                    <a href="{{ product.url }}" class="ai-recipe-product-image-wrap-{{ ai_gen_id }}" aria-label="{{ product.title }}">
+                      {% if product.featured_image != blank %}
+                        <img
+                          src="{{ product.featured_image | image_url: width: 200 }}"
+                          srcset="{{ product.featured_image | image_url: width: 100 }} 100w,
+                                  {{ product.featured_image | image_url: width: 200 }} 200w,
+                                  {{ product.featured_image | image_url: width: 300 }} 300w"
+                          sizes="(max-width: 749px) {{ block.settings.product_image_size_mobile }}px, {{ block.settings.product_image_size }}px"
+                          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                          class="ai-recipe-product-image-{{ ai_gen_id }}"
+                          loading="lazy"
+                          width="{{ block.settings.product_image_size }}"
+                          height="{{ block.settings.product_image_size }}"
+                        >
+                      {% else %}
+                        <div class="ai-recipe-product-image-placeholder-{{ ai_gen_id }}">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                          </svg>
+                        </div>
+                      {% endif %}
+                    </a>
+
+                    {%- comment -%} Product Info - Center {%- endcomment -%}
+                    <a href="{{ product.url }}" class="ai-recipe-product-info-{{ ai_gen_id }} ai-recipe-product-link-{{ ai_gen_id }}">
+                      <h4 class="ai-recipe-product-title-{{ ai_gen_id }}">
+                        {{ product.title }}
+                      </h4>
+
+                      {% if block.settings.show_price %}
+                        <div class="ai-recipe-product-price-{{ ai_gen_id }}">
+                          {% if product.compare_at_price > product.price %}
+                            <span class="ai-recipe-product-price-compare-{{ ai_gen_id }}">
+                              {{ product.compare_at_price | money }}
+                            </span>
+                          {% endif %}
+                          {{ product.price | money }}
+                        </div>
+                      {% endif %}
+                    </a>
+
+                    {%- comment -%} Add to Cart - Right {%- endcomment -%}
+                    {% if block.settings.show_add_to_cart %}
+                      <div class="ai-recipe-product-actions-{{ ai_gen_id }}">
+                        {% if product.available %}
+                          <form method="post" action="/cart/add">
+                            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="ai-recipe-add-btn-{{ ai_gen_id }}" aria-label="{{ block.settings.add_to_cart_text }} - {{ product.title }}">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                              </svg>
+                              <span class="ai-recipe-btn-text-{{ ai_gen_id }}">{{ block.settings.add_to_cart_text }}</span>
+                            </button>
+                          </form>
+                        {% else %}
+                          <button class="ai-recipe-add-btn-{{ ai_gen_id }}" disabled aria-label="{{ block.settings.sold_out_text }}">
+                            {{ block.settings.sold_out_text }}
+                          </button>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="ai-recipe-empty-{{ ai_gen_id }}">
+              {{ block.settings.no_products_text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {%- comment -%} ===== INGREDIENTS SECTION ===== {%- endcomment -%}
+      {% if block.settings.show_ingredients %}
+        <div class="ai-recipe-section-{{ ai_gen_id }}">
+          {% if block.settings.ingredients_title != blank %}
+            <h3 class="ai-recipe-section-title-{{ ai_gen_id }}">{{ block.settings.ingredients_title }}</h3>
+          {% endif %}
+
+          {%- liquid
+            assign ingredients_metafield = article.metafields.recipes.ingredients
+            assign ingredients_list = ''
+            assign has_ingredients = false
+            
+            if ingredients_metafield != blank
+              assign has_ingredients = true
+              assign ingredients_value = ingredients_metafield.value
+              
+              if ingredients_value == blank
+                assign ingredients_value = ingredients_metafield
+              endif
+              
+              if ingredients_value.first != blank
+                assign temp_string = ''
+                for item in ingredients_value
+                  assign clean_item = item | strip
+                  if clean_item != blank
+                    assign temp_string = temp_string | append: clean_item
+                    unless forloop.last
+                      assign temp_string = temp_string | append: ', '
+                    endunless
+                  endif
+                endfor
+                assign ingredients_value = temp_string
+              endif
+              
+              if ingredients_value != blank
+                assign cleaned_value = ingredients_value | strip
+                
+                if cleaned_value contains ','
+                  assign raw_list = cleaned_value | split: ','
+                  assign clean_list = ''
+                  
+                  for item in raw_list
+                    assign clean_item = item | strip
+                    if clean_item != blank
+                      assign clean_list = clean_list | append: clean_item
+                      unless forloop.last
+                        assign clean_list = clean_list | append: '|||'
+                      endunless
+                    endif
+                  endfor
+                  
+                  if clean_list != blank
+                    assign ingredients_list = clean_list | split: '|||'
+                  endif
+                else
+                  assign ingredients_list = cleaned_value | split: '---'
+                endif
+              endif
+            endif
+            
+            if ingredients_list == blank or ingredients_list.size == 0
+              assign has_ingredients = false
+            endif
+          -%}
+
+          {% if has_ingredients %}
+            <ul class="ai-recipe-ingredients-{{ ai_gen_id }}">
+              {% for ingredient in ingredients_list %}
+                {%- assign clean_ingredient = ingredient | strip -%}
+                {% if clean_ingredient != blank %}
+                  <li class="ai-recipe-ingredient-{{ ai_gen_id }}">{{ clean_ingredient }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="ai-recipe-empty-{{ ai_gen_id }}">
+              {{ block.settings.no_ingredients_text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} ========== RIGHT COLUMN: Content ========== {%- endcomment -%}
+    <div class="ai-recipe-right-{{ ai_gen_id }}">
+      {% if block.settings.show_content %}
+        <div class="ai-recipe-section-{{ ai_gen_id }}">
+          {% if block.settings.content_title != blank %}
+            <h3 class="ai-recipe-section-title-{{ ai_gen_id }}">{{ block.settings.content_title }}</h3>
+          {% endif %}
+
+          <div class="ai-recipe-content-{{ ai_gen_id }}">
+            {{ article.content }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Recipe Two Columns",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Diseño General"
+    },
+    {
+      "type": "select",
+      "id": "layout_style",
+      "label": "Estilo de layout",
+      "options": [
+        { "value": "default", "label": "Columnas (izq-der)" },
+        { "value": "reversed", "label": "Columnas (der-izq)" },
+        { "value": "stacked", "label": "Apilado vertical" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "range",
+      "id": "left_column_width",
+      "label": "Ancho columna izquierda (%)",
+      "min": 25,
+      "max": 45,
+      "step": 5,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Espacio entre columnas",
+      "min": 10,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "column_gap_mobile",
+      "label": "Espacio entre columnas (móvil)",
+      "min": 10,
+      "max": 40,
+      "step": 10,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_gap",
+      "label": "Espacio entre secciones",
+      "min": 10,
+      "max": 40,
+      "step": 10,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "mobile_products_position",
+      "label": "Posición productos (móvil)",
+      "options": [
+        { "value": "0", "label": "Arriba del contenido" },
+        { "value": "2", "label": "Debajo del contenido" }
+      ],
+      "default": "0"
+    },
+    {
+      "type": "header",
+      "content": "Estilo de Secciones"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Padding interno",
+      "min": 4,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "section_border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "section_border_width",
+      "label": "Grosor de borde",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "section_border_color",
+      "label": "Color de borde",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_shadow",
+      "label": "Mostrar sombra",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Títulos de Sección"
+    },
+    {
+      "type": "select",
+      "id": "title_style",
+      "label": "Estilo de título",
+      "options": [
+        { "value": "simple", "label": "Simple" },
+        { "value": "underline", "label": "Con línea inferior" },
+        { "value": "accent_bg", "label": "Fondo de acento" }
+      ],
+      "default": "simple"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color de título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño de título",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Espacio bajo título",
+      "min": 4,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento",
+      "default": "#761e0b"
+    },
+    {
+      "type": "header",
+      "content": "── Productos ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_products",
+      "label": "Mostrar productos",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "products_title",
+      "label": "Título de sección",
+      "default": "Productos destacados"
+    },
+    {
+      "type": "header",
+      "content": "Card de Producto"
+    },
+    {
+      "type": "color",
+      "id": "product_card_bg",
+      "label": "Color de fondo",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "range",
+      "id": "product_card_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "product_card_padding",
+      "label": "Padding interno",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "product_card_padding_mobile",
+      "label": "Padding interno (móvil)",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "product_card_border",
+      "label": "Mostrar borde",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "product_card_shadow",
+      "label": "Mostrar sombra",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "product_hover_effect",
+      "label": "Efecto hover",
+      "options": [
+        { "value": "none", "label": "Ninguno" },
+        { "value": "shadow", "label": "Sombra" },
+        { "value": "lift", "label": "Elevación" },
+        { "value": "border", "label": "Borde color" }
+      ],
+      "default": "shadow"
+    },
+    {
+      "type": "range",
+      "id": "product_gap",
+      "label": "Espacio entre productos",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "product_internal_gap",
+      "label": "Espacio interno (img-info-btn)",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "product_internal_gap_mobile",
+      "label": "Espacio interno móvil",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Imagen del Producto"
+    },
+    {
+      "type": "range",
+      "id": "product_image_size",
+      "label": "Tamaño de imagen",
+      "min": 48,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "product_image_size_mobile",
+      "label": "Tamaño de imagen (móvil)",
+      "min": 40,
+      "max": 96,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "product_image_radius",
+      "label": "Radio de imagen",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Texto del Producto"
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Color de título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "label": "Tamaño de título",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Mostrar precio",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "product_price_color",
+      "label": "Color de precio",
+      "default": "#761e0b"
+    },
+    {
+      "type": "range",
+      "id": "product_price_size",
+      "label": "Tamaño de precio",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Botón Añadir"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Mostrar botón añadir",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "add_btn_style",
+      "label": "Estilo del botón",
+      "options": [
+        { "value": "icon_text", "label": "Icono + Texto" },
+        { "value": "icon_only", "label": "Solo icono" },
+        { "value": "text_only", "label": "Solo texto" }
+      ],
+      "default": "icon_only"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Texto del botón",
+      "default": "Añadir"
+    },
+    {
+      "type": "color",
+      "id": "add_btn_text_color",
+      "label": "Color de texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "add_btn_radius",
+      "label": "Radio del botón",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "add_btn_padding_x",
+      "label": "Padding horizontal",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "add_btn_padding_y",
+      "label": "Padding vertical",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "add_btn_font_size",
+      "label": "Tamaño de fuente",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_btn_icon_only",
+      "label": "Solo icono en móvil",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Texto agotado",
+      "default": "Agotado"
+    },
+    {
+      "type": "text",
+      "id": "no_products_text",
+      "label": "Texto sin productos",
+      "default": "No hay productos asociados"
+    },
+    {
+      "type": "header",
+      "content": "Ingredientes"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ingredients",
+      "label": "Mostrar ingredientes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "ingredients_title",
+      "label": "Título de sección",
+      "default": "Ingredientes"
+    },
+    {
+      "type": "select",
+      "id": "bullet_style",
+      "label": "Estilo de viñeta",
+      "options": [
+        { "value": "circle", "label": "Círculo" },
+        { "value": "square", "label": "Cuadrado" },
+        { "value": "check", "label": "Check ✓" },
+        { "value": "dash", "label": "Guión —" },
+        { "value": "none", "label": "Sin viñeta" }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "range",
+      "id": "list_item_gap",
+      "label": "Espacio entre items",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "no_ingredients_text",
+      "label": "Texto sin ingredientes",
+      "default": "No hay ingredientes"
+    },
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_content",
+      "label": "Mostrar contenido",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "content_title",
+      "label": "Título de sección",
+      "default": "Preparación"
+    },
+    {
+      "type": "color",
+      "id": "content_text_color",
+      "label": "Color de texto",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "content_text_size",
+      "label": "Tamaño de texto",
+      "min": 14,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "content_heading_color",
+      "label": "Color de encabezados",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Texto General"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Tamaño de texto",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recipe Two Columns"
+    }
+  ]
+}
+{% endschema %}

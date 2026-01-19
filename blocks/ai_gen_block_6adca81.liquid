@@ -1,0 +1,575 @@
+{% doc %}
+  @prompt
+    Acordeón dinámico desde metafield custom.accordions (JSON)
+    - Estética inspirada en Wonder Theme Wellness
+    - Solo un acordeón abierto a la vez
+    - Todos cerrados por defecto
+    - Icono + que rota a × cuando está abierto
+    - Animación suave de apertura/cierre
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | replace: '-', '' | downcase %}
+
+{% style %}
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.wt-accordion-{{ ai_gen_id }} {
+  --accordion-border-color: {{ block.settings.border_color }};
+  --accordion-border-width: {{ block.settings.border_width }}px;
+  --accordion-title-color: {{ block.settings.title_color }};
+  --accordion-title-size: {{ block.settings.title_font_size }}px;
+  --accordion-title-weight: {{ block.settings.title_font_weight }};
+  --accordion-content-color: {{ block.settings.content_color }};
+  --accordion-content-size: {{ block.settings.content_font_size }}px;
+  --accordion-icon-color: {{ block.settings.icon_color }};
+  --accordion-icon-size: {{ block.settings.icon_size }}px;
+  --accordion-padding-y: {{ block.settings.padding_vertical }}px;
+  --accordion-padding-x: {{ block.settings.padding_horizontal }}px;
+  --accordion-bg: {{ block.settings.background_color }};
+  --accordion-bg-hover: {{ block.settings.hover_background }};
+  --accordion-content-bg: {{ block.settings.content_background }};
+  
+  display: block;
+  width: 100%;
+}
+
+/* ===== ITEM DEL ACORDEÓN ===== */
+.wt-accordion__item-{{ ai_gen_id }} {
+  border-bottom: var(--accordion-border-width) solid var(--accordion-border-color);
+}
+
+{% if block.settings.show_top_border %}
+.wt-accordion__item-{{ ai_gen_id }}:first-child {
+  border-top: var(--accordion-border-width) solid var(--accordion-border-color);
+}
+{% endif %}
+
+/* ===== TRIGGER/HEADER ===== */
+.wt-accordion__trigger-{{ ai_gen_id }} {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--accordion-padding-y) var(--accordion-padding-x);
+  background: var(--accordion-bg);
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.wt-accordion__trigger-{{ ai_gen_id }}:hover {
+  background: var(--accordion-bg-hover);
+}
+
+.wt-accordion__trigger-{{ ai_gen_id }}:focus {
+  outline: none;
+}
+
+.wt-accordion__trigger-{{ ai_gen_id }}:focus-visible {
+  outline: 2px solid var(--accordion-icon-color);
+  outline-offset: -2px;
+}
+
+/* ===== TÍTULO ===== */
+.wt-accordion__title-{{ ai_gen_id }} {
+  flex: 1;
+  margin: 0;
+  font-size: var(--accordion-title-size);
+  font-weight: var(--accordion-title-weight);
+  color: var(--accordion-title-color);
+  text-transform: {{ block.settings.title_transform }};
+  letter-spacing: {{ block.settings.title_letter_spacing }}px;
+  line-height: 1.3;
+}
+
+/* ===== ICONO ===== */
+.wt-accordion__icon-{{ ai_gen_id }} {
+  position: relative;
+  width: var(--accordion-icon-size);
+  height: var(--accordion-icon-size);
+  flex-shrink: 0;
+}
+
+.wt-accordion__icon-{{ ai_gen_id }}::before,
+.wt-accordion__icon-{{ ai_gen_id }}::after {
+  content: '';
+  position: absolute;
+  background-color: var(--accordion-icon-color);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Línea horizontal */
+.wt-accordion__icon-{{ ai_gen_id }}::before {
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+
+/* Línea vertical */
+.wt-accordion__icon-{{ ai_gen_id }}::after {
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+/* Estado abierto - rotar a X */
+.wt-accordion__item-{{ ai_gen_id }}[data-open="true"] .wt-accordion__icon-{{ ai_gen_id }}::before {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.wt-accordion__item-{{ ai_gen_id }}[data-open="true"] .wt-accordion__icon-{{ ai_gen_id }}::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+/* ===== CONTENIDO ===== */
+.wt-accordion__content-{{ ai_gen_id }} {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+  background: var(--accordion-content-bg);
+}
+
+.wt-accordion__item-{{ ai_gen_id }}[data-open="true"] .wt-accordion__content-{{ ai_gen_id }} {
+  grid-template-rows: 1fr;
+}
+
+.wt-accordion__content-inner-{{ ai_gen_id }} {
+  overflow: hidden;
+}
+
+.wt-accordion__content-text-{{ ai_gen_id }} {
+  padding: 0 var(--accordion-padding-x) var(--accordion-padding-y);
+  color: var(--accordion-content-color);
+  font-size: var(--accordion-content-size);
+  line-height: {{ block.settings.content_line_height }};
+}
+
+.wt-accordion__content-text-{{ ai_gen_id }} p {
+  margin: 0 0 1em;
+}
+
+.wt-accordion__content-text-{{ ai_gen_id }} p:last-child {
+  margin-bottom: 0;
+}
+
+.wt-accordion__content-text-{{ ai_gen_id }} ul,
+.wt-accordion__content-text-{{ ai_gen_id }} ol {
+  margin: 0 0 1em;
+  padding-left: 1.25em;
+}
+
+.wt-accordion__content-text-{{ ai_gen_id }} li {
+  margin-bottom: 0.5em;
+}
+
+.wt-accordion__content-text-{{ ai_gen_id }} strong {
+  font-weight: 600;
+}
+
+/* ===== EMPTY STATE ===== */
+.wt-accordion__empty-{{ ai_gen_id }} {
+  padding: 32px 16px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  font-size: 14px;
+  border: 1px dashed #ddd;
+  border-radius: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width: 749px) {
+  .wt-accordion-{{ ai_gen_id }} {
+    --accordion-title-size: {{ block.settings.title_font_size | minus: 2 }}px;
+    --accordion-padding-y: {{ block.settings.padding_vertical | minus: 4 }}px;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+  .wt-accordion__icon-{{ ai_gen_id }}::before,
+  .wt-accordion__icon-{{ ai_gen_id }}::after,
+  .wt-accordion__content-{{ ai_gen_id }} {
+    transition: none;
+  }
+}
+{% endstyle %}
+
+<div class="wt-accordion-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if product.metafields.custom.accordions != blank %}
+    {% assign accordion_items = product.metafields.custom.accordions.value %}
+    
+    {% if accordion_items.size > 0 %}
+      {% for item in accordion_items %}
+        <div 
+          class="wt-accordion__item-{{ ai_gen_id }}" 
+          data-accordion-item 
+          data-open="false"
+        >
+          <button
+            class="wt-accordion__trigger-{{ ai_gen_id }}"
+            type="button"
+            aria-expanded="false"
+            aria-controls="accordion-content-{{ ai_gen_id }}-{{ forloop.index }}"
+            data-accordion-trigger
+          >
+            <span class="wt-accordion__title-{{ ai_gen_id }}">
+              {{ item.title }}
+            </span>
+            <span class="wt-accordion__icon-{{ ai_gen_id }}" aria-hidden="true"></span>
+          </button>
+          
+          <div 
+            class="wt-accordion__content-{{ ai_gen_id }}"
+            id="accordion-content-{{ ai_gen_id }}-{{ forloop.index }}"
+            data-accordion-content
+          >
+            <div class="wt-accordion__content-inner-{{ ai_gen_id }}">
+              <div class="wt-accordion__content-text-{{ ai_gen_id }}">
+                {{ item.content }}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="wt-accordion__empty-{{ ai_gen_id }}">
+        No se encontraron items en el metafield custom.accordions
+      </div>
+    {% endif %}
+  {% else %}
+    <div class="wt-accordion__empty-{{ ai_gen_id }}">
+      Agrega datos JSON al metafield <strong>custom.accordions</strong>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+(function() {
+  const containerId = '{{ ai_gen_id }}';
+  
+  class WTAccordion extends HTMLElement {
+    constructor() {
+      super();
+      this.items = [];
+      this.allowMultiple = {{ block.settings.allow_multiple | default: false }};
+    }
+    
+    connectedCallback() {
+      this.items = this.querySelectorAll('[data-accordion-item]');
+      this.triggers = this.querySelectorAll('[data-accordion-trigger]');
+      
+      this.triggers.forEach((trigger, index) => {
+        trigger.addEventListener('click', () => this.toggle(index));
+        
+        // Keyboard navigation
+        trigger.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.toggle(index);
+          }
+        });
+      });
+      
+      // Open first item if setting enabled
+      {% if block.settings.open_first %}
+      if (this.items.length > 0) {
+        this.open(0);
+      }
+      {% endif %}
+    }
+    
+    toggle(index) {
+      const item = this.items[index];
+      const isOpen = item.dataset.open === 'true';
+      
+      if (isOpen) {
+        this.close(index);
+      } else {
+        // Close others if not allowing multiple
+        if (!this.allowMultiple) {
+          this.items.forEach((otherItem, otherIndex) => {
+            if (otherIndex !== index && otherItem.dataset.open === 'true') {
+              this.close(otherIndex);
+            }
+          });
+        }
+        this.open(index);
+      }
+    }
+    
+    open(index) {
+      const item = this.items[index];
+      const trigger = item.querySelector('[data-accordion-trigger]');
+      
+      item.dataset.open = 'true';
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    
+    close(index) {
+      const item = this.items[index];
+      const trigger = item.querySelector('[data-accordion-trigger]');
+      
+      item.dataset.open = 'false';
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+  }
+  
+  // Define custom element with unique name
+  if (!customElements.get('wt-accordion-' + containerId)) {
+    customElements.define('wt-accordion-' + containerId, WTAccordion);
+  }
+  
+  // Initialize existing elements
+  document.querySelectorAll('.wt-accordion-{{ ai_gen_id }}').forEach(el => {
+    if (!el._initialized) {
+      el._initialized = true;
+      
+      const items = el.querySelectorAll('[data-accordion-item]');
+      const allowMultiple = {{ block.settings.allow_multiple | default: false }};
+      
+      el.querySelectorAll('[data-accordion-trigger]').forEach((trigger, index) => {
+        trigger.addEventListener('click', () => {
+          const item = items[index];
+          const isOpen = item.dataset.open === 'true';
+          
+          if (isOpen) {
+            item.dataset.open = 'false';
+            trigger.setAttribute('aria-expanded', 'false');
+          } else {
+            if (!allowMultiple) {
+              items.forEach((otherItem, otherIndex) => {
+                if (otherIndex !== index) {
+                  otherItem.dataset.open = 'false';
+                  otherItem.querySelector('[data-accordion-trigger]').setAttribute('aria-expanded', 'false');
+                }
+              });
+            }
+            item.dataset.open = 'true';
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+      
+      {% if block.settings.open_first %}
+      if (items.length > 0) {
+        items[0].dataset.open = 'true';
+        items[0].querySelector('[data-accordion-trigger]').setAttribute('aria-expanded', 'true');
+      }
+      {% endif %}
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Dynamic Accordion",
+  "tag": "div",
+  "class": "wt-dynamic-accordion-block",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Lee datos del metafield: custom.accordions (tipo JSON)"
+    },
+    {
+      "type": "header",
+      "content": "━━━ COMPORTAMIENTO ━━━"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Abrir primer acordeón por defecto",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_multiple",
+      "label": "Permitir múltiples abiertos",
+      "default": false,
+      "info": "Si está desactivado, solo un acordeón puede estar abierto a la vez"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_border",
+      "label": "Mostrar borde superior en primer item",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "━━━ COLORES ━━━"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo del header",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "hover_background",
+      "label": "Fondo en hover",
+      "default": "rgba(0,0,0,0.02)"
+    },
+    {
+      "type": "color",
+      "id": "content_background",
+      "label": "Fondo del contenido",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color de borde",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Grosor de borde",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "━━━ TÍTULO ━━━"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño de fuente",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Peso de fuente",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "title_transform",
+      "label": "Transformación de texto",
+      "options": [
+        { "value": "none", "label": "Normal" },
+        { "value": "uppercase", "label": "MAYÚSCULAS" },
+        { "value": "capitalize", "label": "Capitalizar" }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "label": "Espaciado de letras",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "unit": "px",
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "━━━ CONTENIDO ━━━"
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Color del texto",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "content_font_size",
+      "label": "Tamaño de fuente",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "content_line_height",
+      "label": "Altura de línea",
+      "min": 1.2,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "header",
+      "content": "━━━ ICONO ━━━"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color del icono",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del icono",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "━━━ ESPACIADO ━━━"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Padding vertical",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dynamic Accordion"
+    }
+  ]
+}
+{% endschema %}

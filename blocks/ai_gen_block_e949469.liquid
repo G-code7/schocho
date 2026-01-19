@@ -1,0 +1,646 @@
+{% doc %}
+  @prompt
+    necesito  una sección que contenga dos columnas,  las columnas tienen un column  flex  y  del lado izquierdo  hay un slider  de imagenes y del lado derecho  hay un titulo, un  breve parrafo y un accordeon  que muestra uno a la vez. 
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-two-column-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-two-column-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: {{ block.settings.column_gap }}px;
+    align-items: center;
+  }
+
+  .ai-two-column-left-{{ ai_gen_id }},
+  .ai-two-column-right-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-slider-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-slider-track-{{ ai_gen_id }} {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-slider-slide-{{ ai_gen_id }} {
+    min-width: 100%;
+    flex-shrink: 0;
+  }
+
+  .ai-slider-slide-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-slider-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-slider-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-slider-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .ai-slider-dot-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: {{ block.settings.dot_color }};
+    opacity: 0.3;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    padding: 0;
+  }
+
+  .ai-slider-dot-{{ ai_gen_id }}.active {
+    opacity: 1;
+  }
+
+  .ai-content-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.content_gap }}px;
+  }
+
+  .ai-content-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0;
+  }
+
+  .ai-content-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.6;
+  }
+
+  .ai-accordion-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ai-accordion-item-{{ ai_gen_id }} {
+    border: 1px solid {{ block.settings.accordion_border_color }};
+    border-radius: {{ block.settings.accordion_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .ai-accordion-header-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px 20px;
+    background-color: {{ block.settings.accordion_header_bg }};
+    color: {{ block.settings.accordion_header_text }};
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: {{ block.settings.accordion_title_size }}px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-accordion-header-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.accordion_header_hover_bg }};
+  }
+
+  .ai-accordion-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-accordion-header-{{ ai_gen_id }}.active .ai-accordion-icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-accordion-content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: {{ block.settings.accordion_content_bg }};
+  }
+
+  .ai-accordion-content-{{ ai_gen_id }}.active {
+    max-height: 500px;
+  }
+
+  .ai-accordion-content-inner-{{ ai_gen_id }} {
+    padding: 20px;
+    color: {{ block.settings.accordion_content_text }};
+    font-size: {{ block.settings.accordion_content_size }}px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-two-column-container-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-content-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<two-column-section-{{ ai_gen_id }} class="ai-two-column-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-two-column-container-{{ ai_gen_id }}">
+    <div class="ai-two-column-left-{{ ai_gen_id }}">
+      <div class="ai-slider-wrapper-{{ ai_gen_id }}">
+        <div class="ai-slider-track-{{ ai_gen_id }}">
+          {% for i in (1..5) %}
+            {% assign image_key = 'image_' | append: i %}
+            {% assign image = block.settings[image_key] %}
+            {% if image != blank %}
+              <div class="ai-slider-slide-{{ ai_gen_id }}">
+                <img
+                  src="{{ image | image_url: width: 800 }}"
+                  alt="{{ image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ image.width }}"
+                  height="{{ image.height }}"
+                >
+              </div>
+            {% endif %}
+          {% endfor %}
+          {% if block.settings.image_1 == blank and block.settings.image_2 == blank and block.settings.image_3 == blank and block.settings.image_4 == blank and block.settings.image_5 == blank %}
+            <div class="ai-slider-slide-{{ ai_gen_id }}">
+              <div class="ai-slider-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="ai-slider-controls-{{ ai_gen_id }}"></div>
+    </div>
+
+    <div class="ai-two-column-right-{{ ai_gen_id }}">
+      <div class="ai-content-wrapper-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h2 class="ai-content-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+        {% endif %}
+
+        {% if block.settings.description != blank %}
+          <div class="ai-content-text-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+        {% endif %}
+
+        <div class="ai-accordion-{{ ai_gen_id }}">
+          {% for i in (1..5) %}
+            {% assign accordion_title_key = 'accordion_title_' | append: i %}
+            {% assign accordion_content_key = 'accordion_content_' | append: i %}
+            {% assign accordion_title = block.settings[accordion_title_key] %}
+            {% assign accordion_content = block.settings[accordion_content_key] %}
+
+            {% if accordion_title != blank %}
+              <div class="ai-accordion-item-{{ ai_gen_id }}">
+                <button
+                  class="ai-accordion-header-{{ ai_gen_id }}"
+                  aria-expanded="false"
+                  data-accordion-index="{{ i }}"
+                >
+                  <span>{{ accordion_title }}</span>
+                  <svg
+                    class="ai-accordion-icon-{{ ai_gen_id }}"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class="ai-accordion-content-{{ ai_gen_id }}">
+                  <div class="ai-accordion-content-inner-{{ ai_gen_id }}">
+                    {{ accordion_content }}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</two-column-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class TwoColumnSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.currentAccordion = null;
+      }
+
+      connectedCallback() {
+        this.sliderTrack = this.querySelector('.ai-slider-track-{{ ai_gen_id }}');
+        this.slides = this.querySelectorAll('.ai-slider-slide-{{ ai_gen_id }}');
+        this.controlsContainer = this.querySelector('.ai-slider-controls-{{ ai_gen_id }}');
+        this.accordionHeaders = this.querySelectorAll('.ai-accordion-header-{{ ai_gen_id }}');
+
+        if (this.slides.length > 1) {
+          this.initSlider();
+        }
+
+        this.initAccordion();
+      }
+
+      initSlider() {
+        this.slides.forEach((slide, index) => {
+          const dot = document.createElement('button');
+          dot.classList.add('ai-slider-dot-{{ ai_gen_id }}');
+          if (index === 0) dot.classList.add('active');
+          dot.setAttribute('aria-label', 'Ir a la imagen ' + (index + 1));
+          dot.addEventListener('click', () => this.goToSlide(index));
+          this.controlsContainer.appendChild(dot);
+        });
+
+        this.dots = this.querySelectorAll('.ai-slider-dot-{{ ai_gen_id }}');
+      }
+
+      goToSlide(index) {
+        this.currentSlide = index;
+        const offset = -100 * index;
+        this.sliderTrack.style.transform = 'translateX(' + offset + '%)';
+
+        this.dots.forEach((dot, i) => {
+          if (i === index) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      initAccordion() {
+        this.accordionHeaders.forEach((header) => {
+          header.addEventListener('click', () => {
+            const content = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+
+            if (this.currentAccordion && this.currentAccordion !== header) {
+              this.currentAccordion.classList.remove('active');
+              this.currentAccordion.setAttribute('aria-expanded', 'false');
+              this.currentAccordion.nextElementSibling.classList.remove('active');
+            }
+
+            if (isActive) {
+              header.classList.remove('active');
+              header.setAttribute('aria-expanded', 'false');
+              content.classList.remove('active');
+              this.currentAccordion = null;
+            } else {
+              header.classList.add('active');
+              header.setAttribute('aria-expanded', 'true');
+              content.classList.add('active');
+              this.currentAccordion = header;
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('two-column-section-{{ ai_gen_id }}', TwoColumnSection{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Dos columnas con slider",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Sección"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Espacio entre columnas",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Slider de imágenes"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Imagen 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Imagen 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Imagen 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Imagen 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Imagen 5"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Radio de borde de imagen",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Color de puntos",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Título",
+      "default": "<p>Título de la sección</p>"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "<p>Esta es una breve descripción del contenido de la sección.</p>"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Tamaño del texto",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Espacio entre elementos",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Acordeón 1"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_1",
+      "label": "Título",
+      "default": "Pregunta 1"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_1",
+      "label": "Contenido",
+      "default": "<p>Respuesta a la primera pregunta.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Acordeón 2"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_2",
+      "label": "Título",
+      "default": "Pregunta 2"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_2",
+      "label": "Contenido",
+      "default": "<p>Respuesta a la segunda pregunta.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Acordeón 3"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_3",
+      "label": "Título",
+      "default": "Pregunta 3"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_3",
+      "label": "Contenido",
+      "default": "<p>Respuesta a la tercera pregunta.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Acordeón 4"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_4",
+      "label": "Título"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_4",
+      "label": "Contenido"
+    },
+    {
+      "type": "header",
+      "content": "Acordeón 5"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_5",
+      "label": "Título"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_5",
+      "label": "Contenido"
+    },
+    {
+      "type": "header",
+      "content": "Estilo del acordeón"
+    },
+    {
+      "type": "range",
+      "id": "accordion_border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "accordion_border_color",
+      "label": "Color del borde",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "accordion_header_bg",
+      "label": "Fondo del encabezado",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "accordion_header_hover_bg",
+      "label": "Fondo del encabezado al pasar",
+      "default": "#eeeeee"
+    },
+    {
+      "type": "color",
+      "id": "accordion_header_text",
+      "label": "Texto del encabezado",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "range",
+      "id": "accordion_title_size",
+      "label": "Tamaño del título",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "accordion_content_bg",
+      "label": "Fondo del contenido",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accordion_content_text",
+      "label": "Texto del contenido",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "range",
+      "id": "accordion_content_size",
+      "label": "Tamaño del contenido",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Dos columnas con slider"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,556 @@
+{% doc %}
+  @prompt
+    Navegación entre recetas con flechas prev/next
+    - Botones perfectamente redondos con icono centrado
+    - Opciones de alineación (extremos, centro, etc.)
+    - Navegación por teclado con flechas
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-article-nav-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.padding_vertical }}px 0;
+  }
+
+  .ai-article-nav-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 {{ block.settings.container_padding }}px;
+  }
+
+  .ai-article-nav-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    {% if block.settings.alignment == 'space-between' %}
+    justify-content: space-between;
+    {% elsif block.settings.alignment == 'center' %}
+    justify-content: center;
+    {% elsif block.settings.alignment == 'left' %}
+    justify-content: flex-start;
+    {% elsif block.settings.alignment == 'right' %}
+    justify-content: flex-end;
+    {% endif %}
+    align-items: center;
+    gap: {{ block.settings.buttons_gap }}px;
+  }
+
+  /* ===== BOTÓN CIRCULAR PERFECTO ===== */
+  .ai-article-nav-button-{{ ai_gen_id }} {
+    /* Dimensiones fijas para círculo perfecto */
+    width: {{ block.settings.button_size }}px;
+    height: {{ block.settings.button_size }}px;
+    min-width: {{ block.settings.button_size }}px;
+    min-height: {{ block.settings.button_size }}px;
+    
+    /* Flexbox para centrar el icono */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Estilos visuales */
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_icon_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: 50%;
+    
+    /* Reset y transiciones */
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    
+    /* Sombra opcional */
+    {% if block.settings.button_shadow %}
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    {% endif %}
+  }
+
+  .ai-article-nav-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_icon_color }};
+    border-color: {{ block.settings.button_hover_border_color }};
+    {% if block.settings.hover_effect == 'scale' %}
+    transform: scale(1.1);
+    {% elsif block.settings.hover_effect == 'lift' %}
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    {% endif %}
+  }
+
+  .ai-article-nav-button-{{ ai_gen_id }}:active {
+    transform: scale(0.95);
+  }
+
+  .ai-article-nav-button-{{ ai_gen_id }}:disabled,
+  .ai-article-nav-button-{{ ai_gen_id }}[disabled] {
+    opacity: {{ block.settings.disabled_opacity }};
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* ===== ICONO CENTRADO ===== */
+  .ai-article-nav-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  /* ===== TEXTO (opcional, fuera del botón) ===== */
+  .ai-article-nav-link-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: {{ block.settings.text_gap }}px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ai-article-nav-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: {{ block.settings.text_weight }};
+    color: {{ block.settings.text_color }};
+    transition: color 0.25s ease;
+  }
+
+  .ai-article-nav-link-{{ ai_gen_id }}:hover .ai-article-nav-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_hover_color }};
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media screen and (max-width: 749px) {
+    .ai-article-nav-button-{{ ai_gen_id }} {
+      width: {{ block.settings.button_size_mobile }}px;
+      height: {{ block.settings.button_size_mobile }}px;
+      min-width: {{ block.settings.button_size_mobile }}px;
+      min-height: {{ block.settings.button_size_mobile }}px;
+    }
+
+    .ai-article-nav-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size_mobile }}px;
+      height: {{ block.settings.icon_size_mobile }}px;
+    }
+
+    {% if block.settings.hide_text_mobile %}
+    .ai-article-nav-text-{{ ai_gen_id }} {
+      display: none;
+    }
+    {% endif %}
+  }
+{% endstyle %}
+
+<article-navigation-{{ ai_gen_id }}
+  class="ai-article-nav-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-article-nav-container-{{ ai_gen_id }}">
+    <div class="ai-article-nav-wrapper-{{ ai_gen_id }}">
+      
+      {%- comment -%} ===== BOTÓN ANTERIOR ===== {%- endcomment -%}
+      {% if block.settings.show_text and block.settings.text_position == 'outside' %}
+        {%- comment -%} Con texto fuera del botón {%- endcomment -%}
+        {% if blog.previous_article %}
+          <a href="{{ blog.previous_article.url }}" class="ai-article-nav-link-{{ ai_gen_id }}" aria-label="{{ block.settings.previous_text }}">
+            <span class="ai-article-nav-button-{{ ai_gen_id }}">
+              <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </span>
+            <span class="ai-article-nav-text-{{ ai_gen_id }}">{{ block.settings.previous_text }}</span>
+          </a>
+        {% else %}
+          <div class="ai-article-nav-link-{{ ai_gen_id }}">
+            <button class="ai-article-nav-button-{{ ai_gen_id }}" disabled aria-label="No hay artículo anterior">
+              <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <span class="ai-article-nav-text-{{ ai_gen_id }}">{{ block.settings.previous_text }}</span>
+          </div>
+        {% endif %}
+      {% else %}
+        {%- comment -%} Solo botón {%- endcomment -%}
+        {% if blog.previous_article %}
+          <a href="{{ blog.previous_article.url }}" class="ai-article-nav-button-{{ ai_gen_id }} ai-article-nav-prev-{{ ai_gen_id }}" aria-label="{{ block.settings.previous_text }}">
+            <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </a>
+        {% else %}
+          <button class="ai-article-nav-button-{{ ai_gen_id }} ai-article-nav-prev-{{ ai_gen_id }}" disabled aria-label="No hay artículo anterior">
+            <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+        {% endif %}
+      {% endif %}
+
+      {%- comment -%} ===== BOTÓN SIGUIENTE ===== {%- endcomment -%}
+      {% if block.settings.show_text and block.settings.text_position == 'outside' %}
+        {%- comment -%} Con texto fuera del botón {%- endcomment -%}
+        {% if blog.next_article %}
+          <a href="{{ blog.next_article.url }}" class="ai-article-nav-link-{{ ai_gen_id }}" aria-label="{{ block.settings.next_text }}">
+            <span class="ai-article-nav-text-{{ ai_gen_id }}">{{ block.settings.next_text }}</span>
+            <span class="ai-article-nav-button-{{ ai_gen_id }}">
+              <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          </a>
+        {% else %}
+          <div class="ai-article-nav-link-{{ ai_gen_id }}">
+            <span class="ai-article-nav-text-{{ ai_gen_id }}">{{ block.settings.next_text }}</span>
+            <button class="ai-article-nav-button-{{ ai_gen_id }}" disabled aria-label="No hay artículo siguiente">
+              <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
+        {% endif %}
+      {% else %}
+        {%- comment -%} Solo botón {%- endcomment -%}
+        {% if blog.next_article %}
+          <a href="{{ blog.next_article.url }}" class="ai-article-nav-button-{{ ai_gen_id }} ai-article-nav-next-{{ ai_gen_id }}" aria-label="{{ block.settings.next_text }}">
+            <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        {% else %}
+          <button class="ai-article-nav-button-{{ ai_gen_id }} ai-article-nav-next-{{ ai_gen_id }}" disabled aria-label="No hay artículo siguiente">
+            <svg class="ai-article-nav-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="{{ block.settings.icon_stroke_width }}" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        {% endif %}
+      {% endif %}
+
+    </div>
+  </div>
+</article-navigation-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    if (customElements.get('article-navigation-{{ ai_gen_id }}')) return;
+    
+    class ArticleNavigation extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupKeyboardNavigation();
+      }
+
+      setupKeyboardNavigation() {
+        document.addEventListener('keydown', (event) => {
+          if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+          
+          const prevLink = this.querySelector('a[href*="previous"], .ai-article-nav-prev-{{ ai_gen_id }}:not([disabled])');
+          const nextLink = this.querySelector('a[href]:last-of-type, .ai-article-nav-next-{{ ai_gen_id }}:not([disabled])');
+
+          if (event.key === 'ArrowLeft' && prevLink && prevLink.href) {
+            window.location.href = prevLink.href;
+          } else if (event.key === 'ArrowRight' && nextLink && nextLink.href) {
+            window.location.href = nextLink.href;
+          }
+        });
+      }
+    }
+
+    customElements.define('article-navigation-{{ ai_gen_id }}', ArticleNavigation);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Navegación de recetas",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "── Layout ──"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineación de botones",
+      "options": [
+        { "value": "space-between", "label": "Extremos" },
+        { "value": "center", "label": "Centro" },
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "space-between"
+    },
+    {
+      "type": "range",
+      "id": "buttons_gap",
+      "label": "Espacio entre botones",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Ancho máximo del contenedor",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "label": "Padding del contenedor",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Espaciado vertical",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "── Botones ──"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "label": "Tamaño del botón",
+      "min": 36,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Tamaño del botón (móvil)",
+      "min": 32,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_icon_color",
+      "label": "Color del icono",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Color del borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Grosor del borde",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "checkbox",
+      "id": "button_shadow",
+      "label": "Mostrar sombra",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Hover del botón"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Fondo en hover",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_icon_color",
+      "label": "Color del icono en hover",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border_color",
+      "label": "Color del borde en hover",
+      "default": "#3e2563"
+    },
+    {
+      "type": "select",
+      "id": "hover_effect",
+      "label": "Efecto en hover",
+      "options": [
+        { "value": "none", "label": "Ninguno" },
+        { "value": "scale", "label": "Escalar" },
+        { "value": "lift", "label": "Elevar" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "disabled_opacity",
+      "label": "Opacidad cuando deshabilitado",
+      "min": 0.1,
+      "max": 0.5,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "header",
+      "content": "── Iconos ──"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del icono",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "label": "Tamaño del icono (móvil)",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "icon_stroke_width",
+      "label": "Grosor del trazo",
+      "min": 1,
+      "max": 3,
+      "step": 0.5,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "── Texto (opcional) ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text",
+      "label": "Mostrar texto",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Posición del texto",
+      "options": [
+        { "value": "outside", "label": "Fuera del botón" }
+      ],
+      "default": "outside"
+    },
+    {
+      "type": "text",
+      "id": "previous_text",
+      "label": "Texto anterior",
+      "default": "Anterior"
+    },
+    {
+      "type": "text",
+      "id": "next_text",
+      "label": "Texto siguiente",
+      "default": "Siguiente"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Tamaño del texto",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "Peso del texto",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medio" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "text_hover_color",
+      "label": "Color del texto en hover",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "text_gap",
+      "label": "Espacio entre texto y botón",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_text_mobile",
+      "label": "Ocultar texto en móvil",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Navegación de recetas"
+    }
+  ]
+}
+{% endschema %}
