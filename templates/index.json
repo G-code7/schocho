@@ -757,7 +757,7 @@
             "media_max_width": 440,
             "media_border_radius": 0,
             "section_gap_top": 20,
-            "section_gap_bottom": 60,
+            "section_gap_bottom": 80,
             "column_gap": 20,
             "benefits_gap": 40,
             "background_color": "#8b9ea9",
