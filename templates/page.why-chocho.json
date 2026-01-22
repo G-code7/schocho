@@ -510,7 +510,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h2><br/>From the Andes to our kitchen to strengthen the whole family<br/><br/></h2>",
+            "text": "<h2>From the Andes to our kitchen &lt;br&gt; <br/> to strengthen the whole family<br/><br/></h2>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -656,7 +656,7 @@
                 "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
-                "padding-inline-start": 0,
+                "padding-inline-start": 36,
                 "padding-inline-end": 0
               },
               "blocks": {}
@@ -681,13 +681,14 @@
                 "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
-                "padding-inline-start": 0,
+                "padding-inline-start": 36,
                 "padding-inline-end": 0
               },
               "blocks": {}
             },
             "button_aFmKhQ": {
               "type": "button",
+              "disabled": true,
               "settings": {
                 "label": "Shop now",
                 "link": "shopify://collections/all",
