@@ -17,9 +17,9 @@
           "name": "t:names.heading",
           "settings": {
             "text": "<h1>We'd love to chat!</h1>",
-            "width": "fit-content",
+            "width": "100%",
             "max_width": "normal",
-            "alignment": "left",
+            "alignment": "center",
             "type_preset": "rte",
             "font": "var(--font-body--family)",
             "font_size": "1rem",
@@ -43,9 +43,9 @@
           "name": "t:names.text",
           "settings": {
             "text": "<p>Our team is available to respond between the hours of 9:30-4pm CT Monday - Friday. Simply submit your request, and we'll get back to you ASAP.<br/><br/></p>",
-            "width": "fit-content",
+            "width": "100%",
             "max_width": "normal",
-            "alignment": "left",
+            "alignment": "center",
             "type_preset": "rte",
             "font": "var(--font-body--family)",
             "font_size": "1rem",
