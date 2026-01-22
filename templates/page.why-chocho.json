@@ -831,6 +831,332 @@
         "padding-block-start": 40,
         "padding-block-end": 40
       }
+    },
+    "two_column_accordion_slider_Ei4wxi": {
+      "type": "two-column-accordion-slider",
+      "blocks": {
+        "accordion_item_nDfBrW": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Nothing to hide",
+            "accordion_content": "<p>We are committed to producing food products for the whole-food seeker. Our Andean Chocho Powder contains nothing fake, no sweeteners, no additives, and no fillers. Just clean, pure, real-food nourishment.<br/><br/></p>"
+          }
+        },
+        "accordion_item_kiyfb6": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Endlessly versatile",
+            "accordion_content": "<p>Blend it into smoothies, bake it into muffins, or stir it into soups and pasta sauces. Its mild, neutral flavor won't overpower your dishes, making it the perfect protein boost for any meal.<br/><br/></p>"
+          }
+        },
+        "accordion_item_FNdH3x": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Fuel for every generation",
+            "accordion_content": "<p>From athletes and busy professionals to picky eaters and baby boomers. One reliable source of protein and fiber that provides sustained energy without the sugar crashes.<br/><br/></p>"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_item_nDfBrW",
+        "accordion_item_kiyfb6",
+        "accordion_item_FNdH3x"
+      ],
+      "name": "Slider + Acordeón Sync",
+      "settings": {
+        "section_max_width": 1400,
+        "section_background_color": "#ffffff",
+        "section_padding_top": 40,
+        "section_padding_bottom": 40,
+        "section_padding_x": 20,
+        "background_color": "#ffffff",
+        "wrapper_border_radius": 16,
+        "wrapper_border_radius_mobile": 12,
+        "wrapper_border_width": 0,
+        "wrapper_border_color": "#e0e0e0",
+        "wrapper_shadow": false,
+        "section_min_height": 600,
+        "show_badges": true,
+        "badges_text": "Plant-Based, Non-GMO, Clean Label",
+        "badge_alignment": "left",
+        "badge_gap": 8,
+        "badge_margin_bottom": 16,
+        "badge_background": "#f5f4ed",
+        "badge_text_color": "#3e2563",
+        "badge_border_color": "#ac9e89",
+        "badge_border_width": 1,
+        "badge_border_radius": 50,
+        "badge_font_size": 12,
+        "badge_font_size_mobile": 11,
+        "badge_font_weight": "500",
+        "badge_uppercase": false,
+        "badge_padding_x": 12,
+        "badge_padding_y": 6,
+        "badge_padding_x_mobile": 10,
+        "badge_padding_y_mobile": 4,
+        "badge_icon_size": 16,
+        "badge_icon_gap": 6,
+        "image_position": "left",
+        "mobile_image_position": "top",
+        "image_column_width": 50,
+        "image_bg_color": "#ffffff",
+        "image_padding_top": 0,
+        "image_padding_right": 0,
+        "image_padding_bottom": 0,
+        "image_padding_left": 0,
+        "image_border_radius": 0,
+        "image_object_position": "center center",
+        "transition_duration": 500,
+        "show_overlay": false,
+        "overlay_color": "#000000",
+        "overlay_opacity": 20,
+        "autoplay": false,
+        "autoplay_delay": 4000,
+        "show_indicators": true,
+        "dot_size": 12,
+        "indicators_gap": 10,
+        "indicators_bottom": 25,
+        "dot_color": "#ffffff",
+        "dot_active_color": "#ffffff",
+        "dot_opacity": 40,
+        "dot_hover_opacity": 70,
+        "content_bg_color": "#ffffff",
+        "content_vertical_align": "center",
+        "content_max_width": 500,
+        "content_padding_top": 50,
+        "content_padding_right": 50,
+        "content_padding_bottom": 50,
+        "content_padding_left": 50,
+        "title": "Whole food nourishment you can trust",
+        "title_size": 24,
+        "title_size_mobile": 28,
+        "title_weight": "700",
+        "title_color": "#1a1a1a",
+        "title_margin_bottom": 20,
+        "title_line_height": 1.2,
+        "title_letter_spacing": 0,
+        "description": "<p><br/>Discover why PRONTO CHOCHO® is the clean choice for your entire family.<br/><br/></p>",
+        "description_size": 16,
+        "description_color": "#666666",
+        "description_line_height": 1.6,
+        "description_margin_bottom": 30,
+        "first_open": true,
+        "accordion_border_width": 1,
+        "accordion_border_color": "#e0e0e0",
+        "accordion_header_padding_y": 20,
+        "accordion_icon_gap": 14,
+        "accordion_custom_icon_size": 32,
+        "accordion_title_size": 18,
+        "accordion_title_weight": "500",
+        "accordion_title_color": "#1a1a1a",
+        "accordion_title_hover_color": "#5a3e85",
+        "accordion_title_active_color": "#5a3e85",
+        "accordion_toggle_size": 18,
+        "accordion_toggle_thickness": 2,
+        "accordion_toggle_color": "#5a3e85",
+        "accordion_toggle_active_color": "#5a3e85",
+        "accordion_content_padding_bottom": 20,
+        "accordion_content_indent": 0,
+        "accordion_content_size": 15,
+        "accordion_content_color": "#666666",
+        "accordion_content_line_height": 1.6,
+        "section_padding_top_mobile": 20,
+        "section_padding_bottom_mobile": 20,
+        "section_padding_x_mobile": 15,
+        "mobile_image_height": 350,
+        "mobile_image_padding": 0,
+        "mobile_content_padding": 24
+      }
+    },
+    "collection_list_YkaiXx": {
+      "type": "collection-list",
+      "blocks": {
+        "group_KFxxU8": {
+          "type": "group",
+          "name": "t:names.header",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_XRtak3": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<h2><br/>Get inspired with our favorite ways to use PRONTO CHOCHO®<br/><br/></h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_8QXHKP": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<p>We make things that work better and last longer. Our products solve real problems with clean design and honest materials.</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_XRtak3",
+            "text_8QXHKP"
+          ]
+        },
+        "static-collection-card": {
+          "type": "_collection-card",
+          "name": "t:names.collection_card",
+          "static": true,
+          "settings": {
+            "placement": "below_image",
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "collection_card_gap": 8,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0
+          },
+          "blocks": {
+            "collection_title_BXd9rt": {
+              "type": "collection-title",
+              "name": "t:names.collection_title",
+              "settings": {
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "collection-card-image": {
+              "type": "_collection-card-image",
+              "name": "t:names.collection_card_image",
+              "static": true,
+              "settings": {
+                "image_ratio": "adapt",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "collection_title_BXd9rt"
+          ]
+        }
+      },
+      "block_order": [
+        "group_KFxxU8"
+      ],
+      "name": "t:names.collections_carousel",
+      "settings": {
+        "collection_list": [],
+        "layout_type": "carousel",
+        "carousel_on_mobile": false,
+        "columns": 3,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 8,
+        "bento_gap": 8,
+        "rows_gap": 8,
+        "max_collections": 4,
+        "icons_style": "arrow",
+        "icons_shape": "circle",
+        "section_width": "page-width",
+        "gap": 12,
+        "color_scheme": "",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
     }
   },
   "order": [
@@ -839,6 +1165,8 @@
     "main",
     "section_4nkkJf",
     "section_QzzURW",
-    "section_DiRtnm"
+    "section_DiRtnm",
+    "two_column_accordion_slider_Ei4wxi",
+    "collection_list_YkaiXx"
   ]
 }
