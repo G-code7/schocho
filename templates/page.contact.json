@@ -6,27 +6,54 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "main-page",
       "blocks": {
-        "title": {
+        "text_ERRNeK": {
           "type": "text",
-          "name": "t:names.title",
+          "name": "t:names.heading",
           "settings": {
-            "text": "<h1>{{ closest.page.title }}</h1>",
-            "width": "100%",
+            "text": "<h1>We'd love to chat!</h1>",
+            "width": "fit-content",
             "max_width": "normal",
-            "alignment": "center",
-            "type_preset": "h2",
-            "font": "var(--font-primary--family)",
-            "font_size": "",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
             "line_height": "normal",
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
-            "color": "",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_KdYWVM": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p>Our team is available to respond between the hours of 9:30-4pm CT Monday - Friday. Simply submit your request, and we'll get back to you ASAP.<br/><br/></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
             "background": false,
             "background_color": "#00000026",
             "corner_radius": 0,
@@ -65,7 +92,8 @@
         }
       },
       "block_order": [
-        "title",
+        "text_ERRNeK",
+        "text_KdYWVM",
         "content"
       ],
       "settings": {
