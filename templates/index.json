@@ -1086,8 +1086,9 @@
       ],
       "name": "Section video",
       "settings": {
-        "media_type_1": "video",
+        "media_type_1": "image",
         "image_1": "shopify://shop_images/Image_fx_59.jpg",
+        "video_1": "shopify://files/videos/a0bbe12f29134b64b16edd7073bddb73.mp4",
         "media_type_2": "video",
         "image_2": "shopify://shop_images/chocho-women-andean-II.jpg",
         "stack_media_on_mobile": false,
