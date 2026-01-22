@@ -286,6 +286,7 @@
         "image_qWtzRg": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_28_dic_2025_22_22_31.jpg",
             "link": "",
             "image_ratio": "square",
             "width": "fill",
@@ -670,6 +671,7 @@
         "image_kyYm69": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/freepik__fotografa-de-producto-capturada-con-una-luz-natura__42407.png",
             "link": "",
             "image_ratio": "square",
             "width": "fill",
