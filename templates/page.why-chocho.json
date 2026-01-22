@@ -797,6 +797,7 @@
         "accordion_item_nDfBrW": {
           "type": "accordion_item",
           "settings": {
+            "image": "shopify://shop_images/freepik__la-narrativa-visual-se-desarrolla-en-el-corazn-de-__42411.png",
             "accordion_title": "Nothing to hide",
             "accordion_content": "<p>We are committed to producing food products for the whole-food seeker. Our Andean Chocho Powder contains nothing fake, no sweeteners, no additives, and no fillers. Just clean, pure, real-food nourishment.<br/><br/></p>"
           }
@@ -804,6 +805,7 @@
         "accordion_item_kiyfb6": {
           "type": "accordion_item",
           "settings": {
+            "image": "shopify://shop_images/freepik__brfotografa-de-plano-detalle-baada-por-una-luz-nat__42403.png",
             "accordion_title": "Endlessly versatile",
             "accordion_content": "<p>Blend it into smoothies, bake it into muffins, or stir it into soups and pasta sauces. Its mild, neutral flavor won't overpower your dishes, making it the perfect protein boost for any meal.<br/><br/></p>"
           }
@@ -811,6 +813,7 @@
         "accordion_item_FNdH3x": {
           "type": "accordion_item",
           "settings": {
+            "image": "shopify://shop_images/freepik__fotografa-de-estilo-de-vida-capturada-con-una-luz-__42406.png",
             "accordion_title": "Fuel for every generation",
             "accordion_content": "<p>From athletes and busy professionals to picky eaters and baby boomers. One reliable source of protein and fiber that provides sustained energy without the sugar crashes.<br/><br/></p>"
           }
@@ -886,7 +889,7 @@
         "content_padding_right": 50,
         "content_padding_bottom": 50,
         "content_padding_left": 50,
-        "title": "Whole food nourishment<br>you can trust",
+        "title": "Whole food nourishmentyou can trust",
         "title_size": 24,
         "title_size_mobile": 28,
         "title_weight": "700",
