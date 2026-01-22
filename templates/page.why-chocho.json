@@ -15,7 +15,7 @@
         "text_PaMYM3": {
           "type": "text",
           "settings": {
-            "text": "<h1>New arrivals</h1>",
+            "text": "<p>The ancient secret of two moms to nourish three generations</p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -36,79 +36,10 @@
             "padding-inline-end": 0
           },
           "blocks": {}
-        },
-        "text_V8Q8YT": {
-          "type": "text",
-          "settings": {
-            "text": "<p>Made with care and unconditionally loved by our customers.</p>",
-            "width": "fit-content",
-            "max_width": "narrow",
-            "alignment": "left",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 32,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "button_YHRbba": {
-          "type": "button",
-          "name": "t:names.button",
-          "settings": {
-            "label": "Shop now",
-            "link": "shopify://collections/all",
-            "open_in_new_tab": false,
-            "style_class": "button",
-            "show_icon": false,
-            "icon_type": "arrow_right",
-            "icon_position": "right",
-            "icon_size": 16,
-            "icon_gap": 8,
-            "width": "fit-content",
-            "custom_width": 100,
-            "width_mobile": "fit-content",
-            "custom_width_mobile": 100,
-            "padding_top": 12,
-            "padding_bottom": 12,
-            "padding_left": 24,
-            "padding_right": 24,
-            "margin_top": 0,
-            "margin_bottom": 0,
-            "margin_left": 0,
-            "margin_right": 0,
-            "font_size": 16,
-            "font_size_mobile": 14,
-            "font_weight": "500",
-            "text_transform": "none",
-            "bg_color": "",
-            "text_color": "",
-            "border_color": "",
-            "bg_color_hover": "",
-            "text_color_hover": "",
-            "border_color_hover": "",
-            "border_width": 1,
-            "border_radius": 4,
-            "hover_animation": "lift",
-            "transition_duration": 0.3
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "text_PaMYM3",
-        "text_V8Q8YT",
-        "button_YHRbba"
+        "text_PaMYM3"
       ],
       "name": "t:names.hero",
       "settings": {
