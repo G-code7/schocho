@@ -510,7 +510,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h2>From the Andes to our kitchen &lt;br&gt; <br/> to strengthen the whole family<br/><br/></h2>",
+            "text": "<h2>From the Andes to our kitchen&lt;br&gt;</h2><h2>to strengthen the whole family<br/><br/></h2>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -886,7 +886,7 @@
         "content_padding_right": 50,
         "content_padding_bottom": 50,
         "content_padding_left": 50,
-        "title": "Whole food nourishment you can trust",
+        "title": "Whole food nourishment<br>you can trust",
         "title_size": 24,
         "title_size_mobile": 28,
         "title_weight": "700",
