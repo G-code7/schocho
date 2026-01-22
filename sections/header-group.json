@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "type": "header",
   "name": "Header",
@@ -51,7 +60,7 @@
           "type": "_header-menu",
           "static": true,
           "settings": {
-            "menu": "main-menu",
+            "menu": "main-menu-1",
             "color_scheme": "",
             "type_font_primary_size": "1rem",
             "menu_font_style": "inverse",
@@ -71,17 +80,8 @@
         }
       },
       "custom_css": [
-        "/* LOGO SOBRESALIENDO DEL HEADER */",
-        ".header-logo__image-container {",
-        "  position: relative;",
-        "  top: 30px; /* Ajusta aquí cuánto quieres que sobresalga */",
-        "  z-index: 20;",
-        "}",
-        "",
-        "/* Ajusta el header para que no empuje el contenido */",
-        "#header-component {",
-        "  padding-bottom: 30px; /* mismo valor que arriba */",
-        "}"
+        "/* LOGO SOBRESALIENDO DEL HEADER */.header-logo__image-container {position: relative; height: 40px; top: -10px; /* Ajusta aquí cuánto quieres que sobresalga */ z-index: 20;}",
+        " /* Ajusta el header para que no empuje el contenido */#header-component .header__wrapper {padding-bottom: 35px; /* mismo valor que arriba */}"
       ],
       "settings": {
         "logo_position": "left",
