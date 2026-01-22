@@ -432,7 +432,7 @@
                 "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
-                "padding-inline-start": 0,
+                "padding-inline-start": 46,
                 "padding-inline-end": 0
               },
               "blocks": {}
@@ -440,8 +440,8 @@
             "text_iEgXKP": {
               "type": "text",
               "settings": {
-                "text": "<p><br/>We’re Linda and Indira, two friends who do our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, businesswomen. The two of us are each caring for our aging parents while raising kids across generations, including Alpha, Gen Z, and Millennials.</p><p>Some are athletes, some are picky eaters, some have allergies, and all of them want snacks and shakes that differ from our own preferences. This makes for very cluttered pantries. In the middle of it all, we were also searching for something simple to keep ourselves strong, balanced, and feeling our best.</p>",
-                "width": "fit-content",
+                "text": "<p>We’re Linda and Indira, two friends who do our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, businesswomen. The two of us are each caring for our aging parents while raising kids across generations, including Alpha, Gen Z, and Millennials.</p><p>Some are athletes, some are picky eaters, some have allergies, and all of them want snacks and shakes that differ from our own preferences. This makes for very cluttered pantries. In the middle of it all, we were also searching for something simple to keep ourselves strong, balanced, and feeling our best.</p>",
+                "width": "100%",
                 "max_width": "narrow",
                 "alignment": "left",
                 "type_preset": "rte",
@@ -457,57 +457,15 @@
                 "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
-                "padding-inline-start": 0,
+                "padding-inline-start": 46,
                 "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "button_qt6Hpk": {
-              "type": "button",
-              "settings": {
-                "label": "Shop now",
-                "link": "shopify://collections/all",
-                "open_in_new_tab": false,
-                "style_class": "button",
-                "show_icon": false,
-                "icon_type": "arrow_right",
-                "icon_position": "right",
-                "icon_size": 16,
-                "icon_gap": 8,
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100,
-                "padding_top": 12,
-                "padding_bottom": 12,
-                "padding_left": 24,
-                "padding_right": 24,
-                "margin_top": 0,
-                "margin_bottom": 0,
-                "margin_left": 0,
-                "margin_right": 0,
-                "font_size": 16,
-                "font_size_mobile": 14,
-                "font_weight": "500",
-                "text_transform": "none",
-                "bg_color": "",
-                "text_color": "",
-                "border_color": "",
-                "bg_color_hover": "",
-                "text_color_hover": "",
-                "border_color_hover": "",
-                "border_width": 1,
-                "border_radius": 4,
-                "hover_animation": "lift",
-                "transition_duration": 0.3
               },
               "blocks": {}
             }
           },
           "block_order": [
             "text_NdQQNj",
-            "text_iEgXKP",
-            "button_qt6Hpk"
+            "text_iEgXKP"
           ]
         }
       },
