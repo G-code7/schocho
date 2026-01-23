@@ -1406,7 +1406,7 @@
         "highlight_cell_bg": "#f3edfa",
         "row_border_color": "#8762ad",
         "cell_border_color": "#f7f5f0",
-        "row_hover_background": "#fafafa",
+        "row_hover_background": "#f6f2eb",
         "row_label_color": "#3e2563",
         "check_bg_color": "#f6f1f8",
         "check_border_color": "#f6f1f8",
