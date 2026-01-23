@@ -1707,53 +1707,11 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
-                },
-                "button_KVhMxU": {
-                  "type": "button",
-                  "settings": {
-                    "label": "VIEW MORE",
-                    "link": "shopify://blogs/recipes",
-                    "open_in_new_tab": false,
-                    "style_class": "button-secondary",
-                    "show_icon": false,
-                    "icon_type": "arrow_right",
-                    "icon_position": "right",
-                    "icon_size": 16,
-                    "icon_gap": 8,
-                    "width": "custom",
-                    "custom_width": 22,
-                    "width_mobile": "custom",
-                    "custom_width_mobile": 50,
-                    "padding_top": 8,
-                    "padding_bottom": 8,
-                    "padding_left": 30,
-                    "padding_right": 30,
-                    "margin_top": 0,
-                    "margin_bottom": 0,
-                    "margin_left": 0,
-                    "margin_right": 0,
-                    "font_size": 14,
-                    "font_size_mobile": 12,
-                    "font_weight": "600",
-                    "text_transform": "none",
-                    "bg_color": "#372352",
-                    "text_color": "#ece2c6",
-                    "border_color": "",
-                    "bg_color_hover": "#a780b8",
-                    "text_color_hover": "#1b1b1b",
-                    "border_color_hover": "#372352",
-                    "border_width": 1,
-                    "border_radius": 40,
-                    "hover_animation": "lift",
-                    "transition_duration": 0.3
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
                 "text_EHAYtw",
-                "text_4aPH3d",
-                "button_KVhMxU"
+                "text_4aPH3d"
               ]
             }
           },
@@ -1883,9 +1841,9 @@
     "1765587213b1a71267",
     "marquee_RgGzyN",
     "hero_CXJpkj",
-    "marquee_yYUgWk",
     "dual_product_showcase_v2_wf3chC",
     "17659250859c18afff",
+    "marquee_yYUgWk",
     "blocks_VYXCmb"
   ]
 }
