@@ -383,7 +383,7 @@
             "floating_image": "shopify://shop_images/plate-chocho-img.webp",
             "image_position": "right",
             "image_offset": 40,
-            "image_size": 460,
+            "image_size": 490,
             "image_size_tablet": 250,
             "image_size_mobile": 150,
             "image_shadow": false,
