@@ -1818,7 +1818,7 @@
             "dot_active_width": 24,
             "dot_active_radius": 4,
             "dots_gap": 8,
-            "background_color": "#f8f8f8",
+            "background_color": "#efebe5",
             "card_background": "#ffffff",
             "card_border_color": "#e5e5e5",
             "card_shadow_color": "#00000014",
@@ -1839,40 +1839,11 @@
             "mobile_card_padding": 18
           },
           "blocks": {}
-        },
-        "ai_gen_block_69d1b17_nEnrtm": {
-          "type": "ai_gen_block_69d1b17",
-          "settings": {
-            "blog": "recipes",
-            "max_posts": 5,
-            "heading": "",
-            "subheading": "",
-            "heading_alignment": "center",
-            "heading_size": 20,
-            "subheading_size": 12,
-            "show_date": false,
-            "show_excerpt": false,
-            "read_more_text": "Read more",
-            "card_gap": 32,
-            "card_border_radius": 6,
-            "background_color": "#c4b1ca",
-            "card_background": "#b79cbf",
-            "heading_color": "#3e2563",
-            "text_color": "#3e2563",
-            "link_color": "#3e2563",
-            "link_hover_color": "#e0cbfc",
-            "button_background": "#f5f5f5",
-            "button_color": "#2a2a2a",
-            "button_hover_background": "#371e54",
-            "button_hover_color": "#ffffff"
-          },
-          "blocks": {}
         }
       },
       "block_order": [
         "group_LiQjTp",
-        "blog_slider_v1_ezBTqQ",
-        "ai_gen_block_69d1b17_nEnrtm"
+        "blog_slider_v1_ezBTqQ"
       ],
       "settings": {
         "content_direction": "column",
@@ -1886,7 +1857,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "scheme-3",
+        "color_scheme": "scheme-1",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
