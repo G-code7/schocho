@@ -1,0 +1,2075 @@
+{% liquid
+  assign section_id = section.id
+%}
+
+{% style %}
+  .comparison-table-v2-{{ section_id }} {
+    --transition-speed: 0.4s;
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+    position: relative;
+    width: 100%;
+    padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+    overflow: hidden;
+  }
+
+  /* Usar el contenedor del tema para consistencia */
+  .comparison-table-v2__container-{{ section_id }} {
+    width: 100%;
+    max-width: var(--page-width, 1200px);
+    margin: 0 auto;
+    padding: 0 {{ section.settings.container_padding }}px;
+  }
+
+  .comparison-table-v2__header-{{ section_id }} {
+    text-align: {{ section.settings.heading_alignment }};
+    margin-bottom: {{ section.settings.header_margin_bottom }}px;
+  }
+
+  .comparison-table-v2__eyebrow-{{ section_id }} {
+    display: inline-block;
+    color: {{ section.settings.eyebrow_color }};
+    font-size: {{ section.settings.eyebrow_size }}px;
+    font-weight: {{ section.settings.eyebrow_weight }};
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .comparison-table-v2__eyebrow-{{ section_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    background: {{ section.settings.accent_color }};
+    border-radius: 2px;
+  }
+
+  .comparison-table-v2__heading-{{ section_id }} {
+    color: {{ section.settings.heading_color }};
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    line-height: {{ section.settings.heading_line_height }};
+    margin: 0 0 {{ section.settings.heading_margin_bottom }}px 0;
+    letter-spacing: {{ section.settings.heading_letter_spacing }}px;
+  }
+
+  .comparison-table-v2__subheading-{{ section_id }} {
+    color: {{ section.settings.text_color }};
+    font-size: {{ section.settings.subheading_size }}px;
+    font-weight: {{ section.settings.subheading_weight }};
+    margin: 0 auto;
+    max-width: 600px;
+    opacity: 0.85;
+    line-height: 1.6;
+  }
+
+  .comparison-table-v2__wrapper-{{ section_id }} {
+    background-color: {{ section.settings.table_background }};
+    border-radius: {{ section.settings.table_border_radius }}px;
+    overflow: hidden;
+    {% if section.settings.table_shadow_enabled %}
+      box-shadow: 0 {{ section.settings.table_shadow_y }}px {{ section.settings.table_shadow_blur }}px {{ section.settings.table_shadow_spread }}px {{ section.settings.table_shadow_color }};
+    {% endif %}
+    {% if section.settings.table_border_width > 0 %}
+      border: {{ section.settings.table_border_width }}px solid {{ section.settings.table_border_color }};
+    {% endif %}
+  }
+
+  .comparison-table-v2__table-{{ section_id }} {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  /* Header Row */
+  .comparison-table-v2__header-row-{{ section_id }} {
+    background: {{ section.settings.header_row_background }};
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }} {
+    padding: {{ section.settings.header_cell_padding_y }}px {{ section.settings.header_cell_padding_x }}px;
+    text-align: center;
+    vertical-align: bottom;
+    position: relative;
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }}:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: {{ section.settings.header_divider_color }};
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }}:first-child {
+    text-align: left;
+    width: {{ section.settings.first_column_width }}%;
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }}:first-child::after {
+    display: none;
+  }
+
+  .comparison-table-v2__column-icon-{{ section_id }} {
+    width: {{ section.settings.column_icon_size }}px;
+    height: {{ section.settings.column_icon_size }}px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .comparison-table-v2__column-icon-{{ section_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .comparison-table-v2__column-title-{{ section_id }} {
+    color: {{ section.settings.column_title_color }};
+    font-size: {{ section.settings.column_title_size }}px;
+    font-weight: {{ section.settings.column_title_weight }};
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .comparison-table-v2__column-subtitle-{{ section_id }} {
+    color: {{ section.settings.column_subtitle_color }};
+    font-size: {{ section.settings.column_subtitle_size }}px;
+    font-weight: {{ section.settings.column_subtitle_weight }};
+    margin: 6px 0 0 0;
+    opacity: 0.7;
+  }
+
+  /* Highlight column styling */
+  .comparison-table-v2__header-cell-{{ section_id }}.highlight {
+    background: {{ section.settings.highlight_header_bg }};
+    position: relative;
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }}.highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: {{ section.settings.accent_color }};
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }}.highlight .comparison-table-v2__column-title-{{ section_id }} {
+    color: {{ section.settings.highlight_title_color }};
+  }
+
+  .comparison-table-v2__header-cell-{{ section_id }}.highlight .comparison-table-v2__column-subtitle-{{ section_id }} {
+    color: {{ section.settings.highlight_subtitle_color }};
+  }
+
+  /* Badge for highlighted column */
+  .comparison-table-v2__badge-{{ section_id }} {
+    display: inline-block;
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.badge_text_color }};
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  /* Body Rows */
+  .comparison-table-v2__row-{{ section_id }} {
+    border-bottom: 1px solid {{ section.settings.row_border_color }};
+    transition: background-color 0.25s var(--ease-smooth);
+  }
+
+  .comparison-table-v2__row-{{ section_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .comparison-table-v2__row-{{ section_id }}:nth-child(even) {
+    background-color: {{ section.settings.row_alt_background }};
+  }
+
+  .comparison-table-v2__row-{{ section_id }}:hover {
+    background-color: {{ section.settings.row_hover_background }};
+  }
+
+  .comparison-table-v2__cell-{{ section_id }} {
+    padding: {{ section.settings.cell_padding_y }}px {{ section.settings.cell_padding_x }}px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+  }
+
+  .comparison-table-v2__cell-{{ section_id }}:first-child {
+    text-align: left;
+    font-weight: {{ section.settings.row_label_weight }};
+    color: {{ section.settings.row_label_color }};
+    font-size: {{ section.settings.row_label_size }}px;
+    {% if section.settings.row_label_uppercase == 'uppercase' %}
+      text-transform: uppercase;
+      letter-spacing: {{ section.settings.row_label_letter_spacing }}px;
+    {% endif %}
+  }
+
+  .comparison-table-v2__cell-{{ section_id }}.highlight {
+    background-color: {{ section.settings.highlight_cell_bg }};
+  }
+
+  /* Icons */
+  .comparison-table-v2__icon-{{ section_id }} {
+    width: {{ section.settings.icon_size }}px;
+    height: {{ section.settings.icon_size }}px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s var(--ease-smooth);
+  }
+
+  .comparison-table-v2__icon-{{ section_id }}.check {
+    background: {{ section.settings.check_bg_color }};
+    {% if section.settings.check_border_width > 0 %}
+      border: {{ section.settings.check_border_width }}px solid {{ section.settings.check_border_color }};
+    {% endif %}
+  }
+
+  .comparison-table-v2__icon-{{ section_id }}.check svg {
+    width: {{ section.settings.check_icon_size }}px;
+    height: {{ section.settings.check_icon_size }}px;
+    stroke: {{ section.settings.check_icon_color }};
+    stroke-width: 2.5;
+    fill: none;
+  }
+
+  .comparison-table-v2__icon-{{ section_id }}.empty {
+    background: {{ section.settings.empty_bg_color }};
+    border: {{ section.settings.empty_border_width }}px solid {{ section.settings.empty_border_color }};
+  }
+
+  .comparison-table-v2__icon-{{ section_id }}.partial {
+    background: {{ section.settings.partial_bg_color }};
+    border: {{ section.settings.partial_border_width }}px solid {{ section.settings.partial_border_color }};
+  }
+
+  .comparison-table-v2__icon-{{ section_id }}.partial::before {
+    content: '';
+    width: 12px;
+    height: 2px;
+    background: {{ section.settings.partial_icon_color }};
+    border-radius: 2px;
+  }
+
+  .comparison-table-v2__row-{{ section_id }}:hover .comparison-table-v2__icon-{{ section_id }}.check {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px {{ section.settings.check_bg_color }}40;
+  }
+
+  /* Custom text in cells */
+  .comparison-table-v2__cell-text-{{ section_id }} {
+    font-size: {{ section.settings.cell_text_size }}px;
+    font-weight: {{ section.settings.cell_text_weight }};
+    color: {{ section.settings.cell_text_color }};
+  }
+
+  /* Bottom Image */
+  .comparison-table-v2__bottom-image-{{ section_id }} {
+    margin-top: {{ section.settings.bottom_image_margin_top }}px;
+    text-align: center;
+  }
+
+  .comparison-table-v2__bottom-image-wrapper-{{ section_id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ section.settings.bottom_image_max_width }}px;
+    margin: 0 auto;
+    border-radius: {{ section.settings.bottom_image_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .comparison-table-v2__bottom-image-img-{{ section_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Responsive - Tablet */
+  @media screen and (max-width: 1024px) {
+    .comparison-table-v2__heading-{{ section_id }} {
+      font-size: calc({{ section.settings.heading_size }}px * 0.85);
+    }
+
+    .comparison-table-v2__column-title-{{ section_id }} {
+      font-size: calc({{ section.settings.column_title_size }}px * 0.9);
+    }
+
+    .comparison-table-v2__header-cell-{{ section_id }} {
+      padding: {{ section.settings.tablet_header_padding }}px;
+    }
+
+    .comparison-table-v2__cell-{{ section_id }} {
+      padding: {{ section.settings.tablet_cell_padding }}px;
+    }
+
+    .comparison-table-v2__icon-{{ section_id }} {
+      width: calc({{ section.settings.icon_size }}px * 0.9);
+      height: calc({{ section.settings.icon_size }}px * 0.9);
+    }
+  }
+
+  /* Responsive - Mobile */
+  @media screen and (max-width: 768px) {
+    .comparison-table-v2-{{ section_id }} {
+      padding: {{ section.settings.mobile_section_padding }}px 0;
+    }
+
+    .comparison-table-v2__container-{{ section_id }} {
+      padding: 0 16px;
+    }
+
+    .comparison-table-v2__heading-{{ section_id }} {
+      font-size: calc({{ section.settings.heading_size }}px * 0.7);
+    }
+
+    .comparison-table-v2__subheading-{{ section_id }} {
+      font-size: calc({{ section.settings.subheading_size }}px * 0.9);
+    }
+
+    .comparison-table-v2__wrapper-{{ section_id }} {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -16px;
+      padding: 0 16px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .comparison-table-v2__wrapper-{{ section_id }}::-webkit-scrollbar {
+      display: none;
+    }
+
+    .comparison-table-v2__table-{{ section_id }} {
+      min-width: {{ section.settings.mobile_table_min_width }}px;
+    }
+
+    .comparison-table-v2__header-cell-{{ section_id }} {
+      padding: {{ section.settings.mobile_header_padding }}px;
+    }
+
+    .comparison-table-v2__cell-{{ section_id }} {
+      padding: {{ section.settings.mobile_cell_padding }}px;
+    }
+
+    .comparison-table-v2__column-title-{{ section_id }} {
+      font-size: calc({{ section.settings.column_title_size }}px * 0.8);
+    }
+
+    .comparison-table-v2__column-subtitle-{{ section_id }} {
+      font-size: calc({{ section.settings.column_subtitle_size }}px * 0.85);
+    }
+
+    .comparison-table-v2__cell-{{ section_id }}:first-child {
+      font-size: calc({{ section.settings.row_label_size }}px * 0.9);
+    }
+
+    .comparison-table-v2__icon-{{ section_id }} {
+      width: calc({{ section.settings.icon_size }}px * 0.75);
+      height: calc({{ section.settings.icon_size }}px * 0.75);
+    }
+
+    .comparison-table-v2__badge-{{ section_id }} {
+      font-size: 9px;
+      padding: 3px 10px;
+    }
+
+    .comparison-table-v2__column-icon-{{ section_id }} {
+      width: calc({{ section.settings.column_icon_size }}px * 0.7);
+      height: calc({{ section.settings.column_icon_size }}px * 0.7);
+      margin-bottom: 8px;
+    }
+
+    /* Scroll indicator */
+    .comparison-table-v2__scroll-hint-{{ section_id }} {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+      color: {{ section.settings.text_color }};
+      font-size: 12px;
+      opacity: 0.6;
+    }
+
+    .comparison-table-v2__scroll-hint-{{ section_id }} svg {
+      width: 16px;
+      height: 16px;
+      animation: scrollHint-{{ section_id }} 1.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollHint-{{ section_id }} {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(4px); }
+    }
+  }
+
+  @media screen and (min-width: 769px) {
+    .comparison-table-v2__scroll-hint-{{ section_id }} {
+      display: none;
+    }
+  }
+{% endstyle %}
+
+<section
+  class="comparison-table-v2-{{ section_id }}"
+  {{ section.shopify_attributes }}
+>
+  <div class="comparison-table-v2__container-{{ section_id }}">
+
+    {% if section.settings.eyebrow != blank or section.settings.heading != blank or section.settings.subheading != blank %}
+      <div class="comparison-table-v2__header-{{ section_id }}">
+        {% if section.settings.eyebrow != blank %}
+          <span class="comparison-table-v2__eyebrow-{{ section_id }}">{{ section.settings.eyebrow }}</span>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="comparison-table-v2__heading-{{ section_id }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.subheading != blank %}
+          <p class="comparison-table-v2__subheading-{{ section_id }}">{{ section.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="comparison-table-v2__wrapper-{{ section_id }}">
+      <table class="comparison-table-v2__table-{{ section_id }}">
+        <thead>
+          <tr class="comparison-table-v2__header-row-{{ section_id }}">
+            <th class="comparison-table-v2__header-cell-{{ section_id }}">
+              {% if section.settings.feature_column_title != blank %}
+                <span class="comparison-table-v2__column-title-{{ section_id }}">{{ section.settings.feature_column_title }}</span>
+              {% endif %}
+            </th>
+
+            <th class="comparison-table-v2__header-cell-{{ section_id }} highlight">
+              {% if section.settings.show_badge %}
+                <span class="comparison-table-v2__badge-{{ section_id }}">{{ section.settings.badge_text }}</span>
+              {% endif %}
+              {% if section.settings.column_1_icon != blank %}
+                <div class="comparison-table-v2__column-icon-{{ section_id }}">
+                  <img 
+                    src="{{ section.settings.column_1_icon | image_url: width: 100 }}" 
+                    alt="{{ section.settings.column_1_title }}"
+                    width="50"
+                    height="50"
+                    loading="lazy"
+                  >
+                </div>
+              {% endif %}
+              <h3 class="comparison-table-v2__column-title-{{ section_id }}">
+                {{ section.settings.column_1_title }}
+              </h3>
+              {% if section.settings.column_1_subtitle != blank %}
+                <p class="comparison-table-v2__column-subtitle-{{ section_id }}">
+                  {{ section.settings.column_1_subtitle }}
+                </p>
+              {% endif %}
+            </th>
+
+            <th class="comparison-table-v2__header-cell-{{ section_id }}">
+              {% if section.settings.column_2_icon != blank %}
+                <div class="comparison-table-v2__column-icon-{{ section_id }}">
+                  <img 
+                    src="{{ section.settings.column_2_icon | image_url: width: 100 }}" 
+                    alt="{{ section.settings.column_2_title }}"
+                    width="50"
+                    height="50"
+                    loading="lazy"
+                  >
+                </div>
+              {% endif %}
+              <h3 class="comparison-table-v2__column-title-{{ section_id }}">
+                {{ section.settings.column_2_title }}
+              </h3>
+              {% if section.settings.column_2_subtitle != blank %}
+                <p class="comparison-table-v2__column-subtitle-{{ section_id }}">
+                  {{ section.settings.column_2_subtitle }}
+                </p>
+              {% endif %}
+            </th>
+
+            <th class="comparison-table-v2__header-cell-{{ section_id }}">
+              {% if section.settings.column_3_icon != blank %}
+                <div class="comparison-table-v2__column-icon-{{ section_id }}">
+                  <img 
+                    src="{{ section.settings.column_3_icon | image_url: width: 100 }}" 
+                    alt="{{ section.settings.column_3_title }}"
+                    width="50"
+                    height="50"
+                    loading="lazy"
+                  >
+                </div>
+              {% endif %}
+              <h3 class="comparison-table-v2__column-title-{{ section_id }}">
+                {{ section.settings.column_3_title }}
+              </h3>
+              {% if section.settings.column_3_subtitle != blank %}
+                <p class="comparison-table-v2__column-subtitle-{{ section_id }}">
+                  {{ section.settings.column_3_subtitle }}
+                </p>
+              {% endif %}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in (1..10) %}
+            {% liquid
+              assign row_label_key = 'row_' | append: i | append: '_label'
+              assign row_col1_key = 'row_' | append: i | append: '_col1'
+              assign row_col2_key = 'row_' | append: i | append: '_col2'
+              assign row_col3_key = 'row_' | append: i | append: '_col3'
+              assign row_col1_text_key = 'row_' | append: i | append: '_col1_text'
+              assign row_col2_text_key = 'row_' | append: i | append: '_col2_text'
+              assign row_col3_text_key = 'row_' | append: i | append: '_col3_text'
+
+              assign row_label = section.settings[row_label_key]
+              assign row_col1 = section.settings[row_col1_key]
+              assign row_col2 = section.settings[row_col2_key]
+              assign row_col3 = section.settings[row_col3_key]
+              assign row_col1_text = section.settings[row_col1_text_key]
+              assign row_col2_text = section.settings[row_col2_text_key]
+              assign row_col3_text = section.settings[row_col3_text_key]
+            %}
+
+            {% if row_label != blank %}
+              <tr class="comparison-table-v2__row-{{ section_id }}">
+                <td class="comparison-table-v2__cell-{{ section_id }}">
+                  {{ row_label }}
+                </td>
+
+                <td class="comparison-table-v2__cell-{{ section_id }} highlight">
+                  {% if row_col1 == 'check' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} check">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                  {% elsif row_col1 == 'empty' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} empty"></span>
+                  {% elsif row_col1 == 'partial' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} partial"></span>
+                  {% elsif row_col1 == 'text' and row_col1_text != blank %}
+                    <span class="comparison-table-v2__cell-text-{{ section_id }}">{{ row_col1_text }}</span>
+                  {% endif %}
+                </td>
+
+                <td class="comparison-table-v2__cell-{{ section_id }}">
+                  {% if row_col2 == 'check' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} check">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                  {% elsif row_col2 == 'empty' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} empty"></span>
+                  {% elsif row_col2 == 'partial' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} partial"></span>
+                  {% elsif row_col2 == 'text' and row_col2_text != blank %}
+                    <span class="comparison-table-v2__cell-text-{{ section_id }}">{{ row_col2_text }}</span>
+                  {% endif %}
+                </td>
+
+                <td class="comparison-table-v2__cell-{{ section_id }}">
+                  {% if row_col3 == 'check' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} check">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                  {% elsif row_col3 == 'empty' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} empty"></span>
+                  {% elsif row_col3 == 'partial' %}
+                    <span class="comparison-table-v2__icon-{{ section_id }} partial"></span>
+                  {% elsif row_col3 == 'text' and row_col3_text != blank %}
+                    <span class="comparison-table-v2__cell-text-{{ section_id }}">{{ row_col3_text }}</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="comparison-table-v2__scroll-hint-{{ section_id }}">
+      <span>Desliza para ver más</span>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </div>
+
+    {% if section.settings.show_bottom_image and section.settings.bottom_image %}
+      <div class="comparison-table-v2__bottom-image-{{ section_id }}">
+        <div class="comparison-table-v2__bottom-image-wrapper-{{ section_id }}">
+          <img
+            src="{{ section.settings.bottom_image | image_url: width: 1200 }}"
+            srcset="
+              {{ section.settings.bottom_image | image_url: width: 600 }} 600w,
+              {{ section.settings.bottom_image | image_url: width: 900 }} 900w,
+              {{ section.settings.bottom_image | image_url: width: 1200 }} 1200w
+            "
+            sizes="(max-width: 768px) 100vw, {{ section.settings.bottom_image_max_width }}px"
+            alt="{{ section.settings.bottom_image.alt | escape }}"
+            class="comparison-table-v2__bottom-image-img-{{ section_id }}"
+            loading="lazy"
+            width="{{ section.settings.bottom_image.width }}"
+            height="{{ section.settings.bottom_image.height }}"
+          >
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Comparison Table v2",
+  "tag": "section",
+  "class": "comparison-table-v2-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "━━━ LAYOUT ━━━"
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Container side padding",
+      "default": 20,
+      "info": "El ancho máximo usa la variable del tema (--page-width)"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding top",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding bottom",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "━━━ HEADER ━━━"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Compare"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Why Choose Chocho?"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Compare the superior nutritional profile of our plant-based protein"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow size",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_weight",
+      "label": "Eyebrow weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 38
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 1,
+      "max": 1.5,
+      "step": 0.1,
+      "label": "Heading line height",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "min": -2,
+      "max": 3,
+      "step": 0.5,
+      "label": "Heading letter spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading margin bottom",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "subheading_weight",
+      "label": "Subheading weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Header margin bottom",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "━━━ TABLE STRUCTURE ━━━"
+    },
+    {
+      "type": "range",
+      "id": "table_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Table border radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "table_border_width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Table border width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "first_column_width",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "%",
+      "label": "First column width",
+      "default": 28
+    },
+    {
+      "type": "checkbox",
+      "id": "table_shadow_enabled",
+      "label": "Enable table shadow",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "table_shadow_y",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow Y offset",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "table_shadow_blur",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "table_shadow_spread",
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow spread",
+      "default": -4
+    },
+    {
+      "type": "header",
+      "content": "━━━ COLUMN HEADERS ━━━"
+    },
+    {
+      "type": "text",
+      "id": "feature_column_title",
+      "label": "Features column title",
+      "default": "Our Benefits"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge on highlighted column",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Best Choice"
+    },
+    {
+      "type": "text",
+      "id": "column_1_title",
+      "label": "Column 1 Title (Highlighted)",
+      "default": "PRONTO CHOCHO™"
+    },
+    {
+      "type": "text",
+      "id": "column_1_subtitle",
+      "label": "Column 1 Subtitle"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_1_icon",
+      "label": "Column 1 Icon"
+    },
+    {
+      "type": "text",
+      "id": "column_2_title",
+      "label": "Column 2 Title",
+      "default": "Pea Protein"
+    },
+    {
+      "type": "text",
+      "id": "column_2_subtitle",
+      "label": "Column 2 Subtitle"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_2_icon",
+      "label": "Column 2 Icon"
+    },
+    {
+      "type": "text",
+      "id": "column_3_title",
+      "label": "Column 3 Title",
+      "default": "Whey Protein"
+    },
+    {
+      "type": "text",
+      "id": "column_3_subtitle",
+      "label": "Column 3 Subtitle"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_3_icon",
+      "label": "Column 3 Icon"
+    },
+    {
+      "type": "range",
+      "id": "column_icon_size",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Column icon size",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "header_cell_padding_y",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Header vertical padding",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "header_cell_padding_x",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Header horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "column_title_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Column title size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "column_title_weight",
+      "label": "Column title weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "column_subtitle_size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Column subtitle size",
+      "default": 13
+    },
+    {
+      "type": "select",
+      "id": "column_subtitle_weight",
+      "label": "Column subtitle weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 1 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_1_label",
+      "label": "Row 1 Label",
+      "default": "Complete Protein"
+    },
+    {
+      "type": "select",
+      "id": "row_1_col1",
+      "label": "Row 1 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_1_col1_text",
+      "label": "Row 1 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_1_col2",
+      "label": "Row 1 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "partial"
+    },
+    {
+      "type": "text",
+      "id": "row_1_col2_text",
+      "label": "Row 1 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_1_col3",
+      "label": "Row 1 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_1_col3_text",
+      "label": "Row 1 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 2 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_2_label",
+      "label": "Row 2 Label",
+      "default": "High Fiber"
+    },
+    {
+      "type": "select",
+      "id": "row_2_col1",
+      "label": "Row 2 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_2_col1_text",
+      "label": "Row 2 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_2_col2",
+      "label": "Row 2 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_2_col2_text",
+      "label": "Row 2 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_2_col3",
+      "label": "Row 2 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_2_col3_text",
+      "label": "Row 2 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 3 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_3_label",
+      "label": "Row 3 Label",
+      "default": "Plant-Based"
+    },
+    {
+      "type": "select",
+      "id": "row_3_col1",
+      "label": "Row 3 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_3_col1_text",
+      "label": "Row 3 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_3_col2",
+      "label": "Row 3 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_3_col2_text",
+      "label": "Row 3 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_3_col3",
+      "label": "Row 3 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_3_col3_text",
+      "label": "Row 3 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 4 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_4_label",
+      "label": "Row 4 Label",
+      "default": "Easy to Digest"
+    },
+    {
+      "type": "select",
+      "id": "row_4_col1",
+      "label": "Row 4 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_4_col1_text",
+      "label": "Row 4 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_4_col2",
+      "label": "Row 4 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "partial"
+    },
+    {
+      "type": "text",
+      "id": "row_4_col2_text",
+      "label": "Row 4 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_4_col3",
+      "label": "Row 4 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "partial"
+    },
+    {
+      "type": "text",
+      "id": "row_4_col3_text",
+      "label": "Row 4 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 5 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_5_label",
+      "label": "Row 5 Label",
+      "default": "Minimally Processed"
+    },
+    {
+      "type": "select",
+      "id": "row_5_col1",
+      "label": "Row 5 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_5_col1_text",
+      "label": "Row 5 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_5_col2",
+      "label": "Row 5 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_5_col2_text",
+      "label": "Row 5 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_5_col3",
+      "label": "Row 5 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_5_col3_text",
+      "label": "Row 5 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 6 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_6_label",
+      "label": "Row 6 Label",
+      "default": "Rich in Micronutrients"
+    },
+    {
+      "type": "select",
+      "id": "row_6_col1",
+      "label": "Row 6 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_6_col1_text",
+      "label": "Row 6 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_6_col2",
+      "label": "Row 6 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "partial"
+    },
+    {
+      "type": "text",
+      "id": "row_6_col2_text",
+      "label": "Row 6 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_6_col3",
+      "label": "Row 6 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "partial"
+    },
+    {
+      "type": "text",
+      "id": "row_6_col3_text",
+      "label": "Row 6 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 7 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_7_label",
+      "label": "Row 7 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_7_col1",
+      "label": "Row 7 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_7_col1_text",
+      "label": "Row 7 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_7_col2",
+      "label": "Row 7 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_7_col2_text",
+      "label": "Row 7 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_7_col3",
+      "label": "Row 7 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_7_col3_text",
+      "label": "Row 7 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 8 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_8_label",
+      "label": "Row 8 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_8_col1",
+      "label": "Row 8 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_8_col1_text",
+      "label": "Row 8 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_8_col2",
+      "label": "Row 8 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_8_col2_text",
+      "label": "Row 8 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_8_col3",
+      "label": "Row 8 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_8_col3_text",
+      "label": "Row 8 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 9 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_9_label",
+      "label": "Row 9 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_9_col1",
+      "label": "Row 9 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_9_col1_text",
+      "label": "Row 9 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_9_col2",
+      "label": "Row 9 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_9_col2_text",
+      "label": "Row 9 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_9_col3",
+      "label": "Row 9 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_9_col3_text",
+      "label": "Row 9 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW 10 ━━━"
+    },
+    {
+      "type": "text",
+      "id": "row_10_label",
+      "label": "Row 10 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_10_col1",
+      "label": "Row 10 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "text",
+      "id": "row_10_col1_text",
+      "label": "Row 10 Col1 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_10_col2",
+      "label": "Row 10 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_10_col2_text",
+      "label": "Row 10 Col2 custom text"
+    },
+    {
+      "type": "select",
+      "id": "row_10_col3",
+      "label": "Row 10 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty" },
+        { "value": "partial", "label": "— Partial" },
+        { "value": "text", "label": "Custom text" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_10_col3_text",
+      "label": "Row 10 Col3 custom text"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ROW STYLING ━━━"
+    },
+    {
+      "type": "range",
+      "id": "cell_padding_y",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Cell vertical padding",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "cell_padding_x",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Cell horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "row_label_size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Row label size",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "row_label_weight",
+      "label": "Row label weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "select",
+      "id": "row_label_uppercase",
+      "label": "Row label case",
+      "options": [
+        { "value": "none", "label": "Normal" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "row_label_letter_spacing",
+      "min": 0,
+      "max": 2,
+      "step": 0.2,
+      "label": "Row label letter spacing (uppercase)",
+      "default": 0.6
+    },
+    {
+      "type": "range",
+      "id": "cell_text_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Custom cell text size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "cell_text_weight",
+      "label": "Custom cell text weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "header",
+      "content": "━━━ ICONS ━━━"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 28,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon circle size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "check_icon_size",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Check icon size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "check_border_width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Check border width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "empty_border_width",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Empty border width",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "partial_border_width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Partial border width",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "━━━ BOTTOM IMAGE ━━━"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_image",
+      "label": "Show bottom image",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "bottom_image",
+      "label": "Bottom image"
+    },
+    {
+      "type": "range",
+      "id": "bottom_image_margin_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Image margin top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "bottom_image_max_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Image max width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "bottom_image_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "━━━ COLORS ━━━"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#f9f7f4"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#9b8ab8"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#9b8ab8"
+    },
+    {
+      "type": "color",
+      "id": "table_background",
+      "label": "Table background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "table_border_color",
+      "label": "Table border",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "table_shadow_color",
+      "label": "Table shadow",
+      "default": "rgba(0, 0, 0, 0.06)"
+    },
+    {
+      "type": "color",
+      "id": "header_row_background",
+      "label": "Header row background",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color",
+      "id": "header_divider_color",
+      "label": "Header divider color",
+      "default": "#e8e8e8"
+    },
+    {
+      "type": "color",
+      "id": "column_title_color",
+      "label": "Column title color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "column_subtitle_color",
+      "label": "Column subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "highlight_header_bg",
+      "label": "Highlight header background",
+      "default": "#f5f0fb"
+    },
+    {
+      "type": "color",
+      "id": "highlight_title_color",
+      "label": "Highlight title color",
+      "default": "#5c4d7d"
+    },
+    {
+      "type": "color",
+      "id": "highlight_subtitle_color",
+      "label": "Highlight subtitle color",
+      "default": "#7a6a9a"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "highlight_cell_bg",
+      "label": "Highlight cell background",
+      "default": "#fdfcfe"
+    },
+    {
+      "type": "color",
+      "id": "row_border_color",
+      "label": "Row border color",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "row_alt_background",
+      "label": "Alternate row background",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color",
+      "id": "row_hover_background",
+      "label": "Row hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "row_label_color",
+      "label": "Row label color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "cell_text_color",
+      "label": "Custom cell text color",
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "color",
+      "id": "check_bg_color",
+      "label": "Check circle background",
+      "default": "#9b8ab8"
+    },
+    {
+      "type": "color",
+      "id": "check_border_color",
+      "label": "Check circle border",
+      "default": "#9b8ab8"
+    },
+    {
+      "type": "color",
+      "id": "check_icon_color",
+      "label": "Check icon color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "empty_bg_color",
+      "label": "Empty circle background",
+      "default": "transparent"
+    },
+    {
+      "type": "color",
+      "id": "empty_border_color",
+      "label": "Empty circle border",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "partial_bg_color",
+      "label": "Partial circle background",
+      "default": "#f0ebe6"
+    },
+    {
+      "type": "color",
+      "id": "partial_border_color",
+      "label": "Partial circle border",
+      "default": "#d4c9b8"
+    },
+    {
+      "type": "color",
+      "id": "partial_icon_color",
+      "label": "Partial icon color",
+      "default": "#a89880"
+    },
+    {
+      "type": "header",
+      "content": "━━━ RESPONSIVE ━━━"
+    },
+    {
+      "type": "range",
+      "id": "tablet_header_padding",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Tablet header padding",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "tablet_cell_padding",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Tablet cell padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_padding",
+      "min": 24,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_padding",
+      "min": 10,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile header padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_cell_padding",
+      "min": 8,
+      "max": 18,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile cell padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_table_min_width",
+      "min": 500,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "label": "Mobile table min width",
+      "default": 580
+    }
+  ],
+  "presets": [
+    {
+      "name": "Comparison Table v2"
+    }
+  ]
+}
+{% endschema %}
