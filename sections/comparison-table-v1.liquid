@@ -166,7 +166,20 @@
     background-color: {{ section.settings.empty_bg_color }};
     border: {{ section.settings.empty_border_width }}px solid {{ section.settings.empty_border_color }};
   }
- 
+ .comparison-table__icon-{{ section_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Opcional: Si tus imágenes ya tienen fondo, puedes quitar el fondo/borde configurado 
+  .comparison-table__icon-{{ section_id }}.check,
+  .comparison-table__icon-{{ section_id }}.empty {
+    background-color: transparent !important;
+    border: none !important;
+  }*/
+
   .comparison-table__row-{{ section_id }}:hover .comparison-table__icon-{{ section_id }}.check {
     transform: scale(1.1);
   }
@@ -343,44 +356,44 @@
                 <td class="comparison-table__cell-{{ section_id }}">
                   {{ row_label }}
                 </td>
- 
+
                 <td class="comparison-table__cell-{{ section_id }} highlight">
                   {% if row_col1 == 'check' %}
                     <span class="comparison-table__icon-{{ section_id }} check">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
+                      <img src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/check-icon.png?v=1769206764" alt="Check" loading="lazy">
                     </span>
                   {% elsif row_col1 == 'empty' %}
-                    <span class="comparison-table__icon-{{ section_id }} empty"></span>
+                    <span class="comparison-table__icon-{{ section_id }} empty">
+                      <img src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/x-icon.png?v=1769206764" alt="X" loading="lazy">
+                    </span>
                   {% else %}
                     {{ row_col1 }}
                   {% endif %}
                 </td>
- 
+
                 <td class="comparison-table__cell-{{ section_id }}">
                   {% if row_col2 == 'check' %}
                     <span class="comparison-table__icon-{{ section_id }} check">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
+                      <img src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/check-icon.png?v=1769206764" alt="Check" loading="lazy">
                     </span>
                   {% elsif row_col2 == 'empty' %}
-                    <span class="comparison-table__icon-{{ section_id }} empty"></span>
+                    <span class="comparison-table__icon-{{ section_id }} empty">
+                      <img src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/x-icon.png?v=1769206764" alt="X" loading="lazy">
+                    </span>
                   {% else %}
                     {{ row_col2 }}
                   {% endif %}
                 </td>
- 
+
                 <td class="comparison-table__cell-{{ section_id }}">
                   {% if row_col3 == 'check' %}
                     <span class="comparison-table__icon-{{ section_id }} check">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
+                      <img src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/check-icon.png?v=1769206764" alt="Check" loading="lazy">
                     </span>
                   {% elsif row_col3 == 'empty' %}
-                    <span class="comparison-table__icon-{{ section_id }} empty"></span>
+                    <span class="comparison-table__icon-{{ section_id }} empty">
+                      <img src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/x-icon.png?v=1769206764" alt="X" loading="lazy">
+                    </span>
                   {% else %}
                     {{ row_col3 }}
                   {% endif %}
