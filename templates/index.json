@@ -1304,6 +1304,14 @@
     "17659250859c18afff": {
       "type": "_blocks",
       "blocks": {
+        "custom_liquid_wHx6xj": {
+          "type": "custom-liquid",
+          "name": "t:names.custom_liquid",
+          "settings": {
+            "custom_liquid": ""
+          },
+          "blocks": {}
+        },
         "group_pDzde9": {
           "type": "group",
           "name": "t:names.group",
@@ -1519,6 +1527,7 @@
         }
       },
       "block_order": [
+        "custom_liquid_wHx6xj",
         "group_pDzde9",
         "ai_gen_block_69d1b17_q8LEYg"
       ],
