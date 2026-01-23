@@ -840,63 +840,6 @@
         "padding-block-end": 0
       }
     },
-    "marquee_RgGzyN": {
-      "type": "marquee",
-      "blocks": {
-        "text_with_icon_A8GeMT": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "GROWN WITH INTENTION.",
-            "icon_type": "none",
-            "icon_position": "left",
-            "icon_size": 24,
-            "icon_gap": 8,
-            "icon_color": "#000000",
-            "type_preset": "h2",
-            "font_size": 24
-          }
-        },
-        "text_with_icon_VVnnK8": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "CRAFTED BY TRADITION.",
-            "icon_type": "none",
-            "icon_position": "left",
-            "icon_size": 24,
-            "icon_gap": 8,
-            "icon_color": "#000000",
-            "type_preset": "h2",
-            "font_size": 24
-          }
-        },
-        "text_with_icon_bFtLD9": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "NOURISHING BY NATURE.",
-            "icon_type": "none",
-            "icon_position": "left",
-            "icon_size": 24,
-            "icon_gap": 8,
-            "icon_color": "#000000",
-            "type_preset": "h2",
-            "font_size": 24
-          }
-        }
-      },
-      "block_order": [
-        "text_with_icon_A8GeMT",
-        "text_with_icon_VVnnK8",
-        "text_with_icon_bFtLD9"
-      ],
-      "name": "t:names.marquee_section",
-      "settings": {
-        "movement_direction": "normal",
-        "color_scheme": "scheme-4",
-        "padding-block-start": 20,
-        "padding-block-end": 20,
-        "gap_between_elements": 60
-      }
-    },
     "hero_CXJpkj": {
       "type": "hero",
       "blocks": {
@@ -1120,6 +1063,29 @@
         "padding-block-end": 40
       }
     },
+    "marquee_yYUgWk": {
+      "type": "marquee",
+      "blocks": {
+        "text_FDr4BY": {
+          "type": "text",
+          "settings": {
+            "text": "",
+            "type_preset": "custom"
+          }
+        }
+      },
+      "block_order": [
+        "text_FDr4BY"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "scheme-4",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
+      }
+    },
     "dual_product_showcase_v2_wf3chC": {
       "type": "dual-product-showcase-v2",
       "name": "Dual Product Showcase v2",
@@ -1309,27 +1275,61 @@
         "right_bg_5": "#d4745a"
       }
     },
-    "marquee_yYUgWk": {
+    "marquee_RgGzyN": {
       "type": "marquee",
       "blocks": {
-        "text_FDr4BY": {
-          "type": "text",
+        "text_with_icon_A8GeMT": {
+          "type": "text_with_icon",
           "settings": {
-            "text": "",
-            "type_preset": "custom"
+            "text": "GROWN WITH INTENTION.",
+            "icon_type": "none",
+            "icon_position": "left",
+            "icon_size": 24,
+            "icon_gap": 8,
+            "icon_color": "#000000",
+            "type_preset": "h2",
+            "font_size": 24
+          }
+        },
+        "text_with_icon_VVnnK8": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "CRAFTED BY TRADITION.",
+            "icon_type": "none",
+            "icon_position": "left",
+            "icon_size": 24,
+            "icon_gap": 8,
+            "icon_color": "#000000",
+            "type_preset": "h2",
+            "font_size": 24
+          }
+        },
+        "text_with_icon_bFtLD9": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "NOURISHING BY NATURE.",
+            "icon_type": "none",
+            "icon_position": "left",
+            "icon_size": 24,
+            "icon_gap": 8,
+            "icon_color": "#000000",
+            "type_preset": "h2",
+            "font_size": 24
           }
         }
       },
       "block_order": [
-        "text_FDr4BY"
+        "text_with_icon_A8GeMT",
+        "text_with_icon_VVnnK8",
+        "text_with_icon_bFtLD9"
       ],
       "name": "t:names.marquee_section",
       "settings": {
         "movement_direction": "normal",
         "color_scheme": "scheme-4",
-        "padding-block-start": 24,
-        "padding-block-end": 24,
-        "gap_between_elements": 24
+        "padding-block-start": 20,
+        "padding-block-end": 20,
+        "gap_between_elements": 60
       }
     },
     "comparison_table_v1_mGJyjQ": {
@@ -1959,10 +1959,10 @@
     "two_column_accordion_slider_wgtpUT",
     "featured_products_grid_v3_1_j9CWAV",
     "1765587213b1a71267",
-    "marquee_RgGzyN",
+    "marquee_yYUgWk",
     "hero_CXJpkj",
     "dual_product_showcase_v2_wf3chC",
-    "marquee_yYUgWk",
+    "marquee_RgGzyN",
     "comparison_table_v1_mGJyjQ",
     "17659250859c18afff",
     "blocks_VYXCmb"
