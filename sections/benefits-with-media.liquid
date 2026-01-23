@@ -1,0 +1,1354 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .wt-benefits-product-{{ ai_gen_id }} {
+    padding-top: {{ block.settings.section_gap_top }}px;
+    padding-bottom: {{ block.settings.section_gap_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .wt-benefits-product__wrapper-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: {{ block.settings.column_gap }}px;
+    width: 100%;
+    max-width: var(--page-width, 1200px);
+    margin: 0 auto;
+    padding: 0 {{ block.settings.container_padding }}px;
+    align-items: center;
+  }
+
+  .wt-benefits-product__title-{{ ai_gen_id }} {
+    grid-column: 1 / -1;
+    text-align: {{ block.settings.title_alignment }};
+    color: {{ block.settings.title_color }};
+    margin: 0 0 {{ block.settings.title_bottom_spacing }}px;
+    font-size: {{ block.settings.title_size }}px;
+  }
+
+  .wt-benefits-product__icons-container-left-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.benefits_gap }}px;
+    justify-content: center;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ block.settings.media_max_width }}px;
+    min-height: 500px;
+    border-radius: {{ block.settings.media_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .wt-benefits-product__media-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .wt-benefits-product__media-wrapper-{{ ai_gen_id }} img,
+  .wt-benefits-product__media-wrapper-{{ ai_gen_id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Ocultar controles de video */
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-enclosure {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-panel {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-play-button {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-timeline {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-current-time-display,
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-time-remaining-display {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-mute-button {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-volume-slider {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-webkit-media-controls-fullscreen-button {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-moz-media-controls {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video::-ms-media-controls {
+    display: none !important;
+  }
+
+  .wt-benefits-product__img-{{ ai_gen_id }} video {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .wt-benefits-product__gif-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .wt-benefits-product__img-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wt-benefits-product__img-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .wt-benefits-product__icons-container-right-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.benefits_gap }}px;
+    justify-content: center;
+  }
+
+  .wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    padding: {{ block.settings.card_padding }}px;
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    transition: transform 0.3s ease;
+    padding-top: calc({{ block.settings.card_padding }}px + {{ block.settings.icon_size | divided_by: 2 }}px + 10px);
+  }
+
+  .wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+  }
+
+  .wt-benefits-product__icon-container-{{ ai_gen_id }} {
+    position: absolute;
+    top: calc(-{{ block.settings.icon_size | divided_by: 2 }}px - 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc({{ block.settings.icon_size }}px + 20px);
+    height: calc({{ block.settings.icon_size }}px + 20px);
+    background-color: {{ block.settings.background_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .wt-benefits-product__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    object-fit: contain;
+  }
+
+  .wt-benefits-product__icon-placeholder-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    background-color: #e6e6e6;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wt-benefits-product__icon-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .wt-benefits-product__icon-text-{{ ai_gen_id }} {
+    width: 100%;
+    text-align: center;
+  }
+
+  .wt-benefits-product__icon-item-heading-{{ ai_gen_id }} {
+    margin: 0 0 8px;
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: 600;
+  }
+
+  .wt-benefits-product__icon-item-text-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    line-height: 1.5;
+  }
+
+  /* ===== MOBILE SLIDER ===== */
+  .wt-benefits-product__mobile-slider-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .wt-benefits-product__wrapper-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.mobile_gap }}px;
+      padding: 0 20px;
+    }
+
+    .wt-benefits-product__img-{{ ai_gen_id }} {
+      min-height: 300px;
+      order: {{ block.settings.mobile_media_order }};
+      max-width: 100%;
+    }
+
+    .wt-benefits-product__icons-container-left-{{ ai_gen_id }},
+    .wt-benefits-product__icons-container-right-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .wt-benefits-product__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    /* Mostrar slider en móvil */
+    .wt-benefits-product__mobile-slider-{{ ai_gen_id }} {
+      display: block;
+      order: {{ block.settings.mobile_benefits_order | default: 2 }};
+      position: relative;
+      overflow: hidden;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    .wt-benefits-product__slider-track-{{ ai_gen_id }} {
+      display: flex;
+      transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      gap: {{ block.settings.mobile_slider_gap }}px;
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - {{ block.settings.mobile_slider_gap }}px) / {{ block.settings.mobile_slides_to_show }});
+      min-width: calc((100% - {{ block.settings.mobile_slider_gap }}px) / {{ block.settings.mobile_slides_to_show }});
+      box-sizing: border-box;
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }} {
+      margin: 0;
+      height: 100%;
+      min-height: 160px;
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+      padding-top: calc({{ block.settings.card_padding | times: 0.8 }}px + {{ block.settings.icon_size | times: 0.7 | divided_by: 2 }}px + 12px);
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-container-{{ ai_gen_id }} {
+      width: calc({{ block.settings.icon_size | times: 0.7 }}px + 16px);
+      height: calc({{ block.settings.icon_size | times: 0.7 }}px + 16px);
+      top: calc(-{{ block.settings.icon_size | times: 0.7 | divided_by: 2 }}px - 8px);
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size | times: 0.7 }}px;
+      height: {{ block.settings.icon_size | times: 0.7 }}px;
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-item-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.85 }}px;
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-item-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.text_size | times: 0.85 }}px;
+    }
+
+    /* Dots de navegación */
+    .wt-benefits-product__slider-dots-{{ ai_gen_id }} {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .wt-benefits-product__slider-dot-{{ ai_gen_id }} {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: {{ block.settings.card_border_color }};
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .wt-benefits-product__slider-dot-{{ ai_gen_id }}.active {
+      background-color: {{ block.settings.heading_color }};
+      transform: scale(1.2);
+    }
+
+    .wt-benefits-product__slider-dot-{{ ai_gen_id }}:hover {
+      background-color: {{ block.settings.heading_color }};
+      opacity: 0.7;
+    }
+
+    /* Flechas de navegación */
+    .wt-benefits-product__slider-arrows-{{ ai_gen_id }} {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      padding: 0 5px;
+    }
+
+    .wt-benefits-product__slider-arrow-{{ ai_gen_id }} {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: {{ block.settings.card_background }};
+      border: 1px solid {{ block.settings.card_border_color }};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .wt-benefits-product__slider-arrow-{{ ai_gen_id }}:hover {
+      background-color: {{ block.settings.heading_color }};
+      color: #fff;
+      border-color: {{ block.settings.heading_color }};
+    }
+
+    .wt-benefits-product__slider-arrow-{{ ai_gen_id }} svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    {% unless block.settings.show_slider_arrows %}
+    .wt-benefits-product__slider-arrows-{{ ai_gen_id }} {
+      display: none;
+    }
+    {% endunless %}
+
+    {% unless block.settings.show_slider_dots %}
+    .wt-benefits-product__slider-dots-{{ ai_gen_id }} {
+      display: none;
+    }
+    {% endunless %}
+  }
+
+  @media screen and (max-width: 480px) {
+    .wt-benefits-product__wrapper-{{ ai_gen_id }} {
+      padding: 0 16px;
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} {
+      flex: 0 0 calc(100% - 20px);
+      min-width: calc(100% - 20px);
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }} {
+      min-height: 140px;
+      padding: {{ block.settings.card_padding | times: 0.7 }}px;
+      padding-top: calc({{ block.settings.card_padding | times: 0.7 }}px + {{ block.settings.icon_size | times: 0.6 | divided_by: 2 }}px + 10px);
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-container-{{ ai_gen_id }} {
+      width: calc({{ block.settings.icon_size | times: 0.6 }}px + 14px);
+      height: calc({{ block.settings.icon_size | times: 0.6 }}px + 14px);
+      top: calc(-{{ block.settings.icon_size | times: 0.6 | divided_by: 2 }}px - 7px);
+    }
+
+    .wt-benefits-product__slider-slide-{{ ai_gen_id }} .wt-benefits-product__icon-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size | times: 0.6 }}px;
+      height: {{ block.settings.icon_size | times: 0.6 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="wt-benefits-product-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="wt-benefits-product__wrapper-{{ ai_gen_id }}">
+    {% if block.settings.section_title != blank %}
+      <h2 class="wt-benefits-product__title-{{ ai_gen_id }}">
+        {{ block.settings.section_title }}
+      </h2>
+    {% endif %}
+
+    {%- comment -%} Desktop: Beneficios izquierda {%- endcomment -%}
+    <div class="wt-benefits-product__icons-container-left-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign icon_key = 'benefit_left_' | append: i | append: '_icon'
+          assign heading_key = 'benefit_left_' | append: i | append: '_heading'
+          assign description_key = 'benefit_left_' | append: i | append: '_description'
+          
+          assign icon_image = block.settings[icon_key]
+          assign heading = block.settings[heading_key]
+          assign description = block.settings[description_key]
+        %}
+
+        {% if heading != blank or description != blank %}
+          <div class="wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }}">
+            <div class="wt-benefits-product__icon-container-{{ ai_gen_id }}">
+              {% if icon_image %}
+                <img
+                  src="{{ icon_image | image_url: width: 200 }}"
+                  alt="{{ icon_image.alt | default: heading | escape }}"
+                  class="wt-benefits-product__icon-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="{{ block.settings.icon_size }}"
+                  height="{{ block.settings.icon_size }}"
+                >
+              {% else %}
+                <div class="wt-benefits-product__icon-placeholder-{{ ai_gen_id }}">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="wt-benefits-product__icon-text-{{ ai_gen_id }}">
+              {% if heading != blank %}
+                <h3 class="wt-benefits-product__icon-item-heading-{{ ai_gen_id }}">{{ heading }}</h3>
+              {% endif %}
+              {% if description != blank %}
+                <div class="wt-benefits-product__icon-item-text-{{ ai_gen_id }}">{{ description }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {%- comment -%} Media central {%- endcomment -%}
+    <div class="wt-benefits-product__img-{{ ai_gen_id }}">
+      {% if block.settings.video_shopify %}
+        <div class="wt-benefits-product__media-wrapper-{{ ai_gen_id }}">
+          {{ block.settings.video_shopify | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true }}
+        </div>
+      {% elsif block.settings.video_url != blank %}
+        {% assign video_url = block.settings.video_url %}
+        {% if video_url contains '.mp4' or video_url contains '.webm' or video_url contains '.ogg' %}
+          <video
+            class="wt-benefits-product__media-wrapper-{{ ai_gen_id }}"
+            playsinline
+            autoplay
+            loop
+            muted
+            poster="{{ block.settings.media_image | image_url: width: 1200 }}"
+          >
+            <source src="{{ video_url }}" type="video/mp4">
+          </video>
+        {% endif %}
+      {% elsif block.settings.gif_url != blank %}
+        <img
+          src="{{ block.settings.gif_url }}"
+          alt="{{ block.settings.media_image.alt | default: 'Animation' | escape }}"
+          class="wt-benefits-product__gif-{{ ai_gen_id }}"
+          loading="lazy"
+        >
+      {% elsif block.settings.media_image %}
+        <img
+          class="wt-benefits-product__media-wrapper-{{ ai_gen_id }}"
+          src="{{ block.settings.media_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.media_image.alt | default: 'Product image' | escape }}"
+          loading="lazy"
+        >
+      {% else %}
+        <div class="wt-benefits-product__img-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+        </div>
+      {% endif %}
+    </div>
+
+    {%- comment -%} Desktop: Beneficios derecha {%- endcomment -%}
+    <div class="wt-benefits-product__icons-container-right-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign icon_key = 'benefit_right_' | append: i | append: '_icon'
+          assign heading_key = 'benefit_right_' | append: i | append: '_heading'
+          assign description_key = 'benefit_right_' | append: i | append: '_description'
+          
+          assign icon_image = block.settings[icon_key]
+          assign heading = block.settings[heading_key]
+          assign description = block.settings[description_key]
+        %}
+
+        {% if heading != blank or description != blank %}
+          <div class="wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }}">
+            <div class="wt-benefits-product__icon-container-{{ ai_gen_id }}">
+              {% if icon_image %}
+                <img
+                  src="{{ icon_image | image_url: width: 200 }}"
+                  alt="{{ icon_image.alt | default: heading | escape }}"
+                  class="wt-benefits-product__icon-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="{{ block.settings.icon_size }}"
+                  height="{{ block.settings.icon_size }}"
+                >
+              {% else %}
+                <div class="wt-benefits-product__icon-placeholder-{{ ai_gen_id }}">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="wt-benefits-product__icon-text-{{ ai_gen_id }}">
+              {% if heading != blank %}
+                <h3 class="wt-benefits-product__icon-item-heading-{{ ai_gen_id }}">{{ heading }}</h3>
+              {% endif %}
+              {% if description != blank %}
+                <div class="wt-benefits-product__icon-item-text-{{ ai_gen_id }}">{{ description }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {%- comment -%} Mobile: Slider de beneficios {%- endcomment -%}
+    <div class="wt-benefits-product__mobile-slider-{{ ai_gen_id }}" data-slider-id="{{ ai_gen_id }}">
+      <div class="wt-benefits-product__slider-track-{{ ai_gen_id }}" data-slider-track>
+        {%- comment -%} Todos los beneficios combinados {%- endcomment -%}
+        {% assign slide_index = 0 %}
+        
+        {% for i in (1..4) %}
+          {% liquid
+            assign icon_key = 'benefit_left_' | append: i | append: '_icon'
+            assign heading_key = 'benefit_left_' | append: i | append: '_heading'
+            assign description_key = 'benefit_left_' | append: i | append: '_description'
+            
+            assign icon_image = block.settings[icon_key]
+            assign heading = block.settings[heading_key]
+            assign description = block.settings[description_key]
+          %}
+
+          {% if heading != blank or description != blank %}
+            <div class="wt-benefits-product__slider-slide-{{ ai_gen_id }}" data-slide-index="{{ slide_index }}">
+              <div class="wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }}">
+                <div class="wt-benefits-product__icon-container-{{ ai_gen_id }}">
+                  {% if icon_image %}
+                    <img
+                      src="{{ icon_image | image_url: width: 200 }}"
+                      alt="{{ icon_image.alt | default: heading | escape }}"
+                      class="wt-benefits-product__icon-{{ ai_gen_id }}"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    <div class="wt-benefits-product__icon-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="wt-benefits-product__icon-text-{{ ai_gen_id }}">
+                  {% if heading != blank %}
+                    <h3 class="wt-benefits-product__icon-item-heading-{{ ai_gen_id }}">{{ heading }}</h3>
+                  {% endif %}
+                  {% if description != blank %}
+                    <div class="wt-benefits-product__icon-item-text-{{ ai_gen_id }}">{{ description }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% assign slide_index = slide_index | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+
+        {% for i in (1..4) %}
+          {% liquid
+            assign icon_key = 'benefit_right_' | append: i | append: '_icon'
+            assign heading_key = 'benefit_right_' | append: i | append: '_heading'
+            assign description_key = 'benefit_right_' | append: i | append: '_description'
+            
+            assign icon_image = block.settings[icon_key]
+            assign heading = block.settings[heading_key]
+            assign description = block.settings[description_key]
+          %}
+
+          {% if heading != blank or description != blank %}
+            <div class="wt-benefits-product__slider-slide-{{ ai_gen_id }}" data-slide-index="{{ slide_index }}">
+              <div class="wt-benefits-product__icon-item-wrapper-{{ ai_gen_id }}">
+                <div class="wt-benefits-product__icon-container-{{ ai_gen_id }}">
+                  {% if icon_image %}
+                    <img
+                      src="{{ icon_image | image_url: width: 200 }}"
+                      alt="{{ icon_image.alt | default: heading | escape }}"
+                      class="wt-benefits-product__icon-{{ ai_gen_id }}"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    <div class="wt-benefits-product__icon-placeholder-{{ ai_gen_id }}">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </div>
+
+                <div class="wt-benefits-product__icon-text-{{ ai_gen_id }}">
+                  {% if heading != blank %}
+                    <h3 class="wt-benefits-product__icon-item-heading-{{ ai_gen_id }}">{{ heading }}</h3>
+                  {% endif %}
+                  {% if description != blank %}
+                    <div class="wt-benefits-product__icon-item-text-{{ ai_gen_id }}">{{ description }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% assign slide_index = slide_index | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {%- comment -%} Flechas de navegación {%- endcomment -%}
+      <div class="wt-benefits-product__slider-arrows-{{ ai_gen_id }}">
+        <button class="wt-benefits-product__slider-arrow-{{ ai_gen_id }}" data-slider-prev aria-label="Previous slide">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button class="wt-benefits-product__slider-arrow-{{ ai_gen_id }}" data-slider-next aria-label="Next slide">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      {%- comment -%} Dots de navegación {%- endcomment -%}
+      <div class="wt-benefits-product__slider-dots-{{ ai_gen_id }}" data-slider-dots></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const sliderId = '{{ ai_gen_id }}';
+    const sliderContainer = document.querySelector(`[data-slider-id="${sliderId}"]`);
+    
+    if (!sliderContainer) return;
+
+    const track = sliderContainer.querySelector('[data-slider-track]');
+    const slides = track.querySelectorAll('[data-slide-index]');
+    const dotsContainer = sliderContainer.querySelector('[data-slider-dots]');
+    const prevBtn = sliderContainer.querySelector('[data-slider-prev]');
+    const nextBtn = sliderContainer.querySelector('[data-slider-next]');
+    
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+    let autoplayInterval = null;
+    let isAutoplayEnabled = {{ block.settings.slider_autoplay | default: true }};
+    const autoplaySpeed = {{ block.settings.slider_autoplay_speed | default: 4000 }};
+    const slidesToShow = window.innerWidth <= 480 ? 1 : {{ block.settings.mobile_slides_to_show | default: 2 }};
+    const maxIndex = Math.max(0, totalSlides - slidesToShow);
+
+    // Crear dots
+    function createDots() {
+      dotsContainer.innerHTML = '';
+      const dotsCount = maxIndex + 1;
+      
+      for (let i = 0; i < dotsCount; i++) {
+        const dot = document.createElement('button');
+        dot.className = `wt-benefits-product__slider-dot-${sliderId}`;
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        if (i === 0) dot.classList.add('active');
+        
+        dot.addEventListener('click', () => {
+          goToSlide(i);
+          resetAutoplay();
+        });
+        
+        dotsContainer.appendChild(dot);
+      }
+    }
+
+    // Actualizar dots activo
+    function updateDots() {
+      const dots = dotsContainer.querySelectorAll('button');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
+      });
+    }
+
+    // Ir a slide específico
+    function goToSlide(index) {
+      currentIndex = Math.max(0, Math.min(index, maxIndex));
+      
+      const slideWidth = slides[0].offsetWidth;
+      const gap = {{ block.settings.mobile_slider_gap | default: 16 }};
+      const offset = currentIndex * (slideWidth + gap);
+      
+      track.style.transform = `translateX(-${offset}px)`;
+      updateDots();
+    }
+
+    // Siguiente slide
+    function nextSlide() {
+      if (currentIndex >= maxIndex) {
+        goToSlide(0);
+      } else {
+        goToSlide(currentIndex + 1);
+      }
+    }
+
+    // Slide anterior
+    function prevSlide() {
+      if (currentIndex <= 0) {
+        goToSlide(maxIndex);
+      } else {
+        goToSlide(currentIndex - 1);
+      }
+    }
+
+    // Iniciar autoplay
+    function startAutoplay() {
+      if (!isAutoplayEnabled) return;
+      
+      stopAutoplay();
+      autoplayInterval = setInterval(() => {
+        nextSlide();
+      }, autoplaySpeed);
+    }
+
+    // Detener autoplay
+    function stopAutoplay() {
+      if (autoplayInterval) {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
+      }
+    }
+
+    // Reiniciar autoplay
+    function resetAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    // Event listeners
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoplay();
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoplay();
+      });
+    }
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoplay();
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+      resetAutoplay();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+    }
+
+    // Pausar en hover
+    sliderContainer.addEventListener('mouseenter', stopAutoplay);
+    sliderContainer.addEventListener('mouseleave', startAutoplay);
+
+    // Pausar cuando no es visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          startAutoplay();
+        } else {
+          stopAutoplay();
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(sliderContainer);
+
+    // Recalcular en resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        goToSlide(currentIndex);
+      }, 100);
+    });
+
+    // Inicializar
+    if (totalSlides > 0) {
+      createDots();
+      goToSlide(0);
+      startAutoplay();
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Benefits with media",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "━━━ LAYOUT ━━━"
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Container side padding",
+      "default": 20,
+      "info": "El ancho máximo usa la variable del tema (--page-width)"
+    },
+    {
+      "type": "header",
+      "content": "Section title"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Title",
+      "default": "Why choose our product"
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "range",
+      "id": "title_bottom_spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Title bottom spacing",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "video",
+      "id": "video_shopify",
+      "label": "Video (Shopify Files)",
+      "info": "Upload a video directly from Shopify Files. This has priority over all other media options."
+    },
+    {
+      "type": "image_picker",
+      "id": "media_image",
+      "label": "Poster image / Fallback image"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "External video URL",
+      "info": "Direct URL to MP4/WebM file"
+    },
+    {
+      "type": "url",
+      "id": "gif_url",
+      "label": "GIF URL"
+    },
+    {
+      "type": "range",
+      "id": "media_max_width",
+      "min": 300,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "label": "Max width",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_gap_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_gap_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Column gap",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "benefits_gap",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Benefits gap",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Benefit cards"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Card border width",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border color",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "header",
+      "content": "Icon"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 32,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "icon_text_gap",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon to text gap",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_left_1_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_1_heading",
+      "label": "Heading",
+      "default": "Premium quality"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_left_1_description",
+      "label": "Description",
+      "default": "<p>Crafted with the finest materials.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_left_2_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_2_heading",
+      "label": "Heading",
+      "default": "Fast shipping"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_left_2_description",
+      "label": "Description",
+      "default": "<p>Quick delivery to your door.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_left_3_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_3_heading",
+      "label": "Heading",
+      "default": "Easy returns"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_left_3_description",
+      "label": "Description",
+      "default": "<p>30-day return policy.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Left benefit 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_left_4_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_left_4_heading",
+      "label": "Heading",
+      "default": "Secure payment"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_left_4_description",
+      "label": "Description",
+      "default": "<p>Safe and encrypted checkout.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_right_1_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_1_heading",
+      "label": "Heading",
+      "default": "Eco-friendly"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_right_1_description",
+      "label": "Description",
+      "default": "<p>Sustainable and responsible.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_right_2_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_2_heading",
+      "label": "Heading",
+      "default": "24/7 support"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_right_2_description",
+      "label": "Description",
+      "default": "<p>Always here to help you.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_right_3_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_3_heading",
+      "label": "Heading",
+      "default": "Warranty included"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_right_3_description",
+      "label": "Description",
+      "default": "<p>Protected for years to come.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Right benefit 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "benefit_right_4_icon",
+      "label": "Icon"
+    },
+    {
+      "type": "text",
+      "id": "benefit_right_4_heading",
+      "label": "Heading",
+      "default": "Trusted brand"
+    },
+    {
+      "type": "richtext",
+      "id": "benefit_right_4_description",
+      "label": "Description",
+      "default": "<p>Loved by thousands worldwide.</p>"
+    },
+    {
+      "type": "header",
+      "content": "📱 Mobile Slider"
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile section gap",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "mobile_media_order",
+      "label": "Media order on mobile",
+      "options": [
+        { "value": "1", "label": "First" },
+        { "value": "2", "label": "Second" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "mobile_benefits_order",
+      "label": "Benefits order on mobile",
+      "options": [
+        { "value": "1", "label": "First" },
+        { "value": "2", "label": "Second" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "mobile_slides_to_show",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Slides to show (tablet)",
+      "default": 2,
+      "info": "On phones will show 1 slide"
+    },
+    {
+      "type": "range",
+      "id": "mobile_slider_gap",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Slider gap",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "slider_autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slider_autoplay_speed",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay speed",
+      "default": 4000
+    },
+    {
+      "type": "checkbox",
+      "id": "show_slider_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_slider_dots",
+      "label": "Show navigation dots",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits with media"
+    }
+  ]
+}
+{% endschema %}
