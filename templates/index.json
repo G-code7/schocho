@@ -1309,6 +1309,29 @@
         "right_bg_5": "#d4745a"
       }
     },
+    "marquee_yYUgWk": {
+      "type": "marquee",
+      "blocks": {
+        "text_FDr4BY": {
+          "type": "text",
+          "settings": {
+            "text": "<p>WITH INTENTION. CRAFTED BY TRADITION. NOURI</p>",
+            "type_preset": "custom"
+          }
+        }
+      },
+      "block_order": [
+        "text_FDr4BY"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "scheme-4",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
+      }
+    },
     "comparison_table_v1_mGJyjQ": {
       "type": "comparison-table-v1",
       "name": "Comparison Table v1",
@@ -1669,29 +1692,6 @@
         "padding-block-end": 40
       }
     },
-    "marquee_yYUgWk": {
-      "type": "marquee",
-      "blocks": {
-        "text_FDr4BY": {
-          "type": "text",
-          "settings": {
-            "text": "<p>WITH INTENTION. CRAFTED BY TRADITION. NOURI</p>",
-            "type_preset": "custom"
-          }
-        }
-      },
-      "block_order": [
-        "text_FDr4BY"
-      ],
-      "name": "t:names.marquee_section",
-      "settings": {
-        "movement_direction": "normal",
-        "color_scheme": "scheme-4",
-        "padding-block-start": 24,
-        "padding-block-end": 24,
-        "gap_between_elements": 24
-      }
-    },
     "blocks_VYXCmb": {
       "type": "_blocks",
       "blocks": {
@@ -1962,9 +1962,9 @@
     "marquee_RgGzyN",
     "hero_CXJpkj",
     "dual_product_showcase_v2_wf3chC",
+    "marquee_yYUgWk",
     "comparison_table_v1_mGJyjQ",
     "17659250859c18afff",
-    "marquee_yYUgWk",
     "blocks_VYXCmb"
   ]
 }
