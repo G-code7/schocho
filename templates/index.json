@@ -1120,29 +1120,6 @@
         "padding-block-end": 40
       }
     },
-    "marquee_yYUgWk": {
-      "type": "marquee",
-      "blocks": {
-        "text_FDr4BY": {
-          "type": "text",
-          "settings": {
-            "text": "<p>WITH INTENTION. CRAFTED BY TRADITION. NOURI</p>",
-            "type_preset": "custom"
-          }
-        }
-      },
-      "block_order": [
-        "text_FDr4BY"
-      ],
-      "name": "t:names.marquee_section",
-      "settings": {
-        "movement_direction": "normal",
-        "color_scheme": "scheme-4",
-        "padding-block-start": 24,
-        "padding-block-end": 24,
-        "gap_between_elements": 24
-      }
-    },
     "dual_product_showcase_v2_wf3chC": {
       "type": "dual-product-showcase-v2",
       "name": "Dual Product Showcase v2",
@@ -1573,6 +1550,29 @@
         "padding-block-end": 40
       }
     },
+    "marquee_yYUgWk": {
+      "type": "marquee",
+      "blocks": {
+        "text_FDr4BY": {
+          "type": "text",
+          "settings": {
+            "text": "<p>WITH INTENTION. CRAFTED BY TRADITION. NOURI</p>",
+            "type_preset": "custom"
+          }
+        }
+      },
+      "block_order": [
+        "text_FDr4BY"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "scheme-4",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
+      }
+    },
     "blocks_VYXCmb": {
       "type": "_blocks",
       "blocks": {
@@ -1766,7 +1766,7 @@
             "excerpt_margin_bottom": 18,
             "link_size": 14,
             "link_weight": "600",
-            "link_uppercase": "uppercase",
+            "link_uppercase": "none",
             "link_letter_spacing": 0.6,
             "controls_margin_top": 40,
             "controls_gap": 20,
