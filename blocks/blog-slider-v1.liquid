@@ -1,0 +1,1199 @@
+{% liquid
+  assign block_id = block.id | replace: '_', '' | replace: '-', ''
+%}
+
+{% style %}
+  .blog-slider-{{ block_id }} {
+    --transition-speed: 0.5s;
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+    display: block;
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .blog-slider__container-{{ block_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+  }
+
+  .blog-slider__header-{{ block_id }} {
+    text-align: {{ block.settings.heading_alignment }};
+    margin-bottom: {{ block.settings.header_margin_bottom }}px;
+  }
+
+  .blog-slider__heading-{{ block_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: {{ block.settings.heading_weight }};
+    line-height: {{ block.settings.heading_line_height }};
+    margin: 0 0 {{ block.settings.heading_margin_bottom }}px 0;
+    letter-spacing: {{ block.settings.heading_letter_spacing }}px;
+  }
+
+  .blog-slider__subheading-{{ block_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.subheading_size }}px;
+    font-weight: {{ block.settings.subheading_weight }};
+    margin: 0;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  .blog-slider__wrapper-{{ block_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .blog-slider__track-{{ block_id }} {
+    display: flex;
+    gap: {{ block.settings.card_gap }}px;
+    transition: transform var(--transition-speed) var(--ease-smooth);
+  }
+
+  .blog-slider__card-{{ block_id }} {
+    flex: 0 0 calc((100% - {{ block.settings.card_gap | times: 2 }}px) / 3);
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    box-shadow: {{ block.settings.card_shadow_x }}px {{ block.settings.card_shadow_y }}px {{ block.settings.card_shadow_blur }}px {{ block.settings.card_shadow_color }};
+    transition: all 0.4s var(--ease-smooth);
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+  }
+
+  .blog-slider__card-{{ block_id }}:hover {
+    transform: translateY({{ block.settings.card_hover_lift }}px);
+    box-shadow: {{ block.settings.card_shadow_x }}px {{ block.settings.card_shadow_y | plus: 6 }}px {{ block.settings.card_shadow_blur | plus: 8 }}px {{ block.settings.card_shadow_color }};
+  }
+
+  .blog-slider__image-wrapper-{{ block_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_aspect_ratio }}%;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .blog-slider__image-{{ block_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-smooth);
+  }
+
+  .blog-slider__card-{{ block_id }}:hover .blog-slider__image-{{ block_id }} {
+    transform: scale(1.05);
+  }
+
+  .blog-slider__image-placeholder-{{ block_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f8f8;
+  }
+
+  .blog-slider__image-placeholder-{{ block_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.2;
+  }
+
+  .blog-slider__content-{{ block_id }} {
+    padding: {{ block.settings.card_padding }}px;
+  }
+
+  .blog-slider__date-{{ block_id }} {
+    color: {{ block.settings.date_color }};
+    font-size: {{ block.settings.date_size }}px;
+    font-weight: {{ block.settings.date_weight }};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: {{ block.settings.date_margin_bottom }}px;
+    opacity: 0.7;
+  }
+
+  .blog-slider__title-{{ block_id }} {
+    color: {{ block.settings.card_title_color }};
+    font-size: {{ block.settings.card_title_size }}px;
+    font-weight: {{ block.settings.card_title_weight }};
+    line-height: {{ block.settings.card_title_line_height }};
+    margin: 0 0 {{ block.settings.card_title_margin_bottom }}px 0;
+    transition: color 0.3s ease;
+  }
+
+  .blog-slider__title-link-{{ block_id }} {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .blog-slider__card-{{ block_id }}:hover .blog-slider__title-{{ block_id }} {
+    color: {{ block.settings.link_color }};
+  }
+
+  .blog-slider__excerpt-{{ block_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.excerpt_size }}px;
+    font-weight: {{ block.settings.excerpt_weight }};
+    line-height: {{ block.settings.excerpt_line_height }};
+    margin-bottom: {{ block.settings.excerpt_margin_bottom }}px;
+    opacity: 0.85;
+  }
+
+  .blog-slider__link-{{ block_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: {{ block.settings.link_color }};
+    font-size: {{ block.settings.link_size }}px;
+    font-weight: {{ block.settings.link_weight }};
+    text-transform: {{ block.settings.link_uppercase }};
+    letter-spacing: {{ block.settings.link_letter_spacing }}px;
+    text-decoration: none;
+    transition: all 0.3s var(--ease-smooth);
+  }
+
+  .blog-slider__link-{{ block_id }}:hover {
+    color: {{ block.settings.link_hover_color }};
+    gap: 12px;
+  }
+
+  .blog-slider__link-icon-{{ block_id }} {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .blog-slider__link-{{ block_id }}:hover .blog-slider__link-icon-{{ block_id }} {
+    transform: translateX(4px);
+  }
+
+  .blog-slider__controls-{{ block_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ block.settings.controls_gap }}px;
+    margin-top: {{ block.settings.controls_margin_top }}px;
+  }
+
+  .blog-slider__button-{{ block_id }} {
+    width: {{ block.settings.button_size }}px;
+    height: {{ block.settings.button_size }}px;
+    border-radius: 50%;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s var(--ease-smooth);
+  }
+
+  .blog-slider__button-{{ block_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_color }};
+    border-color: {{ block.settings.button_hover_background }};
+    transform: scale(1.1);
+  }
+
+  .blog-slider__button-{{ block_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: scale(1);
+  }
+
+  .blog-slider__button-{{ block_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .blog-slider__dots-{{ block_id }} {
+    display: flex;
+    gap: {{ block.settings.dots_gap }}px;
+  }
+
+  .blog-slider__dot-{{ block_id }} {
+    width: {{ block.settings.dot_size }}px;
+    height: {{ block.settings.dot_size }}px;
+    border-radius: 50%;
+    background-color: {{ block.settings.dot_color }};
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s var(--ease-smooth);
+    opacity: 0.4;
+  }
+
+  .blog-slider__dot-{{ block_id }}.active {
+    background-color: {{ block.settings.dot_active_color }};
+    opacity: 1;
+    width: {{ block.settings.dot_active_width }}px;
+    border-radius: {{ block.settings.dot_active_radius }}px;
+  }
+
+  .blog-slider__empty-{{ block_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: {{ block.settings.text_color }};
+  }
+
+  /* Responsive */
+  @media screen and (max-width: 989px) {
+    .blog-slider__card-{{ block_id }} {
+      flex: 0 0 calc((100% - {{ block.settings.card_gap }}px) / 2);
+    }
+
+    .blog-slider__heading-{{ block_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.85);
+    }
+
+    .blog-slider__content-{{ block_id }} {
+      padding: {{ block.settings.tablet_card_padding }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .blog-slider-{{ block_id }} {
+      padding: {{ block.settings.mobile_section_padding }}px 16px;
+    }
+
+    .blog-slider__card-{{ block_id }} {
+      flex: 0 0 100%;
+    }
+
+    .blog-slider__heading-{{ block_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.7);
+    }
+
+    .blog-slider__content-{{ block_id }} {
+      padding: {{ block.settings.mobile_card_padding }}px;
+    }
+
+    .blog-slider__title-{{ block_id }} {
+      font-size: calc({{ block.settings.card_title_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<blog-slider-{{ block_id }}
+  class="blog-slider-{{ block_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="blog-slider__container-{{ block_id }}">
+    {% if block.settings.heading != blank or block.settings.subheading != blank %}
+      <div class="blog-slider__header-{{ block_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="blog-slider__heading-{{ block_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+        {% if block.settings.subheading != blank %}
+          <p class="blog-slider__subheading-{{ block_id }}">{{ block.settings.subheading }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.blog != blank %}
+      {% assign articles_list = block.settings.blog.articles %}
+      {% assign max_posts = block.settings.max_posts %}
+
+      {% if articles_list.size > 0 %}
+        <div class="blog-slider__wrapper-{{ block_id }}">
+          <div class="blog-slider__track-{{ block_id }}" data-slider-track>
+            {% for article in articles_list %}
+              {% if forloop.index > max_posts %}
+                {% break %}
+              {% endif %}
+
+              <div class="blog-slider__card-{{ block_id }}">
+                <a href="{{ article.url }}" class="blog-slider__image-wrapper-{{ block_id }}">
+                  {% if article.image %}
+                    <img
+                      src="{{ article.image | image_url: width: 600 }}"
+                      alt="{{ article.image.alt | escape }}"
+                      class="blog-slider__image-{{ block_id }}"
+                      loading="lazy"
+                      width="600"
+                      height="400"
+                    >
+                  {% else %}
+                    <div class="blog-slider__image-placeholder-{{ block_id }}">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  {% endif %}
+                </a>
+                <div class="blog-slider__content-{{ block_id }}">
+                  {% if block.settings.show_date %}
+                    <div class="blog-slider__date-{{ block_id }}">
+                      {{ article.published_at | date: '%B %d, %Y' }}
+                    </div>
+                  {% endif %}
+                  <h3 class="blog-slider__title-{{ block_id }}">
+                    <a href="{{ article.url }}" class="blog-slider__title-link-{{ block_id }}">
+                      {{ article.title }}
+                    </a>
+                  </h3>
+                  {% if block.settings.show_excerpt %}
+                    <div class="blog-slider__excerpt-{{ block_id }}">
+                      {{ article.excerpt_or_content | strip_html | truncate: 120 }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.show_read_more %}
+                    <a href="{{ article.url }}" class="blog-slider__link-{{ block_id }}">
+                      <span>{{ block.settings.read_more_text }}</span>
+                      {% if block.settings.show_arrow %}
+                        <svg class="blog-slider__link-icon-{{ block_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                          <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                      {% endif %}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% assign article_count = 0 %}
+        {% for article in articles_list %}
+          {% if forloop.index > max_posts %}
+            {% break %}
+          {% endif %}
+          {% assign article_count = article_count | plus: 1 %}
+        {% endfor %}
+
+        {% if article_count > 3 %}
+          <div class="blog-slider__controls-{{ block_id }}">
+            <button
+              class="blog-slider__button-{{ block_id }}"
+              data-slider-prev
+              aria-label="Previous slide"
+            >
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="12 4 6 10 12 16"></polyline>
+              </svg>
+            </button>
+            <div class="blog-slider__dots-{{ block_id }}" data-slider-dots></div>
+            <button
+              class="blog-slider__button-{{ block_id }}"
+              data-slider-next
+              aria-label="Next slide"
+            >
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="8 4 14 10 8 16"></polyline>
+              </svg>
+            </button>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="blog-slider__empty-{{ block_id }}">
+          <p>No articles found in this blog.</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="blog-slider__empty-{{ block_id }}">
+        <p>Please select a blog to display articles.</p>
+      </div>
+    {% endif %}
+  </div>
+</blog-slider-{{ block_id }}>
+
+<script>
+  (function() {
+    class BlogSlider{{ block_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.slidesPerView = 3;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('[data-slider-track]');
+        this.prevButton = this.querySelector('[data-slider-prev]');
+        this.nextButton = this.querySelector('[data-slider-next]');
+        this.dotsContainer = this.querySelector('[data-slider-dots]');
+
+        if (!this.track) return;
+
+        this.cards = Array.from(this.track.children);
+        this.totalSlides = this.cards.length;
+
+        this.updateSlidesPerView();
+        this.createDots();
+        this.setupEventListeners();
+        this.updateSlider();
+
+        window.addEventListener('resize', () => {
+          this.updateSlidesPerView();
+          this.createDots();
+          this.currentSlide = Math.min(this.currentSlide, this.maxSlide);
+          this.updateSlider();
+        });
+      }
+
+      updateSlidesPerView() {
+        if (window.innerWidth <= 749) {
+          this.slidesPerView = 1;
+        } else if (window.innerWidth <= 989) {
+          this.slidesPerView = 2;
+        } else {
+          this.slidesPerView = 3;
+        }
+      }
+
+      createDots() {
+        if (!this.dotsContainer) return;
+
+        this.dotsContainer.innerHTML = '';
+        this.maxSlide = Math.max(0, this.totalSlides - this.slidesPerView);
+
+        for (let i = 0; i <= this.maxSlide; i++) {
+          const dot = document.createElement('button');
+          dot.classList.add('blog-slider__dot-{{ block_id }}');
+          dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+          dot.addEventListener('click', () => this.goToSlide(i));
+          this.dotsContainer.appendChild(dot);
+        }
+
+        this.dots = Array.from(this.dotsContainer.children);
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.prevSlide());
+        }
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.nextSlide());
+        }
+      }
+
+      goToSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.maxSlide));
+        this.updateSlider();
+      }
+
+      prevSlide() {
+        this.goToSlide(this.currentSlide - 1);
+      }
+
+      nextSlide() {
+        this.goToSlide(this.currentSlide + 1);
+      }
+
+      updateSlider() {
+        const translateX = -(this.currentSlide * (100 / this.slidesPerView));
+        this.track.style.transform = 'translateX(' + translateX + '%)';
+
+        if (this.dots) {
+          this.dots.forEach((dot, index) => {
+            if (index === this.currentSlide) {
+              dot.classList.add('active');
+            } else {
+              dot.classList.remove('active');
+            }
+          });
+        }
+
+        if (this.prevButton) {
+          this.prevButton.disabled = this.currentSlide === 0;
+        }
+
+        if (this.nextButton) {
+          this.nextButton.disabled = this.currentSlide >= this.maxSlide;
+        }
+      }
+    }
+
+    customElements.define('blog-slider-{{ block_id }}', BlogSlider{{ block_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Blog Slider v1",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 8,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 8,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Blog Selection"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "max_posts",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "label": "Maximum posts",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest Recipes"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Discover our newest culinary creations"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "min": 1.0,
+      "max": 1.5,
+      "step": 0.1,
+      "label": "Heading line height",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "min": -2,
+      "max": 3,
+      "step": 0.5,
+      "label": "Heading letter spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading margin bottom",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subheading size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "subheading_weight",
+      "label": "Subheading weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Header margin bottom",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Card Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show publish date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_read_more",
+      "label": "Show read more link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "label": "Read more text",
+      "default": "Read more"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "label": "Show arrow on link",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_ratio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image aspect ratio",
+      "default": 66,
+      "info": "66% = 3:2, 75% = 4:3, 56% = 16:9"
+    },
+    {
+      "type": "range",
+      "id": "card_hover_lift",
+      "min": -10,
+      "max": 0,
+      "step": 1,
+      "unit": "px",
+      "label": "Card hover lift",
+      "default": -4
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Card border width",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Card Shadow"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_x",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow X",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_y",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow Y",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "date_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Date size",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "date_weight",
+      "label": "Date weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "date_margin_bottom",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Date margin bottom",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 16,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Card title size",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "card_title_weight",
+      "label": "Card title weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "card_title_line_height",
+      "min": 1.1,
+      "max": 1.5,
+      "step": 0.1,
+      "label": "Card title line height",
+      "default": 1.3
+    },
+    {
+      "type": "range",
+      "id": "card_title_margin_bottom",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Card title margin bottom",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "excerpt_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Excerpt size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "excerpt_weight",
+      "label": "Excerpt weight",
+      "options": [
+        { "value": "300", "label": "Light" },
+        { "value": "400", "label": "Regular" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "excerpt_line_height",
+      "min": 1.4,
+      "max": 1.8,
+      "step": 0.1,
+      "label": "Excerpt line height",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "excerpt_margin_bottom",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Excerpt margin bottom",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Link size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "link_weight",
+      "label": "Link weight",
+      "options": [
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "link_uppercase",
+      "label": "Link text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "link_letter_spacing",
+      "min": 0,
+      "max": 2,
+      "step": 0.25,
+      "label": "Link letter spacing",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "range",
+      "id": "controls_margin_top",
+      "min": 20,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Controls margin top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "controls_gap",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Controls gap",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 36,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "label": "Button size",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 2,
+      "step": 1,
+      "unit": "px",
+      "label": "Button border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "dot_size",
+      "min": 6,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Dot size",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "dot_active_width",
+      "min": 16,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Active dot width",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "dot_active_radius",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Active dot radius",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "dots_gap",
+      "min": 4,
+      "max": 12,
+      "step": 2,
+      "unit": "px",
+      "label": "Dots gap",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "card_shadow_color",
+      "label": "Card shadow",
+      "default": "rgba(0, 0, 0, 0.1)"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "color",
+      "id": "date_color",
+      "label": "Date",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card title",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link",
+      "default": "#372352"
+    },
+    {
+      "type": "color",
+      "id": "link_hover_color",
+      "label": "Link hover",
+      "default": "#ff4315"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button icon",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#372352"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot",
+      "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active dot",
+      "default": "#372352"
+    },
+    {
+      "type": "header",
+      "content": "Responsive"
+    },
+    {
+      "type": "range",
+      "id": "tablet_card_padding",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Tablet card padding",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_padding",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile section padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_padding",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile card padding",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog Slider v1"
+    }
+  ]
+}
+{% endschema %}
