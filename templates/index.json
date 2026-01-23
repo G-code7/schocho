@@ -347,13 +347,13 @@
         "ai_gen_block_fb2d752_PBdGir": {
           "type": "ai_gen_block_fb2d752",
           "settings": {
-            "title": "<p>A Longevity Food <br/>Rooted in the Andes: <br/>PRONTO CHOCHO<br/><br/></p>",
+            "title": "<p>PRONTO CHOCHO</p><p>The longevity secret born</p><p>in the Andes<br/></p>",
             "paragraph": "<p>Known for its exceptional combination of protein quality, fiber, healthy fats, and micronutrients, <strong>chocho </strong>has fueled Andean communities for generations, and now it’s available to you, <strong>pronto</strong>!<br/><br/><em><strong>Real-food nourishment. Regenerative by Nature.<br/>Not ultra-processed. Simple. Traditional. Intentional.</strong></em><br/><br/><br/></p>",
             "title_size": 32,
             "title_size_mobile": 26,
             "title_weight": "700",
             "title_line_height": "1.1",
-            "title_uppercase": true,
+            "title_uppercase": false,
             "title_color": "#371e54",
             "title_margin_bottom": 0,
             "title_margin_bottom_mobile": 16,
@@ -1386,7 +1386,7 @@
         "background_color": "#f8f5f0",
         "table_background": "#ffffff",
         "table_border_color": "#e5e5e5",
-        "table_shadow_color": "rgba(0, 0, 0, 0.08)",
+        "table_shadow_color": "#00000014",
         "heading_color": "#1b1b1b",
         "text_color": "#4a4a4a",
         "header_row_background": "#f8f8f8",
@@ -1403,7 +1403,7 @@
         "check_bg_color": "#9b8ab8",
         "check_border_color": "#9b8ab8",
         "check_icon_color": "#ffffff",
-        "empty_bg_color": "transparent",
+        "empty_bg_color": "rgba(0,0,0,0)",
         "empty_border_color": "#d4d4d4",
         "tablet_header_padding": 18,
         "tablet_cell_padding": 16,
@@ -1905,6 +1905,7 @@
             "dot_color": "#d4d4d4",
             "dot_active_color": "#5c4d7d",
             "tablet_card_padding": 20,
+            "mobile_section_padding": 32,
             "mobile_card_padding": 18
           },
           "blocks": {}
