@@ -90,13 +90,21 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   }
 
-  /* Image Section */
+  /* Image Section - CORREGIDO: Toda la imagen es clickeable */
   .featured-blogs__image-wrapper-{{ section_id }} {
     position: relative;
     width: 100%;
     aspect-ratio: {{ section.settings.image_aspect_ratio }};
     overflow: hidden;
     background-color: {{ section.settings.image_background }};
+    display: block;
+  }
+
+  .featured-blogs__image-wrapper-{{ section_id }} a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
   }
 
   .featured-blogs__image-{{ section_id }} {
@@ -234,7 +242,7 @@
         <div class="featured-blogs__grid-{{ section_id }}">
           {% for article in articles %}
             <div class="featured-blogs__card-{{ section_id }}">
-              {%- comment -%} Image Section {%- endcomment -%}
+              {%- comment -%} Image Section - CORREGIDO: Toda la imagen es clickeable {%- endcomment -%}
               <div class="featured-blogs__image-wrapper-{{ section_id }}">
                 {% if article.image %}
                   <a href="{{ article.url }}">
@@ -248,9 +256,11 @@
                     >
                   </a>
                 {% else %}
-                  <div class="featured-blogs__placeholder-{{ section_id }}">
-                    {{ 'image' | placeholder_svg_tag }}
-                  </div>
+                  <a href="{{ article.url }}">
+                    <div class="featured-blogs__placeholder-{{ section_id }}">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  </a>
                 {% endif %}
               </div>
 
@@ -283,9 +293,11 @@
             {% for i in (1..3) %}
               <div class="featured-blogs__card-{{ section_id }}">
                 <div class="featured-blogs__image-wrapper-{{ section_id }}">
-                  <div class="featured-blogs__placeholder-{{ section_id }}">
-                    {{ 'image' | placeholder_svg_tag }}
-                  </div>
+                  <a href="#">
+                    <div class="featured-blogs__placeholder-{{ section_id }}">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  </a>
                 </div>
                 <div class="featured-blogs__info-{{ section_id }}">
                   {% if section.settings.show_date %}
@@ -317,9 +329,11 @@
           {% for i in (1..3) %}
             <div class="featured-blogs__card-{{ section_id }}">
               <div class="featured-blogs__image-wrapper-{{ section_id }}">
-                <div class="featured-blogs__placeholder-{{ section_id }}">
-                  {{ 'image' | placeholder_svg_tag }}
-                </div>
+                <a href="#">
+                  <div class="featured-blogs__placeholder-{{ section_id }}">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                </a>
               </div>
               <div class="featured-blogs__info-{{ section_id }}">
                 {% if section.settings.show_date %}
@@ -886,40 +900,6 @@
       "id": "excerpt_color",
       "label": "Excerpt color",
       "default": "#666666"
-    },
-    {
-      "type": "header",
-      "content": "Section Spacing"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 120,
-      "step": 5,
-      "unit": "px",
-      "label": "Top padding",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 120,
-      "step": 5,
-      "unit": "px",
-      "label": "Bottom padding",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "max_width",
-      "min": 1000,
-      "max": 1600,
-      "step": 50,
-      "unit": "px",
-      "label": "Max width",
-      "default": 1200
     }
   ],
   "presets": [
