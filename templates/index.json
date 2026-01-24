@@ -1643,7 +1643,7 @@
         "ai_gen_block_69d1b17_q8LEYg": {
           "type": "ai_gen_block_69d1b17",
           "settings": {
-            "blog": "recipes",
+            "blog": "blog",
             "max_posts": 5,
             "heading": "",
             "subheading": "",
@@ -1726,7 +1726,7 @@
             "dot_active_radius": 4,
             "dots_gap": 8,
             "background_color": "#bfacca",
-            "card_background": "#ffffff",
+            "card_background": "#b9a7c1",
             "card_border_color": "#e5e5e5",
             "card_shadow_color": "rgba(0, 0, 0, 0.1)",
             "heading_color": "#2a2a2a",
