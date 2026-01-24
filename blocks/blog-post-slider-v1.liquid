@@ -1,0 +1,932 @@
+{% liquid
+  assign section_id = section.id
+%}
+
+{% style %}
+  .featured-blogs-{{ section_id }} {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .featured-blogs__container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header - Title */
+  .featured-blogs__header-{{ section_id }} {
+    text-align: {{ section.settings.heading_alignment }};
+    margin-bottom: {{ section.settings.header_margin_bottom }}px;
+  }
+
+  .featured-blogs__title-{{ section_id }} {
+    font-size: {{ section.settings.heading_size }}px;
+    font-weight: {{ section.settings.heading_weight }};
+    color: {{ section.settings.heading_color }};
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: {{ section.settings.heading_letter_spacing }}em;
+    text-transform: {{ section.settings.heading_transform }};
+  }
+
+  .featured-blogs__subtitle-{{ section_id }} {
+    font-size: {{ section.settings.subtitle_size }}px;
+    color: {{ section.settings.subtitle_color }};
+    margin: 16px 0 0;
+    font-weight: 400;
+  }
+
+  /* Blogs Grid */
+  .featured-blogs__grid-wrapper-{{ section_id }} {
+    display: flex;
+    justify-content: center;
+  }
+
+  .featured-blogs__grid-{{ section_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, minmax(0, {{ section.settings.blog_max_width }}px));
+    gap: {{ section.settings.grid_gap }}px;
+    width: 100%;
+    max-width: calc(({{ section.settings.blog_max_width }}px * {{ section.settings.columns_desktop }}) + ({{ section.settings.grid_gap }}px * {{ section.settings.columns_desktop | minus: 1 }}));
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    .featured-blogs__grid-{{ section_id }} {
+      grid-template-columns: repeat(2, minmax(0, {{ section.settings.blog_max_width_tablet }}px));
+      max-width: calc(({{ section.settings.blog_max_width_tablet }}px * 2) + {{ section.settings.grid_gap }}px);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .featured-blogs__header-{{ section_id }} {
+      padding: 0 20px;
+    }
+
+    .featured-blogs__grid-{{ section_id }} {
+      grid-template-columns: repeat(1, minmax(0, {{ section.settings.blog_max_width_mobile }}px));
+      max-width: {{ section.settings.blog_max_width_mobile }}px;
+    }
+
+    .featured-blogs__title-{{ section_id }} {
+      font-size: {{ section.settings.heading_size_mobile }}px;
+    }
+  }
+
+  /* Blog Card con Fondo */
+  .featured-blogs__card-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    background-color: {{ section.settings.card_background }};
+    border-radius: {{ section.settings.card_border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+  }
+
+  .featured-blogs__card-{{ section_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Image Section */
+  .featured-blogs__image-wrapper-{{ section_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: {{ section.settings.image_aspect_ratio }};
+    overflow: hidden;
+    background-color: {{ section.settings.image_background }};
+  }
+
+  .featured-blogs__image-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ section.settings.image_fit }};
+    transition: transform {{ section.settings.transition_duration }}ms ease;
+  }
+
+  .featured-blogs__card-{{ section_id }}:hover .featured-blogs__image-{{ section_id }} {
+    transform: scale(1.05);
+  }
+
+  /* Blog Info */
+  .featured-blogs__info-{{ section_id }} {
+    padding: {{ section.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+  }
+
+  /* Date */
+  .featured-blogs__date-{{ section_id }} {
+    font-size: {{ section.settings.date_size }}px;
+    color: {{ section.settings.date_color }};
+    margin: 0;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  /* Blog Title */
+  .featured-blogs__blog-title-{{ section_id }} {
+    font-size: {{ section.settings.blog_title_size }}px;
+    font-weight: {{ section.settings.blog_title_weight }};
+    color: {{ section.settings.blog_title_color }};
+    margin: 0;
+    line-height: 1.3;
+    flex-grow: 1;
+  }
+
+  .featured-blogs__blog-title-{{ section_id }} a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .featured-blogs__blog-title-{{ section_id }} a:hover {
+    color: {{ section.settings.blog_title_hover }};
+  }
+
+  /* Excerpt */
+  .featured-blogs__excerpt-{{ section_id }} {
+    font-size: {{ section.settings.excerpt_size }}px;
+    color: {{ section.settings.excerpt_color }};
+    margin: 0;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: {{ section.settings.excerpt_lines }};
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Read More Button - Inspirado en tu diseño de productos */
+  .featured-blogs__read-more-{{ section_id }} {
+    margin-top: auto;
+    padding-top: 12px;
+  }
+
+  .featured-blogs__read-more-btn-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ section.settings.read_more_padding_y }}px {{ section.settings.read_more_padding_x }}px;
+    background-color: {{ section.settings.read_more_bg }};
+    color: {{ section.settings.read_more_color }};
+    border: {{ section.settings.read_more_border_width }}px solid {{ section.settings.read_more_border_color }};
+    border-radius: {{ section.settings.read_more_border_radius }}px;
+    font-size: {{ section.settings.read_more_font_size }}px;
+    font-weight: {{ section.settings.read_more_font_weight }};
+    text-decoration: none;
+    text-transform: {{ section.settings.read_more_text_transform }};
+    letter-spacing: {{ section.settings.read_more_letter_spacing }}em;
+    transition: all 0.3s ease;
+    line-height: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+
+  .featured-blogs__read-more-btn-{{ section_id }}:hover {
+    background-color: {{ section.settings.read_more_bg_hover }};
+    color: {{ section.settings.read_more_color_hover }};
+    border-color: {{ section.settings.read_more_border_hover }};
+    transform: translateY(-2px);
+  }
+
+  /* Placeholder */
+  .featured-blogs__placeholder-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+  }
+
+  .featured-blogs__placeholder-{{ section_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.3;
+  }
+{% endstyle %}
+
+<section class="featured-blogs-{{ section_id }}" data-section-id="{{ section_id }}" {{ section.shopify_attributes }}>
+  <div class="featured-blogs__container-{{ section_id }}">
+    {%- comment -%} Header with Title {%- endcomment -%}
+    {% if section.settings.heading != blank or section.settings.subtitle != blank %}
+      <div class="featured-blogs__header-{{ section_id }}">
+        {% if section.settings.heading != blank %}
+          <h2 class="featured-blogs__title-{{ section_id }}">{{ section.settings.heading }}</h2>
+        {% endif %}
+        {% if section.settings.subtitle != blank %}
+          <p class="featured-blogs__subtitle-{{ section_id }}">{{ section.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {%- comment -%} Blogs Grid {%- endcomment -%}
+    {% assign selected_blog = section.settings.blog %}
+    
+    {% if selected_blog != blank %}
+      {% assign articles = selected_blog.articles | limit: section.settings.max_posts %}
+      
+      <div class="featured-blogs__grid-wrapper-{{ section_id }}">
+        <div class="featured-blogs__grid-{{ section_id }}">
+          {% for article in articles %}
+            <div class="featured-blogs__card-{{ section_id }}">
+              {%- comment -%} Image Section {%- endcomment -%}
+              <div class="featured-blogs__image-wrapper-{{ section_id }}">
+                {% if article.image %}
+                  <a href="{{ article.url }}">
+                    <img
+                      src="{{ article.image | image_url: width: 800 }}"
+                      alt="{{ article.image.alt | default: article.title | escape }}"
+                      class="featured-blogs__image-{{ section_id }}"
+                      loading="lazy"
+                      width="800"
+                      height="{{ 800 | divided_by: article.image.aspect_ratio | round }}"
+                    >
+                  </a>
+                {% else %}
+                  <div class="featured-blogs__placeholder-{{ section_id }}">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </div>
+
+              {%- comment -%} Blog Info {%- endcomment -%}
+              <div class="featured-blogs__info-{{ section_id }}">
+                {% if section.settings.show_date %}
+                  <p class="featured-blogs__date-{{ section_id }}">
+                    {{ article.published_at | date: '%B %d, %Y' }}
+                  </p>
+                {% endif %}
+
+                <h3 class="featured-blogs__blog-title-{{ section_id }}">
+                  <a href="{{ article.url }}">{{ article.title }}</a>
+                </h3>
+
+                {% if section.settings.show_excerpt and article.excerpt_or_content != blank %}
+                  <div class="featured-blogs__excerpt-{{ section_id }}">
+                    {{ article.excerpt_or_content | strip_html | truncatewords: section.settings.excerpt_length }}
+                  </div>
+                {% endif %}
+
+                <div class="featured-blogs__read-more-{{ section_id }}">
+                  <a href="{{ article.url }}" class="featured-blogs__read-more-btn-{{ section_id }}">
+                    {{ section.settings.read_more_text }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            {% for i in (1..3) %}
+              <div class="featured-blogs__card-{{ section_id }}">
+                <div class="featured-blogs__image-wrapper-{{ section_id }}">
+                  <div class="featured-blogs__placeholder-{{ section_id }}">
+                    {{ 'image' | placeholder_svg_tag }}
+                  </div>
+                </div>
+                <div class="featured-blogs__info-{{ section_id }}">
+                  {% if section.settings.show_date %}
+                    <p class="featured-blogs__date-{{ section_id }}">January 01, 2024</p>
+                  {% endif %}
+                  <h3 class="featured-blogs__blog-title-{{ section_id }}">
+                    <a href="#">Sample Blog Post Title {{ i }}</a>
+                  </h3>
+                  {% if section.settings.show_excerpt %}
+                    <div class="featured-blogs__excerpt-{{ section_id }}">
+                      This is a sample excerpt for the blog post to give readers a preview of the content.
+                    </div>
+                  {% endif %}
+                  <div class="featured-blogs__read-more-{{ section_id }}">
+                    <a href="#" class="featured-blogs__read-more-btn-{{ section_id }}">
+                      {{ section.settings.read_more_text }}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      {%- comment -%} Placeholder cuando no hay blog seleccionado {%- endcomment -%}
+      <div class="featured-blogs__grid-wrapper-{{ section_id }}">
+        <div class="featured-blogs__grid-{{ section_id }}">
+          {% for i in (1..3) %}
+            <div class="featured-blogs__card-{{ section_id }}">
+              <div class="featured-blogs__image-wrapper-{{ section_id }}">
+                <div class="featured-blogs__placeholder-{{ section_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              </div>
+              <div class="featured-blogs__info-{{ section_id }}">
+                {% if section.settings.show_date %}
+                  <p class="featured-blogs__date-{{ section_id }}">January 01, 2024</p>
+                {% endif %}
+                <h3 class="featured-blogs__blog-title-{{ section_id }}">
+                  <a href="#">Sample Blog Post Title {{ i }}</a>
+                </h3>
+                {% if section.settings.show_excerpt %}
+                  <div class="featured-blogs__excerpt-{{ section_id }}">
+                    This is a sample excerpt for the blog post to give readers a preview of the content.
+                  </div>
+                {% endif %}
+                <div class="featured-blogs__read-more-{{ section_id }}">
+                  <a href="#" class="featured-blogs__read-more-btn-{{ section_id }}">
+                    {{ section.settings.read_more_text }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {%- comment -%} View All Button {%- endcomment -%}
+    {% if section.settings.show_view_all and selected_blog != blank %}
+      <div class="featured-blogs__view-all-{{ section_id }}" style="text-align: center; margin-top: {{ section.settings.view_all_margin_top }}px;">
+        <a href="{{ selected_blog.url }}" class="featured-blogs__read-more-btn-{{ section_id }}">
+          {{ section.settings.view_all_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Blogs Grid",
+  "tag": "section",
+  "class": "featured-blogs-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Blog Selection"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Select Blog",
+      "info": "Choose the blog to display posts from"
+    },
+    {
+      "type": "range",
+      "id": "max_posts",
+      "min": 2,
+      "max": 7,
+      "step": 1,
+      "label": "Maximum posts to show",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest Recipes"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Discover our newest culinary creations"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (desktop)",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 18,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size (mobile)",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "heading_transform",
+      "label": "Text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "lowercase", "label": "Lowercase" },
+        { "value": "capitalize", "label": "Capitalize" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "label": "Letter spacing",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "header_margin_bottom",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Header bottom margin",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card Design"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#E5E4E3"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Grid & Blog Size"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns (desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "blog_max_width",
+      "min": 200,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Blog max width (desktop)",
+      "default": 320
+    },
+    {
+      "type": "range",
+      "id": "blog_max_width_tablet",
+      "min": 180,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Blog max width (tablet)",
+      "default": 280
+    },
+    {
+      "type": "range",
+      "id": "blog_max_width_mobile",
+      "min": 200,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Blog width (mobile)",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between blogs",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Image Settings"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "3/4", "label": "Portrait (3:4)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "4/3", "label": "Landscape (4:3)" },
+        { "value": "16/9", "label": "Wide (16:9)" }
+      ],
+      "default": "3/4"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "color",
+      "id": "image_background",
+      "label": "Image background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "transition_duration",
+      "min": 100,
+      "max": 800,
+      "step": 50,
+      "unit": "ms",
+      "label": "Hover transition duration",
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "date_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Date size",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "excerpt_length",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "label": "Excerpt word length",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "excerpt_lines",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Excerpt lines (clamp)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "excerpt_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Excerpt size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Blog Title"
+    },
+    {
+      "type": "range",
+      "id": "blog_title_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Blog title size",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "blog_title_weight",
+      "label": "Blog title weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "header",
+      "content": "Read More Button"
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "label": "Button text",
+      "default": "Read More"
+    },
+    {
+      "type": "color",
+      "id": "read_more_bg",
+      "label": "Background",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "color",
+      "id": "read_more_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "read_more_border_color",
+      "label": "Border color",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "range",
+      "id": "read_more_border_width",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "read_more_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 25
+    },
+    {
+      "type": "color",
+      "id": "read_more_bg_hover",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "read_more_color_hover",
+      "label": "Hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "read_more_border_hover",
+      "label": "Hover border",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "read_more_padding_y",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "read_more_padding_x",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "read_more_font_size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "read_more_font_weight",
+      "label": "Font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "read_more_text_transform",
+      "label": "Text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "read_more_letter_spacing",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "label": "Letter spacing",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "View All Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show View All button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Button text",
+      "default": "View All Recipes"
+    },
+    {
+      "type": "range",
+      "id": "view_all_margin_top",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Top margin",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#f7f5f3"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "blog_title_color",
+      "label": "Blog title color",
+      "default": "#1b1b1b"
+    },
+    {
+      "type": "color",
+      "id": "blog_title_hover",
+      "label": "Blog title hover",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "date_color",
+      "label": "Date color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "excerpt_color",
+      "label": "Excerpt color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Max width",
+      "default": 1200
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Blogs Grid",
+      "category": "Blog"
+    }
+  ]
+}
+{% endschema %}
