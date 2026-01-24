@@ -840,6 +840,29 @@
         "padding-block-end": 0
       }
     },
+    "marquee_yYUgWk": {
+      "type": "marquee",
+      "blocks": {
+        "text_FDr4BY": {
+          "type": "text",
+          "settings": {
+            "text": "",
+            "type_preset": "custom"
+          }
+        }
+      },
+      "block_order": [
+        "text_FDr4BY"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "scheme-4",
+        "padding-block-start": 24,
+        "padding-block-end": 24,
+        "gap_between_elements": 24
+      }
+    },
     "hero_CXJpkj": {
       "type": "hero",
       "blocks": {
@@ -1061,29 +1084,6 @@
         "reflection_opacity": 75,
         "padding-block-start": 40,
         "padding-block-end": 40
-      }
-    },
-    "marquee_yYUgWk": {
-      "type": "marquee",
-      "blocks": {
-        "text_FDr4BY": {
-          "type": "text",
-          "settings": {
-            "text": "",
-            "type_preset": "custom"
-          }
-        }
-      },
-      "block_order": [
-        "text_FDr4BY"
-      ],
-      "name": "t:names.marquee_section",
-      "settings": {
-        "movement_direction": "normal",
-        "color_scheme": "scheme-4",
-        "padding-block-start": 24,
-        "padding-block-end": 24,
-        "gap_between_elements": 24
       }
     },
     "dual_product_showcase_v2_wf3chC": {
@@ -1526,55 +1526,65 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_bLYCdW": {
-                  "type": "text",
-                  "name": "t:names.heading",
+                "ai_gen_block_fb2d752_3jtcCq": {
+                  "type": "ai_gen_block_fb2d752",
                   "settings": {
-                    "text": "<h2>One ingredient.<br/>Endless benefits. Just chocho</h2>",
-                    "width": "100%",
-                    "max_width": "normal",
-                    "alignment": "center",
-                    "type_preset": "custom",
-                    "font": "var(--font-heading--family)",
-                    "font_size": "1.5rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "text_GG9XUz": {
-                  "type": "text",
-                  "name": "t:names.text",
-                  "settings": {
-                    "text": "<p>From smoothies to soups, plant-based lattes to baked goods, PRONTO CHOCHO® blends smoothly into any routine, from the  gym bag to the kitchen.<br/><br/>It’s a family-friendly, plant-powered upgrade for every stage of life — from childhood to active aging — delivering clean, balanced, whole-food protein that fits every lifestyle.</p>",
-                    "width": "100%",
-                    "max_width": "normal",
-                    "alignment": "center",
-                    "type_preset": "rte",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "title": "<p>One ingredient.<br/>Endless benefits. Just chocho<br/><br/></p>",
+                    "paragraph": "<p>From smoothies to soups, plant-based lattes to baked goods, PRONTO CHOCHO® blends smoothly into any routine, from the  gym bag to the kitchen.<br/><br/>It’s a family-friendly, plant-powered upgrade for every stage of life — from childhood to active aging — delivering clean, balanced, whole-food protein that fits every lifestyle.<br/></p>",
+                    "title_size": 32,
+                    "title_size_mobile": 26,
+                    "title_weight": "700",
+                    "title_line_height": "1.1",
+                    "title_uppercase": false,
+                    "title_color": "#371e54",
+                    "title_margin_bottom": 0,
+                    "title_margin_bottom_mobile": 16,
+                    "paragraph_size": 16,
+                    "paragraph_size_mobile": 14,
+                    "paragraph_weight": "400",
+                    "paragraph_line_height": "1.6",
+                    "paragraph_color": "#371e54",
+                    "paragraph_margin_bottom": 20,
+                    "paragraph_margin_bottom_mobile": 24,
+                    "button_text": "",
+                    "button_link": "",
+                    "button_show_arrow": false,
+                    "button_font_size": 15,
+                    "button_font_weight": "600",
+                    "button_background_color": "#371561",
+                    "button_text_color": "#ffffff",
+                    "button_border_color": "#1a1a1a",
+                    "button_hover_background_color": "#761e0b",
+                    "button_hover_text_color": "#ffffff",
+                    "button_hover_border_color": "#333333",
+                    "button_padding_y": 14,
+                    "button_padding_x": 28,
+                    "button_border_width": 0,
+                    "button_border_radius": 24,
+                    "button_full_width_mobile": false,
+                    "floating_image": "shopify://shop_images/plate-chocho-img.webp",
+                    "image_position": "right",
+                    "image_offset": 20,
+                    "image_size": 460,
+                    "image_size_tablet": 250,
+                    "image_size_mobile": 150,
+                    "image_shadow": false,
+                    "rotation_speed": 0.4,
+                    "image_mobile_behavior": "reduce",
+                    "image_mobile_opacity": 0.5,
+                    "image_mobile_margin": 20,
+                    "content_alignment": "center",
+                    "content_alignment_mobile": "center",
+                    "content_max_width": 550,
+                    "container_max_width": 1200,
+                    "container_padding": 40,
+                    "container_padding_mobile": 20,
+                    "background_color": "#c0aec9",
+                    "min_height": 400,
+                    "section_padding_top": 80,
+                    "section_padding_bottom": 0,
+                    "section_padding_top_mobile": 50,
+                    "section_padding_bottom_mobile": 50
                   },
                   "blocks": {}
                 },
@@ -1621,8 +1631,7 @@
                 }
               },
               "block_order": [
-                "text_bLYCdW",
-                "text_GG9XUz",
+                "ai_gen_block_fb2d752_3jtcCq",
                 "button_96Gw6p"
               ]
             }
@@ -1673,7 +1682,7 @@
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 12,
-        "section_width": "page-width",
+        "section_width": "full-width",
         "section_height": "",
         "section_height_custom": 50,
         "color_scheme": "scheme-3",
