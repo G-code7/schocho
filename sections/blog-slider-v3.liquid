@@ -330,24 +330,22 @@
               {% if forloop.index > max_posts %}{% break %}{% endif %}
 
               <article class="blog-slider__card-{{ section_id }}">
-                <a href="{{ article.url }}" class="blog-slider__image-wrapper-{{ section_id }}">
+                <div class="blog-slider__image-wrapper-{{ section_id }}">
                   {% if article.image %}
                     <img
-                      src="{{ article.image | image_url: width: 800 }}"
-                      srcset="{{ article.image | image_url: width: 400 }} 400w, {{ article.image | image_url: width: 600 }} 600w, {{ article.image | image_url: width: 800 }} 800w"
-                      sizes="(max-width: 749px) 100vw, (max-width: 989px) 50vw, 33vw"
+                      src="{{ article.image | image_url: width: 600 }}"
                       alt="{{ article.image.alt | default: article.title | escape }}"
                       class="blog-slider__image-{{ section_id }}"
                       loading="lazy"
-                      width="{{ article.image.width }}"
-                      height="{{ article.image.height }}"
+                      width="600"
+                      height="400"
                     >
                   {% else %}
                     <div class="blog-slider__image-placeholder-{{ section_id }}">
                       {{ 'image' | placeholder_svg_tag }}
                     </div>
                   {% endif %}
-                </a>
+                </div>
 
                 <div class="blog-slider__content-{{ section_id }}">
                   {% if section.settings.show_date %}
@@ -508,7 +506,7 @@
 
 {% schema %}
 {
-  "name": "Blog Slider v2",
+  "name": "Blog Slider v3",
   "tag": "section",
   "settings": [
     { "type": "header", "content": "━━━ BLOG ━━━" },
