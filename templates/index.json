@@ -1681,14 +1681,14 @@
         "padding_top": 80,
         "padding_bottom": 80,
         "container_padding": 20,
-        "header_margin_bottom": 40,
+        "header_margin_bottom": 20,
         "eyebrow": "",
-        "heading": "Latest Recipes",
-        "subheading": "Discover our newest culinary creations",
+        "heading": "",
+        "subheading": "",
         "heading_alignment": "center",
         "heading_size": 36,
         "heading_weight": "700",
-        "subheading_size": 16,
+        "subheading_size": 15,
         "card_gap": 32,
         "card_border_radius": 12,
         "card_border_width": 1,
@@ -1824,58 +1824,6 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_EHAYtw": {
-                  "type": "text",
-                  "name": "t:names.heading",
-                  "settings": {
-                    "text": "<h2>One ingredient.<br/>Endless benefits. Just chocho</h2>",
-                    "width": "100%",
-                    "max_width": "normal",
-                    "alignment": "center",
-                    "type_preset": "custom",
-                    "font": "var(--font-heading--family)",
-                    "font_size": "1.5rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "text_4aPH3d": {
-                  "type": "text",
-                  "name": "t:names.text",
-                  "settings": {
-                    "text": "<p>From smoothies to soups, plant-based lattes to baked goods, PRONTO CHOCHO® blends smoothly into any routine, from the  gym bag to the kitchen.<br/><br/>It’s a family-friendly, plant-powered upgrade for every stage of life — from childhood to active aging — delivering clean, balanced, whole-food protein that fits every lifestyle.</p>",
-                    "width": "100%",
-                    "max_width": "normal",
-                    "alignment": "center",
-                    "type_preset": "rte",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
                 "blog_slider_v2_cPmjBk": {
                   "type": "blog-slider-v2",
                   "name": "Blog Slider - Elegante",
@@ -1924,42 +1872,10 @@
                     "empty_message": "No articles found"
                   },
                   "blocks": {}
-                },
-                "ai_gen_block_45634be_Rjr8gD": {
-                  "type": "ai_gen_block_45634be",
-                  "settings": {
-                    "blog": "blog",
-                    "articles_limit": 5,
-                    "title_size": 32,
-                    "title_color": "#3e2563",
-                    "description_size": 16,
-                    "description_color": "#3e2563",
-                    "content_background_color": "#e3dad1",
-                    "content_border_radius": 8,
-                    "button_text": "Leer más",
-                    "button_text_size": 16,
-                    "button_background": "#3e2563",
-                    "button_text_color": "#ffffff",
-                    "button_hover_background": "#7428dc",
-                    "button_hover_text_color": "#ffffff",
-                    "button_border_radius": 8,
-                    "image_border_radius": 8,
-                    "arrow_background": "#3e2563",
-                    "arrow_color": "#ffffff",
-                    "arrow_hover_background": "#7428dc",
-                    "dot_color": "#3e2563",
-                    "dot_active_color": "#7428dc",
-                    "background_color": "#eeebe5",
-                    "desktop_width_percent": 80
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
-                "text_EHAYtw",
-                "text_4aPH3d",
-                "blog_slider_v2_cPmjBk",
-                "ai_gen_block_45634be_Rjr8gD"
+                "blog_slider_v2_cPmjBk"
               ]
             }
           },
