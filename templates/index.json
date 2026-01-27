@@ -1828,7 +1828,7 @@
                   "type": "blog-slider-v2",
                   "name": "Blog Slider - Elegante",
                   "settings": {
-                    "blog": "recipes",
+                    "blog": "blog",
                     "articles_limit": 5,
                     "section_eyebrow": "FROM THE BLOG",
                     "section_title": "Insights & Stories",
