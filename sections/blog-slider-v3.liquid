@@ -131,7 +131,6 @@
     font-weight: {{ section.settings.card_title_weight }};
     line-height: {{ section.settings.card_title_line_height }};
     margin: 0 0 {{ section.settings.card_title_margin }}px 0;
-    text-transform: capitalize;
     transition: color 0.3s ease;
   }
 
@@ -287,6 +286,7 @@
 
     .blog-slider__title-{{ section_id }} {
       font-size: calc({{ section.settings.card_title_size }}px * 0.9);
+      text-transform: capitalize;
     }
 
     .blog-slider__content-{{ section_id }} {
