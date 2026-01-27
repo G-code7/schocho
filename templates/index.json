@@ -1568,7 +1568,7 @@
                     "button_full_width_mobile": false,
                     "show_left_image": true,
                     "left_image": "shopify://shop_images/recipe-blog-pronto-chocho.webp",
-                    "left_image_size": 400,
+                    "left_image_size": 500,
                     "left_image_size_tablet": 225,
                     "left_image_size_mobile": 120,
                     "left_image_offset": 40,
