@@ -1,5 +1,3 @@
-
-
 {%- doc -%}
   Renders the blog post featured image block.
 {%- enddoc -%}
@@ -7,10 +5,12 @@
 {% liquid
   assign block_settings = block.settings
   assign image = closest.article.image
+  assign border_radius = block_settings.border_radius | default: 0
+  assign alignment = block_settings.horizontal_alignment | default: 'center'
 %}
 
 <div
-  class="blog-post-featured-image blog-post-featured-image--{{ block.id }} blog-post-featured-image--height-{{ block_settings.height }} spacing-style size-style"
+  class="blog-post-featured-image blog-post-featured-image--{{ block.id }} blog-post-featured-image--height-{{ block_settings.height }} blog-post-featured-image--align-{{ alignment }} spacing-style size-style"
   style="
     --ratio: {% case block_settings.image_ratio %}
       {% when 'landscape' %}16 / 9
@@ -18,6 +18,7 @@
       {% when 'adapt' %}{{ image.aspect_ratio | default: 1 }}
       {% else %}1
     {% endcase %};
+    --border-radius: {{ border_radius }}px;
     {% render 'size-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
   "
@@ -47,10 +48,13 @@
   .blog-post-featured-image {
     --width: 100%;
     --custom-width: 100%;
+    --border-radius: 0;
 
     display: block;
     position: relative;
     width: var(--width);
+    border-radius: var(--border-radius);
+    overflow: hidden;
   }
 
   .blog-post-featured-image.size-style {
@@ -71,6 +75,21 @@
     height: 100%;
     object-fit: cover;
     object-position: center center;
+    border-radius: var(--border-radius);
+  }
+
+  /* Alignment Classes */
+  .blog-post-featured-image--align-left {
+    margin-right: auto;
+  }
+
+  .blog-post-featured-image--align-center {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .blog-post-featured-image--align-right {
+    margin-left: auto;
   }
 
   @media screen and (max-width: 749px) {
@@ -120,6 +139,26 @@
     },
     {
       "type": "select",
+      "id": "horizontal_alignment",
+      "label": "Horizontal alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
       "id": "width",
       "label": "t:settings.width_desktop",
       "options": [
@@ -147,7 +186,7 @@
       "step": 1,
       "unit": "%",
       "default": 100,
-      "visible_if": "{{ block.settings.width == 'custom' }}"
+      "info": "Note: Custom width is required for alignment to work properly"
     },
     {
       "type": "select",
@@ -177,8 +216,7 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 100,
-      "visible_if": "{{ block.settings.width_mobile == 'custom' }}"
+      "default": 100
     },
     {
       "type": "select",
@@ -195,7 +233,7 @@
         }
       ],
       "default": "fit",
-      "visible_if": "{{ block.settings.image_ratio == 'adapt' }}"
+      "info": "Visible when aspect ratio is set to 'Auto'"
     },
     {
       "type": "header",
@@ -225,8 +263,7 @@
       "step": 1,
       "unit": "px",
       "label": "t:settings.thickness",
-      "default": 1,
-      "visible_if": "{{ block.settings.border != 'none' }}"
+      "default": 1
     },
     {
       "type": "range",
@@ -236,18 +273,18 @@
       "step": 1,
       "unit": "%",
       "label": "t:settings.opacity",
-      "default": 100,
-      "visible_if": "{{ block.settings.border != 'none' }}"
+      "default": 100
     },
     {
       "type": "range",
       "id": "border_radius",
-      "label": "t:settings.border_radius",
+      "label": "Border radius",
       "min": 0,
       "max": 100,
       "step": 1,
       "unit": "px",
-      "default": 0
+      "default": 0,
+      "info": "Set corner radius for rounded corners"
     },
     {
       "type": "header",
