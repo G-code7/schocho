@@ -17,7 +17,9 @@
     padding: 0 {{ block.settings.horizontal_padding }}px;
   }
 
-  /* Header de sección */
+  /* ═══════════════════════════════════════
+     HEADER DE SECCIÓN
+  ═══════════════════════════════════════ */
   .blog-slider__header-{{ block.id }} {
     text-align: {{ block.settings.header_alignment }};
     margin-bottom: {{ block.settings.header_spacing }}px;
@@ -41,23 +43,30 @@
     font-weight: 400;
   }
 
-  /* Slider Viewport */
+  /* ═══════════════════════════════════════
+     SLIDER STRUCTURE - CRÍTICO
+  ═══════════════════════════════════════ */
+  
+  /* Viewport: contiene todo y oculta el overflow */
   .blog-slider__viewport-{{ block.id }} {
-    overflow: hidden;
     position: relative;
+    overflow: hidden;
+    width: 100%;
   }
 
-  /* Slider Track */
+  /* Track: contenedor flex que se desplaza */
   .blog-slider__track-{{ block.id }} {
     display: flex;
+    width: 100%;
     transition: transform 0.6s cubic-bezier(0.83, 0, 0.17, 1);
     will-change: transform;
   }
 
-  /* Cada slide ocupa 100% */
+  /* Cada slide ocupa 100% del ancho */
   .blog-slider__slide-{{ block.id }} {
-    min-width: 100%;
-    flex-shrink: 0;
+    flex: 0 0 100%;
+    min-width: 0;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: {{ block.settings.gap_between }}px;
@@ -75,6 +84,7 @@
     padding: {{ block.settings.content_padding }}px;
     position: relative;
     aspect-ratio: {{ block.settings.content_aspect_ratio }};
+    min-height: 0;
   }
 
   .blog-slider__content-inner-{{ block.id }} {
@@ -104,10 +114,11 @@
   .blog-slider__article-title-{{ block.id }} a {
     color: inherit;
     text-decoration: none;
+    transition: opacity 0.3s ease;
   }
 
   .blog-slider__article-title-{{ block.id }} a:hover {
-    opacity: 0.8;
+    opacity: 0.7;
   }
 
   .blog-slider__description-{{ block.id }} {
@@ -118,7 +129,9 @@
     margin: 0;
   }
 
-  /* Botón con flecha animada */
+  /* ═══════════════════════════════════════
+     BOTÓN CON FLECHA ANIMADA
+  ═══════════════════════════════════════ */
   .blog-slider__button-wrapper-{{ block.id }} {
     display: flex;
     align-items: center;
@@ -168,12 +181,13 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transition: transform 0.4s cubic-bezier(0.83, 0, 0.17, 1);
+    transition: transform 0.4s cubic-bezier(0.83, 0, 0.17, 1), opacity 0.4s ease;
     color: var(--color-foreground);
   }
 
   .icon-arrow-animated-item--1-{{ block.id }} {
     transform: translate(-50%, -50%);
+    opacity: 1;
   }
 
   .icon-arrow-animated-item--2-{{ block.id }} {
@@ -205,6 +219,7 @@
     overflow: hidden;
     background-color: {{ block.settings.image_background }};
     aspect-ratio: {{ block.settings.content_aspect_ratio }};
+    min-height: 0;
   }
 
   .blog-slider__media-link-{{ block.id }} {
@@ -271,7 +286,7 @@
     padding: 0;
   }
 
-  .blog-slider__arrow-{{ block.id }}:hover {
+  .blog-slider__arrow-{{ block.id }}:hover:not(:disabled) {
     background-color: var(--color-foreground);
     color: var(--color-background-1);
     border-color: var(--color-foreground);
@@ -280,12 +295,6 @@
   .blog-slider__arrow-{{ block.id }}:disabled {
     opacity: 0.3;
     cursor: not-allowed;
-  }
-
-  .blog-slider__arrow-{{ block.id }}:disabled:hover {
-    background-color: transparent;
-    color: var(--color-foreground);
-    border-color: var(--color-border);
   }
 
   .blog-slider__arrow-{{ block.id }} svg {
@@ -313,7 +322,7 @@
 
   .blog-slider__dot-{{ block.id }}.active {
     opacity: 1;
-    transform: scale(1.3);
+    transform: scale(1.4);
   }
 
   .blog-slider__dot-{{ block.id }}:hover:not(.active) {
@@ -328,10 +337,6 @@
     letter-spacing: 0.05em;
   }
 
-  .blog-slider__counter-current-{{ block.id }} {
-    color: var(--color-foreground);
-  }
-
   .blog-slider__counter-total-{{ block.id }} {
     opacity: 0.5;
   }
@@ -343,7 +348,6 @@
     color: var(--color-foreground);
     font-size: 16px;
     background-color: var(--color-background-1);
-    border-radius: 8px;
     opacity: 0.7;
   }
 
@@ -356,7 +360,6 @@
       gap: 0;
     }
 
-    /* En móvil: imagen arriba, contenido abajo */
     .blog-slider__content-{{ block.id }} {
       order: 2;
       aspect-ratio: auto;
@@ -369,7 +372,7 @@
     }
 
     .blog-slider__article-title-{{ block.id }} {
-      font-size: {{ block.settings.article_title_size | times: 0.8 | round }}px;
+      font-size: {{ block.settings.article_title_size | times: 0.85 | round }}px;
     }
   }
 
@@ -427,7 +430,7 @@
   }
 {%- endstyle -%}
 
-<div class="blog-slider-{{ block.id }}" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+<div class="blog-slider-{{ block.id }}" data-blog-slider="{{ block.id }}" {{ block.shopify_attributes }}>
   <div class="blog-slider__container-{{ block.id }}">
     
     {%- if block.settings.section_eyebrow != blank or block.settings.section_title != blank -%}
@@ -445,12 +448,14 @@
     {%- if blog != blank and blog.articles_count > 0 -%}
       {%- assign articles_limit = block.settings.articles_limit | at_most: blog.articles_count -%}
       
+      {%- comment -%} ══════ SLIDER VIEWPORT ══════ {%- endcomment -%}
       <div class="blog-slider__viewport-{{ block.id }}">
         <div class="blog-slider__track-{{ block.id }}" data-slider-track>
+          
           {%- for article in blog.articles limit: articles_limit -%}
-            <div class="blog-slider__slide-{{ block.id }}" data-slide-index="{{ forloop.index0 }}">
+            <div class="blog-slider__slide-{{ block.id }}" data-slide="{{ forloop.index0 }}">
               
-              {%- comment -%} ══════ COLUMNA IZQUIERDA: CONTENIDO ══════ {%- endcomment -%}
+              {%- comment -%} COLUMNA IZQUIERDA: CONTENIDO {%- endcomment -%}
               <div class="blog-slider__content-{{ block.id }}">
                 <div class="blog-slider__content-inner-{{ block.id }}">
                   
@@ -478,7 +483,7 @@
 
                   {%- if block.settings.show_button -%}
                     <div class="blog-slider__button-wrapper-{{ block.id }}">
-                      <a href="{{ article.url }}" class="icon-arrow-animated-{{ block.id }}" aria-label="{{ block.settings.button_text }}">
+                      <a href="{{ article.url }}" class="icon-arrow-animated-{{ block.id }}" aria-label="{{ block.settings.button_text | default: 'Read article' }}">
                         <svg class="icon-arrow-animated-svg-{{ block.id }}" width="64" height="32" viewBox="0 0 64 32" fill="none">
                           <path class="icon-arrow-animated-bg-{{ block.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
                           <path class="icon-arrow-animated-fill-{{ block.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
@@ -502,7 +507,7 @@
                 </div>
               </div>
 
-              {%- comment -%} ══════ COLUMNA DERECHA: IMAGEN ══════ {%- endcomment -%}
+              {%- comment -%} COLUMNA DERECHA: IMAGEN {%- endcomment -%}
               <div class="blog-slider__media-{{ block.id }}">
                 <a href="{{ article.url }}" class="blog-slider__media-link-{{ block.id }}" aria-label="{{ article.title | escape }}">
                   {%- if article.image -%}
@@ -530,9 +535,11 @@
 
             </div>
           {%- endfor -%}
+          
         </div>
       </div>
 
+      {%- comment -%} ══════ CONTROLES ══════ {%- endcomment -%}
       {%- if articles_limit > 1 and block.settings.show_controls -%}
         <div class="blog-slider__controls-{{ block.id }}">
           
@@ -553,7 +560,7 @@
 
           {%- if block.settings.show_counter -%}
             <div class="blog-slider__counter-{{ block.id }}">
-              <span class="blog-slider__counter-current-{{ block.id }}" data-slider-current>01</span>
+              <span data-slider-current>01</span>
               <span class="blog-slider__counter-total-{{ block.id }}"> / {{ articles_limit | prepend: '00' | slice: -2, 2 }}</span>
             </div>
           {%- endif -%}
@@ -587,49 +594,54 @@
 
 <script>
 (function() {
-  const blockId = '{{ block.id }}';
-  const container = document.querySelector(`[data-block-id="${blockId}"]`);
+  const BLOCK_ID = '{{ block.id }}';
+  const container = document.querySelector(`[data-blog-slider="${BLOCK_ID}"]`);
   if (!container) return;
 
   const track = container.querySelector('[data-slider-track]');
   if (!track) return;
 
-  const slides = container.querySelectorAll('[data-slide-index]');
+  const slides = container.querySelectorAll('[data-slide]');
+  const totalSlides = slides.length;
+  
+  // Exit if only one slide
+  if (totalSlides <= 1) return;
+
   const prevBtn = container.querySelector('[data-slider-prev]');
   const nextBtn = container.querySelector('[data-slider-next]');
   const dots = container.querySelectorAll('[data-slider-dot]');
   const counterCurrent = container.querySelector('[data-slider-current]');
 
-  const totalSlides = slides.length;
-  if (totalSlides <= 1) return;
-
   let currentSlide = 0;
-  const loop = {{ block.settings.enable_loop | default: true }};
+  const enableLoop = {{ block.settings.enable_loop | default: true }};
   const autoplay = {{ block.settings.autoplay | default: false }};
   const autoplayDelay = {{ block.settings.autoplay_delay | default: 5000 }};
   let autoplayInterval = null;
 
   function updateSlider() {
+    // Move track
     track.style.transform = `translateX(-${currentSlide * 100}%)`;
 
+    // Update dots
     dots.forEach((dot, i) => {
       dot.classList.toggle('active', i === currentSlide);
     });
 
+    // Update counter
     if (counterCurrent) {
-      counterCurrent.textContent = (currentSlide + 1).toString().padStart(2, '0');
+      counterCurrent.textContent = String(currentSlide + 1).padStart(2, '0');
     }
 
-    // Update arrow states if loop is disabled
-    if (!loop) {
+    // Update arrow states when loop is disabled
+    if (!enableLoop) {
       if (prevBtn) prevBtn.disabled = currentSlide === 0;
       if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
     }
   }
 
   function goToSlide(index) {
-    if (loop) {
-      currentSlide = (index + totalSlides) % totalSlides;
+    if (enableLoop) {
+      currentSlide = (index % totalSlides + totalSlides) % totalSlides;
     } else {
       currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
     }
@@ -645,7 +657,7 @@
   }
 
   function startAutoplay() {
-    if (!autoplay || autoplayDelay < 1000) return;
+    if (!autoplay || autoplayDelay < 2000) return;
     stopAutoplay();
     autoplayInterval = setInterval(nextSlide, autoplayDelay);
   }
@@ -657,25 +669,26 @@
     }
   }
 
-  // Event listeners
+  // Arrow buttons
   if (prevBtn) {
-    prevBtn.addEventListener('click', () => { 
-      stopAutoplay(); 
-      prevSlide(); 
-    });
-  }
-  
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => { 
-      stopAutoplay(); 
-      nextSlide(); 
+    prevBtn.addEventListener('click', function() {
+      stopAutoplay();
+      prevSlide();
     });
   }
 
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
       stopAutoplay();
-      const index = parseInt(dot.dataset.sliderDot, 10);
+      nextSlide();
+    });
+  }
+
+  // Dot buttons
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() {
+      stopAutoplay();
+      const index = parseInt(this.dataset.sliderDot, 10);
       goToSlide(index);
     });
   });
@@ -684,12 +697,12 @@
   let touchStartX = 0;
   let touchEndX = 0;
 
-  track.addEventListener('touchstart', (e) => {
+  track.addEventListener('touchstart', function(e) {
     touchStartX = e.changedTouches[0].screenX;
     stopAutoplay();
   }, { passive: true });
 
-  track.addEventListener('touchend', (e) => {
+  track.addEventListener('touchend', function(e) {
     touchEndX = e.changedTouches[0].screenX;
     const diff = touchStartX - touchEndX;
     if (Math.abs(diff) > 50) {
@@ -699,14 +712,20 @@
   }, { passive: true });
 
   // Keyboard navigation
-  container.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') { stopAutoplay(); prevSlide(); }
-    if (e.key === 'ArrowRight') { stopAutoplay(); nextSlide(); }
+  container.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') {
+      stopAutoplay();
+      prevSlide();
+    } else if (e.key === 'ArrowRight') {
+      stopAutoplay();
+      nextSlide();
+    }
   });
 
+  // Make focusable for keyboard
   container.setAttribute('tabindex', '0');
 
-  // Pause on hover
+  // Pause autoplay on hover
   container.addEventListener('mouseenter', stopAutoplay);
   container.addEventListener('mouseleave', startAutoplay);
 
@@ -718,7 +737,7 @@
 
 {% schema %}
 {
-  "name": "Blog Slider - Elegante",
+  "name": "Blog Slider",
   "settings": [
     {
       "type": "header",
@@ -890,11 +909,11 @@
       "type": "range",
       "id": "description_length",
       "min": 80,
-      "max": 350,
+      "max": 400,
       "step": 10,
       "label": "Description max characters",
       "default": 180,
-      "info": "Adjust to balance content with image height"
+      "info": "Adjust to balance content height"
     },
     {
       "type": "range",
@@ -1097,7 +1116,7 @@
   ],
   "presets": [
     {
-      "name": "Blog Slider - Elegante",
+      "name": "Blog Slider",
       "category": "Blog"
     }
   ]
