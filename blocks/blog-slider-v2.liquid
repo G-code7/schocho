@@ -33,7 +33,7 @@
     font-weight: 500;
   }
 
-  .blog-slider__title-{{ block.id }} {
+  .blog-slider__section-title-{{ block.id }} {
     font-size: {{ block.settings.title_size }}px;
     color: var(--color-foreground);
     margin: 0;
@@ -41,7 +41,7 @@
     font-weight: 400;
   }
 
-  /* Slider Viewport - AÑADIDO */
+  /* Slider Viewport */
   .blog-slider__viewport-{{ block.id }} {
     overflow: hidden;
     position: relative;
@@ -54,37 +54,30 @@
     will-change: transform;
   }
 
+  /* Cada slide ocupa 100% */
   .blog-slider__slide-{{ block.id }} {
     min-width: 100%;
+    flex-shrink: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: {{ block.settings.gap_between }}px;
-    flex-shrink: 0;
+    align-items: stretch;
   }
 
-  /* Columna de contenido (cuadrado) */
+  /* ═══════════════════════════════════════
+     COLUMNA IZQUIERDA - CONTENIDO
+  ═══════════════════════════════════════ */
   .blog-slider__content-{{ block.id }} {
     background-color: var(--color-background-1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: {{ block.settings.content_padding }}px;
-    aspect-ratio: 1 / 1;
-  }
-
-  .blog-slider__content-link-{{ block.id }} {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    text-decoration: none;
+    position: relative;
+    aspect-ratio: {{ block.settings.content_aspect_ratio }};
   }
 
   .blog-slider__content-inner-{{ block.id }} {
-    position: relative;
-    z-index: 2;
     display: flex;
     flex-direction: column;
     gap: {{ block.settings.content_spacing }}px;
@@ -106,6 +99,15 @@
     margin: 0;
     line-height: 1.2;
     font-weight: 400;
+  }
+
+  .blog-slider__article-title-{{ block.id }} a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .blog-slider__article-title-{{ block.id }} a:hover {
+    opacity: 0.8;
   }
 
   .blog-slider__description-{{ block.id }} {
@@ -180,7 +182,8 @@
   }
 
   .icon-arrow-animated-{{ block.id }}:hover .icon-arrow-animated-item--1-{{ block.id }} {
-    transform: translate(-30%, -50%);
+    transform: translate(50%, -50%);
+    opacity: 0;
   }
 
   .icon-arrow-animated-{{ block.id }}:hover .icon-arrow-animated-item--2-{{ block.id }} {
@@ -194,34 +197,23 @@
     opacity: 0.7;
   }
 
-  /* Columna de imagen */
+  /* ═══════════════════════════════════════
+     COLUMNA DERECHA - IMAGEN
+  ═══════════════════════════════════════ */
   .blog-slider__media-{{ block.id }} {
     position: relative;
     overflow: hidden;
     background-color: {{ block.settings.image_background }};
+    aspect-ratio: {{ block.settings.content_aspect_ratio }};
   }
 
   .blog-slider__media-link-{{ block.id }} {
-    position: absolute;
-    top: 0;
-    left: 0;
+    display: block;
     width: 100%;
     height: 100%;
-    z-index: 1;
-    text-decoration: none;
-  }
-
-  .blog-slider__image-wrapper-{{ block.id }} {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding-bottom: {{ block.settings.image_aspect_ratio }};
   }
 
   .blog-slider__image-{{ block.id }} {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -233,9 +225,6 @@
   }
 
   .blog-slider__image-placeholder-{{ block.id }} {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     background-color: var(--color-background-1);
@@ -245,13 +234,15 @@
   }
 
   .blog-slider__image-placeholder-{{ block.id }} svg {
-    width: 60%;
-    height: 60%;
-    max-width: 200px;
+    width: 40%;
+    height: 40%;
+    max-width: 150px;
     opacity: 0.3;
   }
 
-  /* Controles del slider */
+  /* ═══════════════════════════════════════
+     CONTROLES DEL SLIDER
+  ═══════════════════════════════════════ */
   .blog-slider__controls-{{ block.id }} {
     display: flex;
     justify-content: {{ block.settings.controls_alignment }};
@@ -291,6 +282,12 @@
     cursor: not-allowed;
   }
 
+  .blog-slider__arrow-{{ block.id }}:disabled:hover {
+    background-color: transparent;
+    color: var(--color-foreground);
+    border-color: var(--color-border);
+  }
+
   .blog-slider__arrow-{{ block.id }} svg {
     width: 20px;
     height: 20px;
@@ -316,7 +313,11 @@
 
   .blog-slider__dot-{{ block.id }}.active {
     opacity: 1;
-    transform: scale(1.2);
+    transform: scale(1.3);
+  }
+
+  .blog-slider__dot-{{ block.id }}:hover:not(.active) {
+    opacity: 0.6;
   }
 
   /* Contador */
@@ -328,7 +329,11 @@
   }
 
   .blog-slider__counter-current-{{ block.id }} {
-    opacity: 0.7;
+    color: var(--color-foreground);
+  }
+
+  .blog-slider__counter-total-{{ block.id }} {
+    opacity: 0.5;
   }
 
   /* Estado vacío */
@@ -342,20 +347,25 @@
     opacity: 0.7;
   }
 
-  /* Responsive */
+  /* ═══════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════ */
   @media screen and (max-width: 990px) {
     .blog-slider__slide-{{ block.id }} {
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 0;
     }
 
+    /* En móvil: imagen arriba, contenido abajo */
     .blog-slider__content-{{ block.id }} {
+      order: 2;
       aspect-ratio: auto;
-      padding: {{ block.settings.content_padding | times: 0.7 | round }}px;
+      padding: {{ block.settings.content_padding | times: 0.75 | round }}px;
     }
 
-    .blog-slider__image-wrapper-{{ block.id }} {
-      padding-bottom: {{ block.settings.mobile_image_aspect_ratio }};
+    .blog-slider__media-{{ block.id }} {
+      order: 1;
+      aspect-ratio: 4 / 3;
     }
 
     .blog-slider__article-title-{{ block.id }} {
@@ -365,19 +375,40 @@
 
   @media screen and (max-width: 749px) {
     .blog-slider-{{ block.id }} {
-      padding: {{ block.settings.padding_top | times: 0.7 | round }}px 0 {{ block.settings.padding_bottom | times: 0.7 | round }}px;
+      padding: {{ block.settings.padding_top | times: 0.6 | round }}px 0 {{ block.settings.padding_bottom | times: 0.6 | round }}px;
     }
 
     .blog-slider__container-{{ block.id }} {
       padding: 0 20px;
     }
 
+    .blog-slider__header-{{ block.id }} {
+      margin-bottom: {{ block.settings.header_spacing | times: 0.7 | round }}px;
+    }
+
+    .blog-slider__section-title-{{ block.id }} {
+      font-size: {{ block.settings.title_size | times: 0.75 | round }}px;
+    }
+
     .blog-slider__content-{{ block.id }} {
-      padding: 32px;
+      padding: 28px;
+    }
+
+    .blog-slider__article-title-{{ block.id }} {
+      font-size: {{ block.settings.article_title_size | times: 0.7 | round }}px;
+    }
+
+    .blog-slider__description-{{ block.id }} {
+      font-size: {{ block.settings.description_size | times: 0.9 | round }}px;
     }
 
     .blog-slider__controls-{{ block.id }} {
       justify-content: center;
+    }
+
+    .blog-slider__arrow-{{ block.id }} {
+      width: 42px;
+      height: 42px;
     }
   }
 
@@ -396,7 +427,7 @@
   }
 {%- endstyle -%}
 
-<div class="blog-slider-{{ block.id }}" {{ block.shopify_attributes }}>
+<div class="blog-slider-{{ block.id }}" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
   <div class="blog-slider__container-{{ block.id }}">
     
     {%- if block.settings.section_eyebrow != blank or block.settings.section_title != blank -%}
@@ -405,7 +436,7 @@
           <span class="blog-slider__eyebrow-{{ block.id }}">{{ block.settings.section_eyebrow | escape }}</span>
         {%- endif -%}
         {%- if block.settings.section_title != blank -%}
-          <h2 class="blog-slider__title-{{ block.id }}">{{ block.settings.section_title | escape }}</h2>
+          <h2 class="blog-slider__section-title-{{ block.id }}">{{ block.settings.section_title | escape }}</h2>
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -414,17 +445,15 @@
     {%- if blog != blank and blog.articles_count > 0 -%}
       {%- assign articles_limit = block.settings.articles_limit | at_most: blog.articles_count -%}
       
-      <!-- AÑADIR EL VIEWPORT AQUÍ -->
       <div class="blog-slider__viewport-{{ block.id }}">
-        <div class="blog-slider__track-{{ block.id }}" data-track>
+        <div class="blog-slider__track-{{ block.id }}" data-slider-track>
           {%- for article in blog.articles limit: articles_limit -%}
-            <div class="blog-slider__slide-{{ block.id }}" data-slide="{{ forloop.index0 }}">
+            <div class="blog-slider__slide-{{ block.id }}" data-slide-index="{{ forloop.index0 }}">
               
-              <!-- Contenido (columna izquierda) -->
+              {%- comment -%} ══════ COLUMNA IZQUIERDA: CONTENIDO ══════ {%- endcomment -%}
               <div class="blog-slider__content-{{ block.id }}">
-                <a href="{{ article.url }}" class="blog-slider__content-link-{{ block.id }}" aria-label="{{ article.title | escape }}"></a>
-                
                 <div class="blog-slider__content-inner-{{ block.id }}">
+                  
                   {%- if block.settings.show_eyebrow -%}
                     {%- if article.tags.size > 0 -%}
                       <div class="blog-slider__article-eyebrow-{{ block.id }}">{{ article.tags.first }}</div>
@@ -434,24 +463,22 @@
                   {%- endif -%}
 
                   <h3 class="blog-slider__article-title-{{ block.id }}">
-                    <a href="{{ article.url }}" style="color: inherit; text-decoration: none;">
-                      {{ article.title | escape }}
-                    </a>
+                    <a href="{{ article.url }}">{{ article.title | escape }}</a>
                   </h3>
 
                   {%- if block.settings.show_description -%}
-                    <div class="blog-slider__description-{{ block.id }}">
+                    <p class="blog-slider__description-{{ block.id }}">
                       {%- if article.excerpt != blank -%}
                         {{ article.excerpt | strip_html | truncate: block.settings.description_length }}
                       {%- else -%}
                         {{ article.content | strip_html | truncate: block.settings.description_length }}
                       {%- endif -%}
-                    </div>
+                    </p>
                   {%- endif -%}
 
-                  {%- if block.settings.show_read_time -%}
+                  {%- if block.settings.show_button -%}
                     <div class="blog-slider__button-wrapper-{{ block.id }}">
-                      <a href="{{ article.url }}" class="icon-arrow-animated-{{ block.id }}" aria-label="Read article">
+                      <a href="{{ article.url }}" class="icon-arrow-animated-{{ block.id }}" aria-label="{{ block.settings.button_text }}">
                         <svg class="icon-arrow-animated-svg-{{ block.id }}" width="64" height="32" viewBox="0 0 64 32" fill="none">
                           <path class="icon-arrow-animated-bg-{{ block.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
                           <path class="icon-arrow-animated-fill-{{ block.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
@@ -464,19 +491,20 @@
                         </svg>
                       </a>
                       
-                      {%- assign words = article.content | strip_html | split: ' ' | size -%}
-                      {%- assign read_time = words | divided_by: 200 | at_least: 1 -%}
-                      <span class="blog-slider__read-time-{{ block.id }}">{{ read_time }} min read</span>
+                      {%- if block.settings.show_read_time -%}
+                        {%- assign words = article.content | strip_html | split: ' ' | size -%}
+                        {%- assign read_time = words | divided_by: 200 | at_least: 1 -%}
+                        <span class="blog-slider__read-time-{{ block.id }}">{{ read_time }} min read</span>
+                      {%- endif -%}
                     </div>
                   {%- endif -%}
+
                 </div>
               </div>
 
-              <!-- Imagen (columna derecha) -->
+              {%- comment -%} ══════ COLUMNA DERECHA: IMAGEN ══════ {%- endcomment -%}
               <div class="blog-slider__media-{{ block.id }}">
-                <a href="{{ article.url }}" class="blog-slider__media-link-{{ block.id }}" aria-label="{{ article.title | escape }}"></a>
-                
-                <div class="blog-slider__image-wrapper-{{ block.id }}">
+                <a href="{{ article.url }}" class="blog-slider__media-link-{{ block.id }}" aria-label="{{ article.title | escape }}">
                   {%- if article.image -%}
                     <img
                       src="{{ article.image | image_url: width: 1200 }}"
@@ -485,7 +513,7 @@
                               {{ article.image | image_url: width: 800 }} 800w,
                               {{ article.image | image_url: width: 1000 }} 1000w,
                               {{ article.image | image_url: width: 1200 }} 1200w"
-                      sizes="(max-width: 749px) 100vw, 50vw"
+                      sizes="(max-width: 990px) 100vw, 50vw"
                       alt="{{ article.image.alt | escape | default: article.title | escape }}"
                       class="blog-slider__image-{{ block.id }}"
                       loading="lazy"
@@ -497,7 +525,7 @@
                       {{ 'image' | placeholder_svg_tag }}
                     </div>
                   {%- endif -%}
-                </div>
+                </a>
               </div>
 
             </div>
@@ -510,12 +538,12 @@
           
           {%- if block.settings.show_arrows -%}
             <div class="blog-slider__nav-{{ block.id }}">
-              <button class="blog-slider__arrow-{{ block.id }}" data-prev aria-label="Previous article">
+              <button class="blog-slider__arrow-{{ block.id }}" data-slider-prev aria-label="Previous article">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="15 18 9 12 15 6"/>
                 </svg>
               </button>
-              <button class="blog-slider__arrow-{{ block.id }}" data-next aria-label="Next article">
+              <button class="blog-slider__arrow-{{ block.id }}" data-slider-next aria-label="Next article">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="9 18 15 12 9 6"/>
                 </svg>
@@ -525,9 +553,8 @@
 
           {%- if block.settings.show_counter -%}
             <div class="blog-slider__counter-{{ block.id }}">
-              <span class="blog-slider__counter-current-{{ block.id }}" data-current>01</span>
-              <span>/</span>
-              <span>{{ articles_limit | prepend: '00' | slice: -2, 2 }}</span>
+              <span class="blog-slider__counter-current-{{ block.id }}" data-slider-current>01</span>
+              <span class="blog-slider__counter-total-{{ block.id }}"> / {{ articles_limit | prepend: '00' | slice: -2, 2 }}</span>
             </div>
           {%- endif -%}
 
@@ -535,8 +562,8 @@
             <div class="blog-slider__dots-{{ block.id }}">
               {%- for i in (1..articles_limit) -%}
                 <button 
-                  class="blog-slider__dot-{{ block.id }} {% if forloop.first %}active{% endif %}" 
-                  data-dot="{{ forloop.index0 }}"
+                  class="blog-slider__dot-{{ block.id }}{% if forloop.first %} active{% endif %}" 
+                  data-slider-dot="{{ forloop.index0 }}"
                   aria-label="Go to article {{ forloop.index }}"
                 ></button>
               {%- endfor -%}
@@ -550,7 +577,7 @@
       <div class="blog-slider__empty-{{ block.id }}">
         <p>{{ block.settings.empty_message | escape }}</p>
         {%- if blog == blank -%}
-          <p style="margin-top: 10px; font-size: 14px;">Please select a blog in the section settings</p>
+          <p style="margin-top: 10px; font-size: 14px;">Please select a blog in the block settings</p>
         {%- endif -%}
       </div>
     {%- endif -%}
@@ -560,48 +587,53 @@
 
 <script>
 (function() {
-  const block = document.querySelector('[data-section-id="{{ block.id }}"]') || document.currentScript.closest('.shopify-block');
-  if (!block) return;
+  const blockId = '{{ block.id }}';
+  const container = document.querySelector(`[data-block-id="${blockId}"]`);
+  if (!container) return;
 
-  const track = block.querySelector('[data-track]');
+  const track = container.querySelector('[data-slider-track]');
   if (!track) return;
 
-  const slides = block.querySelectorAll('[data-slide]');
-  const prevBtn = block.querySelector('[data-prev]');
-  const nextBtn = block.querySelector('[data-next]');
-  const dots = block.querySelectorAll('[data-dot]');
-  const counterCurrent = block.querySelector('[data-current]');
+  const slides = container.querySelectorAll('[data-slide-index]');
+  const prevBtn = container.querySelector('[data-slider-prev]');
+  const nextBtn = container.querySelector('[data-slider-next]');
+  const dots = container.querySelectorAll('[data-slider-dot]');
+  const counterCurrent = container.querySelector('[data-slider-current]');
 
   const totalSlides = slides.length;
   if (totalSlides <= 1) return;
 
   let currentSlide = 0;
+  const loop = {{ block.settings.enable_loop | default: true }};
   const autoplay = {{ block.settings.autoplay | default: false }};
   const autoplayDelay = {{ block.settings.autoplay_delay | default: 5000 }};
   let autoplayInterval = null;
 
   function updateSlider() {
-    if (track) {
-      track.style.transform = `translateX(-${currentSlide * 100}%)`;
-    }
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
 
-    if (dots.length > 0) {
-      dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === currentSlide);
-      });
-    }
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
+    });
 
     if (counterCurrent) {
       counterCurrent.textContent = (currentSlide + 1).toString().padStart(2, '0');
     }
+
+    // Update arrow states if loop is disabled
+    if (!loop) {
+      if (prevBtn) prevBtn.disabled = currentSlide === 0;
+      if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
+    }
   }
 
   function goToSlide(index) {
-    if (index < 0) index = totalSlides - 1;
-    if (index >= totalSlides) index = 0;
-    currentSlide = index;
+    if (loop) {
+      currentSlide = (index + totalSlides) % totalSlides;
+    } else {
+      currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
+    }
     updateSlider();
-    resetAutoplay();
   }
 
   function nextSlide() {
@@ -625,13 +657,6 @@
     }
   }
 
-  function resetAutoplay() {
-    if (autoplay) {
-      stopAutoplay();
-      startAutoplay();
-    }
-  }
-
   // Event listeners
   if (prevBtn) {
     prevBtn.addEventListener('click', () => { 
@@ -647,48 +672,43 @@
     });
   }
 
-  if (dots.length > 0) {
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        stopAutoplay();
-        const index = parseInt(dot.dataset.dot, 10);
-        goToSlide(index);
-      });
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      stopAutoplay();
+      const index = parseInt(dot.dataset.sliderDot, 10);
+      goToSlide(index);
     });
-  }
+  });
 
-  // Touch support
+  // Touch/Swipe support
   let touchStartX = 0;
   let touchEndX = 0;
 
-  if (track) {
-    track.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-      stopAutoplay();
-    }, { passive: true });
+  track.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    stopAutoplay();
+  }, { passive: true });
 
-    track.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchStartX - touchEndX;
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) nextSlide();
-        else prevSlide();
-      }
-    }, { passive: true });
-  }
+  track.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextSlide();
+      else prevSlide();
+    }
+  }, { passive: true });
 
   // Keyboard navigation
-  block.addEventListener('keydown', (e) => {
+  container.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') { stopAutoplay(); prevSlide(); }
     if (e.key === 'ArrowRight') { stopAutoplay(); nextSlide(); }
   });
 
-  // Make block focusable
-  block.setAttribute('tabindex', '0');
+  container.setAttribute('tabindex', '0');
 
-  // Pause autoplay on hover
-  block.addEventListener('mouseenter', stopAutoplay);
-  block.addEventListener('mouseleave', startAutoplay);
+  // Pause on hover
+  container.addEventListener('mouseenter', stopAutoplay);
+  container.addEventListener('mouseleave', startAutoplay);
 
   // Initialize
   updateSlider();
@@ -702,7 +722,7 @@
   "settings": [
     {
       "type": "header",
-      "content": "📰 Blog Source"
+      "content": "📰 Blog"
     },
     {
       "type": "blog",
@@ -749,18 +769,9 @@
       "id": "header_alignment",
       "label": "Header alignment",
       "options": [
-        {
-          "value": "left",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "right",
-          "label": "Right"
-        }
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
       ],
       "default": "left"
     },
@@ -771,7 +782,7 @@
       "max": 80,
       "step": 4,
       "unit": "px",
-      "label": "Header spacing",
+      "label": "Header bottom spacing",
       "default": 40
     },
     {
@@ -779,24 +790,27 @@
       "content": "🎨 Layout"
     },
     {
-      "type": "range",
-      "id": "gap_between",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Gap between columns",
-      "default": 40
+      "type": "select",
+      "id": "content_aspect_ratio",
+      "label": "Columns aspect ratio",
+      "options": [
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "4 / 3", "label": "Landscape (4:3)" },
+        { "value": "3 / 4", "label": "Portrait (3:4)" },
+        { "value": "16 / 9", "label": "Wide (16:9)" }
+      ],
+      "default": "1 / 1",
+      "info": "Both columns will have the same height"
     },
     {
       "type": "range",
-      "id": "content_spacing",
-      "min": 8,
-      "max": 40,
+      "id": "gap_between",
+      "min": 0,
+      "max": 60,
       "step": 4,
       "unit": "px",
-      "label": "Content inner spacing",
-      "default": 20
+      "label": "Gap between columns",
+      "default": 0
     },
     {
       "type": "range",
@@ -809,22 +823,23 @@
       "default": 48
     },
     {
+      "type": "range",
+      "id": "content_spacing",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Content inner spacing",
+      "default": 20
+    },
+    {
       "type": "select",
       "id": "content_alignment",
       "label": "Content alignment",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Right"
-        }
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
       ],
       "default": "flex-start"
     },
@@ -833,64 +848,27 @@
       "id": "text_alignment",
       "label": "Text alignment",
       "options": [
-        {
-          "value": "left",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "right",
-          "label": "Right"
-        }
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
       ],
       "default": "left"
     },
     {
-      "type": "text",
-      "id": "image_aspect_ratio",
-      "label": "Image aspect ratio (desktop)",
-      "default": "67%",
-      "info": "e.g., 67% for 3:2, 100% for square"
-    },
-    {
-      "type": "text",
-      "id": "mobile_image_aspect_ratio",
-      "label": "Image aspect ratio (mobile)",
-      "default": "100%"
-    },
-    {
       "type": "header",
-      "content": "✏️ Content Settings"
+      "content": "✏️ Article Content"
     },
     {
       "type": "checkbox",
       "id": "show_eyebrow",
-      "label": "Show article eyebrow",
+      "label": "Show eyebrow (tag)",
       "default": true
     },
     {
       "type": "text",
       "id": "custom_eyebrow",
-      "label": "Custom eyebrow text",
+      "label": "Custom eyebrow",
       "info": "Used if article has no tags"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_description",
-      "label": "Show description",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "description_length",
-      "min": 80,
-      "max": 300,
-      "step": 10,
-      "label": "Description max characters",
-      "default": 180
     },
     {
       "type": "range",
@@ -903,6 +881,22 @@
       "default": 28
     },
     {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "description_length",
+      "min": 80,
+      "max": 350,
+      "step": 10,
+      "label": "Description max characters",
+      "default": 180,
+      "info": "Adjust to balance content with image height"
+    },
+    {
       "type": "range",
       "id": "description_size",
       "min": 14,
@@ -911,6 +905,22 @@
       "unit": "px",
       "label": "Description size",
       "default": 16
+    },
+    {
+      "type": "header",
+      "content": "🔘 Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button aria label",
+      "default": "Read article"
     },
     {
       "type": "checkbox",
@@ -925,14 +935,14 @@
     {
       "type": "color",
       "id": "background_color",
-      "label": "Background color",
-      "default": "#f5f3ef"
+      "label": "Section background",
+      "default": "#ffffff"
     },
     {
       "type": "color",
       "id": "content_background_color",
       "label": "Content background",
-      "default": "#ffffff"
+      "default": "#f5f3ef"
     },
     {
       "type": "color",
@@ -961,7 +971,7 @@
     {
       "type": "color",
       "id": "image_background",
-      "label": "Image background",
+      "label": "Image placeholder background",
       "default": "#fff0bb"
     },
     {
@@ -997,18 +1007,10 @@
       "id": "controls_alignment",
       "label": "Controls alignment",
       "options": [
-        {
-          "value": "flex-start",
-          "label": "Left"
-        },
-        {
-          "value": "center",
-          "label": "Center"
-        },
-        {
-          "value": "flex-end",
-          "label": "Right"
-        }
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" },
+        { "value": "space-between", "label": "Space between" }
       ],
       "default": "center"
     },
@@ -1019,12 +1021,18 @@
       "max": 60,
       "step": 4,
       "unit": "px",
-      "label": "Controls spacing",
+      "label": "Controls top spacing",
       "default": 32
     },
     {
       "type": "header",
       "content": "⚙️ Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_loop",
+      "label": "Enable infinite loop",
+      "default": true
     },
     {
       "type": "checkbox",

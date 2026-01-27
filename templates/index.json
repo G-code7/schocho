@@ -1876,6 +1876,51 @@
                   },
                   "blocks": {}
                 },
+                "blog_slider_v2_cPmjBk": {
+                  "type": "blog-slider-v2",
+                  "name": "Blog Slider - Elegante",
+                  "settings": {
+                    "blog": "recipes",
+                    "articles_limit": 5,
+                    "section_eyebrow": "FROM THE BLOG",
+                    "section_title": "Insights & Stories",
+                    "title_size": 36,
+                    "header_alignment": "left",
+                    "header_spacing": 40,
+                    "gap_between": 40,
+                    "content_padding": 48,
+                    "content_spacing": 20,
+                    "content_alignment": "flex-start",
+                    "text_alignment": "left",
+                    "show_eyebrow": true,
+                    "custom_eyebrow": "",
+                    "article_title_size": 28,
+                    "show_description": true,
+                    "description_length": 180,
+                    "description_size": 16,
+                    "show_read_time": true,
+                    "background_color": "#f5f3ef",
+                    "content_background_color": "#ffffff",
+                    "text_color": "#2c2416",
+                    "eyebrow_color": "#8b7355",
+                    "accent_color": "#c4a574",
+                    "border_color": "#e5e1da",
+                    "image_background": "#fff0bb",
+                    "show_controls": true,
+                    "show_arrows": true,
+                    "show_dots": true,
+                    "show_counter": false,
+                    "controls_alignment": "center",
+                    "controls_spacing": 32,
+                    "autoplay": false,
+                    "autoplay_delay": 350,
+                    "padding_top": 60,
+                    "padding_bottom": 60,
+                    "horizontal_padding": 24,
+                    "empty_message": "No articles found"
+                  },
+                  "blocks": {}
+                },
                 "ai_gen_block_45634be_Rjr8gD": {
                   "type": "ai_gen_block_45634be",
                   "settings": {
@@ -1909,6 +1954,7 @@
               "block_order": [
                 "text_EHAYtw",
                 "text_4aPH3d",
+                "blog_slider_v2_cPmjBk",
                 "ai_gen_block_45634be_Rjr8gD"
               ]
             }
