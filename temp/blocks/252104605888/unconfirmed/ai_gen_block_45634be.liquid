@@ -1,6 +1,540 @@
+{% doc %}
+  @prompt
+    quiero  una sección para los blogpost  que contenga dos columnas la de la izquierda que sea  un cuadrado  donde esté el titulo, la descripción y el botón  y  del lado derecho la imagen .
+    esta sección sería un slider para mostrar de 1 en 1 los distinstos articulos.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-blog-slider-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-blog-slider__container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ai-blog-slider__track-{{ ai_gen_id }} {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-blog-slider__slide-{{ ai_gen_id }} {
+    min-width: 100%;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .ai-blog-slider__content-{{ ai_gen_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    padding: 40px;
+    background-color: {{ block.settings.content_background_color }};
+    border-radius: {{ block.settings.content_border_radius }}px;
+    aspect-ratio: 1 / 1;
+  }
+
+  .ai-blog-slider__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .ai-blog-slider__description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.description_color }};
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .ai-blog-slider__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_text_size }}px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    align-self: flex-start;
+  }
+
+  .ai-blog-slider__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text_color }};
+  }
+
+  .ai-blog-slider__image-wrapper-{{ ai_gen_id }} {
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-blog-slider__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-blog-slider__image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-blog-slider__image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 300px;
+    max-height: 300px;
+  }
+
+  .ai-blog-slider__controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .ai-blog-slider__arrow-{{ ai_gen_id }} {
+    background-color: {{ block.settings.arrow_background }};
+    color: {{ block.settings.arrow_color }};
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-blog-slider__arrow-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.arrow_hover_background }};
+  }
+
+  .ai-blog-slider__arrow-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-blog-slider__dots-{{ ai_gen_id }} {
+    display: flex;
+    gap: 10px;
+  }
+
+  .ai-blog-slider__dot-{{ ai_gen_id }} {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: {{ block.settings.dot_color }};
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    opacity: 0.5;
+  }
+
+  .ai-blog-slider__dot-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.dot_active_color }};
+    opacity: 1;
+  }
+
+  .ai-blog-slider__empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-blog-slider__slide-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .ai-blog-slider__content-{{ ai_gen_id }} {
+      aspect-ratio: auto;
+      padding: 30px;
+    }
+
+    .ai-blog-slider__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.8);
+    }
+
+    .ai-blog-slider__description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<blog-slider-{{ ai_gen_id }} class="ai-blog-slider-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-blog-slider__container-{{ ai_gen_id }}">
+    {% if block.settings.blog != blank and block.settings.blog.articles_count > 0 %}
+      <div class="ai-blog-slider__track-{{ ai_gen_id }}">
+        {% for article in block.settings.blog.articles limit: block.settings.articles_limit %}
+          <div class="ai-blog-slider__slide-{{ ai_gen_id }}" data-slide="{{ forloop.index0 }}">
+            <div class="ai-blog-slider__content-{{ ai_gen_id }}">
+              <h2 class="ai-blog-slider__title-{{ ai_gen_id }}">{{ article.title }}</h2>
+              
+              {% if article.excerpt != blank %}
+                <div class="ai-blog-slider__description-{{ ai_gen_id }}">
+                  {{ article.excerpt | strip_html | truncate: 200 }}
+                </div>
+              {% else %}
+                <div class="ai-blog-slider__description-{{ ai_gen_id }}">
+                  {{ article.content | strip_html | truncate: 200 }}
+                </div>
+              {% endif %}
+
+              <a href="{{ article.url }}" class="ai-blog-slider__button-{{ ai_gen_id }}">
+                {{ block.settings.button_text }}
+              </a>
+            </div>
+
+            <div class="ai-blog-slider__image-wrapper-{{ ai_gen_id }}">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 800 }}"
+                  alt="{{ article.image.alt | escape }}"
+                  class="ai-blog-slider__image-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="800"
+                  height="800"
+                >
+              {% else %}
+                <div class="ai-blog-slider__image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if block.settings.blog.articles_count > 1 %}
+        <div class="ai-blog-slider__controls-{{ ai_gen_id }}">
+          <button class="ai-blog-slider__arrow-{{ ai_gen_id }} ai-blog-slider__arrow-prev-{{ ai_gen_id }}" aria-label="Artículo anterior">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+
+          <div class="ai-blog-slider__dots-{{ ai_gen_id }}">
+            {% for article in block.settings.blog.articles limit: block.settings.articles_limit %}
+              <button 
+                class="ai-blog-slider__dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" 
+                data-index="{{ forloop.index0 }}"
+                aria-label="Ir al artículo {{ forloop.index }}"
+              ></button>
+            {% endfor %}
+          </div>
+
+          <button class="ai-blog-slider__arrow-{{ ai_gen_id }} ai-blog-slider__arrow-next-{{ ai_gen_id }}" aria-label="Siguiente artículo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="ai-blog-slider__empty-state-{{ ai_gen_id }}">
+        Selecciona un blog para mostrar los artículos
+      </div>
+    {% endif %}
+  </div>
+</blog-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BlogSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.totalSlides = 0;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('.ai-blog-slider__track-{{ ai_gen_id }}');
+        this.slides = this.querySelectorAll('.ai-blog-slider__slide-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-blog-slider__arrow-prev-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-blog-slider__arrow-next-{{ ai_gen_id }}');
+        this.dots = this.querySelectorAll('.ai-blog-slider__dot-{{ ai_gen_id }}');
+        
+        this.totalSlides = this.slides.length;
+
+        if (this.totalSlides <= 1) return;
+
+        this.prevButton.addEventListener('click', () => this.goToPrevSlide());
+        this.nextButton.addEventListener('click', () => this.goToNextSlide());
+
+        this.dots.forEach((dot) => {
+          dot.addEventListener('click', (e) => {
+            const index = parseInt(e.target.dataset.index);
+            this.goToSlide(index);
+          });
+        });
+
+        this.updateSlider();
+      }
+
+      goToSlide(index) {
+        this.currentSlide = index;
+        this.updateSlider();
+      }
+
+      goToNextSlide() {
+        this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        this.updateSlider();
+      }
+
+      goToPrevSlide() {
+        this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+        this.updateSlider();
+      }
+
+      updateSlider() {
+        const offset = -this.currentSlide * 100;
+        this.track.style.transform = `translateX(${offset}%)`;
+
+        this.dots.forEach((dot, index) => {
+          if (index === this.currentSlide) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+
+        this.prevButton.disabled = this.currentSlide === 0;
+        this.nextButton.disabled = this.currentSlide === this.totalSlides - 1;
+      }
+    }
+
+    customElements.define('blog-slider-{{ ai_gen_id }}', BlogSlider{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Slider de artículos",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Blog"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "articles_limit",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Número de artículos",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamaño del título",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de la descripción",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color de la descripción",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "content_background_color",
+      "label": "Fondo del contenido",
+      "default": "#efebe5"
+    },
+    {
+      "type": "range",
+      "id": "content_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio de borde del contenido",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "Leer más"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño del texto",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fondo del botón",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Fondo al pasar el cursor",
+      "default": "#7428dc"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Color del texto al pasar el cursor",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio de borde",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Imagen"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio de borde de la imagen",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Controles"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background",
+      "label": "Fondo de las flechas",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Color de las flechas",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_background",
+      "label": "Fondo al pasar el cursor",
+      "default": "#7428dc"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Color de los puntos",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Color del punto activo",
+      "default": "#7428dc"
+    },
+    {
+      "type": "header",
+      "content": "Estilo general"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slider de artículos"
+    }
+  ]
+}
 {% endschema %}
