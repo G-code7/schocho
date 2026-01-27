@@ -1901,7 +1901,7 @@
                     "dot_color": "#3e2563",
                     "dot_active_color": "#7428dc",
                     "background_color": "#eeebe5",
-                    "desktop_width_percent": 100
+                    "desktop_width_percent": 80
                   },
                   "blocks": {}
                 }
