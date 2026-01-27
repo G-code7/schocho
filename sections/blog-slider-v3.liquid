@@ -3,15 +3,15 @@
 {% style %}
   .blog-slider-{{ section_id }} {
     display: block;
-    max-width: 1020px;
-    width: 100%;
+    max-width: 100%;
+    width: 80%;
     justify-self: anchor-center;
     padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
     background-color: {{ section.settings.background_color }};
   }
 
   .blog-slider__container-{{ section_id }} {
-    max-width: var(--page-width, 1200px);
+    max-width: 1000px;
     margin: 0 auto;
     padding: 0 {{ section.settings.container_padding }}px;
   }
