@@ -1,4 +1,6 @@
 
+{%- assign ai_gen_id = section.id | replace: '_', '' | replace: '-', '' | slice: 0, 8 -%}
+
 {% style %}
 
   .pc-blog-slider-{{ ai_gen_id }} {
