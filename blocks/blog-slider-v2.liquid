@@ -41,7 +41,13 @@
     font-weight: 400;
   }
 
-  /* Slider */
+  /* Slider Viewport - AÑADIDO */
+  .blog-slider__viewport-{{ block.id }} {
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Slider Track */
   .blog-slider__track-{{ block.id }} {
     display: flex;
     transition: transform 0.6s cubic-bezier(0.83, 0, 0.17, 1);
@@ -408,6 +414,7 @@
     {%- if blog != blank and blog.articles_count > 0 -%}
       {%- assign articles_limit = block.settings.articles_limit | at_most: blog.articles_count -%}
       
+      <!-- AÑADIR EL VIEWPORT AQUÍ -->
       <div class="blog-slider__viewport-{{ block.id }}">
         <div class="blog-slider__track-{{ block.id }}" data-track>
           {%- for article in blog.articles limit: articles_limit -%}
@@ -553,10 +560,12 @@
 
 <script>
 (function() {
-  const block = document.currentScript.closest('.shopify-block');
+  const block = document.querySelector('[data-section-id="{{ block.id }}"]') || document.currentScript.closest('.shopify-block');
   if (!block) return;
 
   const track = block.querySelector('[data-track]');
+  if (!track) return;
+
   const slides = block.querySelectorAll('[data-slide]');
   const prevBtn = block.querySelector('[data-prev]');
   const nextBtn = block.querySelector('[data-next]');
@@ -572,11 +581,15 @@
   let autoplayInterval = null;
 
   function updateSlider() {
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    if (track) {
+      track.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
 
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentSlide);
-    });
+    if (dots.length > 0) {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+    }
 
     if (counterCurrent) {
       counterCurrent.textContent = (currentSlide + 1).toString().padStart(2, '0');
@@ -620,34 +633,49 @@
   }
 
   // Event listeners
-  if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoplay(); prevSlide(); });
-  if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoplay(); nextSlide(); });
-
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      stopAutoplay();
-      const index = parseInt(dot.dataset.dot, 10);
-      goToSlide(index);
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => { 
+      stopAutoplay(); 
+      prevSlide(); 
     });
-  });
+  }
+  
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => { 
+      stopAutoplay(); 
+      nextSlide(); 
+    });
+  }
+
+  if (dots.length > 0) {
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        stopAutoplay();
+        const index = parseInt(dot.dataset.dot, 10);
+        goToSlide(index);
+      });
+    });
+  }
 
   // Touch support
   let touchStartX = 0;
   let touchEndX = 0;
 
-  block.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-    stopAutoplay();
-  }, { passive: true });
+  if (track) {
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoplay();
+    }, { passive: true });
 
-  block.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    const diff = touchStartX - touchEndX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) nextSlide();
-      else prevSlide();
-    }
-  }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+  }
 
   // Keyboard navigation
   block.addEventListener('keydown', (e) => {
@@ -662,6 +690,7 @@
   block.addEventListener('mouseenter', stopAutoplay);
   block.addEventListener('mouseleave', startAutoplay);
 
+  // Initialize
   updateSlider();
   startAutoplay();
 })();
@@ -670,8 +699,6 @@
 {% schema %}
 {
   "name": "Blog Slider - Elegante",
-  "tag": "div",
-  "class": "shopify-block",
   "settings": [
     {
       "type": "header",
