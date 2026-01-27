@@ -1,9 +1,5 @@
-
-{%- assign ai_gen_id = section.id | replace: '_', '' | replace: '-', '' | slice: 0, 8 -%}
-
-{% style %}
-
-  .pc-blog-slider-{{ ai_gen_id }} {
+{%- style -%}
+  .pc-blog-slider-{{ section.id }} {
     --pc-bg: {{ section.settings.background_color }};
     --pc-content-bg: {{ section.settings.content_background_color }};
     --pc-title-color: {{ section.settings.title_color }};
@@ -19,31 +15,33 @@
     width: 100%;
     background-color: var(--pc-bg);
     padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    position: relative;
   }
 
-  .pc-blog-slider__container-{{ ai_gen_id }} {
-    max-width: var(--page-width, 1200px);
+  .pc-blog-slider__container-{{ section.id }} {
+    max-width: var(--page-width);
     margin: 0 auto;
     padding: 0 {{ section.settings.horizontal_padding }}px;
     position: relative;
   }
 
   /* Section Header */
-  .pc-blog-slider__header-{{ ai_gen_id }} {
+  .pc-blog-slider__header-{{ section.id }} {
     text-align: {{ section.settings.header_alignment }};
     margin-bottom: 40px;
   }
 
-  .pc-blog-slider__section-eyebrow-{{ ai_gen_id }} {
+  .pc-blog-slider__section-eyebrow-{{ section.id }} {
     font-size: 12px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--pc-eyebrow-color);
     margin-bottom: 12px;
     font-weight: 500;
+    display: block;
   }
 
-  .pc-blog-slider__section-title-{{ ai_gen_id }} {
+  .pc-blog-slider__section-title-{{ section.id }} {
     font-size: {{ section.settings.section_title_size }}px;
     color: var(--pc-title-color);
     margin: 0;
@@ -52,36 +50,38 @@
   }
 
   /* Slider Track */
-  .pc-blog-slider__viewport-{{ ai_gen_id }} {
+  .pc-blog-slider__viewport-{{ section.id }} {
     overflow: hidden;
     position: relative;
   }
 
-  .pc-blog-slider__track-{{ ai_gen_id }} {
+  .pc-blog-slider__track-{{ section.id }} {
     display: flex;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
   }
 
   /* Slide Layout */
-  .pc-blog-slider__slide-{{ ai_gen_id }} {
+  .pc-blog-slider__slide-{{ section.id }} {
     min-width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: {{ section.settings.columns_gap }}px;
     align-items: stretch;
+    flex-shrink: 0;
   }
 
-  {% if section.settings.layout_direction == 'image_first' %}
-  .pc-blog-slider__slide-{{ ai_gen_id }} {
+  {%- if section.settings.layout_direction == 'image_first' -%}
+  .pc-blog-slider__slide-{{ section.id }} {
     direction: rtl;
   }
-  .pc-blog-slider__slide-{{ ai_gen_id }} > * {
+  .pc-blog-slider__slide-{{ section.id }} > * {
     direction: ltr;
   }
-  {% endif %}
+  {%- endif -%}
 
-  /* Content Column - Square/Flexible */
-  .pc-blog-slider__content-{{ ai_gen_id }} {
+  /* Content Column */
+  .pc-blog-slider__content-{{ section.id }} {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -89,15 +89,15 @@
     padding: {{ section.settings.content_padding }}px;
     border-radius: {{ section.settings.content_border_radius }}px;
     position: relative;
-    {% if section.settings.content_aspect_ratio != 'auto' %}
+    {%- if section.settings.content_aspect_ratio != 'auto' -%}
     aspect-ratio: {{ section.settings.content_aspect_ratio }};
-    {% endif %}
-    {% if section.settings.show_content_border %}
+    {%- endif -%}
+    {%- if section.settings.show_content_border -%}
     border: 1px solid var(--pc-border-color);
-    {% endif %}
+    {%- endif -%}
   }
 
-  .pc-blog-slider__content-inner-{{ ai_gen_id }} {
+  .pc-blog-slider__content-inner-{{ section.id }} {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -106,35 +106,38 @@
   }
 
   /* Eyebrow / Category */
-  .pc-blog-slider__eyebrow-{{ ai_gen_id }} {
+  .pc-blog-slider__eyebrow-{{ section.id }} {
     font-size: {{ section.settings.eyebrow_size }}px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--pc-eyebrow-color);
     font-weight: 500;
-    position: relative;
     display: inline-block;
+    line-height: 1.2;
   }
 
-  {% if section.settings.eyebrow_style == 'underline' %}
-  .pc-blog-slider__eyebrow-{{ ai_gen_id }}::after {
+  {%- if section.settings.eyebrow_style == 'underline' -%}
+  .pc-blog-slider__eyebrow-{{ section.id }} {
+    position: relative;
+    padding-bottom: 8px;
+  }
+  .pc-blog-slider__eyebrow-{{ section.id }}::after {
     content: '';
     position: absolute;
-    bottom: -6px;
+    bottom: 0;
     left: 0;
     width: 30px;
     height: 2px;
     background-color: var(--pc-accent);
   }
-  .pc-blog-slider__content-inner-{{ ai_gen_id }}[style*="center"] .pc-blog-slider__eyebrow-{{ ai_gen_id }}::after,
-  .pc-blog-slider__eyebrow-{{ ai_gen_id }}:only-child::after {
+  .pc-blog-slider__content-inner-{{ section.id }}[style*="center"] .pc-blog-slider__eyebrow-{{ section.id }}::after {
     left: 50%;
     transform: translateX(-50%);
   }
-  {% endif %}
+  {%- endif -%}
 
   /* Title */
-  .pc-blog-slider__title-{{ ai_gen_id }} {
+  .pc-blog-slider__title-{{ section.id }} {
     font-size: {{ section.settings.title_size }}px;
     color: var(--pc-title-color);
     margin: 0;
@@ -143,7 +146,7 @@
   }
 
   /* Description */
-  .pc-blog-slider__description-{{ ai_gen_id }} {
+  .pc-blog-slider__description-{{ section.id }} {
     font-size: {{ section.settings.description_size }}px;
     color: var(--pc-text-color);
     line-height: 1.7;
@@ -151,7 +154,7 @@
   }
 
   /* Reading Time / Meta */
-  .pc-blog-slider__meta-{{ ai_gen_id }} {
+  .pc-blog-slider__meta-{{ section.id }} {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -160,20 +163,20 @@
     opacity: 0.7;
   }
 
-  .pc-blog-slider__meta-{{ ai_gen_id }} svg {
+  .pc-blog-slider__meta-{{ section.id }} svg {
     width: 14px;
     height: 14px;
   }
 
-  /* Button - Animated Arrow Style */
-  .pc-blog-slider__button-wrapper-{{ ai_gen_id }} {
+  /* Button */
+  .pc-blog-slider__button-wrapper-{{ section.id }} {
     display: flex;
     align-items: center;
     gap: 16px;
     margin-top: 8px;
   }
 
-  .pc-blog-slider__button-{{ ai_gen_id }} {
+  .pc-blog-slider__button-{{ section.id }} {
     display: inline-flex;
     align-items: center;
     gap: 12px;
@@ -188,25 +191,27 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    border: none;
+    cursor: pointer;
   }
 
-  .pc-blog-slider__button-{{ ai_gen_id }}:hover {
+  .pc-blog-slider__button-{{ section.id }}:hover {
     background-color: var(--pc-btn-hover-bg);
     transform: translateX(4px);
   }
 
-  .pc-blog-slider__button-{{ ai_gen_id }} svg {
+  .pc-blog-slider__button-{{ section.id }} svg {
     width: 16px;
     height: 16px;
     transition: transform 0.3s ease;
   }
 
-  .pc-blog-slider__button-{{ ai_gen_id }}:hover svg {
+  .pc-blog-slider__button-{{ section.id }}:hover svg {
     transform: translateX(4px);
   }
 
-  /* Animated Arrow Button (Alternative Style) */
-  .pc-blog-slider__arrow-btn-{{ ai_gen_id }} {
+  /* Animated Arrow Button */
+  .pc-blog-slider__arrow-btn-{{ section.id }} {
     position: relative;
     width: 64px;
     height: 32px;
@@ -217,7 +222,7 @@
     display: block;
   }
 
-  .pc-blog-slider__arrow-btn-svg-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-btn-svg-{{ section.id }} {
     position: absolute;
     top: 0;
     left: 0;
@@ -225,13 +230,13 @@
     height: 100%;
   }
 
-  .pc-blog-slider__arrow-btn-bg-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-btn-bg-{{ section.id }} {
     fill: none;
     stroke: var(--pc-border-color);
     stroke-width: 1;
   }
 
-  .pc-blog-slider__arrow-btn-fill-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-btn-fill-{{ section.id }} {
     fill: none;
     stroke: var(--pc-accent);
     stroke-width: 1.5;
@@ -240,11 +245,11 @@
     transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .pc-blog-slider__arrow-btn-{{ ai_gen_id }}:hover .pc-blog-slider__arrow-btn-fill-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-btn-{{ section.id }}:hover .pc-blog-slider__arrow-btn-fill-{{ section.id }} {
     stroke-dashoffset: 0;
   }
 
-  .pc-blog-slider__arrow-icon-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-icon-{{ section.id }} {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -253,11 +258,11 @@
     color: var(--pc-title-color);
   }
 
-  .pc-blog-slider__arrow-btn-{{ ai_gen_id }}:hover .pc-blog-slider__arrow-icon-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-btn-{{ section.id }}:hover .pc-blog-slider__arrow-icon-{{ section.id }} {
     transform: translate(-30%, -50%);
   }
 
-  .pc-blog-slider__arrow-icon-second-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-icon-second-{{ section.id }} {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -267,36 +272,36 @@
     opacity: 0;
   }
 
-  .pc-blog-slider__arrow-btn-{{ ai_gen_id }}:hover .pc-blog-slider__arrow-icon-second-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-btn-{{ section.id }}:hover .pc-blog-slider__arrow-icon-second-{{ section.id }} {
     transform: translate(-50%, -50%);
     opacity: 1;
   }
 
   /* Image Column */
-  .pc-blog-slider__image-wrapper-{{ ai_gen_id }} {
+  .pc-blog-slider__image-wrapper-{{ section.id }} {
     position: relative;
     overflow: hidden;
     border-radius: {{ section.settings.image_border_radius }}px;
     background-color: {{ section.settings.image_background_color }};
-    {% if section.settings.image_aspect_ratio != 'auto' %}
+    {%- if section.settings.image_aspect_ratio != 'auto' -%}
     aspect-ratio: {{ section.settings.image_aspect_ratio }};
-    {% else %}
+    {%- else -%}
     aspect-ratio: 1 / 1;
-    {% endif %}
+    {%- endif -%}
   }
 
-  .pc-blog-slider__image-{{ ai_gen_id }} {
+  .pc-blog-slider__image-{{ section.id }} {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .pc-blog-slider__slide-{{ ai_gen_id }}:hover .pc-blog-slider__image-{{ ai_gen_id }} {
+  .pc-blog-slider__slide-{{ section.id }}:hover .pc-blog-slider__image-{{ section.id }} {
     transform: scale(1.03);
   }
 
-  .pc-blog-slider__image-placeholder-{{ ai_gen_id }} {
+  .pc-blog-slider__image-placeholder-{{ section.id }} {
     width: 100%;
     height: 100%;
     display: flex;
@@ -305,7 +310,7 @@
     background-color: #f5f3ef;
   }
 
-  .pc-blog-slider__image-placeholder-{{ ai_gen_id }} svg {
+  .pc-blog-slider__image-placeholder-{{ section.id }} svg {
     width: 60%;
     height: 60%;
     max-width: 200px;
@@ -313,7 +318,7 @@
   }
 
   /* Date Badge */
-  .pc-blog-slider__date-badge-{{ ai_gen_id }} {
+  .pc-blog-slider__date-badge-{{ section.id }} {
     position: absolute;
     top: 16px;
     left: 16px;
@@ -326,23 +331,25 @@
     letter-spacing: 0.02em;
     backdrop-filter: blur(4px);
     z-index: 2;
+    pointer-events: none;
   }
 
   /* Navigation Controls */
-  .pc-blog-slider__controls-{{ ai_gen_id }} {
+  .pc-blog-slider__controls-{{ section.id }} {
     display: flex;
     justify-content: {{ section.settings.controls_alignment }};
     align-items: center;
     gap: 24px;
     margin-top: {{ section.settings.controls_margin_top }}px;
+    flex-wrap: wrap;
   }
 
-  .pc-blog-slider__nav-{{ ai_gen_id }} {
+  .pc-blog-slider__nav-{{ section.id }} {
     display: flex;
     gap: 12px;
   }
 
-  .pc-blog-slider__arrow-{{ ai_gen_id }} {
+  .pc-blog-slider__arrow-{{ section.id }} {
     background-color: {{ section.settings.arrow_background }};
     color: {{ section.settings.arrow_color }};
     border: 1px solid {{ section.settings.arrow_border_color }};
@@ -354,32 +361,33 @@
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    padding: 0;
   }
 
-  .pc-blog-slider__arrow-{{ ai_gen_id }}:hover:not(:disabled) {
+  .pc-blog-slider__arrow-{{ section.id }}:hover:not(:disabled) {
     background-color: {{ section.settings.arrow_hover_background }};
     border-color: {{ section.settings.arrow_hover_background }};
     color: {{ section.settings.arrow_hover_color }};
   }
 
-  .pc-blog-slider__arrow-{{ ai_gen_id }}:disabled {
+  .pc-blog-slider__arrow-{{ section.id }}:disabled {
     opacity: 0.3;
     cursor: not-allowed;
   }
 
-  .pc-blog-slider__arrow-{{ ai_gen_id }} svg {
+  .pc-blog-slider__arrow-{{ section.id }} svg {
     width: 20px;
     height: 20px;
   }
 
   /* Dots / Indicators */
-  .pc-blog-slider__dots-{{ ai_gen_id }} {
+  .pc-blog-slider__dots-{{ section.id }} {
     display: flex;
     gap: {{ section.settings.dot_gap }}px;
     align-items: center;
   }
 
-  .pc-blog-slider__dot-{{ ai_gen_id }} {
+  .pc-blog-slider__dot-{{ section.id }} {
     width: {{ section.settings.dot_size }}px;
     height: {{ section.settings.dot_size }}px;
     border-radius: {{ section.settings.dot_border_radius }}px;
@@ -391,27 +399,27 @@
     padding: 0;
   }
 
-  .pc-blog-slider__dot-{{ ai_gen_id }}.active {
+  .pc-blog-slider__dot-{{ section.id }}.active {
     background-color: {{ section.settings.dot_active_color }};
     opacity: 1;
-    {% if section.settings.dot_active_scale %}
+    {%- if section.settings.dot_active_scale -%}
     transform: scale(1.2);
-    {% endif %}
+    {%- endif -%}
   }
 
-  .pc-blog-slider__dot-{{ ai_gen_id }}:hover:not(.active) {
+  .pc-blog-slider__dot-{{ section.id }}:hover:not(.active) {
     opacity: 0.7;
   }
 
   /* Progress Bar Style Indicator */
-  {% if section.settings.indicator_style == 'progress' %}
-  .pc-blog-slider__progress-{{ ai_gen_id }} {
+  {%- if section.settings.indicator_style == 'progress' -%}
+  .pc-blog-slider__progress-{{ section.id }} {
     display: flex;
     gap: 8px;
     align-items: center;
   }
 
-  .pc-blog-slider__progress-bar-{{ ai_gen_id }} {
+  .pc-blog-slider__progress-bar-{{ section.id }} {
     width: 60px;
     height: 3px;
     background-color: var(--pc-border-color);
@@ -420,155 +428,168 @@
     cursor: pointer;
   }
 
-  .pc-blog-slider__progress-bar-{{ ai_gen_id }}.active {
+  .pc-blog-slider__progress-bar-{{ section.id }}.active {
     background-color: var(--pc-accent);
   }
-  {% endif %}
+  {%- endif -%}
 
   /* Counter */
-  .pc-blog-slider__counter-{{ ai_gen_id }} {
+  .pc-blog-slider__counter-{{ section.id }} {
     font-size: 14px;
     color: var(--pc-text-color);
     font-weight: 500;
     letter-spacing: 0.05em;
   }
 
-  .pc-blog-slider__counter-current-{{ ai_gen_id }} {
+  .pc-blog-slider__counter-current-{{ section.id }} {
     color: var(--pc-title-color);
   }
 
   /* Empty State */
-  .pc-blog-slider__empty-{{ ai_gen_id }} {
+  .pc-blog-slider__empty-{{ section.id }} {
     text-align: center;
     padding: 80px 40px;
     color: var(--pc-text-color);
     font-size: 16px;
     background-color: var(--pc-content-bg);
     border-radius: 12px;
+    border: 1px solid var(--pc-border-color);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     RESPONSIVE STYLES
-  ═══════════════════════════════════════════════════════════════ */
-
+  /* RESPONSIVE STYLES */
   @media screen and (max-width: 990px) {
-    .pc-blog-slider__slide-{{ ai_gen_id }} {
+    .pc-blog-slider__slide-{{ section.id }} {
       grid-template-columns: 1fr;
       gap: 24px;
     }
 
-    {% if section.settings.mobile_image_position == 'top' %}
-    .pc-blog-slider__content-{{ ai_gen_id }} {
+    {%- if section.settings.mobile_image_position == 'top' -%}
+    .pc-blog-slider__content-{{ section.id }} {
       order: 2;
     }
-    .pc-blog-slider__image-wrapper-{{ ai_gen_id }} {
+    .pc-blog-slider__image-wrapper-{{ section.id }} {
       order: 1;
     }
-    {% endif %}
+    {%- endif -%}
 
-    .pc-blog-slider__content-{{ ai_gen_id }} {
+    .pc-blog-slider__content-{{ section.id }} {
       aspect-ratio: auto;
       padding: {{ section.settings.content_padding | times: 0.75 | round }}px;
     }
 
-    .pc-blog-slider__image-wrapper-{{ ai_gen_id }} {
+    .pc-blog-slider__image-wrapper-{{ section.id }} {
       aspect-ratio: {{ section.settings.mobile_image_aspect_ratio }};
     }
 
-    .pc-blog-slider__title-{{ ai_gen_id }} {
-      font-size: {{ section.settings.title_size | times: 0.75 | round }}px;
+    .pc-blog-slider__title-{{ section.id }} {
+      font-size: {{ section.settings.title_size | times: 0.85 | round }}px;
     }
 
-    .pc-blog-slider__section-title-{{ ai_gen_id }} {
-      font-size: {{ section.settings.section_title_size | times: 0.8 | round }}px;
+    .pc-blog-slider__section-title-{{ section.id }} {
+      font-size: {{ section.settings.section_title_size | times: 0.9 | round }}px;
     }
   }
 
   @media screen and (max-width: 749px) {
-    .pc-blog-slider-{{ ai_gen_id }} {
-      padding: {{ section.settings.padding_top | times: 0.6 | round }}px 0 {{ section.settings.padding_bottom | times: 0.6 | round }}px;
+    .pc-blog-slider-{{ section.id }} {
+      padding: {{ section.settings.padding_top | times: 0.7 | round }}px 0 {{ section.settings.padding_bottom | times: 0.7 | round }}px;
     }
 
-    .pc-blog-slider__container-{{ ai_gen_id }} {
+    .pc-blog-slider__container-{{ section.id }} {
       padding: 0 20px;
     }
 
-    .pc-blog-slider__header-{{ ai_gen_id }} {
-      margin-bottom: 24px;
+    .pc-blog-slider__header-{{ section.id }} {
+      margin-bottom: 32px;
     }
 
-    .pc-blog-slider__content-{{ ai_gen_id }} {
-      padding: 28px;
+    .pc-blog-slider__content-{{ section.id }} {
+      padding: 32px;
     }
 
-    .pc-blog-slider__title-{{ ai_gen_id }} {
-      font-size: {{ section.settings.title_size | times: 0.65 | round }}px;
+    .pc-blog-slider__title-{{ section.id }} {
+      font-size: {{ section.settings.title_size | times: 0.75 | round }}px;
     }
 
-    .pc-blog-slider__description-{{ ai_gen_id }} {
+    .pc-blog-slider__description-{{ section.id }} {
       font-size: {{ section.settings.description_size | times: 0.9 | round }}px;
     }
 
-    .pc-blog-slider__controls-{{ ai_gen_id }} {
+    .pc-blog-slider__controls-{{ section.id }} {
       justify-content: center;
     }
   }
 
   /* Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
-    .pc-blog-slider__track-{{ ai_gen_id }},
-    .pc-blog-slider__image-{{ ai_gen_id }},
-    .pc-blog-slider__button-{{ ai_gen_id }},
-    .pc-blog-slider__arrow-btn-fill-{{ ai_gen_id }},
-    .pc-blog-slider__arrow-icon-{{ ai_gen_id }},
-    .pc-blog-slider__arrow-icon-second-{{ ai_gen_id }} {
+    .pc-blog-slider__track-{{ section.id }},
+    .pc-blog-slider__image-{{ section.id }},
+    .pc-blog-slider__button-{{ section.id }},
+    .pc-blog-slider__arrow-btn-fill-{{ section.id }},
+    .pc-blog-slider__arrow-icon-{{ section.id }},
+    .pc-blog-slider__arrow-icon-second-{{ section.id }} {
       transition: none;
     }
 
-    .pc-blog-slider__slide-{{ ai_gen_id }}:hover .pc-blog-slider__image-{{ ai_gen_id }} {
+    .pc-blog-slider__slide-{{ section.id }}:hover .pc-blog-slider__image-{{ section.id }} {
       transform: none;
     }
   }
-{% endstyle %}
+{%- endstyle -%}
 
-<section class="pc-blog-slider-{{ ai_gen_id }}" data-section-id="{{ section.id }}">
-  <div class="pc-blog-slider__container-{{ ai_gen_id }}">
+<section class="pc-blog-slider-{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="pc-blog-slider__container-{{ section.id }}">
     
     {%- if section.settings.section_eyebrow != blank or section.settings.section_title != blank -%}
-      <div class="pc-blog-slider__header-{{ ai_gen_id }}">
+      <div class="pc-blog-slider__header-{{ section.id }}">
         {%- if section.settings.section_eyebrow != blank -%}
-          <p class="pc-blog-slider__section-eyebrow-{{ ai_gen_id }}">{{ section.settings.section_eyebrow }}</p>
+          <p class="pc-blog-slider__section-eyebrow-{{ section.id }}">{{ section.settings.section_eyebrow | escape }}</p>
         {%- endif -%}
         {%- if section.settings.section_title != blank -%}
-          <h2 class="pc-blog-slider__section-title-{{ ai_gen_id }}">{{ section.settings.section_title }}</h2>
+          <h2 class="pc-blog-slider__section-title-{{ section.id }}">{{ section.settings.section_title | escape }}</h2>
         {%- endif -%}
       </div>
     {%- endif -%}
 
-    {%- if section.settings.blog != blank and section.settings.blog.articles_count > 0 -%}
-      <div class="pc-blog-slider__viewport-{{ ai_gen_id }}">
-        <div class="pc-blog-slider__track-{{ ai_gen_id }}" data-track>
-          {%- for article in section.settings.blog.articles limit: section.settings.articles_limit -%}
-            <div class="pc-blog-slider__slide-{{ ai_gen_id }}" data-slide="{{ forloop.index0 }}">
+    {%- assign blog = section.settings.blog -%}
+    {%- if blog != blank and blog.articles_count > 0 -%}
+      {%- assign articles_limit = section.settings.articles_limit | at_most: blog.articles_count -%}
+      
+      <div class="pc-blog-slider__viewport-{{ section.id }}">
+        <div class="pc-blog-slider__track-{{ section.id }}" data-track>
+          {%- for article in blog.articles limit: articles_limit -%}
+            <div class="pc-blog-slider__slide-{{ section.id }}" data-slide="{{ forloop.index0 }}">
               
-              {%- comment -%} Content Column {%- endcomment -%}
-              <div class="pc-blog-slider__content-{{ ai_gen_id }}">
-                <div class="pc-blog-slider__content-inner-{{ ai_gen_id }}" style="align-items: {{ section.settings.content_alignment }}; text-align: {{ section.settings.content_text_alignment }};">
+              <!-- Content Column -->
+              <div class="pc-blog-slider__content-{{ section.id }}">
+                <div class="pc-blog-slider__content-inner-{{ section.id }}">
                   
                   {%- if section.settings.show_eyebrow -%}
-                    {%- if section.settings.eyebrow_source == 'blog_title' -%}
-                      <span class="pc-blog-slider__eyebrow-{{ ai_gen_id }}">{{ section.settings.blog.title }}</span>
-                    {%- elsif section.settings.eyebrow_source == 'custom' and section.settings.custom_eyebrow != blank -%}
-                      <span class="pc-blog-slider__eyebrow-{{ ai_gen_id }}">{{ section.settings.custom_eyebrow }}</span>
-                    {%- elsif article.tags.size > 0 -%}
-                      <span class="pc-blog-slider__eyebrow-{{ ai_gen_id }}">{{ article.tags.first }}</span>
+                    {%- assign eyebrow_text = '' -%}
+                    {%- case section.settings.eyebrow_source -%}
+                      {%- when 'blog_title' -%}
+                        {%- assign eyebrow_text = blog.title -%}
+                      {%- when 'custom' -%}
+                        {%- assign eyebrow_text = section.settings.custom_eyebrow -%}
+                      {%- when 'first_tag' -%}
+                        {%- if article.tags.size > 0 -%}
+                          {%- assign eyebrow_text = article.tags.first -%}
+                        {%- endif -%}
+                    {%- endcase -%}
+                    
+                    {%- if eyebrow_text != blank -%}
+                      <span class="pc-blog-slider__eyebrow-{{ section.id }}">{{ eyebrow_text | escape }}</span>
                     {%- endif -%}
                   {%- endif -%}
 
-                  <h3 class="pc-blog-slider__title-{{ ai_gen_id }}">{{ article.title }}</h3>
+                  <h3 class="pc-blog-slider__title-{{ section.id }}">
+                    <a href="{{ article.url }}" style="color: inherit; text-decoration: none;">
+                      {{ article.title | escape }}
+                    </a>
+                  </h3>
 
                   {%- if section.settings.show_description -%}
-                    <p class="pc-blog-slider__description-{{ ai_gen_id }}">
+                    <p class="pc-blog-slider__description-{{ section.id }}">
                       {%- if article.excerpt != blank -%}
                         {{ article.excerpt | strip_html | truncate: section.settings.description_length }}
                       {%- else -%}
@@ -579,8 +600,8 @@
 
                   {%- if section.settings.show_read_time -%}
                     {%- assign words = article.content | strip_html | split: ' ' | size -%}
-                    {%- assign read_time = words | divided_by: 200 | plus: 1 -%}
-                    <div class="pc-blog-slider__meta-{{ ai_gen_id }}">
+                    {%- assign read_time = words | divided_by: 200 | at_least: 1 -%}
+                    <div class="pc-blog-slider__meta-{{ section.id }}">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
                         <polyline points="12 6 12 12 16 14"/>
@@ -590,29 +611,29 @@
                   {%- endif -%}
 
                   {%- if section.settings.show_button -%}
-                    <div class="pc-blog-slider__button-wrapper-{{ ai_gen_id }}">
+                    <div class="pc-blog-slider__button-wrapper-{{ section.id }}">
                       {%- if section.settings.button_style == 'solid' -%}
-                        <a href="{{ article.url }}" class="pc-blog-slider__button-{{ ai_gen_id }}">
-                          {{ section.settings.button_text }}
+                        <a href="{{ article.url }}" class="pc-blog-slider__button-{{ section.id }}">
+                          {{ section.settings.button_text | escape }}
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="5" y1="12" x2="19" y2="12"/>
                             <polyline points="12 5 19 12 12 19"/>
                           </svg>
                         </a>
                       {%- else -%}
-                        <a href="{{ article.url }}" class="pc-blog-slider__arrow-btn-{{ ai_gen_id }}" aria-label="{{ section.settings.button_text }}">
-                          <svg class="pc-blog-slider__arrow-btn-svg-{{ ai_gen_id }}" width="64" height="32" viewBox="0 0 64 32" fill="none">
-                            <path class="pc-blog-slider__arrow-btn-bg-{{ ai_gen_id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
-                            <path class="pc-blog-slider__arrow-btn-fill-{{ ai_gen_id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
+                        <a href="{{ article.url }}" class="pc-blog-slider__arrow-btn-{{ section.id }}" aria-label="{{ section.settings.button_text | escape }}">
+                          <svg class="pc-blog-slider__arrow-btn-svg-{{ section.id }}" width="64" height="32" viewBox="0 0 64 32" fill="none">
+                            <path class="pc-blog-slider__arrow-btn-bg-{{ section.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
+                            <path class="pc-blog-slider__arrow-btn-fill-{{ section.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
                           </svg>
-                          <svg class="pc-blog-slider__arrow-icon-{{ ai_gen_id }}" width="12" height="10" viewBox="0 0 12 10" fill="none">
+                          <svg class="pc-blog-slider__arrow-icon-{{ section.id }}" width="12" height="10" viewBox="0 0 12 10" fill="none">
                             <path d="M1 5L11 5M11 5L6.71429 1M11 5L6.71429 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/>
                           </svg>
-                          <svg class="pc-blog-slider__arrow-icon-second-{{ ai_gen_id }}" width="12" height="10" viewBox="0 0 12 10" fill="none">
+                          <svg class="pc-blog-slider__arrow-icon-second-{{ section.id }}" width="12" height="10" viewBox="0 0 12 10" fill="none">
                             <path d="M1 5L11 5M11 5L6.71429 1M11 5L6.71429 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/>
                           </svg>
                         </a>
-                        <span class="pc-blog-slider__meta-{{ ai_gen_id }}">{{ section.settings.button_text }}</span>
+                        <span class="pc-blog-slider__meta-{{ section.id }}">{{ section.settings.button_text | escape }}</span>
                       {%- endif -%}
                     </div>
                   {%- endif -%}
@@ -620,32 +641,36 @@
                 </div>
               </div>
 
-              {%- comment -%} Image Column {%- endcomment -%}
-              <div class="pc-blog-slider__image-wrapper-{{ ai_gen_id }}">
+              <!-- Image Column -->
+              <div class="pc-blog-slider__image-wrapper-{{ section.id }}">
                 {%- if section.settings.show_date_badge -%}
-                  <div class="pc-blog-slider__date-badge-{{ ai_gen_id }}">
-                    {{ article.published_at | date: section.settings.date_format }}
+                  <div class="pc-blog-slider__date-badge-{{ section.id }}">
+                    {{ article.published_at | time_tag: format: section.settings.date_format }}
                   </div>
                 {%- endif -%}
 
                 {%- if article.image -%}
-                  <img
-                    src="{{ article.image | image_url: width: 1200 }}"
-                    srcset="{{ article.image | image_url: width: 400 }} 400w,
-                            {{ article.image | image_url: width: 600 }} 600w,
-                            {{ article.image | image_url: width: 800 }} 800w,
-                            {{ article.image | image_url: width: 1000 }} 1000w,
-                            {{ article.image | image_url: width: 1200 }} 1200w"
-                    sizes="(max-width: 749px) 100vw, 50vw"
-                    alt="{{ article.image.alt | escape | default: article.title | escape }}"
-                    class="pc-blog-slider__image-{{ ai_gen_id }}"
-                    loading="lazy"
-                    width="{{ article.image.width }}"
-                    height="{{ article.image.height }}"
-                  >
+                  <a href="{{ article.url }}">
+                    <img
+                      src="{{ article.image | image_url: width: 800 }}"
+                      srcset="
+                        {{ article.image | image_url: width: 400 }} 400w,
+                        {{ article.image | image_url: width: 600 }} 600w,
+                        {{ article.image | image_url: width: 800 }} 800w,
+                        {{ article.image | image_url: width: 1000 }} 1000w,
+                        {{ article.image | image_url: width: 1200 }} 1200w
+                      "
+                      sizes="(max-width: 749px) 100vw, 50vw"
+                      alt="{{ article.image.alt | escape | default: article.title | escape }}"
+                      class="pc-blog-slider__image-{{ section.id }}"
+                      loading="lazy"
+                      width="{{ article.image.width }}"
+                      height="{{ article.image.height }}"
+                    >
+                  </a>
                 {%- else -%}
-                  <div class="pc-blog-slider__image-placeholder-{{ ai_gen_id }}">
-                    {{ 'image' | placeholder_svg_tag }}
+                  <div class="pc-blog-slider__image-placeholder-{{ section.id }}">
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
                   </div>
                 {%- endif -%}
               </div>
@@ -655,24 +680,17 @@
         </div>
       </div>
 
-      {%- assign articles_count = section.settings.blog.articles_count -%}
-      {%- if articles_count > section.settings.articles_limit -%}
-        {%- assign total_slides = section.settings.articles_limit -%}
-      {%- else -%}
-        {%- assign total_slides = articles_count -%}
-      {%- endif -%}
-
-      {%- if total_slides > 1 and section.settings.show_controls -%}
-        <div class="pc-blog-slider__controls-{{ ai_gen_id }}">
+      {%- if articles_limit > 1 and section.settings.show_controls -%}
+        <div class="pc-blog-slider__controls-{{ section.id }}">
           
           {%- if section.settings.show_arrows -%}
-            <div class="pc-blog-slider__nav-{{ ai_gen_id }}">
-              <button class="pc-blog-slider__arrow-{{ ai_gen_id }}" data-prev aria-label="Artículo anterior" {% if section.settings.disable_loop %}disabled{% endif %}>
+            <div class="pc-blog-slider__nav-{{ section.id }}">
+              <button class="pc-blog-slider__arrow-{{ section.id }}" data-prev aria-label="{{ 'general.slider.previous_slide' | t }}" {% if section.settings.disable_loop and forloop.first %}disabled{% endif %}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="15 18 9 12 15 6"/>
                 </svg>
               </button>
-              <button class="pc-blog-slider__arrow-{{ ai_gen_id }}" data-next aria-label="Siguiente artículo">
+              <button class="pc-blog-slider__arrow-{{ section.id }}" data-next aria-label="{{ 'general.slider.next_slide' | t }}">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="9 18 15 12 9 6"/>
                 </svg>
@@ -681,30 +699,30 @@
           {%- endif -%}
 
           {%- if section.settings.show_counter -%}
-            <div class="pc-blog-slider__counter-{{ ai_gen_id }}">
-              <span class="pc-blog-slider__counter-current-{{ ai_gen_id }}" data-current>01</span>
+            <div class="pc-blog-slider__counter-{{ section.id }}">
+              <span class="pc-blog-slider__counter-current-{{ section.id }}" data-current>01</span>
               <span>/</span>
-              <span>{{ total_slides | prepend: '00' | slice: -2, 2 }}</span>
+              <span data-total>{{ articles_limit | prepend: '00' | slice: -2, 2 }}</span>
             </div>
           {%- endif -%}
 
           {%- if section.settings.show_dots -%}
             {%- if section.settings.indicator_style == 'dots' -%}
-              <div class="pc-blog-slider__dots-{{ ai_gen_id }}">
-                {%- for i in (1..total_slides) -%}
+              <div class="pc-blog-slider__dots-{{ section.id }}" data-dots>
+                {%- for i in (1..articles_limit) -%}
                   <button 
-                    class="pc-blog-slider__dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" 
-                    data-dot="{{ forloop.index0 }}"
-                    aria-label="Ir al artículo {{ forloop.index }}"
+                    class="pc-blog-slider__dot-{{ section.id }} {% if forloop.first %}active{% endif %}" 
+                    data-index="{{ forloop.index0 }}"
+                    aria-label="{{ 'sections.slider.load_slide' | t: slide_number: forloop.index }}"
                   ></button>
                 {%- endfor -%}
               </div>
             {%- elsif section.settings.indicator_style == 'progress' -%}
-              <div class="pc-blog-slider__progress-{{ ai_gen_id }}">
-                {%- for i in (1..total_slides) -%}
+              <div class="pc-blog-slider__progress-{{ section.id }}" data-progress>
+                {%- for i in (1..articles_limit) -%}
                   <div 
-                    class="pc-blog-slider__progress-bar-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}" 
-                    data-progress="{{ forloop.index0 }}"
+                    class="pc-blog-slider__progress-bar-{{ section.id }} {% if forloop.first %}active{% endif %}" 
+                    data-index="{{ forloop.index0 }}"
                   ></div>
                 {%- endfor -%}
               </div>
@@ -715,8 +733,11 @@
       {%- endif -%}
 
     {%- else -%}
-      <div class="pc-blog-slider__empty-{{ ai_gen_id }}">
-        <p>{{ section.settings.empty_message }}</p>
+      <div class="pc-blog-slider__empty-{{ section.id }}">
+        <p>{{ section.settings.empty_message | escape }}</p>
+        {%- if blog == blank -%}
+          <p style="margin-top: 10px; font-size: 14px;">{{ 'sections.blog_slider.select_blog' | t }}</p>
+        {%- endif -%}
       </div>
     {%- endif -%}
 
@@ -724,135 +745,178 @@
 </section>
 
 <script>
-  (function() {
-    const section = document.querySelector('[data-section-id="{{ section.id }}"]');
-    if (!section) return;
-
-    const track = section.querySelector('[data-track]');
-    const slides = section.querySelectorAll('[data-slide]');
-    const prevBtn = section.querySelector('[data-prev]');
-    const nextBtn = section.querySelector('[data-next]');
-    const dots = section.querySelectorAll('[data-dot]');
-    const progressBars = section.querySelectorAll('[data-progress]');
-    const counter = section.querySelector('[data-current]');
-
-    const totalSlides = slides.length;
-    let currentSlide = 0;
-    const loop = {{ section.settings.disable_loop | json }} !== true;
-    const autoplay = {{ section.settings.autoplay | json }};
-    const autoplayDelay = {{ section.settings.autoplay_delay }};
-    let autoplayInterval = null;
-
-    if (totalSlides <= 1) return;
-
-    function updateSlider() {
-      track.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-      dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === currentSlide);
-      });
-
-      progressBars.forEach((bar, i) => {
-        bar.classList.toggle('active', i === currentSlide);
-      });
-
-      if (counter) {
-        counter.textContent = String(currentSlide + 1).padStart(2, '0');
+(function() {
+  'use strict';
+  
+  const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+  if (!section) return;
+  
+  const track = section.querySelector('[data-track]');
+  const slides = section.querySelectorAll('[data-slide]');
+  const prevBtn = section.querySelector('[data-prev]');
+  const nextBtn = section.querySelector('[data-next]');
+  const dots = section.querySelectorAll('[data-dot]') || section.querySelectorAll('[data-progress] [data-index]');
+  const counterCurrent = section.querySelector('[data-current]');
+  const counterTotal = section.querySelector('[data-total]');
+  
+  const totalSlides = slides.length;
+  if (totalSlides <= 1) return;
+  
+  let currentIndex = 0;
+  const loop = !{{ section.settings.disable_loop | default: false }};
+  const autoplay = {{ section.settings.autoplay | default: false }};
+  const autoplayDelay = {{ section.settings.autoplay_delay | default: 5000 }};
+  let autoplayTimer = null;
+  
+  function updateSlider() {
+    // Update track position
+    track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    
+    // Update dots
+    dots.forEach((dot, index) => {
+      if (dot.classList) {
+        dot.classList.toggle('active', index === currentIndex);
       }
-
-      if (prevBtn && !loop) {
-        prevBtn.disabled = currentSlide === 0;
-      }
-      if (nextBtn && !loop) {
-        nextBtn.disabled = currentSlide === totalSlides - 1;
-      }
-    }
-
-    function goToSlide(index) {
-      if (loop) {
-        currentSlide = (index + totalSlides) % totalSlides;
-      } else {
-        currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
-      }
-      updateSlider();
-    }
-
-    function nextSlide() {
-      goToSlide(currentSlide + 1);
-    }
-
-    function prevSlide() {
-      goToSlide(currentSlide - 1);
-    }
-
-    function startAutoplay() {
-      if (autoplay && autoplayDelay > 0) {
-        autoplayInterval = setInterval(nextSlide, autoplayDelay);
-      }
-    }
-
-    function stopAutoplay() {
-      if (autoplayInterval) {
-        clearInterval(autoplayInterval);
-        autoplayInterval = null;
-      }
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoplay(); prevSlide(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoplay(); nextSlide(); });
-
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        stopAutoplay();
-        goToSlide(parseInt(dot.dataset.dot, 10));
-      });
     });
-
-    progressBars.forEach(bar => {
-      bar.addEventListener('click', () => {
-        stopAutoplay();
-        goToSlide(parseInt(bar.dataset.progress, 10));
-      });
-    });
-
-    // Touch/Swipe support
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    track.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-      stopAutoplay();
-    }, { passive: true });
-
-    track.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchStartX - touchEndX;
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) nextSlide();
-        else prevSlide();
-      }
-    }, { passive: true });
-
-    // Keyboard navigation
-    section.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') { stopAutoplay(); prevSlide(); }
-      if (e.key === 'ArrowRight') { stopAutoplay(); nextSlide(); }
-    });
-
-    // Pause autoplay on hover
-    section.addEventListener('mouseenter', stopAutoplay);
-    section.addEventListener('mouseleave', startAutoplay);
-
+    
+    // Update counter
+    if (counterCurrent) {
+      counterCurrent.textContent = (currentIndex + 1).toString().padStart(2, '0');
+    }
+    
+    // Update arrow states if loop is disabled
+    if (!loop) {
+      if (prevBtn) prevBtn.disabled = currentIndex === 0;
+      if (nextBtn) nextBtn.disabled = currentIndex === totalSlides - 1;
+    }
+  }
+  
+  function goToSlide(index) {
+    if (index < 0) {
+      currentIndex = loop ? totalSlides - 1 : 0;
+    } else if (index >= totalSlides) {
+      currentIndex = loop ? 0 : totalSlides - 1;
+    } else {
+      currentIndex = index;
+    }
     updateSlider();
-    startAutoplay();
-  })();
+    resetAutoplay();
+  }
+  
+  function nextSlide() {
+    goToSlide(currentIndex + 1);
+  }
+  
+  function prevSlide() {
+    goToSlide(currentIndex - 1);
+  }
+  
+  function startAutoplay() {
+    if (!autoplay || autoplayDelay < 1000) return;
+    
+    stopAutoplay();
+    autoplayTimer = setInterval(() => {
+      nextSlide();
+    }, autoplayDelay);
+  }
+  
+  function stopAutoplay() {
+    if (autoplayTimer) {
+      clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+  }
+  
+  function resetAutoplay() {
+    if (autoplay) {
+      stopAutoplay();
+      startAutoplay();
+    }
+  }
+  
+  // Event Listeners
+  if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      prevSlide();
+    });
+  }
+  
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      nextSlide();
+    });
+  }
+  
+  // Dot click events
+  dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      const index = parseInt(dot.getAttribute('data-index'), 10);
+      if (!isNaN(index)) {
+        goToSlide(index);
+      }
+    });
+  });
+  
+  // Touch/Swipe support
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  track.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    stopAutoplay();
+  }, { passive: true });
+  
+  track.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const threshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > threshold) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  }, { passive: true });
+  
+  // Keyboard navigation
+  section.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+  });
+  
+  // Pause autoplay on hover
+  section.addEventListener('mouseenter', stopAutoplay);
+  section.addEventListener('mouseleave', startAutoplay);
+  
+  // Initialize
+  updateSlider();
+  startAutoplay();
+  
+  // Cleanup function
+  section.cleanupSlider = function() {
+    stopAutoplay();
+    if (prevBtn) prevBtn.removeEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.removeEventListener('click', nextSlide);
+    dots.forEach(dot => dot.removeEventListener('click', goToSlide));
+    track.removeEventListener('touchstart', touchStart);
+    track.removeEventListener('touchend', touchEnd);
+    section.removeEventListener('keydown', keyboardNav);
+    section.removeEventListener('mouseenter', stopAutoplay);
+    section.removeEventListener('mouseleave', startAutoplay);
+  };
+})();
 </script>
 
 {% schema %}
 {
-  "name": "Blog Slider - v2",
+  "name": "Blog Slider v2",
   "tag": "section",
-  "class": "section-blog-slider-pc",
+  "class": "section section-blog-slider",
   "settings": [
     {
       "type": "header",
@@ -903,9 +967,18 @@
       "id": "header_alignment",
       "label": "Header alignment",
       "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "left"
     },
@@ -918,8 +991,14 @@
       "id": "layout_direction",
       "label": "Layout direction",
       "options": [
-        { "value": "content_first", "label": "Content left, Image right" },
-        { "value": "image_first", "label": "Image left, Content right" }
+        {
+          "value": "content_first",
+          "label": "Content left, Image right"
+        },
+        {
+          "value": "image_first",
+          "label": "Image left, Content right"
+        }
       ],
       "default": "content_first"
     },
@@ -938,10 +1017,22 @@
       "id": "content_aspect_ratio",
       "label": "Content box aspect ratio",
       "options": [
-        { "value": "auto", "label": "Auto (flexible)" },
-        { "value": "1 / 1", "label": "Square (1:1)" },
-        { "value": "4 / 3", "label": "Landscape (4:3)" },
-        { "value": "3 / 4", "label": "Portrait (3:4)" }
+        {
+          "value": "auto",
+          "label": "Auto (flexible)"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4 / 3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Portrait (3:4)"
+        }
       ],
       "default": "1 / 1"
     },
@@ -950,11 +1041,26 @@
       "id": "image_aspect_ratio",
       "label": "Image aspect ratio",
       "options": [
-        { "value": "auto", "label": "Auto (match content)" },
-        { "value": "1 / 1", "label": "Square (1:1)" },
-        { "value": "4 / 3", "label": "Landscape (4:3)" },
-        { "value": "16 / 9", "label": "Wide (16:9)" },
-        { "value": "3 / 4", "label": "Portrait (3:4)" }
+        {
+          "value": "auto",
+          "label": "Auto (match content)"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4 / 3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "16 / 9",
+          "label": "Wide (16:9)"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Portrait (3:4)"
+        }
       ],
       "default": "1 / 1"
     },
@@ -963,8 +1069,14 @@
       "id": "mobile_image_position",
       "label": "Mobile: Image position",
       "options": [
-        { "value": "top", "label": "Image on top" },
-        { "value": "bottom", "label": "Image on bottom" }
+        {
+          "value": "top",
+          "label": "Image on top"
+        },
+        {
+          "value": "bottom",
+          "label": "Image on bottom"
+        }
       ],
       "default": "top"
     },
@@ -973,10 +1085,22 @@
       "id": "mobile_image_aspect_ratio",
       "label": "Mobile: Image aspect ratio",
       "options": [
-        { "value": "1 / 1", "label": "Square (1:1)" },
-        { "value": "4 / 3", "label": "Landscape (4:3)" },
-        { "value": "16 / 9", "label": "Wide (16:9)" },
-        { "value": "3 / 2", "label": "Photo (3:2)" }
+        {
+          "value": "1 / 1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4 / 3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "16 / 9",
+          "label": "Wide (16:9)"
+        },
+        {
+          "value": "3 / 2",
+          "label": "Photo (3:2)"
+        }
       ],
       "default": "4 / 3"
     },
@@ -995,9 +1119,18 @@
       "id": "eyebrow_source",
       "label": "Eyebrow source",
       "options": [
-        { "value": "blog_title", "label": "Blog title" },
-        { "value": "first_tag", "label": "First tag" },
-        { "value": "custom", "label": "Custom text" }
+        {
+          "value": "blog_title",
+          "label": "Blog title"
+        },
+        {
+          "value": "first_tag",
+          "label": "First tag"
+        },
+        {
+          "value": "custom",
+          "label": "Custom text"
+        }
       ],
       "default": "blog_title"
     },
@@ -1011,8 +1144,14 @@
       "id": "eyebrow_style",
       "label": "Eyebrow style",
       "options": [
-        { "value": "plain", "label": "Plain text" },
-        { "value": "underline", "label": "With underline accent" }
+        {
+          "value": "plain",
+          "label": "Plain text"
+        },
+        {
+          "value": "underline",
+          "label": "With underline accent"
+        }
       ],
       "default": "underline"
     },
@@ -1065,9 +1204,18 @@
       "id": "content_alignment",
       "label": "Content alignment",
       "options": [
-        { "value": "flex-start", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "flex-end", "label": "Right" }
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
       ],
       "default": "flex-start"
     },
@@ -1076,9 +1224,18 @@
       "id": "content_text_alignment",
       "label": "Text alignment",
       "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "left"
     },
@@ -1101,11 +1258,26 @@
       "id": "title_weight",
       "label": "Title weight",
       "options": [
-        { "value": "300", "label": "Light" },
-        { "value": "400", "label": "Regular" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" }
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
       ],
       "default": "400"
     },
@@ -1198,8 +1370,14 @@
       "id": "button_style",
       "label": "Button style",
       "options": [
-        { "value": "solid", "label": "Solid button" },
-        { "value": "animated_arrow", "label": "Animated arrow (like reference)" }
+        {
+          "value": "solid",
+          "label": "Solid button"
+        },
+        {
+          "value": "animated_arrow",
+          "label": "Animated arrow"
+        }
       ],
       "default": "animated_arrow"
     },
@@ -1322,8 +1500,14 @@
       "id": "indicator_style",
       "label": "Indicator style",
       "options": [
-        { "value": "dots", "label": "Dots" },
-        { "value": "progress", "label": "Progress bars" }
+        {
+          "value": "dots",
+          "label": "Dots"
+        },
+        {
+          "value": "progress",
+          "label": "Progress bars"
+        }
       ],
       "default": "dots"
     },
@@ -1338,10 +1522,22 @@
       "id": "controls_alignment",
       "label": "Controls alignment",
       "options": [
-        { "value": "flex-start", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "flex-end", "label": "Right" },
-        { "value": "space-between", "label": "Space between" }
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        },
+        {
+          "value": "space-between",
+          "label": "Space between"
+        }
       ],
       "default": "center"
     },
@@ -1534,8 +1730,10 @@
   ],
   "presets": [
     {
-      "name": "Blog Slider - v2",
+      "name": "Blog Slider v2",
       "settings": {
+        "blog": "",
+        "articles_limit": 5,
         "section_eyebrow": "FROM THE BLOG",
         "section_title": "Insights & Stories"
       }
