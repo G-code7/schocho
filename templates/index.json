@@ -1830,9 +1830,9 @@
                   "settings": {
                     "blog": "blog",
                     "articles_limit": 5,
-                    "section_eyebrow": "FROM THE BLOG",
-                    "section_title": "Insights & Stories",
-                    "title_size": 36,
+                    "section_eyebrow": "",
+                    "section_title": "",
+                    "title_size": 32,
                     "header_alignment": "center",
                     "header_spacing": 40,
                     "content_aspect_ratio": "1 / 1",
