@@ -1,13 +1,11 @@
-{% doc %}
-  @prompt
-    Crea una sección de blog con diseño split-screen (pantalla dividida). La columna izquierda ocupa 1/3 del ancho, tiene fondo personalizable y contiene el título y la fecha alineados a la izquierda con tipografía serif elegante. La columna derecha ocupa 2/3, mostrando una imagen en formato landscape (3:2). Aplica un border-radius de 20px a ambos contenedores para redondear las esquinas y añade un espaciado (gap) de 24px entre columnas. El estilo debe ser minimalista, limpio y estéticamente premium.
-{% enddoc %}
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
   .ai-blog-split-{{ ai_gen_id }} {
     display: block;
     width: 100%;
+    margin: 0 auto;
+    max-width: 1200px;
   }
 
   .ai-blog-split__container-{{ ai_gen_id }} {
@@ -15,73 +13,155 @@
     gap: 24px;
     width: 100%;
     align-items: stretch;
+    min-height: 500px;
   }
 
   .ai-blog-split__left-{{ ai_gen_id }} {
-    flex: 0 0 calc(33.333% - 12px);
+    flex: 0 0 {{ block.settings.left_width }}%;
     background-color: {{ block.settings.left_background_color }};
     border-radius: 20px;
-    padding: 40px;
+    padding: 60px 40px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Elemento decorativo para la columna izquierda */
+  .ai-blog-split__left-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background-color: {{ block.settings.accent_color }};
+    opacity: 0.1;
+    border-radius: 0 20px 0 0;
+  }
+
+  .ai-blog-split__left-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    width: 40px;
+    height: 40px;
+    background-color: {{ block.settings.accent_color }};
+    opacity: 0.15;
+    border-radius: 50%;
   }
 
   .ai-blog-split__title-{{ ai_gen_id }} {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: {{ block.settings.title_font_family }};
     font-size: {{ block.settings.title_size }}px;
+    font-weight: {{ block.settings.title_font_weight }};
     color: {{ block.settings.text_color }};
-    margin: 0 0 16px 0;
-    line-height: 1.2;
-    font-weight: 400;
+    margin: 0 0 20px 0;
+    line-height: 1.3;
+    letter-spacing: {{ block.settings.title_letter_spacing }}px;
+    position: relative;
+    z-index: 2;
+    max-width: 90%;
   }
 
   .ai-blog-split__date-{{ ai_gen_id }} {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: {{ block.settings.date_font_family }};
     font-size: {{ block.settings.date_size }}px;
+    font-weight: {{ block.settings.date_font_weight }};
     color: {{ block.settings.text_color }};
-    opacity: 0.7;
+    opacity: 0.8;
     margin: 0;
+    padding-left: 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ai-blog-split__date-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 16px;
+    background-color: {{ block.settings.accent_color }};
+    border-radius: 2px;
   }
 
   .ai-blog-split__right-{{ ai_gen_id }} {
-    flex: 0 0 calc(66.667% - 12px);
+    flex: 0 0 {{ 100 | minus: block.settings.left_width }}%;
     border-radius: 20px;
     overflow: hidden;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: {{ block.settings.right_background_color }};
+  }
+
+  .ai-blog-split__image-container-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    max-width: {{ block.settings.image_max_width }}%;
+    max-height: {{ block.settings.image_max_height }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-blog-split__image-container-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
   }
 
   .ai-blog-split__image-wrapper-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .ai-blog-split__image-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: {{ block.settings.image_fit }};
     display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-blog-split__image-container-{{ ai_gen_id }}:hover .ai-blog-split__image-{{ ai_gen_id }} {
+    transform: scale(1.05);
   }
 
   .ai-blog-split__placeholder-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    min-height: 400px;
-    background-color: #f4f4f4;
+    max-width: {{ block.settings.image_max_width }}%;
+    max-height: {{ block.settings.image_max_height }}px;
+    background-color: #f8f8f8;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   }
 
   .ai-blog-split__placeholder-{{ ai_gen_id }} svg {
-    width: 100%;
-    height: 100%;
-    max-width: 300px;
-    max-height: 300px;
-    opacity: 0.3;
+    width: 60%;
+    height: 60%;
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.2;
   }
 
   .ai-blog-split__empty-state-{{ ai_gen_id }} {
@@ -92,28 +172,86 @@
     padding: 12px 20px;
     font-size: 14px;
     color: #666;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
     text-align: center;
     pointer-events: none;
+    backdrop-filter: blur(5px);
+  }
+
+  @media screen and (max-width: 1024px) {
+    .ai-blog-split__container-{{ ai_gen_id }} {
+      gap: 20px;
+      min-height: 450px;
+    }
+
+    .ai-blog-split__left-{{ ai_gen_id }} {
+      padding: 40px 30px;
+    }
+
+    .ai-blog-split__right-{{ ai_gen_id }} {
+      padding: 30px;
+    }
+
+    .ai-blog-split__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.9);
+    }
   }
 
   @media screen and (max-width: 768px) {
     .ai-blog-split__container-{{ ai_gen_id }} {
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
+      min-height: auto;
     }
 
     .ai-blog-split__left-{{ ai_gen_id }},
     .ai-blog-split__right-{{ ai_gen_id }} {
       flex: 0 0 100%;
+      width: 100%;
     }
 
     .ai-blog-split__left-{{ ai_gen_id }} {
-      padding: 30px;
+      padding: 40px 30px;
     }
 
-    .ai-blog-split__image-wrapper-{{ ai_gen_id }},
-    .ai-blog-split__placeholder-{{ ai_gen_id }} {
+    .ai-blog-split__right-{{ ai_gen_id }} {
+      padding: 30px;
       min-height: 300px;
+    }
+
+    .ai-blog-split__image-container-{{ ai_gen_id }},
+    .ai-blog-split__placeholder-{{ ai_gen_id }} {
+      max-width: 90%;
+      max-height: 350px;
+    }
+
+    .ai-blog-split__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.85);
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-blog-split__container-{{ ai_gen_id }} {
+      gap: 16px;
+    }
+
+    .ai-blog-split__left-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .ai-blog-split__right-{{ ai_gen_id }} {
+      padding: 20px;
+    }
+
+    .ai-blog-split__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.75);
+      margin-bottom: 16px;
+    }
+
+    .ai-blog-split__date-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.date_size }}px * 0.9);
     }
   }
 {% endstyle %}
@@ -130,32 +268,34 @@
     </div>
 
     <div class="ai-blog-split__right-{{ ai_gen_id }}">
-      {% if block.settings.image %}
-        <div class="ai-blog-split__image-wrapper-{{ ai_gen_id }}">
-          <img
-            src="{{ block.settings.image | image_url: width: 1200 }}"
-            alt="{{ block.settings.image.alt | escape }}"
-            loading="lazy"
-            width="{{ block.settings.image.width }}"
-            height="{{ block.settings.image.height }}"
-            class="ai-blog-split__image-{{ ai_gen_id }}"
-          >
-        </div>
-      {% else %}
-        <div class="ai-blog-split__placeholder-{{ ai_gen_id }}">
-          {{ 'image' | placeholder_svg_tag }}
-          <div class="ai-blog-split__empty-state-{{ ai_gen_id }}">
-            Añade una imagen para completar el diseño
+      <div class="ai-blog-split__image-container-{{ ai_gen_id }}">
+        {% if block.settings.image %}
+          <div class="ai-blog-split__image-wrapper-{{ ai_gen_id }}">
+            <img
+              src="{{ block.settings.image | image_url: width: 1200 }}"
+              alt="{{ block.settings.image.alt | escape }}"
+              loading="lazy"
+              width="{{ block.settings.image.width }}"
+              height="{{ block.settings.image.height }}"
+              class="ai-blog-split__image-{{ ai_gen_id }}"
+            >
           </div>
-        </div>
-      {% endif %}
+        {% else %}
+          <div class="ai-blog-split__placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-blog-split__empty-state-{{ ai_gen_id }}">
+              Añade una imagen para completar el diseño
+            </div>
+          </div>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Blog split screen",
+  "name": "Blog Split",
   "tag": null,
   "settings": [
     {
@@ -166,13 +306,13 @@
       "type": "text",
       "id": "title",
       "label": "Título",
-      "default": "Explorando nuevas tendencias"
+      "default": "Refreshing Alternatives to Sugary Beverages"
     },
     {
       "type": "text",
       "id": "date",
       "label": "Fecha",
-      "default": "28 de enero, 2026"
+      "default": "November 8, 2024"
     },
     {
       "type": "image_picker",
@@ -181,17 +321,129 @@
     },
     {
       "type": "header",
-      "content": "Estilo de texto"
+      "content": "Configuración de Columnas"
+    },
+    {
+      "type": "range",
+      "id": "left_width",
+      "min": 25,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "label": "Ancho columna izquierda",
+      "default": 35
+    },
+    {
+      "type": "header",
+      "content": "Estilo del Título"
+    },
+    {
+      "type": "select",
+      "id": "title_font_family",
+      "label": "Tipografía del título",
+      "options": [
+        {
+          "value": "Georgia, 'Times New Roman', serif",
+          "label": "Serif Elegante"
+        },
+        {
+          "value": "'Playfair Display', serif",
+          "label": "Playfair Display"
+        },
+        {
+          "value": "'Merriweather', serif",
+          "label": "Merriweather"
+        },
+        {
+          "value": "'Cormorant Garamond', serif",
+          "label": "Garamond"
+        },
+        {
+          "value": "'Montserrat', sans-serif",
+          "label": "Montserrat (Sans-serif)"
+        },
+        {
+          "value": "'Helvetica Neue', sans-serif",
+          "label": "Helvetica"
+        }
+      ],
+      "default": "Georgia, 'Times New Roman', serif"
     },
     {
       "type": "range",
       "id": "title_size",
-      "min": 20,
+      "min": 24,
       "max": 60,
       "step": 2,
       "unit": "px",
       "label": "Tamaño del título",
-      "default": 32
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Peso de fuente del título",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light (300)"
+        },
+        {
+          "value": "400",
+          "label": "Regular (400)"
+        },
+        {
+          "value": "500",
+          "label": "Medium (500)"
+        },
+        {
+          "value": "600",
+          "label": "Semibold (600)"
+        },
+        {
+          "value": "700",
+          "label": "Bold (700)"
+        },
+        {
+          "value": "800",
+          "label": "Extra Bold (800)"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "min": -1,
+      "max": 3,
+      "step": 0.1,
+      "unit": "px",
+      "label": "Espaciado de letras del título",
+      "default": 0.5
+    },
+    {
+      "type": "header",
+      "content": "Estilo de la Fecha"
+    },
+    {
+      "type": "select",
+      "id": "date_font_family",
+      "label": "Tipografía de la fecha",
+      "options": [
+        {
+          "value": "Georgia, 'Times New Roman', serif",
+          "label": "Serif"
+        },
+        {
+          "value": "'Helvetica Neue', sans-serif",
+          "label": "Sans-serif"
+        },
+        {
+          "value": "'Courier New', monospace",
+          "label": "Monospace"
+        }
+      ],
+      "default": "Georgia, 'Times New Roman', serif"
     },
     {
       "type": "range",
@@ -204,25 +456,121 @@
       "default": 16
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Color del texto",
-      "default": "#371e54"
+      "type": "select",
+      "id": "date_font_weight",
+      "label": "Peso de fuente de la fecha",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        }
+      ],
+      "default": "400"
     },
     {
       "type": "header",
-      "content": "Fondo"
+      "content": "Configuración de la Imagen"
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Ancho máximo de la imagen",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "image_max_height",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Altura máxima de la imagen",
+      "default": 450
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste de imagen",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cubrir (cover)"
+        },
+        {
+          "value": "contain",
+          "label": "Contener (contain)"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
     },
     {
       "type": "color",
       "id": "left_background_color",
       "label": "Color de fondo izquierdo",
-      "default": "#efebe5"
+      "default": "#f8f5f0"
+    },
+    {
+      "type": "color",
+      "id": "right_background_color",
+      "label": "Color de fondo derecho",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#2d2d2d"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color de acento",
+      "default": "#4a6fa5",
+      "info": "Se usa en elementos decorativos y detalles"
     }
   ],
   "presets": [
     {
-      "name": "Blog split screen"
+      "name": "Blog Split ",
+      "settings": {
+        "title": "Refreshing Alternatives to Sugary Beverages",
+        "date": "November 8, 2024",
+        "left_width": 35,
+        "title_font_family": "Georgia, 'Times New Roman', serif",
+        "title_size": 36,
+        "title_font_weight": "600",
+        "title_letter_spacing": 0.5,
+        "date_font_family": "Georgia, 'Times New Roman', serif",
+        "date_size": 16,
+        "date_font_weight": "400",
+        "image_max_width": 80,
+        "image_max_height": 450,
+        "image_fit": "cover",
+        "left_background_color": "#f8f5f0",
+        "right_background_color": "#ffffff",
+        "text_color": "#2d2d2d",
+        "accent_color": "#4a6fa5"
+      }
     }
   ]
 }
