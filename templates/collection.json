@@ -96,7 +96,7 @@
       },
       "name": "t:names.media_with_text",
       "settings": {
-        "media_position": "left",
+        "media_position": "right",
         "media_width": "medium",
         "media_height": "50svh",
         "section_width": "full-width",
