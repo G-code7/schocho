@@ -187,14 +187,50 @@
       display: block;
     }
 
-    /* Estilos para slides de galería */
+    /* =============================================
+       ESTILOS PARA SLIDES DE GALERÍA - CORREGIDO
+       ============================================= */
+    
+    /* Base: ocultar todos los slides */
     .media-gallery__slide {
       display: none;
       opacity: 0;
       transition: opacity 0.3s ease;
     }
 
+    /* SOLUCIÓN: Mostrar el primer slide por defecto */
+    /* Usando :first-child como fallback cuando no hay is-active */
+    .media-gallery__slide:first-child {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Cuando hay un slide con is-active, ocultar el first-child si no es el activo */
     .media-gallery__slide.is-active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Si hay un is-active que NO es el primero, ocultar el primero */
+    .media-gallery__slide.is-active ~ .media-gallery__slide:first-child,
+    .media-gallery__slide:first-child:not(.is-active):has(~ .media-gallery__slide.is-active) {
+      display: none;
+      opacity: 0;
+    }
+
+    /* Fallback más robusto usando :where para menor especificidad */
+    :where(.media-gallery__slide:not(.is-active):not(:first-child)) {
+      display: none;
+      opacity: 0;
+    }
+
+    /* Asegurar que solo el slide activo se muestre cuando JS está funcionando */
+    .media-block.js-initialized .media-gallery__slide {
+      display: none;
+      opacity: 0;
+    }
+
+    .media-block.js-initialized .media-gallery__slide.is-active {
       display: block;
       opacity: 1;
     }
@@ -290,6 +326,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const slides = block.querySelectorAll('.media-gallery__slide');
       
       if (slides.length > 0) {
+        // Marcar el bloque como inicializado por JS
+        block.classList.add('js-initialized');
+        
         // Verificar si ya hay un slide activo
         let hasActiveSlide = false;
         slides.forEach(slide => {
@@ -299,12 +338,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Si no hay slide activo, activar el primero
-        if (!hasActiveSlide) {
+        if (!hasActiveSlide && slides.length > 0) {
           slides[0].classList.add('is-active');
-          
-          // También forzar la carga de imágenes lazy
-          const firstSlideImages = slides[0].querySelectorAll('img[data-src], img[data-srcset], source[data-srcset]');
-          firstSlideImages.forEach(element => {
+        }
+        
+        // Forzar la carga de imágenes del slide activo
+        const activeSlide = block.querySelector('.media-gallery__slide.is-active');
+        if (activeSlide) {
+          const lazyImages = activeSlide.querySelectorAll('img[data-src], img[data-srcset], source[data-srcset]');
+          lazyImages.forEach(element => {
             if (element.tagName === 'IMG' && element.dataset.src) {
               element.src = element.dataset.src;
             }
@@ -316,20 +358,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           });
         }
-        
-        // Forzar la carga de todas las imágenes lazy
-        const lazyImages = block.querySelectorAll('img[data-src], img[data-srcset], source[data-srcset]');
-        lazyImages.forEach(element => {
-          if (element.tagName === 'IMG' && element.dataset.src) {
-            element.src = element.dataset.src;
-          }
-          if (element.tagName === 'IMG' && element.dataset.srcset) {
-            element.srcset = element.dataset.srcset;
-          }
-          if (element.tagName === 'SOURCE' && element.dataset.srcset) {
-            element.srcset = element.dataset.srcset;
-          }
-        });
       }
     });
   }
@@ -419,6 +447,18 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(initGallerySlider, 150);
   });
 });
+
+// Ejecutar también antes del DOMContentLoaded para evitar el flash
+(function() {
+  // Añadir estilos inline inmediatamente para evitar FOUC (Flash of Unstyled Content)
+  const style = document.createElement('style');
+  style.textContent = `
+    .media-gallery__slide:first-child { display: block !important; opacity: 1 !important; }
+    .media-gallery__slide:not(:first-child):not(.is-active) { display: none !important; }
+    .media-gallery__slide.is-active { display: block !important; opacity: 1 !important; }
+  `;
+  document.head.appendChild(style);
+})();
 </script>
 
 {% schema %}
