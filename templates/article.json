@@ -67,6 +67,52 @@
           },
           "blocks": {}
         },
+        "article_content_DtKhrd": {
+          "type": "article-content",
+          "name": "Article Content",
+          "settings": {
+            "content": "{{ closest.article.content }}",
+            "max_width": 1100,
+            "content_width": 700,
+            "columns_gap": 40,
+            "section_padding_vertical": 40,
+            "section_padding_horizontal": 20,
+            "content_width_tablet": 550,
+            "columns_gap_tablet": 24,
+            "section_padding_mobile": 20,
+            "body_font_family": "inherit",
+            "body_size": 17,
+            "body_size_tablet": 16,
+            "body_size_mobile": 15,
+            "body_font_weight": "400",
+            "body_line_height": 1.5,
+            "paragraph_spacing": 16,
+            "heading_font_family": "inherit",
+            "heading_font_weight": "500",
+            "h2_size": 26,
+            "h3_size": 20,
+            "h4_size": 20,
+            "heading_margin_top": 24,
+            "heading_margin_bottom": 12,
+            "blockquote_margin": 32,
+            "blockquote_padding": 24,
+            "blockquote_border_width": 4,
+            "blockquote_border_radius": 4,
+            "blockquote_style": "italic",
+            "list_indent": 24,
+            "list_item_spacing": 8,
+            "image_border_radius": 8,
+            "image_margin": 24,
+            "body_color": "#3a3a3a",
+            "heading_color": "#1a1a1a",
+            "link_color": "#3e2563",
+            "link_underline": false,
+            "blockquote_background": "#f8f8f8",
+            "blockquote_border_color": "#d4d4d4",
+            "blockquote_color": "#4a4a4a"
+          },
+          "blocks": {}
+        },
         "blog-post-title": {
           "type": "text",
           "name": "Title",
@@ -143,7 +189,8 @@
         }
       },
       "block_order": [
-        "ai_gen_block_294ac0f_3BxWyR"
+        "ai_gen_block_294ac0f_3BxWyR",
+        "article_content_DtKhrd"
       ],
       "settings": {
         "content_direction": "column",
