@@ -12,6 +12,19 @@
     "section": {
       "type": "main-blog-post",
       "blocks": {
+        "ai_gen_block_294ac0f_3BxWyR": {
+          "type": "ai_gen_block_294ac0f",
+          "settings": {
+            "title": "{{ closest.article.title }}",
+            "date": "",
+            "image": "{{ closest.article.image }}",
+            "title_size": 32,
+            "date_size": 16,
+            "text_color": "#371e54",
+            "left_background_color": "#efebe5"
+          },
+          "blocks": {}
+        },
         "blog-post-title": {
           "type": "text",
           "name": "Title",
@@ -83,6 +96,9 @@
           "blocks": {}
         }
       },
+      "block_order": [
+        "ai_gen_block_294ac0f_3BxWyR"
+      ],
       "settings": {
         "content_direction": "column",
         "gap": 32,
