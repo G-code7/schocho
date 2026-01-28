@@ -17,7 +17,7 @@
           "static": true,
           "settings": {
             "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "space-between",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 24
           },
           "blocks": {
@@ -25,7 +25,7 @@
               "type": "text",
               "name": "t:names.caption",
               "settings": {
-                "text": "<p>Bestseller</p>",
+                "text": "",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -55,7 +55,7 @@
                 "horizontal_alignment": "flex-start",
                 "vertical_alignment": "center",
                 "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
+                "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "fill",
@@ -142,53 +142,11 @@
                 "text_fE9KzA",
                 "text_TffAkh"
               ]
-            },
-            "button_VXE98H": {
-              "type": "button",
-              "settings": {
-                "label": "Shop now",
-                "link": "shopify://collections/all",
-                "open_in_new_tab": false,
-                "style_class": "link",
-                "show_icon": false,
-                "icon_type": "arrow_right",
-                "icon_position": "right",
-                "icon_size": 16,
-                "icon_gap": 8,
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100,
-                "padding_top": 12,
-                "padding_bottom": 12,
-                "padding_left": 24,
-                "padding_right": 24,
-                "margin_top": 0,
-                "margin_bottom": 0,
-                "margin_left": 0,
-                "margin_right": 0,
-                "font_size": 16,
-                "font_size_mobile": 14,
-                "font_weight": "500",
-                "text_transform": "none",
-                "bg_color": "",
-                "text_color": "",
-                "border_color": "",
-                "bg_color_hover": "",
-                "text_color_hover": "",
-                "border_color_hover": "",
-                "border_width": 1,
-                "border_radius": 4,
-                "hover_animation": "lift",
-                "transition_duration": 0.3
-              },
-              "blocks": {}
             }
           },
           "block_order": [
             "text_QRRAJL",
-            "group_BQTrch",
-            "button_VXE98H"
+            "group_BQTrch"
           ]
         }
       },
