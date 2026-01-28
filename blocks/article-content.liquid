@@ -1,0 +1,644 @@
+{% style %}
+  .ai-article-content-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-article-content__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr {{ block.settings.content_width }}px 1fr;
+    gap: {{ block.settings.columns_gap }}px;
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding_vertical }}px {{ block.settings.section_padding_horizontal }}px;
+  }
+
+  /* Columna izquierda - Espacio vacío o sidebar */
+  .ai-article-content__left-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+
+  /* Columna central - Contenido principal */
+  .ai-article-content__main-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.content_width }}px;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} {
+    font-family: {{ block.settings.body_font_family }};
+    font-size: {{ block.settings.body_size }}px;
+    font-weight: {{ block.settings.body_font_weight }};
+    color: {{ block.settings.body_color }};
+    line-height: {{ block.settings.body_line_height }};
+  }
+
+  /* Estilos para elementos RTE */
+  .ai-article-content__rte-{{ ai_gen_id }} h2 {
+    font-family: {{ block.settings.heading_font_family }};
+    font-size: {{ block.settings.h2_size }}px;
+    font-weight: {{ block.settings.heading_font_weight }};
+    color: {{ block.settings.heading_color }};
+    margin: {{ block.settings.heading_margin_top }}px 0 {{ block.settings.heading_margin_bottom }}px 0;
+    line-height: 1.3;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} h3 {
+    font-family: {{ block.settings.heading_font_family }};
+    font-size: {{ block.settings.h3_size }}px;
+    font-weight: {{ block.settings.heading_font_weight }};
+    color: {{ block.settings.heading_color }};
+    margin: {{ block.settings.heading_margin_top | times: 0.8 }}px 0 {{ block.settings.heading_margin_bottom | times: 0.8 }}px 0;
+    line-height: 1.35;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} h4 {
+    font-family: {{ block.settings.heading_font_family }};
+    font-size: {{ block.settings.h4_size }}px;
+    font-weight: {{ block.settings.heading_font_weight }};
+    color: {{ block.settings.heading_color }};
+    margin: {{ block.settings.heading_margin_top | times: 0.6 }}px 0 {{ block.settings.heading_margin_bottom | times: 0.6 }}px 0;
+    line-height: 1.4;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} p {
+    margin: 0 0 {{ block.settings.paragraph_spacing }}px 0;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} a {
+    color: {{ block.settings.link_color }};
+    text-decoration: {% if block.settings.link_underline %}underline{% else %}none{% endif %};
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} a:hover {
+    opacity: 0.7;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} blockquote {
+    margin: {{ block.settings.blockquote_margin }}px 0;
+    padding: {{ block.settings.blockquote_padding }}px;
+    padding-left: {{ block.settings.blockquote_padding | plus: 20 }}px;
+    background-color: {{ block.settings.blockquote_background }};
+    border-left: {{ block.settings.blockquote_border_width }}px solid {{ block.settings.blockquote_border_color }};
+    border-radius: {{ block.settings.blockquote_border_radius }}px;
+    font-style: {{ block.settings.blockquote_style }};
+    color: {{ block.settings.blockquote_color }};
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} blockquote p {
+    margin: 0;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} ul,
+  .ai-article-content__rte-{{ ai_gen_id }} ol {
+    margin: 0 0 {{ block.settings.paragraph_spacing }}px 0;
+    padding-left: {{ block.settings.list_indent }}px;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} li {
+    margin-bottom: {{ block.settings.list_item_spacing }}px;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} li:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-article-content__rte-{{ ai_gen_id }} img {
+    max-width: 100%;
+    height: auto;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    margin: {{ block.settings.image_margin }}px 0;
+  }
+
+  /* Columna derecha - Espacio vacío o sidebar */
+  .ai-article-content__right-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  /* Tablet */
+  @media screen and (max-width: 1024px) {
+    .ai-article-content__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr {{ block.settings.content_width_tablet }}px 1fr;
+      gap: {{ block.settings.columns_gap_tablet }}px;
+      padding: {{ block.settings.section_padding_vertical | times: 0.8 }}px {{ block.settings.section_padding_horizontal | times: 0.8 }}px;
+    }
+
+    .ai-article-content__main-{{ ai_gen_id }} {
+      max-width: {{ block.settings.content_width_tablet }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} {
+      font-size: {{ block.settings.body_size_tablet }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} h2 {
+      font-size: {{ block.settings.h2_size | times: 0.9 }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} h3 {
+      font-size: {{ block.settings.h3_size | times: 0.9 }}px;
+    }
+  }
+
+  /* Mobile - Solo contenido, sin columnas laterales */
+  @media screen and (max-width: 749px) {
+    .ai-article-content__container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 0;
+      padding: {{ block.settings.section_padding_mobile }}px;
+    }
+
+    .ai-article-content__left-{{ ai_gen_id }},
+    .ai-article-content__right-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-article-content__main-{{ ai_gen_id }} {
+      max-width: 100%;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} {
+      font-size: {{ block.settings.body_size_mobile }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} h2 {
+      font-size: {{ block.settings.h2_size | times: 0.8 }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} h3 {
+      font-size: {{ block.settings.h3_size | times: 0.85 }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} h4 {
+      font-size: {{ block.settings.h4_size | times: 0.9 }}px;
+    }
+
+    .ai-article-content__rte-{{ ai_gen_id }} blockquote {
+      margin: {{ block.settings.blockquote_margin | times: 0.75 }}px 0;
+      padding: {{ block.settings.blockquote_padding | times: 0.75 }}px;
+      padding-left: {{ block.settings.blockquote_padding | times: 0.75 | plus: 16 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-article-content-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-article-content__container-{{ ai_gen_id }}">
+    
+    <!-- Columna izquierda -->
+    <div class="ai-article-content__left-{{ ai_gen_id }}"></div>
+
+    <!-- Contenido principal -->
+    <div class="ai-article-content__main-{{ ai_gen_id }}">
+      <div class="ai-article-content__rte-{{ ai_gen_id }}">
+        {{ block.settings.content }}
+      </div>
+    </div>
+
+    <!-- Columna derecha -->
+    <div class="ai-article-content__right-{{ ai_gen_id }}"></div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Article Content",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "═══ CONTENIDO ═══"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Contenido del artículo",
+      "default": "<p>Este es el contenido de ejemplo para tu artículo. Puedes editar este texto y agregar tus propios párrafos, encabezados, listas y otros elementos de formato.</p><p>El diseño está optimizado para una lectura cómoda con un ancho de columna adecuado y tipografía legible.</p><h2>Encabezado de ejemplo</h2><p>Este es otro párrafo que sigue a un encabezado. Puedes usar este bloque para crear artículos largos con una estructura clara y organizada.</p>"
+    },
+    {
+      "type": "header",
+      "content": "═══ LAYOUT - DESKTOP ═══"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 900,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho máximo del contenedor",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 500,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "label": "Ancho del contenido",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "columns_gap",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "── Padding de sección"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_vertical",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding vertical",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_horizontal",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding horizontal",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "═══ LAYOUT - TABLET ═══"
+    },
+    {
+      "type": "range",
+      "id": "content_width_tablet",
+      "min": 400,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Ancho del contenido",
+      "default": 550
+    },
+    {
+      "type": "range",
+      "id": "columns_gap_tablet",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "═══ LAYOUT - MOBILE ═══"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_mobile",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding de sección",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "═══ TIPOGRAFÍA - CUERPO ═══"
+    },
+    {
+      "type": "select",
+      "id": "body_font_family",
+      "label": "Tipografía",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Georgia, 'Times New Roman', serif", "label": "Georgia (Serif)" },
+        { "value": "'Merriweather', serif", "label": "Merriweather" },
+        { "value": "'Lora', serif", "label": "Lora" },
+        { "value": "'Inter', sans-serif", "label": "Inter" },
+        { "value": "'Helvetica Neue', Arial, sans-serif", "label": "Helvetica" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño (desktop)",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "body_size_tablet",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño (tablet)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "min": 14,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño (mobile)",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "body_font_weight",
+      "label": "Peso de fuente",
+      "options": [
+        { "value": "300", "label": "Light (300)" },
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "body_line_height",
+      "min": 0,
+      "max": 2,
+      "step": 0.1,
+      "label": "Altura de línea",
+      "default": 1.7
+    },
+    {
+      "type": "range",
+      "id": "paragraph_spacing",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Espaciado entre párrafos",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "═══ TIPOGRAFÍA - ENCABEZADOS ═══"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_family",
+      "label": "Tipografía",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Georgia, 'Times New Roman', serif", "label": "Georgia (Serif)" },
+        { "value": "'Playfair Display', serif", "label": "Playfair Display" },
+        { "value": "'Merriweather', serif", "label": "Merriweather" },
+        { "value": "'Montserrat', sans-serif", "label": "Montserrat" },
+        { "value": "'Inter', sans-serif", "label": "Inter" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_weight",
+      "label": "Peso de fuente",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semibold (600)" },
+        { "value": "700", "label": "Bold (700)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "h2_size",
+      "min": 24,
+      "max": 42,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamaño H2",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "h3_size",
+      "min": 20,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamaño H3",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "h4_size",
+      "min": 16,
+      "max": 26,
+      "step": 2,
+      "unit": "px",
+      "label": "Tamaño H4",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_top",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Margen superior",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Margen inferior",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "═══ BLOCKQUOTE ═══"
+    },
+    {
+      "type": "range",
+      "id": "blockquote_margin",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Margen vertical",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "blockquote_padding",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding interno",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "blockquote_border_width",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Ancho del borde izquierdo",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "blockquote_border_radius",
+      "min": 0,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "blockquote_style",
+      "label": "Estilo de texto",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Itálica" }
+      ],
+      "default": "italic"
+    },
+    {
+      "type": "header",
+      "content": "═══ LISTAS ═══"
+    },
+    {
+      "type": "range",
+      "id": "list_indent",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Indentación de listas",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "list_item_spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Espaciado entre items",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "═══ IMÁGENES ═══"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "image_margin",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Margen vertical",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "═══ COLORES ═══"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Color del texto",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color de encabezados",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Color de enlaces",
+      "default": "#2563eb"
+    },
+    {
+      "type": "checkbox",
+      "id": "link_underline",
+      "label": "Subrayar enlaces",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "blockquote_background",
+      "label": "Fondo del blockquote",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "blockquote_border_color",
+      "label": "Color del borde del blockquote",
+      "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "blockquote_color",
+      "label": "Color del texto del blockquote",
+      "default": "#4a4a4a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Article Content",
+      "settings": {
+        "content": "<p>Este es el contenido de ejemplo para tu artículo. Puedes editar este texto y agregar tus propios párrafos, encabezados, listas y otros elementos de formato.</p><p>El diseño está optimizado para una lectura cómoda con un ancho de columna adecuado y tipografía legible.</p><h2>Encabezado de ejemplo</h2><p>Este es otro párrafo que sigue a un encabezado. Puedes usar este bloque para crear artículos largos con una estructura clara y organizada.</p>",
+        "content_width": 700,
+        "body_size": 17,
+        "body_line_height": 1.7,
+        "body_color": "#3a3a3a",
+        "heading_color": "#1a1a1a"
+      }
+    }
+  ]
+}
+{% endschema %}
