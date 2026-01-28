@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "media_with_content_pezPEP": {
       "type": "media-with-content",
@@ -16,6 +17,8 @@
           "static": true,
           "settings": {
             "media_type": "image",
+            "image": "shopify://shop_images/Gemini_Generated_Image_1fugje1fugje1fug_1.png",
+            "link": "",
             "video_loop": true,
             "video_autoplay": false,
             "image_position": "cover",
@@ -36,11 +39,11 @@
               "type": "text",
               "name": "Title",
               "settings": {
-                "text": "<h1>{{ closest.collection.title }}</h1>",
+                "text": "<h1>Our Products</h1>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "h3",
+                "type_preset": "h1",
                 "font": "var(--font-primary--family)",
                 "font_size": "",
                 "line_height": "normal",
@@ -98,7 +101,7 @@
         "media_height": "50svh",
         "section_width": "full-width",
         "extend_media": true,
-        "color_scheme": "scheme-5",
+        "color_scheme": "scheme-4",
         "padding-block-start": 0,
         "padding-block-end": 0
       }
@@ -133,7 +136,7 @@
           "type": "_product-card",
           "static": true,
           "settings": {
-            "product_card_gap": 12,
+            "product_card_gap": 13,
             "inherit_color_scheme": true,
             "color_scheme": "",
             "border": "none",
@@ -164,7 +167,6 @@
             "group": {
               "type": "_product-card-group",
               "settings": {
-                "open_in_new_tab": false,
                 "content_direction": "column",
                 "vertical_on_mobile": true,
                 "horizontal_alignment": "flex-start",
@@ -192,6 +194,8 @@
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
                 "gradient_direction": "to top",
+                "link": "",
+                "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -276,6 +280,8 @@
         "layout_type": "grid",
         "product_card_size": "medium",
         "mobile_product_card_size": "small",
+        "enable_infinite_scroll": true,
+        "products_per_page": 24,
         "product_grid_width": "centered",
         "full_width_on_mobile": true,
         "columns_gap_horizontal": 16,
