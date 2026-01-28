@@ -187,6 +187,18 @@
       display: block;
     }
 
+    /* Estilos para slides de galería */
+    .media-gallery__slide {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .media-gallery__slide.is-active {
+      display: block;
+      opacity: 1;
+    }
+
     .media-with-content__content {
       grid-area: content;
       position: relative;
@@ -269,48 +281,142 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Solución simple: forzar la carga de imágenes lazy
-  function forceLoadMediaImages() {
-    // Buscar todas las imágenes en el bloque de media
+  // Función principal para inicializar el carrusel de media
+  function initMediaGallery() {
     const mediaBlocks = document.querySelectorAll('.media-with-content .media-block');
     
     mediaBlocks.forEach(block => {
-      // Buscar imágenes lazy (las que tienen data-src)
-      const lazyImages = block.querySelectorAll('img[data-src], img[data-srcset]');
+      // Buscar todos los slides de la galería
+      const slides = block.querySelectorAll('.media-gallery__slide');
       
-      lazyImages.forEach(img => {
-        // Si tiene data-src, moverlo a src
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
+      if (slides.length > 0) {
+        // Verificar si ya hay un slide activo
+        let hasActiveSlide = false;
+        slides.forEach(slide => {
+          if (slide.classList.contains('is-active')) {
+            hasActiveSlide = true;
+          }
+        });
+        
+        // Si no hay slide activo, activar el primero
+        if (!hasActiveSlide) {
+          slides[0].classList.add('is-active');
+          
+          // También forzar la carga de imágenes lazy
+          const firstSlideImages = slides[0].querySelectorAll('img[data-src], img[data-srcset], source[data-srcset]');
+          firstSlideImages.forEach(element => {
+            if (element.tagName === 'IMG' && element.dataset.src) {
+              element.src = element.dataset.src;
+            }
+            if (element.tagName === 'IMG' && element.dataset.srcset) {
+              element.srcset = element.dataset.srcset;
+            }
+            if (element.tagName === 'SOURCE' && element.dataset.srcset) {
+              element.srcset = element.dataset.srcset;
+            }
+          });
         }
         
-        // Si tiene data-srcset, moverlo a srcset
-        if (img.dataset.srcset) {
-          img.srcset = img.dataset.srcset;
-        }
-      });
-      
-      // También para picture sources
-      const lazySources = block.querySelectorAll('source[data-srcset]');
-      lazySources.forEach(source => {
-        if (source.dataset.srcset) {
-          source.srcset = source.dataset.srcset;
-        }
-      });
+        // Forzar la carga de todas las imágenes lazy
+        const lazyImages = block.querySelectorAll('img[data-src], img[data-srcset], source[data-srcset]');
+        lazyImages.forEach(element => {
+          if (element.tagName === 'IMG' && element.dataset.src) {
+            element.src = element.dataset.src;
+          }
+          if (element.tagName === 'IMG' && element.dataset.srcset) {
+            element.srcset = element.dataset.srcset;
+          }
+          if (element.tagName === 'SOURCE' && element.dataset.srcset) {
+            element.srcset = element.dataset.srcset;
+          }
+        });
+      }
     });
   }
   
   // Ejecutar inmediatamente
-  forceLoadMediaImages();
+  initMediaGallery();
   
   // También ejecutar después de que la página termine de cargar
-  window.addEventListener('load', forceLoadMediaImages);
+  window.addEventListener('load', initMediaGallery);
   
   // Ejecutar cuando la sección se cargue dinámicamente (editor de Shopify)
   document.addEventListener('shopify:section:load', function(event) {
     if (event.target.closest('.media-with-content')) {
-      setTimeout(forceLoadMediaImages, 100);
+      setTimeout(initMediaGallery, 100);
     }
+  });
+  
+  // Si hay algún slider de galería que necesite ser inicializado
+  function initGallerySlider() {
+    const gallerySliders = document.querySelectorAll('.media-gallery');
+    
+    gallerySliders.forEach(slider => {
+      // Inicializar comportamiento básico del slider si no está ya inicializado
+      if (!slider.dataset.initialized) {
+        const slides = slider.querySelectorAll('.media-gallery__slide');
+        const dots = slider.querySelectorAll('.media-gallery__dot');
+        const prevBtn = slider.querySelector('.media-gallery__prev');
+        const nextBtn = slider.querySelector('.media-gallery__next');
+        
+        if (slides.length > 0) {
+          let currentIndex = 0;
+          
+          // Encontrar el índice del slide activo
+          slides.forEach((slide, index) => {
+            if (slide.classList.contains('is-active')) {
+              currentIndex = index;
+            }
+          });
+          
+          // Función para cambiar de slide
+          function goToSlide(index) {
+            slides.forEach(slide => slide.classList.remove('is-active'));
+            dots.forEach(dot => dot.classList.remove('is-active'));
+            
+            slides[index].classList.add('is-active');
+            if (dots[index]) {
+              dots[index].classList.add('is-active');
+            }
+            
+            currentIndex = index;
+          }
+          
+          // Configurar botones de navegación si existen
+          if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+              const newIndex = currentIndex > 0 ? currentIndex - 1 : slides.length - 1;
+              goToSlide(newIndex);
+            });
+          }
+          
+          if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+              const newIndex = currentIndex < slides.length - 1 ? currentIndex + 1 : 0;
+              goToSlide(newIndex);
+            });
+          }
+          
+          // Configurar dots si existen
+          dots.forEach((dot, index) => {
+            dot.addEventListener('click', function() {
+              goToSlide(index);
+            });
+          });
+          
+          // Marcar como inicializado
+          slider.dataset.initialized = 'true';
+        }
+      }
+    });
+  }
+  
+  // Inicializar sliders de galería
+  initGallerySlider();
+  
+  // Re-inicializar cuando se carguen secciones dinámicamente
+  document.addEventListener('shopify:section:load', function() {
+    setTimeout(initGallerySlider, 150);
   });
 });
 </script>
