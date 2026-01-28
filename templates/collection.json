@@ -9,6 +9,211 @@
  */
 {
   "sections": {
+    "media_with_gallery_pDADnd": {
+      "type": "media-with-gallery",
+      "blocks": {
+        "content": {
+          "type": "_content-without-appearance",
+          "static": true,
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "space-between",
+            "gap": 24
+          },
+          "blocks": {
+            "text_QRRAJL": {
+              "type": "text",
+              "name": "t:names.caption",
+              "settings": {
+                "text": "<p>Bestseller</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h6",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "group_BQTrch": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "fill",
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_fE9KzA": {
+                  "type": "text",
+                  "name": "t:names.heading",
+                  "settings": {
+                    "text": "<h2>Our signature product</h2>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h3",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_TffAkh": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Made with care and unconditionally loved by our customers, this signature bestseller exceeds all expectations.</p>",
+                    "width": "fit-content",
+                    "max_width": "narrow",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "text_fE9KzA",
+                "text_TffAkh"
+              ]
+            },
+            "button_VXE98H": {
+              "type": "button",
+              "settings": {
+                "label": "Shop now",
+                "link": "shopify://collections/all",
+                "open_in_new_tab": false,
+                "style_class": "link",
+                "show_icon": false,
+                "icon_type": "arrow_right",
+                "icon_position": "right",
+                "icon_size": 16,
+                "icon_gap": 8,
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100,
+                "padding_top": 12,
+                "padding_bottom": 12,
+                "padding_left": 24,
+                "padding_right": 24,
+                "margin_top": 0,
+                "margin_bottom": 0,
+                "margin_left": 0,
+                "margin_right": 0,
+                "font_size": 16,
+                "font_size_mobile": 14,
+                "font_weight": "500",
+                "text_transform": "none",
+                "bg_color": "",
+                "text_color": "",
+                "border_color": "",
+                "bg_color_hover": "",
+                "text_color_hover": "",
+                "border_color_hover": "",
+                "border_width": 1,
+                "border_radius": 4,
+                "hover_animation": "lift",
+                "transition_duration": 0.3
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_QRRAJL",
+            "group_BQTrch",
+            "button_VXE98H"
+          ]
+        }
+      },
+      "name": "Media Gallery with Text",
+      "settings": {
+        "image_1": "shopify://shop_images/pronto-chocho-bg.jpg",
+        "image_2": "shopify://shop_images/freepik__pla-imagen-est-construida-para-que-el-empaque-de-n__42413_1b30c506-c54c-4664-8477-64efd97d404b.png",
+        "image_3": "shopify://shop_images/Image_fx_41.jpg",
+        "image_4": "shopify://shop_images/recipe-with-ginger-turmeric-black-pepper.webp",
+        "image_5": "shopify://shop_images/Gemini_Generated_Image_gjw97ogjw97ogjw9.png",
+        "show_arrows": false,
+        "show_dots": true,
+        "show_counter": false,
+        "autoplay": false,
+        "autoplay_speed": 500,
+        "media_position": "right",
+        "media_width": "medium",
+        "media_height": "60svh",
+        "section_width": "full-width",
+        "extend_media": true,
+        "color_scheme": "scheme-4",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "media_with_content_pezPEP": {
       "type": "media-with-content",
       "blocks": {
@@ -316,7 +521,7 @@
         "product_2_title": "",
         "product_3": "product-2",
         "product_3_title": "",
-        "card_background": "#E5E4E3",
+        "card_background": "#e5e4e3",
         "card_border_radius": 12,
         "card_padding": 20,
         "columns_desktop": 3,
@@ -398,6 +603,7 @@
     }
   },
   "order": [
+    "media_with_gallery_pDADnd",
     "media_with_content_pezPEP",
     "main",
     "featured_products_grid_v3_1_BGFJfa"
