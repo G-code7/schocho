@@ -1,3 +1,5 @@
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
 {% style %}
   .ai-article-content-{{ ai_gen_id }} {
     display: block;
@@ -6,19 +8,18 @@
 
   .ai-article-content__container-{{ ai_gen_id }} {
     display: grid;
-    grid-template-columns: 1fr {{ block.settings.content_width }}px 1fr;
+    grid-template-columns: 1fr {{ block.settings.content_width }}px {{ block.settings.sidebar_width }}px;
     gap: {{ block.settings.columns_gap }}px;
     width: 100%;
     max-width: {{ block.settings.max_width }}px;
     margin: 0 auto;
     padding: {{ block.settings.section_padding_vertical }}px {{ block.settings.section_padding_horizontal }}px;
+    align-items: start;
   }
 
-  /* Columna izquierda - Espacio vacío o sidebar */
+  /* Columna izquierda - Espacio vacío */
   .ai-article-content__left-{{ ai_gen_id }} {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
+    display: block;
   }
 
   /* Columna central - Contenido principal */
@@ -117,23 +118,97 @@
     margin: {{ block.settings.image_margin }}px 0;
   }
 
-  /* Columna derecha - Espacio vacío o sidebar */
-  .ai-article-content__right-{{ ai_gen_id }} {
+  /* Columna derecha - Sidebar */
+  .ai-article-content__sidebar-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.sidebar_width }}px;
+    {% if block.settings.sidebar_sticky %}
+      position: sticky;
+      top: {{ block.settings.sidebar_sticky_offset }}px;
+    {% endif %}
+  }
+
+  .ai-article-sidebar__title-{{ ai_gen_id }} {
+    font-family: {{ block.settings.sidebar_title_font_family }};
+    font-size: {{ block.settings.sidebar_title_size }}px;
+    font-weight: {{ block.settings.sidebar_title_font_weight }};
+    color: {{ block.settings.sidebar_title_color }};
+    margin: 0 0 {{ block.settings.sidebar_title_margin }}px 0;
+    padding-bottom: {{ block.settings.sidebar_title_padding }}px;
+    {% if block.settings.sidebar_title_border %}
+      border-bottom: 1px solid {{ block.settings.sidebar_border_color }};
+    {% endif %}
+    {% if block.settings.sidebar_title_uppercase %}
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    {% endif %}
+  }
+
+  .ai-article-sidebar__list-{{ ai_gen_id }} {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: {{ block.settings.sidebar_item_gap }}px;
+  }
+
+  .ai-article-sidebar__item-{{ ai_gen_id }} {
+    display: block;
+  }
+
+  .ai-article-sidebar__link-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.sidebar_item_text_gap }}px;
+    text-decoration: none;
+    padding: {{ block.settings.sidebar_item_padding }}px 0;
+    {% if block.settings.sidebar_item_border %}
+      border-bottom: 1px solid {{ block.settings.sidebar_border_color }};
+    {% endif %}
+    transition: opacity 0.2s ease;
+  }
+
+  .ai-article-sidebar__link-{{ ai_gen_id }}:hover {
+    opacity: 0.7;
+  }
+
+  .ai-article-sidebar__item-title-{{ ai_gen_id }} {
+    font-family: {{ block.settings.sidebar_item_font_family }};
+    font-size: {{ block.settings.sidebar_item_title_size }}px;
+    font-weight: {{ block.settings.sidebar_item_title_weight }};
+    color: {{ block.settings.sidebar_item_title_color }};
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .ai-article-sidebar__item-date-{{ ai_gen_id }} {
+    font-family: {{ block.settings.sidebar_item_font_family }};
+    font-size: {{ block.settings.sidebar_item_date_size }}px;
+    font-weight: 400;
+    color: {{ block.settings.sidebar_item_date_color }};
+    margin: 0;
   }
 
   /* Tablet */
   @media screen and (max-width: 1024px) {
     .ai-article-content__container-{{ ai_gen_id }} {
-      grid-template-columns: 1fr {{ block.settings.content_width_tablet }}px 1fr;
+      grid-template-columns: {{ block.settings.content_width_tablet }}px {{ block.settings.sidebar_width_tablet }}px;
       gap: {{ block.settings.columns_gap_tablet }}px;
       padding: {{ block.settings.section_padding_vertical | times: 0.8 }}px {{ block.settings.section_padding_horizontal | times: 0.8 }}px;
+      justify-content: center;
+    }
+
+    .ai-article-content__left-{{ ai_gen_id }} {
+      display: none;
     }
 
     .ai-article-content__main-{{ ai_gen_id }} {
       max-width: {{ block.settings.content_width_tablet }}px;
+    }
+
+    .ai-article-content__sidebar-{{ ai_gen_id }} {
+      max-width: {{ block.settings.sidebar_width_tablet }}px;
     }
 
     .ai-article-content__rte-{{ ai_gen_id }} {
@@ -149,7 +224,7 @@
     }
   }
 
-  /* Mobile - Solo contenido, sin columnas laterales */
+  /* Mobile - Solo contenido, sin sidebar */
   @media screen and (max-width: 749px) {
     .ai-article-content__container-{{ ai_gen_id }} {
       grid-template-columns: 1fr;
@@ -158,7 +233,7 @@
     }
 
     .ai-article-content__left-{{ ai_gen_id }},
-    .ai-article-content__right-{{ ai_gen_id }} {
+    .ai-article-content__sidebar-{{ ai_gen_id }} {
       display: none;
     }
 
@@ -203,15 +278,126 @@
       </div>
     </div>
 
-    <!-- Columna derecha -->
-    <div class="ai-article-content__right-{{ ai_gen_id }}"></div>
+    <!-- Sidebar - Artículos relacionados -->
+    <aside class="ai-article-content__sidebar-{{ ai_gen_id }}">
+      {% if block.settings.sidebar_title != blank %}
+        <h3 class="ai-article-sidebar__title-{{ ai_gen_id }}">{{ block.settings.sidebar_title }}</h3>
+      {% endif %}
+
+      <ul class="ai-article-sidebar__list-{{ ai_gen_id }}">
+        {%- comment -%} Artículo 1 {%- endcomment -%}
+        {% if block.settings.article_1 != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_1.url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_1.title }}</span>
+              {% if block.settings.show_article_date %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_1.published_at | date: block.settings.date_format }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% elsif block.settings.article_1_title != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_1_url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_1_title }}</span>
+              {% if block.settings.show_article_date and block.settings.article_1_date != blank %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_1_date }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+
+        {%- comment -%} Artículo 2 {%- endcomment -%}
+        {% if block.settings.article_2 != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_2.url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_2.title }}</span>
+              {% if block.settings.show_article_date %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_2.published_at | date: block.settings.date_format }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% elsif block.settings.article_2_title != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_2_url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_2_title }}</span>
+              {% if block.settings.show_article_date and block.settings.article_2_date != blank %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_2_date }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+
+        {%- comment -%} Artículo 3 {%- endcomment -%}
+        {% if block.settings.article_3 != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_3.url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_3.title }}</span>
+              {% if block.settings.show_article_date %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_3.published_at | date: block.settings.date_format }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% elsif block.settings.article_3_title != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_3_url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_3_title }}</span>
+              {% if block.settings.show_article_date and block.settings.article_3_date != blank %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_3_date }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+
+        {%- comment -%} Artículo 4 {%- endcomment -%}
+        {% if block.settings.article_4 != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_4.url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_4.title }}</span>
+              {% if block.settings.show_article_date %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_4.published_at | date: block.settings.date_format }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% elsif block.settings.article_4_title != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_4_url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_4_title }}</span>
+              {% if block.settings.show_article_date and block.settings.article_4_date != blank %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_4_date }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+
+        {%- comment -%} Artículo 5 {%- endcomment -%}
+        {% if block.settings.article_5 != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_5.url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_5.title }}</span>
+              {% if block.settings.show_article_date %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_5.published_at | date: block.settings.date_format }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% elsif block.settings.article_5_title != blank %}
+          <li class="ai-article-sidebar__item-{{ ai_gen_id }}">
+            <a href="{{ block.settings.article_5_url }}" class="ai-article-sidebar__link-{{ ai_gen_id }}">
+              <span class="ai-article-sidebar__item-title-{{ ai_gen_id }}">{{ block.settings.article_5_title }}</span>
+              {% if block.settings.show_article_date and block.settings.article_5_date != blank %}
+                <span class="ai-article-sidebar__item-date-{{ ai_gen_id }}">{{ block.settings.article_5_date }}</span>
+              {% endif %}
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </aside>
 
   </div>
 </div>
 
 {% schema %}
 {
-  "name": "Article Content",
+  "name": "Article Content + Sidebar",
   "tag": null,
   "settings": [
     {
@@ -222,7 +408,7 @@
       "type": "richtext",
       "id": "content",
       "label": "Contenido del artículo",
-      "default": "<p>Este es el contenido de ejemplo para tu artículo. Puedes editar este texto y agregar tus propios párrafos, encabezados, listas y otros elementos de formato.</p><p>El diseño está optimizado para una lectura cómoda con un ancho de columna adecuado y tipografía legible.</p><h2>Encabezado de ejemplo</h2><p>Este es otro párrafo que sigue a un encabezado. Puedes usar este bloque para crear artículos largos con una estructura clara y organizada.</p>"
+      "default": "<p>Este es el contenido de ejemplo para tu artículo. Puedes editar este texto y agregar tus propios párrafos, encabezados, listas y otros elementos de formato.</p><p>El diseño está optimizado para una lectura cómoda con un ancho de columna adecuado y tipografía legible.</p><h3>Encabezado de ejemplo</h3><p>Este es otro párrafo que sigue a un encabezado. Puedes usar este bloque para crear artículos largos con una estructura clara y organizada.</p>"
     },
     {
       "type": "header",
@@ -242,21 +428,31 @@
       "type": "range",
       "id": "content_width",
       "min": 500,
-      "max": 900,
+      "max": 800,
       "step": 10,
       "unit": "px",
       "label": "Ancho del contenido",
-      "default": 700
+      "default": 650
+    },
+    {
+      "type": "range",
+      "id": "sidebar_width",
+      "min": 180,
+      "max": 350,
+      "step": 10,
+      "unit": "px",
+      "label": "Ancho del sidebar",
+      "default": 250
     },
     {
       "type": "range",
       "id": "columns_gap",
-      "min": 0,
-      "max": 80,
+      "min": 20,
+      "max": 100,
       "step": 4,
       "unit": "px",
       "label": "Espacio entre columnas",
-      "default": 40
+      "default": 60
     },
     {
       "type": "header",
@@ -289,22 +485,32 @@
     {
       "type": "range",
       "id": "content_width_tablet",
-      "min": 400,
-      "max": 700,
+      "min": 350,
+      "max": 600,
       "step": 10,
       "unit": "px",
       "label": "Ancho del contenido",
-      "default": 550
+      "default": 450
+    },
+    {
+      "type": "range",
+      "id": "sidebar_width_tablet",
+      "min": 150,
+      "max": 280,
+      "step": 10,
+      "unit": "px",
+      "label": "Ancho del sidebar",
+      "default": 200
     },
     {
       "type": "range",
       "id": "columns_gap_tablet",
-      "min": 0,
+      "min": 16,
       "max": 60,
       "step": 4,
       "unit": "px",
       "label": "Espacio entre columnas",
-      "default": 24
+      "default": 32
     },
     {
       "type": "header",
@@ -319,6 +525,328 @@
       "unit": "px",
       "label": "Padding de sección",
       "default": 20
+    },
+    {
+      "type": "header",
+      "content": "═══ SIDEBAR - CONFIGURACIÓN ═══"
+    },
+    {
+      "type": "text",
+      "id": "sidebar_title",
+      "label": "Título del sidebar",
+      "default": "Related Articles"
+    },
+    {
+      "type": "checkbox",
+      "id": "sidebar_sticky",
+      "label": "Sidebar sticky (fijo al scroll)",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "sidebar_sticky_offset",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Offset del sticky",
+      "default": 100,
+      "info": "Distancia desde el top cuando es sticky"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_article_date",
+      "label": "Mostrar fecha de artículos",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "date_format",
+      "label": "Formato de fecha",
+      "default": "%B %d, %Y",
+      "info": "Ej: %B %d, %Y = January 01, 2024"
+    },
+    {
+      "type": "header",
+      "content": "═══ SIDEBAR - ARTÍCULOS ═══"
+    },
+    {
+      "type": "paragraph",
+      "content": "Puedes seleccionar artículos del blog o ingresar manualmente título/URL"
+    },
+    {
+      "type": "header",
+      "content": "── Artículo 1"
+    },
+    {
+      "type": "article",
+      "id": "article_1",
+      "label": "Seleccionar artículo"
+    },
+    {
+      "type": "text",
+      "id": "article_1_title",
+      "label": "O título manual",
+      "info": "Se usa si no se selecciona artículo arriba"
+    },
+    {
+      "type": "url",
+      "id": "article_1_url",
+      "label": "URL manual"
+    },
+    {
+      "type": "text",
+      "id": "article_1_date",
+      "label": "Fecha manual",
+      "placeholder": "November 8, 2024"
+    },
+    {
+      "type": "header",
+      "content": "── Artículo 2"
+    },
+    {
+      "type": "article",
+      "id": "article_2",
+      "label": "Seleccionar artículo"
+    },
+    {
+      "type": "text",
+      "id": "article_2_title",
+      "label": "O título manual"
+    },
+    {
+      "type": "url",
+      "id": "article_2_url",
+      "label": "URL manual"
+    },
+    {
+      "type": "text",
+      "id": "article_2_date",
+      "label": "Fecha manual"
+    },
+    {
+      "type": "header",
+      "content": "── Artículo 3"
+    },
+    {
+      "type": "article",
+      "id": "article_3",
+      "label": "Seleccionar artículo"
+    },
+    {
+      "type": "text",
+      "id": "article_3_title",
+      "label": "O título manual"
+    },
+    {
+      "type": "url",
+      "id": "article_3_url",
+      "label": "URL manual"
+    },
+    {
+      "type": "text",
+      "id": "article_3_date",
+      "label": "Fecha manual"
+    },
+    {
+      "type": "header",
+      "content": "── Artículo 4"
+    },
+    {
+      "type": "article",
+      "id": "article_4",
+      "label": "Seleccionar artículo"
+    },
+    {
+      "type": "text",
+      "id": "article_4_title",
+      "label": "O título manual"
+    },
+    {
+      "type": "url",
+      "id": "article_4_url",
+      "label": "URL manual"
+    },
+    {
+      "type": "text",
+      "id": "article_4_date",
+      "label": "Fecha manual"
+    },
+    {
+      "type": "header",
+      "content": "── Artículo 5"
+    },
+    {
+      "type": "article",
+      "id": "article_5",
+      "label": "Seleccionar artículo"
+    },
+    {
+      "type": "text",
+      "id": "article_5_title",
+      "label": "O título manual"
+    },
+    {
+      "type": "url",
+      "id": "article_5_url",
+      "label": "URL manual"
+    },
+    {
+      "type": "text",
+      "id": "article_5_date",
+      "label": "Fecha manual"
+    },
+    {
+      "type": "header",
+      "content": "═══ SIDEBAR - ESTILOS ═══"
+    },
+    {
+      "type": "select",
+      "id": "sidebar_title_font_family",
+      "label": "Tipografía del título",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Georgia, 'Times New Roman', serif", "label": "Georgia (Serif)" },
+        { "value": "'Montserrat', sans-serif", "label": "Montserrat" },
+        { "value": "'Inter', sans-serif", "label": "Inter" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "sidebar_title_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño del título",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "sidebar_title_font_weight",
+      "label": "Peso del título",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semibold (600)" },
+        { "value": "700", "label": "Bold (700)" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "checkbox",
+      "id": "sidebar_title_uppercase",
+      "label": "Título en mayúsculas",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "sidebar_title_border",
+      "label": "Borde bajo el título",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "sidebar_title_margin",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Margen inferior del título",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "sidebar_title_padding",
+      "min": 0,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inferior del título",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "── Estilos de items"
+    },
+    {
+      "type": "select",
+      "id": "sidebar_item_font_family",
+      "label": "Tipografía de items",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Georgia, 'Times New Roman', serif", "label": "Georgia (Serif)" },
+        { "value": "'Inter', sans-serif", "label": "Inter" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "sidebar_item_title_size",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño del título del item",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "sidebar_item_title_weight",
+      "label": "Peso del título del item",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semibold (600)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "sidebar_item_date_size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Tamaño de la fecha",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "sidebar_item_gap",
+      "min": 0,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre items",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "sidebar_item_text_gap",
+      "min": 2,
+      "max": 12,
+      "step": 2,
+      "unit": "px",
+      "label": "Espacio entre título y fecha",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "sidebar_item_padding",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding vertical del item",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "sidebar_item_border",
+      "label": "Borde entre items",
+      "default": true
     },
     {
       "type": "header",
@@ -386,7 +914,7 @@
       "max": 2,
       "step": 0.1,
       "label": "Altura de línea",
-      "default": 1.7
+      "default": 1.2
     },
     {
       "type": "range",
@@ -617,26 +1145,55 @@
     {
       "type": "color",
       "id": "blockquote_border_color",
-      "label": "Color del borde del blockquote",
+      "label": "Borde del blockquote",
       "default": "#d4d4d4"
     },
     {
       "type": "color",
       "id": "blockquote_color",
-      "label": "Color del texto del blockquote",
+      "label": "Texto del blockquote",
       "default": "#4a4a4a"
+    },
+    {
+      "type": "header",
+      "content": "── Colores del Sidebar"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_title_color",
+      "label": "Color del título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_item_title_color",
+      "label": "Color del título del item",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_item_date_color",
+      "label": "Color de la fecha",
+      "default": "#6b6b6b"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_border_color",
+      "label": "Color de bordes",
+      "default": "#e5e5e5"
     }
   ],
   "presets": [
     {
-      "name": "Article Content",
+      "name": "Article Content + Sidebar",
       "settings": {
-        "content": "<p>Este es el contenido de ejemplo para tu artículo. Puedes editar este texto y agregar tus propios párrafos, encabezados, listas y otros elementos de formato.</p><p>El diseño está optimizado para una lectura cómoda con un ancho de columna adecuado y tipografía legible.</p><h2>Encabezado de ejemplo</h2><p>Este es otro párrafo que sigue a un encabezado. Puedes usar este bloque para crear artículos largos con una estructura clara y organizada.</p>",
-        "content_width": 700,
+        "content_width": 650,
+        "sidebar_width": 250,
         "body_size": 17,
         "body_line_height": 1.7,
         "body_color": "#3a3a3a",
-        "heading_color": "#1a1a1a"
+        "heading_color": "#1a1a1a",
+        "sidebar_title": "Related Articles"
       }
     }
   ]
