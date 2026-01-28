@@ -9,8 +9,9 @@
   .ai-blog-header__container-{{ ai_gen_id }} {
     display: grid;
     grid-template-columns: {{ block.settings.left_width }}% 1fr;
+    gap: {{ block.settings.columns_gap }}px;
     width: 100%;
-    min-height: {{ block.settings.section_height }}px;
+    align-items: {{ block.settings.columns_vertical_align }};
   }
 
   /* Columna izquierda - Contenido */
@@ -21,6 +22,8 @@
     flex-direction: column;
     justify-content: {{ block.settings.content_vertical_align }};
     position: relative;
+    border-radius: {{ block.settings.border_radius }}px;
+    min-height: {{ block.settings.content_height }}px;
   }
 
   .ai-blog-header__title-{{ ai_gen_id }} {
@@ -65,10 +68,10 @@
   .ai-blog-header__image-wrapper-{{ ai_gen_id }} {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: {{ block.settings.section_height }}px;
+    height: {{ block.settings.image_height }}px;
     background-color: {{ block.settings.image_background }};
     overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
   }
 
   .ai-blog-header__image-{{ ai_gen_id }} {
@@ -82,7 +85,6 @@
   .ai-blog-header__placeholder-{{ ai_gen_id }} {
     width: 100%;
     height: 100%;
-    min-height: {{ block.settings.section_height }}px;
     background-color: {{ block.settings.image_background }};
     display: flex;
     align-items: center;
@@ -90,8 +92,8 @@
   }
 
   .ai-blog-header__placeholder-{{ ai_gen_id }} svg {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     opacity: 0.3;
   }
 
@@ -99,11 +101,13 @@
   @media screen and (max-width: 1024px) {
     .ai-blog-header__container-{{ ai_gen_id }} {
       grid-template-columns: {{ block.settings.left_width_tablet }}% 1fr;
-      min-height: {{ block.settings.section_height_tablet }}px;
+      gap: {{ block.settings.columns_gap_tablet }}px;
     }
 
     .ai-blog-header__content-{{ ai_gen_id }} {
       padding: {{ block.settings.content_padding_vertical | times: 0.8 }}px {{ block.settings.content_padding_horizontal | times: 0.8 }}px;
+      min-height: {{ block.settings.content_height_tablet }}px;
+      border-radius: {{ block.settings.border_radius_tablet }}px;
     }
 
     .ai-blog-header__title-{{ ai_gen_id }} {
@@ -111,11 +115,8 @@
     }
 
     .ai-blog-header__image-wrapper-{{ ai_gen_id }} {
-      min-height: {{ block.settings.section_height_tablet }}px;
-    }
-
-    .ai-blog-header__placeholder-{{ ai_gen_id }} {
-      min-height: {{ block.settings.section_height_tablet }}px;
+      height: {{ block.settings.image_height_tablet }}px;
+      border-radius: {{ block.settings.border_radius_tablet }}px;
     }
   }
 
@@ -123,12 +124,14 @@
   @media screen and (max-width: 749px) {
     .ai-blog-header__container-{{ ai_gen_id }} {
       grid-template-columns: 1fr;
-      min-height: auto;
+      gap: {{ block.settings.columns_gap_mobile }}px;
     }
 
     .ai-blog-header__content-{{ ai_gen_id }} {
       padding: {{ block.settings.content_padding_mobile }}px;
+      min-height: auto;
       order: {% if block.settings.mobile_content_first %}1{% else %}2{% endif %};
+      border-radius: {{ block.settings.border_radius_mobile }}px;
     }
 
     .ai-blog-header__title-{{ ai_gen_id }} {
@@ -141,12 +144,9 @@
     }
 
     .ai-blog-header__image-wrapper-{{ ai_gen_id }} {
-      min-height: {{ block.settings.section_height_mobile }}px;
+      height: {{ block.settings.image_height_mobile }}px;
       order: {% if block.settings.mobile_content_first %}2{% else %}1{% endif %};
-    }
-
-    .ai-blog-header__placeholder-{{ ai_gen_id }} {
-      min-height: {{ block.settings.section_height_mobile }}px;
+      border-radius: {{ block.settings.border_radius_mobile }}px;
     }
   }
 {% endstyle %}
@@ -246,13 +246,63 @@
     },
     {
       "type": "range",
-      "id": "section_height",
-      "min": 300,
-      "max": 800,
+      "id": "columns_gap",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "columns_vertical_align",
+      "label": "Alineación vertical de columnas",
+      "options": [
+        { "value": "stretch", "label": "Estirar (igual altura)" },
+        { "value": "start", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "end", "label": "Abajo" }
+      ],
+      "default": "stretch"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "── Altura Contenido (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "content_height",
+      "min": 150,
+      "max": 600,
       "step": 10,
       "unit": "px",
-      "label": "Altura de la sección",
-      "default": 500
+      "label": "Altura mínima del contenido",
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "── Altura Imagen (Desktop)"
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "min": 150,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura de la imagen",
+      "default": 350
     },
     {
       "type": "header",
@@ -265,18 +315,48 @@
       "max": 60,
       "step": 1,
       "unit": "%",
-      "label": "Ancho columna izquierda (tablet)",
+      "label": "Ancho columna izquierda",
       "default": 45
     },
     {
       "type": "range",
-      "id": "section_height_tablet",
-      "min": 250,
-      "max": 600,
+      "id": "columns_gap_tablet",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "border_radius_tablet",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "content_height_tablet",
+      "min": 120,
+      "max": 500,
       "step": 10,
       "unit": "px",
-      "label": "Altura de la sección (tablet)",
-      "default": 400
+      "label": "Altura mínima del contenido",
+      "default": 250
+    },
+    {
+      "type": "range",
+      "id": "image_height_tablet",
+      "min": 120,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Altura de la imagen",
+      "default": 300
     },
     {
       "type": "header",
@@ -284,13 +364,33 @@
     },
     {
       "type": "range",
-      "id": "section_height_mobile",
-      "min": 200,
-      "max": 500,
+      "id": "columns_gap_mobile",
+      "min": 0,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius_mobile",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "image_height_mobile",
+      "min": 150,
+      "max": 400,
       "step": 10,
       "unit": "px",
-      "label": "Altura de imagen (mobile)",
-      "default": 300
+      "label": "Altura de imagen",
+      "default": 250
     },
     {
       "type": "checkbox",
@@ -306,8 +406,8 @@
       "max": 60,
       "step": 4,
       "unit": "px",
-      "label": "Padding del contenido (mobile)",
-      "default": 32
+      "label": "Padding del contenido",
+      "default": 24
     },
     {
       "type": "header",
@@ -316,27 +416,27 @@
     {
       "type": "range",
       "id": "content_padding_vertical",
-      "min": 20,
-      "max": 100,
-      "step": 5,
+      "min": 16,
+      "max": 80,
+      "step": 4,
       "unit": "px",
       "label": "Padding vertical",
-      "default": 60
+      "default": 40
     },
     {
       "type": "range",
       "id": "content_padding_horizontal",
-      "min": 20,
-      "max": 100,
-      "step": 5,
+      "min": 16,
+      "max": 80,
+      "step": 4,
       "unit": "px",
       "label": "Padding horizontal",
-      "default": 50
+      "default": 36
     },
     {
       "type": "select",
       "id": "content_vertical_align",
-      "label": "Alineación vertical del contenido",
+      "label": "Alineación vertical del texto",
       "options": [
         { "value": "flex-start", "label": "Arriba" },
         { "value": "center", "label": "Centro" },
@@ -367,32 +467,32 @@
     {
       "type": "range",
       "id": "title_size",
-      "min": 24,
-      "max": 72,
+      "min": 20,
+      "max": 60,
       "step": 2,
       "unit": "px",
       "label": "Tamaño (desktop)",
-      "default": 42
+      "default": 32
     },
     {
       "type": "range",
       "id": "title_size_tablet",
-      "min": 22,
-      "max": 56,
+      "min": 18,
+      "max": 48,
       "step": 2,
       "unit": "px",
       "label": "Tamaño (tablet)",
-      "default": 34
+      "default": 28
     },
     {
       "type": "range",
       "id": "title_size_mobile",
-      "min": 20,
-      "max": 44,
+      "min": 18,
+      "max": 40,
       "step": 2,
       "unit": "px",
       "label": "Tamaño (mobile)",
-      "default": 28
+      "default": 24
     },
     {
       "type": "select",
@@ -410,7 +510,7 @@
     {
       "type": "range",
       "id": "title_line_height",
-      "min": 1,
+      "min": 0,
       "max": 2,
       "step": 0.1,
       "label": "Altura de línea",
@@ -420,21 +520,21 @@
       "type": "range",
       "id": "title_letter_spacing",
       "min": 0,
-      "max": 1,
+      "max": 2,
       "step": 0.1,
       "unit": "px",
       "label": "Espaciado de letras",
-      "default": 0
+      "default": 0.4
     },
     {
       "type": "range",
       "id": "title_margin_bottom",
       "min": 0,
-      "max": 40,
+      "max": 32,
       "step": 4,
       "unit": "px",
       "label": "Margen inferior",
-      "default": 20
+      "default": 16
     },
     {
       "type": "header",
@@ -455,12 +555,12 @@
     {
       "type": "range",
       "id": "excerpt_size",
-      "min": 14,
-      "max": 24,
+      "min": 13,
+      "max": 20,
       "step": 1,
       "unit": "px",
       "label": "Tamaño",
-      "default": 17
+      "default": 15
     },
     {
       "type": "select",
@@ -514,11 +614,11 @@
       "type": "range",
       "id": "date_size",
       "min": 11,
-      "max": 18,
+      "max": 16,
       "step": 1,
       "unit": "px",
       "label": "Tamaño",
-      "default": 14
+      "default": 13
     },
     {
       "type": "select",
@@ -535,11 +635,11 @@
       "type": "range",
       "id": "date_spacing",
       "min": 8,
-      "max": 40,
+      "max": 32,
       "step": 4,
       "unit": "px",
       "label": "Espaciado desde contenido",
-      "default": 20
+      "default": 16
     },
     {
       "type": "checkbox",
@@ -617,7 +717,10 @@
         "excerpt": "Discover healthier, refreshing alternatives to sugary drinks with natural sweetness.",
         "date": "November 8, 2024",
         "left_width": 40,
-        "section_height": 500,
+        "columns_gap": 24,
+        "border_radius": 12,
+        "content_height": 300,
+        "image_height": 350,
         "content_background": "#f5f3ef",
         "title_color": "#1a1a1a"
       }
