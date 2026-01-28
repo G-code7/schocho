@@ -90,7 +90,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h1>Our signature product</h1>",
+                    "text": "<h1>Our products</h1>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -164,7 +164,7 @@
         "autoplay_speed": 3500,
         "media_position": "right",
         "media_width": "medium",
-        "media_height": "60svh",
+        "media_height": "80svh",
         "section_width": "full-width",
         "extend_media": true,
         "color_scheme": "scheme-4",
