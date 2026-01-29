@@ -90,7 +90,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<h1>Our products</h1>",
+                    "text": "<h1>Our Collection</h1>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -115,7 +115,7 @@
                 "text_TffAkh": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Made with care and unconditionally loved by our customers, this signature bestseller exceeds all expectations.</p>",
+                    "text": "<p>Crafted with intention and pure Andean ingredients to fuel your daily performance.</p>",
                     "width": "fit-content",
                     "max_width": "narrow",
                     "alignment": "left",
