@@ -896,7 +896,7 @@
         "text_CFhBfg": {
           "type": "text",
           "settings": {
-            "text": "<p>real food that gives back.</p>",
+            "text": "<p>real food that gives back</p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
