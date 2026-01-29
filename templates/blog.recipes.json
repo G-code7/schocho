@@ -271,6 +271,7 @@
             "text_JmQJLd": {
               "type": "text",
               "name": "t:names.text",
+              "disabled": true,
               "settings": {
                 "text": "<p>We make things that work better and last longer. Our products solve real problems with clean design and honest materials.</p>",
                 "width": "fit-content",
