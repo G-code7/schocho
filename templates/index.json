@@ -854,6 +854,7 @@
       "block_order": [
         "text_FDr4BY"
       ],
+      "disabled": true,
       "name": "t:names.marquee_section",
       "settings": {
         "movement_direction": "normal",
