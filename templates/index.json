@@ -584,7 +584,7 @@
       "type": "featured-products-grid-v3-1",
       "name": "Featured Products Grid V3",
       "settings": {
-        "heading": "Three Real-Food Varieties  <br>\n<p style=\" font-size: 16px; font-weight: 500;\">Each crafted from functional <br>and nutrient-dense whole ingredients.</p>",
+        "heading": "Three Real-Food Varieties  <br>\n<p style=\" font-size: 16px; font-weight: 500;\">Each crafted from functional <br>and nutrient-dense whole ingredients</p>",
         "heading_icon_size": 40,
         "heading_icon_radius": 50,
         "subtitle": "",
