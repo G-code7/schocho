@@ -835,8 +835,8 @@
               "type": "icon",
               "settings": {
                 "icon": "eye",
-                "image_upload": "shopify://shop_images/Recurso_8.svg",
-                "width": 60,
+                "image_upload": "shopify://shop_images/Recurso_54_3x_91ebdbda-2193-47aa-82c2-910fe7f130fc.png",
+                "width": 70,
                 "link": "",
                 "open_in_new_tab": false
               },
@@ -909,13 +909,13 @@
                 "text_yXtfhT": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Everything we do starts with why</p>",
+                    "text": "<p>Everything starts with why: pure, gluten-free nutrition without compromise.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
-                    "type_preset": "rte",
+                    "type_preset": "custom",
                     "font": "var(--font-body--family)",
-                    "font_size": "1rem",
+                    "font_size": "0.875rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
@@ -986,8 +986,8 @@
               "type": "icon",
               "settings": {
                 "icon": "heart",
-                "image_upload": "shopify://shop_images/Recurso_16.svg",
-                "width": 60,
+                "image_upload": "shopify://shop_images/Recurso_50_3x_6769b243-b378-4577-af85-67b46e731dba.png",
+                "width": 70,
                 "link": "",
                 "open_in_new_tab": false
               },
@@ -1060,13 +1060,13 @@
                 "text_nppV4f": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We believe in building better</p>",
+                    "text": "<p>We believe in building better by choosing nutrient-dense Chocho over pea protein.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
-                    "type_preset": "rte",
+                    "type_preset": "custom",
                     "font": "var(--font-body--family)",
-                    "font_size": "1rem",
+                    "font_size": "0.875rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
@@ -1137,8 +1137,8 @@
               "type": "icon",
               "settings": {
                 "icon": "silhouette",
-                "image_upload": "shopify://shop_images/Recurso_7_4x-8.png",
-                "width": 60,
+                "image_upload": "shopify://shop_images/Recurso_53_3x_870a52ff-08c5-4652-b8e7-77e133d1cd16.png",
+                "width": 70,
                 "link": "",
                 "open_in_new_tab": false
               },
@@ -1211,13 +1211,13 @@
                 "text_kGVrTA": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Real people making great products</p>",
+                    "text": "<p>Real people committed to the natural integrity of non-GMO ancient foods.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
-                    "type_preset": "rte",
+                    "type_preset": "custom",
                     "font": "var(--font-body--family)",
-                    "font_size": "1rem",
+                    "font_size": "0.875rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
@@ -1288,8 +1288,8 @@
               "type": "icon",
               "settings": {
                 "icon": "silhouette",
-                "image_upload": "shopify://shop_images/Recurso_9.svg",
-                "width": 60,
+                "image_upload": "shopify://shop_images/Recurso_52_3x_bb7e566f-9402-44d4-86c1-dda61241aa9a.png",
+                "width": 70,
                 "link": "",
                 "open_in_new_tab": false
               },
@@ -1362,13 +1362,13 @@
                 "text_iWTGAV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Real people making great products</p>",
+                    "text": "<p>Great products made simple by excluding soy and artificial additives.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
-                    "type_preset": "rte",
+                    "type_preset": "custom",
                     "font": "var(--font-body--family)",
-                    "font_size": "1rem",
+                    "font_size": "0.875rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
