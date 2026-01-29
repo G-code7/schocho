@@ -721,7 +721,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p><strong>PRONTO CHOCHO</strong> is made with one pure ingredient that delivers complete plant-based protein for the whole-food<br/>seeker who wants to feel their best.</p>",
+            "text": "<p><strong>PRONTO CHOCHO</strong> is made with one pure ingredient that delivers complete plant-based protein for the whole-food<br/>seeker who wants to feel their best</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
