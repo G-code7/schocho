@@ -609,20 +609,14 @@
     let currentSlideIndex = 0;
     let autoplayInterval = null;
     const autoplayEnabled = {{ section.settings.autoplay | json }};
-    const autoplayDelay = {{ section.settings.autoplay_delay | default: 3500 }};
+    const autoplayDelay = {{ section.settings.autoplay_delay }};
 
-    // FUNCIÓN PARA CAMBIAR SLIDE INDEPENDIENTE
+    // Funciones para el slider independiente
     function goToSlide(index) {
-      // Asegurarse de que el índice esté dentro del rango
-      if (index < 0) index = slides.length - 1;
-      if (index >= slides.length) index = 0;
-      
-      // Ocultar todos los slides
       slides.forEach((slide, i) => {
         slide.classList.toggle('active', i === index);
       });
 
-      // Actualizar dots
       dots.forEach((dot, i) => {
         dot.classList.toggle('active', i === index);
       });
@@ -630,26 +624,23 @@
       currentSlideIndex = index;
     }
 
-    // FUNCIÓN PARA MOVER SLIDE AUTOMÁTICAMENTE
     function nextSlide() {
-      let nextIndex = currentSlideIndex + 1;
-      if (nextIndex >= slides.length) {
-        nextIndex = 0;
-      }
+      const nextIndex = (currentSlideIndex + 1) % slides.length;
       goToSlide(nextIndex);
     }
 
-    // FUNCIÓN PARA INICIAR AUTOPLAY
+    function prevSlide() {
+      const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+      goToSlide(prevIndex);
+    }
+
     function startAutoplay() {
       if (!autoplayEnabled || slides.length <= 1) return;
       
       stopAutoplay();
-      autoplayInterval = setInterval(() => {
-        nextSlide();
-      }, autoplayDelay);
+      autoplayInterval = setInterval(nextSlide, autoplayDelay);
     }
 
-    // FUNCIÓN PARA DETENER AUTOPLAY
     function stopAutoplay() {
       if (autoplayInterval) {
         clearInterval(autoplayInterval);
@@ -657,75 +648,69 @@
       }
     }
 
-    // FUNCIÓN PARA SINCRONIZAR ACORDEÓN CON SLIDE
-    function syncAccordionWithSlide(slideIndex) {
-      // Cerrar todos los acordeones
+    // Funciones para el acordeón (independiente)
+    function toggleAccordion(index) {
       accordionItems.forEach((item, i) => {
         const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
-        item.classList.remove('active');
-        header.setAttribute('aria-expanded', 'false');
+        const isTarget = i === index;
+        
+        if (isTarget) {
+          const isCurrentlyActive = item.classList.contains('active');
+          if (!isCurrentlyActive) {
+            item.classList.add('active');
+            header.setAttribute('aria-expanded', 'true');
+          } else {
+            item.classList.remove('active');
+            header.setAttribute('aria-expanded', 'false');
+          }
+        } else {
+          // Opcional: cerrar otros acordeones
+          // item.classList.remove('active');
+          // header.setAttribute('aria-expanded', 'false');
+        }
       });
-      
-      // Abrir el acordeón correspondiente al slide
-      if (accordionItems[slideIndex]) {
-        const header = accordionItems[slideIndex].querySelector('.sync-accordion-header-{{ section_id }}');
-        accordionItems[slideIndex].classList.add('active');
-        header.setAttribute('aria-expanded', 'true');
-      }
     }
 
-    // FUNCIÓN PARA SINCRONIZAR SLIDE CON ACORDEÓN
-    function syncSlideWithAccordion(accordionIndex) {
-      goToSlide(accordionIndex);
-      stopAutoplay();
-      startAutoplay(); // Reiniciar autoplay después de interacción
-    }
-
-    // EVENT LISTENERS PARA DOTS
+    // Event Listeners para dots del slider
     dots.forEach((dot, index) => {
-      dot.addEventListener('click', () => {
-        syncSlideWithAccordion(index);
-        syncAccordionWithSlide(index);
+      dot.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stopAutoplay();
+        goToSlide(index);
       });
     });
 
-    // EVENT LISTENERS PARA ACORDEÓN
+    // Event Listeners para acordeón
     accordionItems.forEach((item, index) => {
       const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
       
-      header.addEventListener('click', () => {
-        const isCurrentlyActive = item.classList.contains('active');
-        
-        if (isCurrentlyActive) {
-          // Si ya está activo, solo cerrar
-          item.classList.remove('active');
-          header.setAttribute('aria-expanded', 'false');
-        } else {
-          // Si no está activo, abrir este y cerrar otros
-          syncSlideWithAccordion(index);
-          syncAccordionWithSlide(index);
-        }
+      header.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleAccordion(index);
       });
     });
 
-    // PAUSAR AUTOPLAY AL HOVER
-    const sliderContainer = section.querySelector('.sync-image-column-{{ section_id }}');
-    if (sliderContainer) {
-      sliderContainer.addEventListener('mouseenter', stopAutoplay);
-      sliderContainer.addEventListener('mouseleave', startAutoplay);
+    // Pausar autoplay al hover
+    const imageColumn = section.querySelector('.sync-image-column-{{ section_id }}');
+    if (imageColumn) {
+      imageColumn.addEventListener('mouseenter', stopAutoplay);
+      imageColumn.addEventListener('mouseleave', startAutoplay);
     }
 
-    // TOUCH PARA MOBILE
+    // Touch para mobile (solo para slider)
     let touchStartX = 0;
     let touchEndX = 0;
-    
-    if (sliderContainer) {
-      sliderContainer.addEventListener('touchstart', (e) => {
+    const slider = section.querySelector('.sync-slider-{{ section_id }}');
+
+    if (slider) {
+      slider.addEventListener('touchstart', (e) => {
         touchStartX = e.changedTouches[0].screenX;
         stopAutoplay();
       }, { passive: true });
 
-      sliderContainer.addEventListener('touchend', (e) => {
+      slider.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].screenX;
         handleSwipe();
       }, { passive: true });
@@ -736,1126 +721,33 @@
       const diff = touchStartX - touchEndX;
 
       if (Math.abs(diff) > swipeThreshold) {
+        stopAutoplay();
         if (diff > 0) {
-          // Swipe izquierda: siguiente slide
           nextSlide();
-          syncAccordionWithSlide(currentSlideIndex);
         } else {
-          // Swipe derecha: slide anterior
-          let prevIndex = currentSlideIndex - 1;
-          if (prevIndex < 0) prevIndex = slides.length - 1;
-          goToSlide(prevIndex);
-          syncAccordionWithSlide(currentSlideIndex);
+          prevSlide();
         }
-        startAutoplay(); // Reiniciar autoplay después de swipe
       }
     }
 
-    // KEYBOARD NAVIGATION
+    // Keyboard navigation para slider
     section.addEventListener('keydown', (e) => {
-      stopAutoplay();
+      if (e.target.closest('.sync-accordion-header-{{ section_id }}')) return;
       
       if (e.key === 'ArrowLeft') {
-        let prevIndex = currentSlideIndex - 1;
-        if (prevIndex < 0) prevIndex = slides.length - 1;
-        goToSlide(prevIndex);
-        syncAccordionWithSlide(currentSlideIndex);
+        stopAutoplay();
+        prevSlide();
       } else if (e.key === 'ArrowRight') {
+        stopAutoplay();
         nextSlide();
-        syncAccordionWithSlide(currentSlideIndex);
-      } else if (e.key === 'Home') {
-        goToSlide(0);
-        syncAccordionWithSlide(currentSlideIndex);
-      } else if (e.key === 'End') {
-        goToSlide(slides.length - 1);
-        syncAccordionWithSlide(currentSlideIndex);
       }
-      
-      startAutoplay();
     });
 
-    // INICIALIZAR
-    // Abrir primer acordeón si está configurado
-    if ({{ section.settings.first_open | json }} && accordionItems[0]) {
-      const header = accordionItems[0].querySelector('.sync-accordion-header-{{ section_id }}');
-      accordionItems[0].classList.add('active');
-      header.setAttribute('aria-expanded', 'true');
-    }
-    
     // Iniciar autoplay
     startAutoplay();
 
-    // VISIBILITY API: Pausar autoplay cuando la pestaña no está visible
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        stopAutoplay();
-      } else {
-        startAutoplay();
-      }
-    });
+    // Limpiar intervalo al salir de la página
+    window.addEventListener('beforeunload', stopAutoplay);
 
   })();
 </script>
-
-{% schema %}
-{
-  "name": "Slider + Acordeón Sync",
-  "tag": "section",
-  "class": "section-sync-accordion",
-  "settings": [
-    {
-      "type": "header",
-      "content": "── Contenedor Principal ──"
-    },
-    {
-      "type": "range",
-      "id": "section_max_width",
-      "label": "Ancho máximo",
-      "min": 800,
-      "max": 1600,
-      "step": 50,
-      "unit": "px",
-      "default": 1400
-    },
-    {
-      "type": "color",
-      "id": "section_background_color",
-      "label": "Color de fondo exterior",
-      "default": "#ffffff"
-    },
-    {
-      "type": "range",
-      "id": "section_padding_top",
-      "label": "Padding superior",
-      "min": 0,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "section_padding_bottom",
-      "label": "Padding inferior",
-      "min": 0,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "section_padding_x",
-      "label": "Padding horizontal",
-      "min": 0,
-      "max": 80,
-      "step": 10,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "header",
-      "content": "── Wrapper (Caja Interior) ──"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Color de fondo",
-      "default": "#ffffff"
-    },
-    {
-      "type": "range",
-      "id": "wrapper_border_radius",
-      "label": "Radio de borde (desktop)",
-      "min": 0,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "wrapper_border_radius_mobile",
-      "label": "Radio de borde (móvil)",
-      "min": 0,
-      "max": 24,
-      "step": 4,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "wrapper_border_width",
-      "label": "Grosor de borde",
-      "min": 0,
-      "max": 4,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "color",
-      "id": "wrapper_border_color",
-      "label": "Color de borde",
-      "default": "#e0e0e0"
-    },
-    {
-      "type": "checkbox",
-      "id": "wrapper_shadow",
-      "label": "Mostrar sombra",
-      "default": false
-    },
-    {
-      "type": "range",
-      "id": "section_min_height",
-      "label": "Altura mínima",
-      "min": 400,
-      "max": 900,
-      "step": 50,
-      "unit": "px",
-      "default": 600
-    },
-    {
-      "type": "header",
-      "content": "── Badge / Claims ──"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_badges",
-      "label": "Mostrar badges",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "badges_text",
-      "label": "Badges (separados por coma)",
-      "placeholder": "Plant-Based, Non-GMO, Clean Label",
-      "info": "Ej: Plant-Based, Non-GMO, Gluten-Free"
-    },
-    {
-      "type": "image_picker",
-      "id": "badge_icon",
-      "label": "Icono para badges (opcional)"
-    },
-    {
-      "type": "select",
-      "id": "badge_alignment",
-      "label": "Alineación",
-      "options": [
-        { "value": "left", "label": "Izquierda" },
-        { "value": "center", "label": "Centro" },
-        { "value": "right", "label": "Derecha" }
-      ],
-      "default": "left"
-    },
-    {
-      "type": "range",
-      "id": "badge_gap",
-      "label": "Espacio entre badges",
-      "min": 4,
-      "max": 16,
-      "step": 2,
-      "unit": "px",
-      "default": 8
-    },
-    {
-      "type": "range",
-      "id": "badge_margin_bottom",
-      "label": "Margen inferior",
-      "min": 8,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "header",
-      "content": "Badge - Estilo"
-    },
-    {
-      "type": "color",
-      "id": "badge_background",
-      "label": "Color de fondo",
-      "default": "#f5f4ed"
-    },
-    {
-      "type": "color",
-      "id": "badge_text_color",
-      "label": "Color de texto",
-      "default": "#3e2563"
-    },
-    {
-      "type": "color",
-      "id": "badge_border_color",
-      "label": "Color de borde",
-      "default": "#ac9e89"
-    },
-    {
-      "type": "range",
-      "id": "badge_border_width",
-      "label": "Grosor de borde",
-      "min": 0,
-      "max": 3,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "range",
-      "id": "badge_border_radius",
-      "label": "Radio de borde",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "badge_font_size",
-      "label": "Tamaño de texto",
-      "min": 10,
-      "max": 16,
-      "step": 1,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "badge_font_size_mobile",
-      "label": "Tamaño de texto (móvil)",
-      "min": 9,
-      "max": 14,
-      "step": 1,
-      "unit": "px",
-      "default": 11
-    },
-    {
-      "type": "select",
-      "id": "badge_font_weight",
-      "label": "Peso de fuente",
-      "options": [
-        { "value": "400", "label": "Normal" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi-bold" }
-      ],
-      "default": "500"
-    },
-    {
-      "type": "checkbox",
-      "id": "badge_uppercase",
-      "label": "Mayúsculas",
-      "default": false
-    },
-    {
-      "type": "range",
-      "id": "badge_padding_x",
-      "label": "Padding horizontal",
-      "min": 8,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "badge_padding_y",
-      "label": "Padding vertical",
-      "min": 4,
-      "max": 12,
-      "step": 1,
-      "unit": "px",
-      "default": 6
-    },
-    {
-      "type": "range",
-      "id": "badge_padding_x_mobile",
-      "label": "Padding horizontal (móvil)",
-      "min": 6,
-      "max": 16,
-      "step": 2,
-      "unit": "px",
-      "default": 10
-    },
-    {
-      "type": "range",
-      "id": "badge_padding_y_mobile",
-      "label": "Padding vertical (móvil)",
-      "min": 3,
-      "max": 10,
-      "step": 1,
-      "unit": "px",
-      "default": 4
-    },
-    {
-      "type": "range",
-      "id": "badge_icon_size",
-      "label": "Tamaño de icono",
-      "min": 12,
-      "max": 24,
-      "step": 2,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "badge_icon_gap",
-      "label": "Espacio entre icono y texto",
-      "min": 4,
-      "max": 12,
-      "step": 2,
-      "unit": "px",
-      "default": 6
-    },
-    {
-      "type": "header",
-      "content": "── Posición de Imagen ──"
-    },
-    {
-      "type": "select",
-      "id": "image_position",
-      "label": "Posición en desktop",
-      "options": [
-        { "value": "left", "label": "Izquierda" },
-        { "value": "right", "label": "Derecha" }
-      ],
-      "default": "left"
-    },
-    {
-      "type": "select",
-      "id": "mobile_image_position",
-      "label": "Posición en móvil",
-      "options": [
-        { "value": "top", "label": "Arriba" },
-        { "value": "bottom", "label": "Abajo" }
-      ],
-      "default": "top"
-    },
-    {
-      "type": "range",
-      "id": "image_column_width",
-      "label": "Ancho columna imagen",
-      "min": 30,
-      "max": 60,
-      "step": 5,
-      "unit": "%",
-      "default": 50
-    },
-    {
-      "type": "header",
-      "content": "── Padding Imagen ──"
-    },
-    {
-      "type": "color",
-      "id": "image_bg_color",
-      "label": "Color de fondo",
-      "default": "#ffffff"
-    },
-    {
-      "type": "range",
-      "id": "image_padding_top",
-      "label": "Padding superior",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_padding_right",
-      "label": "Padding derecho",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_padding_bottom",
-      "label": "Padding inferior",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_padding_left",
-      "label": "Padding izquierdo",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_border_radius",
-      "label": "Radio de borde de imagen",
-      "min": 0,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "── Config. Imagen ──"
-    },
-    {
-      "type": "select",
-      "id": "image_object_position",
-      "label": "Posición del objeto",
-      "options": [
-        { "value": "center center", "label": "Centro" },
-        { "value": "top center", "label": "Arriba" },
-        { "value": "bottom center", "label": "Abajo" },
-        { "value": "center left", "label": "Izquierda" },
-        { "value": "center right", "label": "Derecha" }
-      ],
-      "default": "center center"
-    },
-    {
-      "type": "range",
-      "id": "transition_duration",
-      "label": "Duración de transición",
-      "min": 200,
-      "max": 1000,
-      "step": 100,
-      "unit": "ms",
-      "default": 500
-    },
-    {
-      "type": "checkbox",
-      "id": "show_overlay",
-      "label": "Mostrar overlay",
-      "default": false
-    },
-    {
-      "type": "color",
-      "id": "overlay_color",
-      "label": "Color de overlay",
-      "default": "#000000"
-    },
-    {
-      "type": "range",
-      "id": "overlay_opacity",
-      "label": "Opacidad de overlay",
-      "min": 0,
-      "max": 80,
-      "step": 5,
-      "unit": "%",
-      "default": 20
-    },
-    {
-      "type": "header",
-      "content": "── Autoplay del Slider ──"
-    },
-    {
-      "type": "checkbox",
-      "id": "autoplay",
-      "label": "Activar autoplay",
-      "default": true,
-      "info": "El slider cambiará automáticamente cada 3.5 segundos"
-    },
-    {
-      "type": "range",
-      "id": "autoplay_delay",
-      "label": "Intervalo del autoplay",
-      "min": 1000,
-      "max": 8000,
-      "step": 500,
-      "unit": "ms",
-      "default": 3500,
-      "info": "3500ms = 3.5 segundos"
-    },
-    {
-      "type": "header",
-      "content": "── Indicadores (Dots) ──"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_indicators",
-      "label": "Mostrar indicadores",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "dot_size",
-      "label": "Tamaño",
-      "min": 8,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "default": 12
-    },
-    {
-      "type": "range",
-      "id": "indicators_gap",
-      "label": "Espacio entre puntos",
-      "min": 4,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "default": 10
-    },
-    {
-      "type": "range",
-      "id": "indicators_bottom",
-      "label": "Distancia desde abajo",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "unit": "px",
-      "default": 25
-    },
-    {
-      "type": "color",
-      "id": "dot_color",
-      "label": "Color",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "dot_active_color",
-      "label": "Color activo",
-      "default": "#ffffff"
-    },
-    {
-      "type": "range",
-      "id": "dot_opacity",
-      "label": "Opacidad",
-      "min": 20,
-      "max": 80,
-      "step": 10,
-      "unit": "%",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "dot_hover_opacity",
-      "label": "Opacidad hover",
-      "min": 50,
-      "max": 100,
-      "step": 10,
-      "unit": "%",
-      "default": 70
-    },
-    {
-      "type": "header",
-      "content": "── Contenido ──"
-    },
-    {
-      "type": "color",
-      "id": "content_bg_color",
-      "label": "Color de fondo",
-      "default": "#ffffff"
-    },
-    {
-      "type": "select",
-      "id": "content_vertical_align",
-      "label": "Alineación vertical",
-      "options": [
-        { "value": "flex-start", "label": "Arriba" },
-        { "value": "center", "label": "Centro" },
-        { "value": "flex-end", "label": "Abajo" }
-      ],
-      "default": "center"
-    },
-    {
-      "type": "range",
-      "id": "content_max_width",
-      "label": "Ancho máximo",
-      "min": 300,
-      "max": 700,
-      "step": 50,
-      "unit": "px",
-      "default": 500
-    },
-    {
-      "type": "range",
-      "id": "content_padding_top",
-      "label": "Padding superior",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "content_padding_right",
-      "label": "Padding derecho",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "content_padding_bottom",
-      "label": "Padding inferior",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "content_padding_left",
-      "label": "Padding izquierdo",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "header",
-      "content": "── Título ──"
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Título",
-      "default": "Descubre nuestro proceso"
-    },
-    {
-      "type": "range",
-      "id": "title_size",
-      "label": "Tamaño (desktop)",
-      "min": 24,
-      "max": 60,
-      "step": 2,
-      "unit": "px",
-      "default": 36
-    },
-    {
-      "type": "range",
-      "id": "title_size_mobile",
-      "label": "Tamaño (móvil)",
-      "min": 20,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 28
-    },
-    {
-      "type": "select",
-      "id": "title_weight",
-      "label": "Peso",
-      "options": [
-        { "value": "400", "label": "Normal" },
-        { "value": "500", "label": "Medio" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" }
-      ],
-      "default": "700"
-    },
-    {
-      "type": "color",
-      "id": "title_color",
-      "label": "Color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "range",
-      "id": "title_margin_bottom",
-      "label": "Margen inferior",
-      "min": 10,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "title_line_height",
-      "label": "Altura de línea",
-      "min": 1,
-      "max": 2,
-      "step": 0.1,
-      "default": 1.2
-    },
-    {
-      "type": "range",
-      "id": "title_letter_spacing",
-      "label": "Espaciado de letras",
-      "min": -2,
-      "max": 4,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "── Descripción ──"
-    },
-    {
-      "type": "richtext",
-      "id": "description",
-      "label": "Descripción",
-      "default": "<p>Conoce cada paso de nuestro proceso y descubre cómo creamos productos excepcionales para ti.</p>"
-    },
-    {
-      "type": "range",
-      "id": "description_size",
-      "label": "Tamaño",
-      "min": 14,
-      "max": 22,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "color",
-      "id": "description_color",
-      "label": "Color",
-      "default": "#666666"
-    },
-    {
-      "type": "range",
-      "id": "description_line_height",
-      "label": "Altura de línea",
-      "min": 1.2,
-      "max": 2,
-      "step": 0.1,
-      "default": 1.6
-    },
-    {
-      "type": "range",
-      "id": "description_margin_bottom",
-      "label": "Margen inferior",
-      "min": 10,
-      "max": 60,
-      "step": 5,
-      "unit": "px",
-      "default": 30
-    },
-    {
-      "type": "header",
-      "content": "── Acordeón - General ──"
-    },
-    {
-      "type": "checkbox",
-      "id": "first_open",
-      "label": "Primer acordeón abierto",
-      "default": true,
-      "info": "El primer acordeón estará abierto al cargar la página"
-    },
-    {
-      "type": "range",
-      "id": "accordion_border_width",
-      "label": "Grosor línea separadora",
-      "min": 0,
-      "max": 5,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "color",
-      "id": "accordion_border_color",
-      "label": "Color línea",
-      "default": "#e0e0e0"
-    },
-    {
-      "type": "header",
-      "content": "── Acordeón - Encabezado ──"
-    },
-    {
-      "type": "range",
-      "id": "accordion_header_padding_y",
-      "label": "Padding vertical",
-      "min": 12,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "accordion_icon_gap",
-      "label": "Espacio icono-título",
-      "min": 8,
-      "max": 24,
-      "step": 2,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "accordion_custom_icon_size",
-      "label": "Tamaño icono custom",
-      "min": 20,
-      "max": 60,
-      "step": 4,
-      "unit": "px",
-      "default": 32
-    },
-    {
-      "type": "header",
-      "content": "── Acordeón - Título ──"
-    },
-    {
-      "type": "range",
-      "id": "accordion_title_size",
-      "label": "Tamaño",
-      "min": 14,
-      "max": 26,
-      "step": 1,
-      "unit": "px",
-      "default": 18
-    },
-    {
-      "type": "select",
-      "id": "accordion_title_weight",
-      "label": "Peso",
-      "options": [
-        { "value": "400", "label": "Normal" },
-        { "value": "500", "label": "Medio" },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold" }
-      ],
-      "default": "500"
-    },
-    {
-      "type": "color",
-      "id": "accordion_title_color",
-      "label": "Color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "accordion_title_hover_color",
-      "label": "Color hover",
-      "default": "#5a3e85"
-    },
-    {
-      "type": "color",
-      "id": "accordion_title_active_color",
-      "label": "Color activo",
-      "default": "#5a3e85"
-    },
-    {
-      "type": "header",
-      "content": "── Acordeón - Toggle ──"
-    },
-    {
-      "type": "range",
-      "id": "accordion_toggle_size",
-      "label": "Tamaño",
-      "min": 14,
-      "max": 28,
-      "step": 2,
-      "unit": "px",
-      "default": 18
-    },
-    {
-      "type": "range",
-      "id": "accordion_toggle_thickness",
-      "label": "Grosor líneas",
-      "min": 1,
-      "max": 3,
-      "step": 1,
-      "unit": "px",
-      "default": 2
-    },
-    {
-      "type": "color",
-      "id": "accordion_toggle_color",
-      "label": "Color",
-      "default": "#5a3e85"
-    },
-    {
-      "type": "color",
-      "id": "accordion_toggle_active_color",
-      "label": "Color activo",
-      "default": "#5a3e85"
-    },
-    {
-      "type": "header",
-      "content": "── Acordeón - Contenido ──"
-    },
-    {
-      "type": "range",
-      "id": "accordion_content_padding_bottom",
-      "label": "Padding inferior",
-      "min": 10,
-      "max": 40,
-      "step": 2,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "accordion_content_indent",
-      "label": "Indentación izquierda",
-      "min": 0,
-      "max": 60,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "accordion_content_size",
-      "label": "Tamaño texto",
-      "min": 13,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "color",
-      "id": "accordion_content_color",
-      "label": "Color",
-      "default": "#666666"
-    },
-    {
-      "type": "range",
-      "id": "accordion_content_line_height",
-      "label": "Altura de línea",
-      "min": 1.2,
-      "max": 2.0,
-      "step": 0.1,
-      "default": 1.6
-    },
-    {
-      "type": "header",
-      "content": "── Móvil ──"
-    },
-    {
-      "type": "range",
-      "id": "section_padding_top_mobile",
-      "label": "Padding superior sección",
-      "min": 0,
-      "max": 60,
-      "step": 10,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "section_padding_bottom_mobile",
-      "label": "Padding inferior sección",
-      "min": 0,
-      "max": 60,
-      "step": 10,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "section_padding_x_mobile",
-      "label": "Padding horizontal sección",
-      "min": 0,
-      "max": 40,
-      "step": 5,
-      "unit": "px",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "mobile_image_height",
-      "label": "Altura de imagen",
-      "min": 200,
-      "max": 500,
-      "step": 50,
-      "unit": "px",
-      "default": 350
-    },
-    {
-      "type": "range",
-      "id": "mobile_image_padding",
-      "label": "Padding imagen",
-      "min": 0,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "mobile_content_padding",
-      "label": "Padding contenido",
-      "min": 16,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "default": 24
-    }
-  ],
-  "blocks": [
-    {
-      "type": "accordion_item",
-      "name": "Item de acordeón",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Imagen del slide"
-        },
-        {
-          "type": "image_picker",
-          "id": "icon",
-          "label": "Icono del acordeón",
-          "info": "PNG o imagen pequeña junto al título"
-        },
-        {
-          "type": "text",
-          "id": "accordion_title",
-          "label": "Título",
-          "default": "Título del paso"
-        },
-        {
-          "type": "richtext",
-          "id": "accordion_content",
-          "label": "Contenido",
-          "default": "<p>Descripción detallada de este paso o sección.</p>"
-        }
-      ]
-    }
-  ],
-  "presets": [
-    {
-      "name": "Slider + Acordeón Sync",
-      "settings": {
-        "show_badges": true,
-        "badges_text": "Plant-Based, Non-GMO, Clean Label",
-        "autoplay": true,
-        "autoplay_delay": 3500
-      },
-      "blocks": [
-        {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Selección de ingredientes",
-            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
-          }
-        },
-        {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Proceso artesanal",
-            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
-          }
-        },
-        {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Control de calidad",
-            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
-          }
-        }
-      ]
-    }
-  ]
-}
-{% endschema %}
