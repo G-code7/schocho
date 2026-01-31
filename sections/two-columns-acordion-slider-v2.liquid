@@ -436,25 +436,28 @@
 <section class="sync-section-{{ section_id }}">
   <div class="sync-wrapper-{{ section_id }}">
     <div class="sync-container-{{ section_id }}">
-      
       <!-- Columna Imagen: Slider -->
       <div class="sync-image-column-{{ section_id }}">
         <div class="sync-slider-{{ section_id }}" data-slider>
-          
           {% assign has_images = false %}
           {% assign image_count = 0 %}
-          
+
           {% for block in section.blocks %}
             {% if block.type == 'accordion_item' and block.settings.image != blank %}
               {% assign has_images = true %}
               {% assign image_count = image_count | plus: 1 %}
-              <div class="sync-slide-{{ section_id }}{% if forloop.first %} active{% endif %}" data-slide-index="{{ forloop.index0 }}">
+              <div
+                class="sync-slide-{{ section_id }}{% if forloop.first %} active{% endif %}"
+                data-slide-index="{{ forloop.index0 }}"
+              >
                 <img
                   src="{{ block.settings.image | image_url: width: 1200 }}"
-                  srcset="{{ block.settings.image | image_url: width: 600 }} 600w,
-                          {{ block.settings.image | image_url: width: 900 }} 900w,
-                          {{ block.settings.image | image_url: width: 1200 }} 1200w,
-                          {{ block.settings.image | image_url: width: 1800 }} 1800w"
+                  srcset="
+                    {{ block.settings.image | image_url: width: 600 }} 600w,
+                    {{ block.settings.image | image_url: width: 900 }} 900w,
+                    {{ block.settings.image | image_url: width: 1200 }} 1200w,
+                    {{ block.settings.image | image_url: width: 1800 }} 1800w
+                  "
                   sizes="(max-width: 990px) 100vw, {{ section.settings.image_column_width }}vw"
                   alt="{{ block.settings.image.alt | default: block.settings.accordion_title | escape }}"
                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
@@ -464,7 +467,10 @@
               </div>
             {% elsif block.type == 'accordion_item' and block.settings.image == blank %}
               {% assign image_count = image_count | plus: 1 %}
-              <div class="sync-slide-{{ section_id }}{% if forloop.first %} active{% endif %}" data-slide-index="{{ forloop.index0 }}">
+              <div
+                class="sync-slide-{{ section_id }}{% if forloop.first %} active{% endif %}"
+                data-slide-index="{{ forloop.index0 }}"
+              >
                 <div class="sync-placeholder-{{ section_id }}">
                   {{ 'image' | placeholder_svg_tag }}
                 </div>
@@ -489,8 +495,8 @@
           <div class="sync-indicators-{{ section_id }}" data-indicators>
             {% for block in section.blocks %}
               {% if block.type == 'accordion_item' %}
-                <button 
-                  class="sync-dot-{{ section_id }}{% if forloop.first %} active{% endif %}" 
+                <button
+                  class="sync-dot-{{ section_id }}{% if forloop.first %} active{% endif %}"
                   data-dot-index="{{ forloop.index0 }}"
                   aria-label="Ir a la imagen {{ forloop.index }}"
                   type="button"
@@ -504,13 +510,12 @@
       <!-- Columna Contenido -->
       <div class="sync-content-column-{{ section_id }}">
         <div class="sync-content-{{ section_id }}">
-          
           {%- comment -%} ===== BADGES / CLAIMS ===== {%- endcomment -%}
           {% if section.settings.show_badges %}
             {%- liquid
               assign badges_text = section.settings.badges_text
               assign has_badges = false
-              
+
               if badges_text != blank
                 assign badges_array = badges_text | split: ','
                 if badges_array.size > 0
@@ -527,9 +532,9 @@
                     <span class="sync-badge-{{ section_id }}">
                       {% if section.settings.badge_icon != blank %}
                         <span class="sync-badge-icon-{{ section_id }}">
-                          <img 
-                            src="{{ section.settings.badge_icon | image_url: width: 48 }}" 
-                            alt="" 
+                          <img
+                            src="{{ section.settings.badge_icon | image_url: width: 48 }}"
+                            alt=""
                             loading="lazy"
                             width="{{ section.settings.badge_icon_size }}"
                             height="{{ section.settings.badge_icon_size }}"
@@ -555,22 +560,22 @@
           <div class="sync-accordion-{{ section_id }}" data-accordion>
             {% for block in section.blocks %}
               {% if block.type == 'accordion_item' %}
-                <div 
-                  class="sync-accordion-item-{{ section_id }}{% if forloop.first and section.settings.first_open %} active{% endif %}" 
+                <div
+                  class="sync-accordion-item-{{ section_id }}{% if forloop.first and section.settings.first_open %} active{% endif %}"
                   data-accordion-index="{{ forloop.index0 }}"
                   {{ block.shopify_attributes }}
                 >
-                  <button 
-                    class="sync-accordion-header-{{ section_id }}" 
+                  <button
+                    class="sync-accordion-header-{{ section_id }}"
                     type="button"
                     aria-expanded="{% if forloop.first and section.settings.first_open %}true{% else %}false{% endif %}"
                     aria-controls="accordion-body-{{ section_id }}-{{ forloop.index0 }}"
                   >
                     <div class="sync-accordion-left-{{ section_id }}">
                       {% if block.settings.icon != blank %}
-                        <img 
-                          class="sync-accordion-custom-icon-{{ section_id }}" 
-                          src="{{ block.settings.icon | image_url: width: 100 }}" 
+                        <img
+                          class="sync-accordion-custom-icon-{{ section_id }}"
+                          src="{{ block.settings.icon | image_url: width: 100 }}"
                           alt="{{ block.settings.accordion_title | escape }}"
                           width="{{ section.settings.accordion_custom_icon_size }}"
                           height="{{ section.settings.accordion_custom_icon_size }}"
@@ -581,7 +586,10 @@
                     </div>
                     <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
                   </button>
-                  <div class="sync-accordion-body-{{ section_id }}" id="accordion-body-{{ section_id }}-{{ forloop.index0 }}">
+                  <div
+                    class="sync-accordion-body-{{ section_id }}"
+                    id="accordion-body-{{ section_id }}-{{ forloop.index0 }}"
+                  >
                     <div class="sync-accordion-content-{{ section_id }}">
                       {{ block.settings.accordion_content }}
                     </div>
@@ -590,7 +598,6 @@
               {% endif %}
             {% endfor %}
           </div>
-
         </div>
       </div>
     </div>
@@ -598,228 +605,228 @@
 </section>
 
 <script>
-  (function() {
-    const section = document.querySelector('.sync-section-{{ section_id }}');
-    if (!section) return;
+    (function() {
+      const section = document.querySelector('.sync-section-{{ section_id }}');
+      if (!section) return;
 
-    const slides = section.querySelectorAll('.sync-slide-{{ section_id }}');
-    const dots = section.querySelectorAll('.sync-dot-{{ section_id }}');
-    const accordionItems = section.querySelectorAll('.sync-accordion-item-{{ section_id }}');
-    
-    let currentSlideIndex = 0;
-    let autoplayInterval = null;
-    const autoplayEnabled = {{ section.settings.autoplay | json }};
-    const autoplayDelay = {{ section.settings.autoplay_delay }};
+      const slides = section.querySelectorAll('.sync-slide-{{ section_id }}');
+      const dots = section.querySelectorAll('.sync-dot-{{ section_id }}');
+      const accordionItems = section.querySelectorAll('.sync-accordion-item-{{ section_id }}');
 
-    // Funciones para el slider independiente
-    function goToSlide(index) {
-      // Validar que el índice esté dentro del rango
-      if (index < 0 || index >= slides.length) return;
-      
-      // Remover clase active de todos los slides
-      slides.forEach((slide) => {
-        slide.classList.remove('active');
-      });
-      
-      // Añadir clase active al slide actual
-      slides[index].classList.add('active');
-      
-      // Actualizar dots
-      dots.forEach((dot) => {
-        dot.classList.remove('active');
-      });
-      if (dots[index]) {
-        dots[index].classList.add('active');
-      }
-      
-      // Actualizar índice actual
-      currentSlideIndex = index;
-    }
+      let currentSlideIndex = 0;
+      let autoplayInterval = null;
+      const autoplayEnabled = {{ section.settings.autoplay | json }};
+      const autoplayDelay = {{ section.settings.autoplay_delay }};
 
-    function nextSlide() {
-      const nextIndex = (currentSlideIndex + 1) % slides.length;
-      goToSlide(nextIndex);
-    }
+      // Funciones para el slider independiente
+      function goToSlide(index) {
+        // Validar que el índice esté dentro del rango
+        if (index < 0 || index >= slides.length) return;
 
-    function prevSlide() {
-      const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
-      goToSlide(prevIndex);
-    }
+        // Remover clase active de todos los slides
+        slides.forEach((slide) => {
+          slide.classList.remove('active');
+        });
 
-    function startAutoplay() {
-      if (!autoplayEnabled || slides.length <= 1) return;
-      
-      stopAutoplay();
-      autoplayInterval = setInterval(() => {
-        nextSlide();
-      }, autoplayDelay);
-    }
+        // Añadir clase active al slide actual
+        slides[index].classList.add('active');
 
-    function stopAutoplay() {
-      if (autoplayInterval) {
-        clearInterval(autoplayInterval);
-        autoplayInterval = null;
-      }
-    }
-
-    // Funciones para el acordeón (independiente)
-    function toggleAccordion(index) {
-      const item = accordionItems[index];
-      if (!item) return;
-      
-      const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
-      const isCurrentlyActive = item.classList.contains('active');
-      
-      // Cerrar todos los acordeones primero (opcional, ajusta según necesidades)
-      // accordionItems.forEach((otherItem, i) => {
-      //   if (i !== index) {
-      //     otherItem.classList.remove('active');
-      //     otherItem.querySelector('.sync-accordion-header-{{ section_id }}').setAttribute('aria-expanded', 'false');
-      //   }
-      // });
-      
-      // Alternar estado del acordeón clickeado
-      if (isCurrentlyActive) {
-        item.classList.remove('active');
-        header.setAttribute('aria-expanded', 'false');
-      } else {
-        item.classList.add('active');
-        header.setAttribute('aria-expanded', 'true');
-      }
-    }
-
-    // Inicializar: asegurarse de que solo un slide esté activo
-    if (slides.length > 0) {
-      // Verificar si ya hay un slide activo, si no, activar el primero
-      let hasActive = false;
-      slides.forEach((slide) => {
-        if (slide.classList.contains('active')) hasActive = true;
-      });
-      
-      if (!hasActive && slides.length > 0) {
-        slides[0].classList.add('active');
-        if (dots[0]) dots[0].classList.add('active');
-      }
-    }
-
-    // Event Listeners para dots del slider
-    dots.forEach((dot, index) => {
-      dot.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        stopAutoplay();
-        goToSlide(index);
-        
-        // Reiniciar autoplay después de un tiempo
-        setTimeout(startAutoplay, autoplayDelay * 2);
-      });
-    });
-
-    // Event Listeners para acordeón
-    accordionItems.forEach((item, index) => {
-      const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
-      
-      header.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleAccordion(index);
-      });
-    });
-
-    // Pausar autoplay al hover sobre el slider
-    const imageColumn = section.querySelector('.sync-image-column-{{ section_id }}');
-    if (imageColumn) {
-      imageColumn.addEventListener('mouseenter', stopAutoplay);
-      imageColumn.addEventListener('mouseleave', startAutoplay);
-      
-      // También para touch en móviles
-      imageColumn.addEventListener('touchstart', stopAutoplay, { passive: true });
-      imageColumn.addEventListener('touchend', () => {
-        setTimeout(startAutoplay, 1000);
-      }, { passive: true });
-    }
-
-    // Touch para mobile (swipe)
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const slider = section.querySelector('.sync-slider-{{ section_id }}');
-
-    if (slider) {
-      slider.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-        stopAutoplay();
-      }, { passive: true });
-
-      slider.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-      }, { passive: true });
-    }
-
-    function handleSwipe() {
-      const swipeThreshold = 50;
-      const diff = touchStartX - touchEndX;
-
-      if (Math.abs(diff) > swipeThreshold) {
-        if (diff > 0) {
-          nextSlide();
-        } else {
-          prevSlide();
+        // Actualizar dots
+        dots.forEach((dot) => {
+          dot.classList.remove('active');
+        });
+        if (dots[index]) {
+          dots[index].classList.add('active');
         }
-        
-        // Reiniciar autoplay después de un tiempo
-        setTimeout(startAutoplay, autoplayDelay * 2);
-      }
-    }
 
-    // Keyboard navigation para slider
-    section.addEventListener('keydown', (e) => {
-      // Solo si no estamos en un elemento del acordeón
-      if (e.target.closest('.sync-accordion-header-{{ section_id }}')) return;
-      
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
+        // Actualizar índice actual
+        currentSlideIndex = index;
+      }
+
+      function nextSlide() {
+        const nextIndex = (currentSlideIndex + 1) % slides.length;
+        goToSlide(nextIndex);
+      }
+
+      function prevSlide() {
+        const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+        goToSlide(prevIndex);
+      }
+
+      function startAutoplay() {
+        if (!autoplayEnabled || slides.length <= 1) return;
+
         stopAutoplay();
-        prevSlide();
-        setTimeout(startAutoplay, autoplayDelay * 2);
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        stopAutoplay();
-        nextSlide();
-        setTimeout(startAutoplay, autoplayDelay * 2);
+        autoplayInterval = setInterval(() => {
+          nextSlide();
+        }, autoplayDelay);
       }
-    });
 
-    // Iniciar autoplay si está habilitado
-    if (autoplayEnabled && slides.length > 1) {
-      // Esperar a que la página cargue completamente
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startAutoplay);
-      } else {
-        startAutoplay();
+      function stopAutoplay() {
+        if (autoplayInterval) {
+          clearInterval(autoplayInterval);
+          autoplayInterval = null;
+        }
       }
-    }
 
-    // Limpiar intervalo al salir de la página
-    window.addEventListener('beforeunload', stopAutoplay);
-    
-    // También limpiar cuando la sección se quite del DOM
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.removedNodes) {
-          for (let i = 0; i < mutation.removedNodes.length; i++) {
-            if (mutation.removedNodes[i] === section) {
-              stopAutoplay();
-              observer.disconnect();
+      // Funciones para el acordeón (independiente)
+      function toggleAccordion(index) {
+        const item = accordionItems[index];
+        if (!item) return;
+
+        const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
+        const isCurrentlyActive = item.classList.contains('active');
+
+        // Si el acordeón clickeado YA está activo, solo lo cerramos
+        if (isCurrentlyActive) {
+          item.classList.remove('active');
+          header.setAttribute('aria-expanded', 'false');
+        } else {
+          // Primero cerramos TODOS los acordeones
+          accordionItems.forEach((otherItem, i) => {
+            const otherHeader = otherItem.querySelector('.sync-accordion-header-{{ section_id }}');
+            otherItem.classList.remove('active');
+            otherHeader.setAttribute('aria-expanded', 'false');
+          });
+
+          // Luego abrimos solo el clickeado
+          item.classList.add('active');
+          header.setAttribute('aria-expanded', 'true');
+        }
+      }
+
+      // Inicializar: asegurarse de que solo un slide esté activo
+      if (slides.length > 0) {
+        // Verificar si ya hay un slide activo, si no, activar el primero
+        let hasActive = false;
+        slides.forEach((slide) => {
+          if (slide.classList.contains('active')) hasActive = true;
+        });
+
+        if (!hasActive && slides.length > 0) {
+          slides[0].classList.add('active');
+          if (dots[0]) dots[0].classList.add('active');
+        }
+      }
+
+      // Event Listeners para dots del slider
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          stopAutoplay();
+          goToSlide(index);
+
+          // Reiniciar autoplay después de un tiempo
+          setTimeout(startAutoplay, autoplayDelay * 2);
+        });
+      });
+
+      // Event Listeners para acordeón
+      accordionItems.forEach((item, index) => {
+        const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
+
+        header.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleAccordion(index);
+        });
+      });
+
+      // Pausar autoplay al hover sobre el slider
+      const imageColumn = section.querySelector('.sync-image-column-{{ section_id }}');
+      if (imageColumn) {
+        imageColumn.addEventListener('mouseenter', stopAutoplay);
+        imageColumn.addEventListener('mouseleave', startAutoplay);
+
+        // También para touch en móviles
+        imageColumn.addEventListener('touchstart', stopAutoplay, { passive: true });
+        imageColumn.addEventListener('touchend', () => {
+          setTimeout(startAutoplay, 1000);
+        }, { passive: true });
+      }
+
+      // Touch para mobile (swipe)
+      let touchStartX = 0;
+      let touchEndX = 0;
+      const slider = section.querySelector('.sync-slider-{{ section_id }}');
+
+      if (slider) {
+        slider.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+          stopAutoplay();
+        }, { passive: true });
+
+        slider.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          handleSwipe();
+        }, { passive: true });
+      }
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+
+          // Reiniciar autoplay después de un tiempo
+          setTimeout(startAutoplay, autoplayDelay * 2);
+        }
+      }
+
+      // Keyboard navigation para slider
+      section.addEventListener('keydown', (e) => {
+        // Solo si no estamos en un elemento del acordeón
+        if (e.target.closest('.sync-accordion-header-{{ section_id }}')) return;
+
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          stopAutoplay();
+          prevSlide();
+          setTimeout(startAutoplay, autoplayDelay * 2);
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          stopAutoplay();
+          nextSlide();
+          setTimeout(startAutoplay, autoplayDelay * 2);
+        }
+      });
+
+      // Iniciar autoplay si está habilitado
+      if (autoplayEnabled && slides.length > 1) {
+        // Esperar a que la página cargue completamente
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', startAutoplay);
+        } else {
+          startAutoplay();
+        }
+      }
+
+      // Limpiar intervalo al salir de la página
+      window.addEventListener('beforeunload', stopAutoplay);
+
+      // También limpiar cuando la sección se quite del DOM
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.removedNodes) {
+            for (let i = 0; i < mutation.removedNodes.length; i++) {
+              if (mutation.removedNodes[i] === section) {
+                stopAutoplay();
+                observer.disconnect();
+              }
             }
           }
-        }
+        });
       });
-    });
-    
-    observer.observe(document.body, { childList: true, subtree: true });
 
-  })();
+      observer.observe(document.body, { childList: true, subtree: true });
+
+    })();
 </script>
 
 {% schema %}
