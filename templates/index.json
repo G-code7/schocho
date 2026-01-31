@@ -459,6 +459,7 @@
         "accordion_item_M6VQET": {
           "type": "accordion_item",
           "settings": {
+            "image": "shopify://shop_images/freepik__documentary-kitchen-photography-eyelevel-perspecti__24330.png",
             "accordion_title": "Selección de ingredientes",
             "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
           }
