@@ -1,8 +1,3 @@
-{% doc %}
-  @prompt
-    puedes  darme una sección de  reviews  estilizada en funcion al resto de la pagina, que sea homogeneo con el  brnding de pronto chocho
-{% enddoc %}
-{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
 
 {% style %}
   .ai-reviews-section-{{ ai_gen_id }} {
