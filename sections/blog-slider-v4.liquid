@@ -1,7 +1,8 @@
 {% assign section_id = section.id %}
+{% assign cleaned_id = section_id | replace: '_', '-' | replace: '--', '-' | replace: '__', '-' %}
 
 {% style %}
-  .blog-slider-{{ section_id }} {
+  .blog-slider-{{ cleaned_id }} {
     display: block;
     width: 100%;
     justify-self: anchor-center;
@@ -9,18 +10,18 @@
     background-color: {{ section.settings.background_color }};
   }
 
-  .blog-slider__container-{{ section_id }} {
+  .blog-slider__container-{{ cleaned_id }} {
     max-width: 80%;
     margin: 0 auto;
     padding: 0 {{ section.settings.container_padding }}px;
   }
 
-  .blog-slider__header-{{ section_id }} {
+  .blog-slider__header-{{ cleaned_id }} {
     text-align: {{ section.settings.heading_alignment }};
     margin-bottom: {{ section.settings.header_margin_bottom }}px;
   }
 
-  .blog-slider__eyebrow-{{ section_id }} {
+  .blog-slider__eyebrow-{{ cleaned_id }} {
     display: inline-block;
     color: {{ section.settings.eyebrow_color }};
     font-size: 12px;
@@ -30,7 +31,7 @@
     margin-bottom: 12px;
   }
 
-  .blog-slider__heading-{{ section_id }} {
+  .blog-slider__heading-{{ cleaned_id }} {
     color: {{ section.settings.heading_color }};
     font-size: {{ section.settings.heading_size }}px;
     font-weight: {{ section.settings.heading_weight }};
@@ -38,25 +39,25 @@
     margin: 0 0 12px 0;
   }
 
-  .blog-slider__subheading-{{ section_id }} {
+  .blog-slider__subheading-{{ cleaned_id }} {
     color: {{ section.settings.text_color }};
     font-size: {{ section.settings.subheading_size }}px;
     margin: 0;
     opacity: 0.85;
   }
 
-  .blog-slider__wrapper-{{ section_id }} {
+  .blog-slider__wrapper-{{ cleaned_id }} {
     position: relative;
     overflow: hidden;
   }
 
-  .blog-slider__track-{{ section_id }} {
+  .blog-slider__track-{{ cleaned_id }} {
     display: flex;
     gap: {{ section.settings.card_gap }}px;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .blog-slider__card-{{ section_id }} {
+  .blog-slider__card-{{ cleaned_id }} {
     flex: 0 0 calc((100% - {{ section.settings.card_gap | times: 2 }}px) / 3);
     background-color: {{ section.settings.card_background }};
     border-radius: {{ section.settings.card_border_radius }}px;
@@ -66,12 +67,12 @@
     border: {{ section.settings.card_border_width }}px solid {{ section.settings.card_border_color }};
   }
 
-  .blog-slider__card-{{ section_id }}:hover {
+  .blog-slider__card-{{ cleaned_id }}:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
   }
 
-  .blog-slider__image-wrapper-{{ section_id }} {
+  .blog-slider__image-wrapper-{{ cleaned_id }} {
     position: relative;
     width: 100%;
     padding-bottom: {{ section.settings.image_aspect_ratio }}%;
@@ -79,7 +80,7 @@
     background-color: #f4f4f4;
   }
 
-  .blog-slider__image-{{ section_id }} {
+  .blog-slider__image-{{ cleaned_id }} {
     position: absolute;
     top: 0;
     left: 0;
@@ -89,11 +90,11 @@
     transition: transform 0.6s ease;
   }
 
-  .blog-slider__card-{{ section_id }}:hover .blog-slider__image-{{ section_id }} {
+  .blog-slider__card-{{ cleaned_id }}:hover .blog-slider__image-{{ cleaned_id }} {
     transform: scale(1.05);
   }
 
-  .blog-slider__image-placeholder-{{ section_id }} {
+  .blog-slider__image-placeholder-{{ cleaned_id }} {
     position: absolute;
     top: 0;
     left: 0;
@@ -105,17 +106,17 @@
     background-color: #f8f8f8;
   }
 
-  .blog-slider__image-placeholder-{{ section_id }} svg {
+  .blog-slider__image-placeholder-{{ cleaned_id }} svg {
     width: 80px;
     height: 80px;
     opacity: 0.3;
   }
 
-  .blog-slider__content-{{ section_id }} {
+  .blog-slider__content-{{ cleaned_id }} {
     padding: {{ section.settings.card_padding }}px;
   }
 
-  .blog-slider__date-{{ section_id }} {
+  .blog-slider__date-{{ cleaned_id }} {
     color: {{ section.settings.date_color }};
     font-size: 12px;
     font-weight: 500;
@@ -125,7 +126,7 @@
     opacity: 0.7;
   }
 
-  .blog-slider__title-{{ section_id }} {
+  .blog-slider__title-{{ cleaned_id }} {
     color: {{ section.settings.card_title_color }};
     font-size: {{ section.settings.card_title_size }}px;
     font-weight: {{ section.settings.card_title_weight }};
@@ -135,16 +136,16 @@
     transition: color 0.3s ease;
   }
 
-  .blog-slider__title-link-{{ section_id }} {
+  .blog-slider__title-link-{{ cleaned_id }} {
     color: inherit;
     text-decoration: none;
   }
 
-  .blog-slider__card-{{ section_id }}:hover .blog-slider__title-{{ section_id }} {
+  .blog-slider__card-{{ cleaned_id }}:hover .blog-slider__title-{{ cleaned_id }} {
     color: {{ section.settings.accent_color }};
   }
 
-  .blog-slider__excerpt-{{ section_id }} {
+  .blog-slider__excerpt-{{ cleaned_id }} {
     color: {{ section.settings.text_color }};
     font-size: {{ section.settings.excerpt_size }}px;
     line-height: 1.6;
@@ -153,7 +154,7 @@
   }
 
   /* Read More Button */
-  .blog-slider__button-{{ section_id }} {
+  .blog-slider__button-{{ cleaned_id }} {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -169,25 +170,25 @@
     cursor: pointer;
   }
 
-  .blog-slider__button-{{ section_id }}:hover {
+  .blog-slider__button-{{ cleaned_id }}:hover {
     background-color: {{ section.settings.button_hover_bg }};
     color: {{ section.settings.button_hover_text }};
     border-color: {{ section.settings.button_hover_border }};
     transform: translateX(4px);
   }
 
-  .blog-slider__button-icon-{{ section_id }} {
+  .blog-slider__button-icon-{{ cleaned_id }} {
     width: 16px;
     height: 16px;
     transition: transform 0.3s ease;
   }
 
-  .blog-slider__button-{{ section_id }}:hover .blog-slider__button-icon-{{ section_id }} {
+  .blog-slider__button-{{ cleaned_id }}:hover .blog-slider__button-icon-{{ cleaned_id }} {
     transform: translateX(4px);
   }
 
   /* Navigation Controls */
-  .blog-slider__controls-{{ section_id }} {
+  .blog-slider__controls-{{ cleaned_id }} {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -195,7 +196,7 @@
     margin-top: {{ section.settings.controls_margin_top }}px;
   }
 
-  .blog-slider__nav-{{ section_id }} {
+  .blog-slider__nav-{{ cleaned_id }} {
     width: {{ section.settings.nav_button_size }}px;
     height: {{ section.settings.nav_button_size }}px;
     border-radius: {{ section.settings.nav_button_radius }}px;
@@ -209,30 +210,30 @@
     transition: all 0.3s ease;
   }
 
-  .blog-slider__nav-{{ section_id }}:hover {
+  .blog-slider__nav-{{ cleaned_id }}:hover {
     background-color: {{ section.settings.nav_hover_bg }};
     color: {{ section.settings.nav_hover_color }};
     border-color: {{ section.settings.nav_hover_bg }};
     transform: scale(1.1);
   }
 
-  .blog-slider__nav-{{ section_id }}:disabled {
+  .blog-slider__nav-{{ cleaned_id }}:disabled {
     opacity: 0.3;
     cursor: not-allowed;
     transform: none;
   }
 
-  .blog-slider__nav-{{ section_id }} svg {
+  .blog-slider__nav-{{ cleaned_id }} svg {
     width: 20px;
     height: 20px;
   }
 
-  .blog-slider__dots-{{ section_id }} {
+  .blog-slider__dots-{{ cleaned_id }} {
     display: flex;
     gap: 8px;
   }
 
-  .blog-slider__dot-{{ section_id }} {
+  .blog-slider__dot-{{ cleaned_id }} {
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -244,14 +245,14 @@
     opacity: 0.4;
   }
 
-  .blog-slider__dot-{{ section_id }}.active {
+  .blog-slider__dot-{{ cleaned_id }}.active {
     background-color: {{ section.settings.dot_active_color }};
     opacity: 1;
     width: 24px;
     border-radius: 4px;
   }
 
-  .blog-slider__empty-{{ section_id }} {
+  .blog-slider__empty-{{ cleaned_id }} {
     text-align: center;
     padding: 60px 20px;
     color: {{ section.settings.text_color }};
@@ -259,57 +260,57 @@
 
   /* Responsive */
   @media screen and (max-width: 989px) {
-    .blog-slider__card-{{ section_id }} {
+    .blog-slider__card-{{ cleaned_id }} {
       flex: 0 0 calc((100% - {{ section.settings.card_gap }}px) / 2);
     }
 
-    .blog-slider__heading-{{ section_id }} {
+    .blog-slider__heading-{{ cleaned_id }} {
       font-size: calc({{ section.settings.heading_size }}px * 0.85);
     }
 
-    .blog-slider__content-{{ section_id }} {
+    .blog-slider__content-{{ cleaned_id }} {
       padding: {{ section.settings.card_padding | times: 0.85 | round }}px;
     }
   }
 
   @media screen and (max-width: 749px) {
-    .blog-slider-{{ section_id }} {
+    .blog-slider-{{ cleaned_id }} {
       padding: {{ section.settings.padding_top | times: 0.7 | round }}px 16px {{ section.settings.padding_bottom | times: 0.7 | round }}px;
     }
 
-    .blog-slider__card-{{ section_id }} {
+    .blog-slider__card-{{ cleaned_id }} {
       flex: 0 0 100%;
     }
 
-    .blog-slider__heading-{{ section_id }} {
+    .blog-slider__heading-{{ cleaned_id }} {
       font-size: calc({{ section.settings.heading_size }}px * 0.7);
     }
 
-    .blog-slider__title-{{ section_id }} {
+    .blog-slider__title-{{ cleaned_id }} {
       font-size: calc({{ section.settings.card_title_size }}px * 0.9);
     }
 
-    .blog-slider__content-{{ section_id }} {
+    .blog-slider__content-{{ cleaned_id }} {
       padding: {{ section.settings.card_padding | times: 0.75 | round }}px;
     }
   }
 {% endstyle %}
 
-<blog-slider-{{ section_id }} class="blog-slider-{{ section_id }}" {{ section.shopify_attributes }}>
-  <div class="blog-slider__container-{{ section_id }}">
+<div class="blog-slider-{{ cleaned_id }}" data-section-id="{{ cleaned_id }}" data-card-gap="{{ section.settings.card_gap }}" {{ section.shopify_attributes }}>
+  <div class="blog-slider__container-{{ cleaned_id }}">
     {% if section.settings.eyebrow != blank
       or section.settings.heading != blank
       or section.settings.subheading != blank
     %}
-      <div class="blog-slider__header-{{ section_id }}">
+      <div class="blog-slider__header-{{ cleaned_id }}">
         {% if section.settings.eyebrow != blank %}
-          <span class="blog-slider__eyebrow-{{ section_id }}">{{ section.settings.eyebrow }}</span>
+          <span class="blog-slider__eyebrow-{{ cleaned_id }}">{{ section.settings.eyebrow }}</span>
         {% endif %}
         {% if section.settings.heading != blank %}
-          <h2 class="blog-slider__heading-{{ section_id }}">{{ section.settings.heading }}</h2>
+          <h2 class="blog-slider__heading-{{ cleaned_id }}">{{ section.settings.heading }}</h2>
         {% endif %}
         {% if section.settings.subheading != blank %}
-          <p class="blog-slider__subheading-{{ section_id }}">{{ section.settings.subheading }}</p>
+          <p class="blog-slider__subheading-{{ cleaned_id }}">{{ section.settings.subheading }}</p>
         {% endif %}
       </div>
     {% endif %}
@@ -320,52 +321,52 @@
       {% assign article_count = articles.size | at_most: max_posts %}
 
       {% if article_count > 0 %}
-        <div class="blog-slider__wrapper-{{ section_id }}">
-          <div class="blog-slider__track-{{ section_id }}" data-slider-track>
+        <div class="blog-slider__wrapper-{{ cleaned_id }}">
+          <div class="blog-slider__track-{{ cleaned_id }}" data-slider-track>
             {% for article in articles limit: max_posts %}
-              <article class="blog-slider__card-{{ section_id }}">
-                <div class="blog-slider__image-wrapper-{{ section_id }}">
+              <article class="blog-slider__card-{{ cleaned_id }}">
+                <div class="blog-slider__image-wrapper-{{ cleaned_id }}">
                   {% if article.image %}
                     <img
                       src="{{ article.image | image_url: width: 600 }}"
                       alt="{{ article.image.alt | default: article.title | escape }}"
-                      class="blog-slider__image-{{ section_id }}"
+                      class="blog-slider__image-{{ cleaned_id }}"
                       loading="lazy"
                       width="600"
                       height="400"
                     >
                   {% else %}
-                    <div class="blog-slider__image-placeholder-{{ section_id }}">
+                    <div class="blog-slider__image-placeholder-{{ cleaned_id }}">
                       {{ 'image' | placeholder_svg_tag }}
                     </div>
                   {% endif %}
                 </div>
 
-                <div class="blog-slider__content-{{ section_id }}">
+                <div class="blog-slider__content-{{ cleaned_id }}">
                   {% if section.settings.show_date %}
-                    <div class="blog-slider__date-{{ section_id }}">
+                    <div class="blog-slider__date-{{ cleaned_id }}">
                       {{ article.published_at | date: section.settings.date_format }}
                     </div>
                   {% endif %}
 
-                  <h3 class="blog-slider__title-{{ section_id }}">
-                    <a href="{{ article.url }}" class="blog-slider__title-link-{{ section_id }}">
+                  <h3 class="blog-slider__title-{{ cleaned_id }}">
+                    <a href="{{ article.url }}" class="blog-slider__title-link-{{ cleaned_id }}">
                       {{ article.title }}
                     </a>
                   </h3>
 
                   {% if section.settings.show_excerpt and article.excerpt_or_content != blank %}
-                    <div class="blog-slider__excerpt-{{ section_id }}">
+                    <div class="blog-slider__excerpt-{{ cleaned_id }}">
                       {{ article.excerpt_or_content | strip_html | truncate: section.settings.excerpt_length }}
                     </div>
                   {% endif %}
 
                   {% if section.settings.show_button %}
-                    <a href="{{ article.url }}" class="blog-slider__button-{{ section_id }}">
+                    <a href="{{ article.url }}" class="blog-slider__button-{{ cleaned_id }}">
                       <span>{{ section.settings.button_text }}</span>
                       {% if section.settings.show_button_arrow %}
                         <svg
-                          class="blog-slider__button-icon-{{ section_id }}"
+                          class="blog-slider__button-icon-{{ cleaned_id }}"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -386,14 +387,14 @@
         </div>
 
         {% if article_count > 3 %}
-          <div class="blog-slider__controls-{{ section_id }}">
-            <button class="blog-slider__nav-{{ section_id }}" data-slider-prev aria-label="Previous">
+          <div class="blog-slider__controls-{{ cleaned_id }}">
+            <button class="blog-slider__nav-{{ cleaned_id }}" data-slider-prev aria-label="Previous">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="15 18 9 12 15 6"></polyline>
               </svg>
             </button>
-            <div class="blog-slider__dots-{{ section_id }}" data-slider-dots></div>
-            <button class="blog-slider__nav-{{ section_id }}" data-slider-next aria-label="Next">
+            <div class="blog-slider__dots-{{ cleaned_id }}" data-slider-dots></div>
+            <button class="blog-slider__nav-{{ cleaned_id }}" data-slider-next aria-label="Next">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="9 18 15 12 9 6"></polyline>
               </svg>
@@ -401,39 +402,37 @@
           </div>
         {% endif %}
       {% else %}
-        <div class="blog-slider__empty-{{ section_id }}">
+        <div class="blog-slider__empty-{{ cleaned_id }}">
           <p>No articles found in this blog.</p>
         </div>
       {% endif %}
     {% else %}
-      <div class="blog-slider__empty-{{ section_id }}">
+      <div class="blog-slider__empty-{{ cleaned_id }}">
         <p>Please select a blog to display articles.</p>
       </div>
     {% endif %}
   </div>
-</blog-slider-{{ section_id }}>
+</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    class BlogSlider extends HTMLElement {
-      constructor() {
-        super();
+    class BlogSlider {
+      constructor(element) {
+        this.element = element;
+        this.sectionId = element.dataset.sectionId;
         this.current = 0;
         this.perView = 3;
-      }
-
-      connectedCallback() {
-        this.track = this.querySelector('[data-slider-track]');
-        this.prev = this.querySelector('[data-slider-prev]');
-        this.next = this.querySelector('[data-slider-next]');
-        this.dotsWrap = this.querySelector('[data-slider-dots]');
+        this.track = element.querySelector('[data-slider-track]');
+        this.prev = element.querySelector('[data-slider-prev]');
+        this.next = element.querySelector('[data-slider-next]');
+        this.dotsWrap = element.querySelector('[data-slider-dots]');
 
         if (!this.track) return;
 
         this.cards = Array.from(this.track.children);
         this.total = this.cards.length;
 
-        if (this.total === 0) return; // No hay artículos
+        if (this.total === 0) return;
 
         this.updatePerView();
         this.createDots();
@@ -453,7 +452,6 @@
         else if (window.innerWidth <= 989) this.perView = 2;
         else this.perView = 3;
         
-        // Asegurar que perView no sea mayor que el total
         this.perView = Math.min(this.perView, this.total);
         this.maxSlide = Math.max(0, this.total - this.perView);
       }
@@ -462,12 +460,11 @@
         if (!this.dotsWrap) return;
         this.dotsWrap.innerHTML = '';
         
-        // Si no hay suficientes artículos para mostrar múltiples slides, no crear dots
         if (this.maxSlide <= 0) return;
         
         for (let i = 0; i <= this.maxSlide; i++) {
           const dot = document.createElement('button');
-          dot.className = 'blog-slider__dot-{{ section_id }}';
+          dot.className = 'blog-slider__dot-' + this.sectionId;
           dot.setAttribute('aria-label', 'Slide ' + (i + 1));
           dot.onclick = () => this.goTo(i);
           this.dotsWrap.appendChild(dot);
@@ -491,16 +488,15 @@
       }
 
       goTo(i) {
-        if (this.maxSlide <= 0) return; // No hay slides para navegar
+        if (this.maxSlide <= 0) return;
         this.current = Math.max(0, Math.min(i, this.maxSlide));
         this.update();
       }
 
       update() {
-        const gap = {{ section.settings.card_gap }};
+        const gap = parseInt(this.element.dataset.cardGap);
         const cardW = this.cards[0] ? this.cards[0].offsetWidth : 0;
         
-        // Solo aplicar transform si hay múltiples slides
         if (this.maxSlide > 0) {
           this.track.style.transform = 'translateX(-' + (this.current * (cardW + gap)) + 'px)';
         } else {
@@ -523,13 +519,20 @@
       }
     }
 
-    customElements.define('blog-slider-{{ section_id }}', BlogSlider);
+    // Inicializar todos los sliders usando una clase común
+    const blogSliders = document.querySelectorAll('[data-card-gap]');
+    blogSliders.forEach(element => {
+      // Verificar si el elemento tiene la estructura correcta
+      if (element.querySelector('[data-slider-track]')) {
+        new BlogSlider(element);
+      }
+    });
   });
 </script>
 
 {% schema %}
 {
-  "name": "Blog Slider v4",
+  "name": "Blog Slider v3",
   "tag": "section",
   "settings": [
     { "type": "header", "content": "━━━ BLOG ━━━" },
@@ -904,6 +907,6 @@
     { "type": "color", "id": "dot_color", "label": "Dot", "default": "#d4d4d4" },
     { "type": "color", "id": "dot_active_color", "label": "Dot active", "default": "#372352" }
   ],
-  "presets": [{ "name": "Blog Slider v4" }]
+  "presets": [{ "name": "Blog Slider" }]
 }
 {% endschema %}
