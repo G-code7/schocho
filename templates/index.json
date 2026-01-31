@@ -460,22 +460,27 @@
           "type": "accordion_item",
           "settings": {
             "image": "shopify://shop_images/freepik__documentary-kitchen-photography-eyelevel-perspecti__24330.png",
-            "accordion_title": "Selección de ingredientes",
-            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
+            "icon": "shopify://shop_images/freepik__background__68644.png",
+            "accordion_title": "Regenerative for the Planet",
+            "accordion_content": "<p>Chocho thrives in the Andes without pesticides or heavy irrigation, naturally restoring soil health by fixing nitrogen. This low-impact, non-GMO legume acts as a model for regenerative agriculture, protecting the Earth’s resources while it grows.</p>"
           }
         },
         "accordion_item_3TFRYD": {
           "type": "accordion_item",
           "settings": {
-            "accordion_title": "Proceso artesanal",
-            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
+            "image": "shopify://shop_images/ChatGPT_Image_28_dic_2025_22_22_31.jpg",
+            "icon": "shopify://shop_images/freepik__background__68644_1.png",
+            "accordion_title": "Crafted by Honoring Tradition",
+            "accordion_content": "<p>Rooted in indigenous heritage, our chocho is hand-sown and harvested as a ritual of care for the community. This traditional approach preserves a vital cultural legacy and ensures shared prosperity for the Andean farmers who guard the land.</p>"
           }
         },
         "accordion_item_NMFNVf": {
           "type": "accordion_item",
           "settings": {
-            "accordion_title": "Control de calidad",
-            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
+            "image": "shopify://shop_images/freepik__la-narrativa-visual-se-desarrolla-en-el-corazn-de-__42409.png",
+            "icon": "shopify://shop_images/freepik__background__68644.png",
+            "accordion_title": "Thoughtful Sourcing & Preparation",
+            "accordion_content": "<p>We partner with local farmers using a meticulous, multi-day debittering process to maintain the seed's integrity.</p>"
           }
         }
       },
@@ -486,7 +491,7 @@
       ],
       "name": "Slider + Acordeón",
       "settings": {
-        "section_max_width": 1400,
+        "section_max_width": 1100,
         "section_background_color": "#ffffff",
         "section_padding_top": 40,
         "section_padding_bottom": 40,
