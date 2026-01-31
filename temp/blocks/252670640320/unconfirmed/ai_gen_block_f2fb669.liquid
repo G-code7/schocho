@@ -1,6 +1,575 @@
+{% doc %}
+  @prompt
+    puedes  darme una sección de  reviews  estilizada en funcion al resto de la pagina, que sea homogeneo con el  brnding de pronto chocho
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-reviews-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-reviews-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-reviews-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-reviews-title-{{ ai_gen_id }} {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 12px 0;
+    text-transform: {{ block.settings.title_transform }};
+  }
+
+  .ai-reviews-subtitle-{{ ai_gen_id }} {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+  }
+
+  .ai-reviews-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .ai-review-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-review-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(62, 37, 99, 0.1);
+  }
+
+  .ai-review-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .ai-review-avatar-{{ ai_gen_id }} {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: {{ block.settings.avatar_background }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: {{ block.settings.avatar_text_color }};
+    flex-shrink: 0;
+  }
+
+  .ai-review-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-review-name-{{ ai_gen_id }} {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: {{ block.settings.name_color }};
+    margin: 0 0 4px 0;
+  }
+
+  .ai-review-date-{{ ai_gen_id }} {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    color: {{ block.settings.date_color }};
+    margin: 0;
+  }
+
+  .ai-review-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  .ai-review-star-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    fill: {{ block.settings.star_color }};
+  }
+
+  .ai-review-text-{{ ai_gen_id }} {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.6;
+    color: {{ block.settings.review_text_color }};
+    margin: 0;
+  }
+
+  .ai-reviews-cta-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-reviews-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 14px 32px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+  }
+
+  .ai-reviews-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    transform: scale(1.02);
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-reviews-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.8);
+    }
+
+    .ai-reviews-subtitle-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subtitle_size }}px * 0.9);
+    }
+  }
+{% endstyle %}
+
+<ai-reviews-section-{{ ai_gen_id }} class="ai-reviews-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-reviews-container-{{ ai_gen_id }}">
+    <div class="ai-reviews-header-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-reviews-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.subtitle != blank %}
+        <p class="ai-reviews-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-reviews-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign name_key = 'review_' | append: i | append: '_name'
+          assign date_key = 'review_' | append: i | append: '_date'
+          assign rating_key = 'review_' | append: i | append: '_rating'
+          assign text_key = 'review_' | append: i | append: '_text'
+
+          assign review_name = block.settings[name_key]
+          assign review_date = block.settings[date_key]
+          assign review_rating = block.settings[rating_key]
+          assign review_text = block.settings[text_key]
+        %}
+
+        {% if review_name != blank %}
+          <div class="ai-review-card-{{ ai_gen_id }}">
+            <div class="ai-review-header-{{ ai_gen_id }}">
+              <div class="ai-review-avatar-{{ ai_gen_id }}">
+                {{ review_name | slice: 0 | upcase }}
+              </div>
+              <div class="ai-review-info-{{ ai_gen_id }}">
+                <h3 class="ai-review-name-{{ ai_gen_id }}">{{ review_name }}</h3>
+                {% if review_date != blank %}
+                  <p class="ai-review-date-{{ ai_gen_id }}">{{ review_date }}</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="ai-review-stars-{{ ai_gen_id }}">
+              {% for star in (1..5) %}
+                {% if star <= review_rating %}
+                  <svg class="ai-review-star-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                {% else %}
+                  <svg class="ai-review-star-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="fill: #E0E0E0;">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            {% if review_text != blank %}
+              <p class="ai-review-text-{{ ai_gen_id }}">{{ review_text }}</p>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if block.settings.show_cta_button and block.settings.cta_button_text != blank %}
+      <div class="ai-reviews-cta-{{ ai_gen_id }}">
+        <a href="{{ block.settings.cta_button_link }}" class="ai-reviews-button-{{ ai_gen_id }}">
+          {{ block.settings.cta_button_text }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</ai-reviews-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AiReviewsSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.initializeReviews();
+      }
+
+      initializeReviews() {
+        const cards = this.querySelectorAll('.ai-review-card-{{ ai_gen_id }}');
+        
+        cards.forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          
+          setTimeout(() => {
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 150);
+        });
+      }
+    }
+
+    customElements.define('ai-reviews-section-{{ ai_gen_id }}', AiReviewsSection{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Reseñas de clientes",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Lo que dicen nuestros clientes"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Experiencias reales de personas reales"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño del subtítulo",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "title_transform",
+      "label": "Transformación del título",
+      "options": [
+        {
+          "value": "none",
+          "label": "Normal"
+        },
+        {
+          "value": "uppercase",
+          "label": "Mayúsculas"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Reseña 1"
+    },
+    {
+      "type": "text",
+      "id": "review_1_name",
+      "label": "Nombre",
+      "default": "María González"
+    },
+    {
+      "type": "text",
+      "id": "review_1_date",
+      "label": "Fecha"
+    },
+    {
+      "type": "range",
+      "id": "review_1_rating",
+      "label": "Calificación",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_text",
+      "label": "Texto de la reseña",
+      "default": "Excelente producto, superó mis expectativas. La calidad es increíble y el servicio al cliente fue excepcional."
+    },
+    {
+      "type": "header",
+      "content": "Reseña 2"
+    },
+    {
+      "type": "text",
+      "id": "review_2_name",
+      "label": "Nombre",
+      "default": "Carlos Rodríguez"
+    },
+    {
+      "type": "text",
+      "id": "review_2_date",
+      "label": "Fecha"
+    },
+    {
+      "type": "range",
+      "id": "review_2_rating",
+      "label": "Calificación",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_text",
+      "label": "Texto de la reseña",
+      "default": "Me encanta la atención al detalle. Definitivamente volveré a comprar. Muy recomendado para todos."
+    },
+    {
+      "type": "header",
+      "content": "Reseña 3"
+    },
+    {
+      "type": "text",
+      "id": "review_3_name",
+      "label": "Nombre",
+      "default": "Ana Martínez"
+    },
+    {
+      "type": "text",
+      "id": "review_3_date",
+      "label": "Fecha"
+    },
+    {
+      "type": "range",
+      "id": "review_3_rating",
+      "label": "Calificación",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_text",
+      "label": "Texto de la reseña",
+      "default": "Producto de alta calidad y entrega rápida. Estoy muy satisfecha con mi compra. ¡5 estrellas!"
+    },
+    {
+      "type": "header",
+      "content": "Botón de llamada a la acción"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_button",
+      "label": "Mostrar botón",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "Texto del botón",
+      "default": "Ver todas las reseñas"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Espaciado vertical",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Radio de borde de tarjeta",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Ancho de borde de tarjeta",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo de sección",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Fondo de tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Borde de tarjeta",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "avatar_background",
+      "label": "Fondo de avatar",
+      "default": "#c4b1ca"
+    },
+    {
+      "type": "color",
+      "id": "avatar_text_color",
+      "label": "Texto de avatar",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Color del nombre",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "date_color",
+      "label": "Color de la fecha",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Color de estrellas",
+      "default": "#c4b1ca"
+    },
+    {
+      "type": "color",
+      "id": "review_text_color",
+      "label": "Color del texto de reseña",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fondo del botón",
+      "default": "#371e54"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Fondo del botón al pasar",
+      "default": "#7428dc"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reseñas de clientes"
+    }
+  ]
+}
 {% endschema %}
