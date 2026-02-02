@@ -262,6 +262,7 @@
             "group_dTHcXb": {
               "type": "group",
               "name": "Product form",
+              "disabled": true,
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -301,6 +302,7 @@
               "blocks": {
                 "price_tMxUbj": {
                   "type": "price",
+                  "disabled": true,
                   "settings": {
                     "show_sale_price_first": true,
                     "show_installments": true,
@@ -323,6 +325,7 @@
                 },
                 "variant_picker_KePPVa": {
                   "type": "variant-picker",
+                  "disabled": true,
                   "settings": {
                     "variant_style": "buttons",
                     "show_swatches": true,
@@ -336,6 +339,7 @@
                 },
                 "buy_buttons_6p8c63": {
                   "type": "buy-buttons",
+                  "disabled": true,
                   "settings": {
                     "stacking": false,
                     "show_pickup_availability": false,
