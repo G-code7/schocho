@@ -222,6 +222,43 @@
               },
               "blocks": {}
             },
+            "ai_gen_block_057fc56_UL8UjR": {
+              "type": "ai_gen_block_057fc56",
+              "settings": {
+                "onetime_title": "Compra única",
+                "onetime_description": "Compra este producto una sola vez",
+                "subscription_title": "Suscripción",
+                "subscription_description": "Ahorra con entregas automáticas",
+                "show_discount_badge": true,
+                "discount_percentage": 15,
+                "discount_badge_text": "descuento",
+                "price_label": "Precio",
+                "subscription_price_label": "Precio con suscripción",
+                "quantity_label": "Cantidad",
+                "add_to_cart_text": "Agregar al carrito",
+                "show_accelerated_checkout": true,
+                "desktop_width_percent": 100,
+                "option_background": "#ffffff",
+                "active_background": "#f5f4ed",
+                "border_color": "#e6e6e6",
+                "border_hover_color": "#3e2563",
+                "active_border_color": "#3e2563",
+                "text_color": "#3e2563",
+                "badge_background": "#c4b1ca",
+                "badge_text_color": "#3e2563",
+                "button_background": "#371e54",
+                "button_hover_background": "#3e2563",
+                "button_text_color": "#ffffff",
+                "border_radius": 8,
+                "input_border_radius": 4,
+                "button_border_radius": 25,
+                "option_title_size": 16,
+                "description_size": 14,
+                "price_size": 18,
+                "button_text_size": 16
+              },
+              "blocks": {}
+            },
             "group_dTHcXb": {
               "type": "group",
               "name": "Product form",
@@ -415,6 +452,7 @@
             "group_4we3XL",
             "ai_gen_block_3fb8129_RhWB7i",
             "text_LbbLqQ",
+            "ai_gen_block_057fc56_UL8UjR",
             "group_dTHcXb",
             "group_8ePU6U"
           ]
