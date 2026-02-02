@@ -1,6 +1,671 @@
+{% doc %}
+  @prompt
+    podrías darme una sección que contenga price, quantity, add to cart y accelerated checkout button  en una sola sección la diferencia de esto es que podamos ofrecerle la opción de  comprar el producto  o subscribirse para un descuento. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-purchase-options-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-purchase-options__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-purchase-options__option-{{ ai_gen_id }} {
+    border: 2px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: {{ block.settings.option_background }};
+  }
+
+  .ai-purchase-options__option-{{ ai_gen_id }}:hover {
+    border-color: {{ block.settings.border_hover_color }};
+  }
+
+  .ai-purchase-options__option-{{ ai_gen_id }}.active {
+    border-color: {{ block.settings.active_border_color }};
+    background-color: {{ block.settings.active_background }};
+  }
+
+  .ai-purchase-options__option-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .ai-purchase-options__radio-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    border: 2px solid {{ block.settings.border_color }};
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .ai-purchase-options__option-{{ ai_gen_id }}.active .ai-purchase-options__radio-{{ ai_gen_id }} {
+    border-color: {{ block.settings.active_border_color }};
+  }
+
+  .ai-purchase-options__option-{{ ai_gen_id }}.active .ai-purchase-options__radio-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: {{ block.settings.active_border_color }};
+  }
+
+  .ai-purchase-options__option-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.option_title_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-purchase-options__badge-{{ ai_gen_id }} {
+    background-color: {{ block.settings.badge_background }};
+    color: {{ block.settings.badge_text_color }};
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: auto;
+  }
+
+  .ai-purchase-options__option-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 0 32px;
+  }
+
+  .ai-purchase-options__price-section-{{ ai_gen_id }} {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-purchase-options__price-row-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .ai-purchase-options__price-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-purchase-options__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-purchase-options__quantity-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .ai-purchase-options__quantity-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-purchase-options__quantity-selector-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    overflow: hidden;
+  }
+
+  .ai-purchase-options__quantity-button-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: {{ block.settings.option_background }};
+    color: {{ block.settings.text_color }};
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-purchase-options__quantity-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.active_background }};
+  }
+
+  .ai-purchase-options__quantity-input-{{ ai_gen_id }} {
+    width: 60px;
+    height: 40px;
+    border: none;
+    border-left: 1px solid {{ block.settings.border_color }};
+    border-right: 1px solid {{ block.settings.border_color }};
+    text-align: center;
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-purchase-options__buttons-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-purchase-options__add-to-cart-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px 24px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-purchase-options__add-to-cart-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+  }
+
+  .ai-purchase-options__accelerated-checkout-{{ ai_gen_id }} {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-purchase-options-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<purchase-options-{{ ai_gen_id }}
+  class="ai-purchase-options-{{ ai_gen_id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-purchase-options__container-{{ ai_gen_id }}">
+    <div
+      class="ai-purchase-options__option-{{ ai_gen_id }} active"
+      data-option="onetime"
+    >
+      <div class="ai-purchase-options__option-header-{{ ai_gen_id }}">
+        <div class="ai-purchase-options__radio-{{ ai_gen_id }}"></div>
+        <h3 class="ai-purchase-options__option-title-{{ ai_gen_id }}">{{ block.settings.onetime_title }}</h3>
+      </div>
+      <p class="ai-purchase-options__option-description-{{ ai_gen_id }}">{{ block.settings.onetime_description }}</p>
+    </div>
+
+    <div
+      class="ai-purchase-options__option-{{ ai_gen_id }}"
+      data-option="subscription"
+    >
+      <div class="ai-purchase-options__option-header-{{ ai_gen_id }}">
+        <div class="ai-purchase-options__radio-{{ ai_gen_id }}"></div>
+        <h3 class="ai-purchase-options__option-title-{{ ai_gen_id }}">{{ block.settings.subscription_title }}</h3>
+        {% if block.settings.show_discount_badge %}
+          <span class="ai-purchase-options__badge-{{ ai_gen_id }}">{{ block.settings.discount_percentage }}% {{ block.settings.discount_badge_text }}</span>
+        {% endif %}
+      </div>
+      <p class="ai-purchase-options__option-description-{{ ai_gen_id }}">{{ block.settings.subscription_description }}</p>
+    </div>
+
+    <div class="ai-purchase-options__price-section-{{ ai_gen_id }}">
+      <div class="ai-purchase-options__price-row-{{ ai_gen_id }}">
+        <span class="ai-purchase-options__price-label-{{ ai_gen_id }}">{{ block.settings.price_label }}</span>
+        <span class="ai-purchase-options__price-{{ ai_gen_id }}" data-price-display>
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+      </div>
+      <div class="ai-purchase-options__price-row-{{ ai_gen_id }}" data-subscription-price style="display: none;">
+        <span class="ai-purchase-options__price-label-{{ ai_gen_id }}">{{ block.settings.subscription_price_label }}</span>
+        <span class="ai-purchase-options__price-{{ ai_gen_id }}" data-subscription-price-display></span>
+      </div>
+    </div>
+
+    <div class="ai-purchase-options__quantity-{{ ai_gen_id }}">
+      <span class="ai-purchase-options__quantity-label-{{ ai_gen_id }}">{{ block.settings.quantity_label }}</span>
+      <div class="ai-purchase-options__quantity-selector-{{ ai_gen_id }}">
+        <button
+          type="button"
+          class="ai-purchase-options__quantity-button-{{ ai_gen_id }}"
+          data-quantity-decrease
+          aria-label="Decrease quantity"
+        >
+          −
+        </button>
+        <input
+          type="number"
+          class="ai-purchase-options__quantity-input-{{ ai_gen_id }}"
+          value="1"
+          min="1"
+          data-quantity-input
+          aria-label="Quantity"
+        >
+        <button
+          type="button"
+          class="ai-purchase-options__quantity-button-{{ ai_gen_id }}"
+          data-quantity-increase
+          aria-label="Increase quantity"
+        >
+          +
+        </button>
+      </div>
+    </div>
+
+    <div class="ai-purchase-options__buttons-{{ ai_gen_id }}">
+      <button
+        type="button"
+        class="ai-purchase-options__add-to-cart-{{ ai_gen_id }}"
+        data-add-to-cart
+      >
+        {{ block.settings.add_to_cart_text }}
+      </button>
+
+      {% if block.settings.show_accelerated_checkout %}
+        <div class="ai-purchase-options__accelerated-checkout-{{ ai_gen_id }}">
+          {{ form | payment_button }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</purchase-options-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class PurchaseOptions{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.selectedOption = 'onetime';
+        this.quantity = 1;
+        this.basePrice = {{ product.selected_or_first_available_variant.price }};
+        this.discountPercentage = {{ block.settings.discount_percentage }};
+      }
+
+      connectedCallback() {
+        this.options = this.querySelectorAll('[data-option]');
+        this.quantityInput = this.querySelector('[data-quantity-input]');
+        this.decreaseBtn = this.querySelector('[data-quantity-decrease]');
+        this.increaseBtn = this.querySelector('[data-quantity-increase]');
+        this.addToCartBtn = this.querySelector('[data-add-to-cart]');
+        this.priceDisplay = this.querySelector('[data-price-display]');
+        this.subscriptionPriceRow = this.querySelector('[data-subscription-price]');
+        this.subscriptionPriceDisplay = this.querySelector('[data-subscription-price-display]');
+
+        this.setupEventListeners();
+        this.updatePrice();
+      }
+
+      setupEventListeners() {
+        this.options.forEach(option => {
+          option.addEventListener('click', () => {
+            this.selectOption(option.dataset.option);
+          });
+        });
+
+        this.decreaseBtn.addEventListener('click', () => {
+          if (this.quantity > 1) {
+            this.quantity--;
+            this.quantityInput.value = this.quantity;
+          }
+        });
+
+        this.increaseBtn.addEventListener('click', () => {
+          this.quantity++;
+          this.quantityInput.value = this.quantity;
+        });
+
+        this.quantityInput.addEventListener('change', (e) => {
+          const value = parseInt(e.target.value);
+          if (value >= 1) {
+            this.quantity = value;
+          } else {
+            this.quantity = 1;
+            this.quantityInput.value = 1;
+          }
+        });
+
+        this.addToCartBtn.addEventListener('click', () => {
+          this.addToCart();
+        });
+      }
+
+      selectOption(option) {
+        this.selectedOption = option;
+        this.options.forEach(opt => {
+          opt.classList.remove('active');
+        });
+        this.querySelector(`[data-option="${option}"]`).classList.add('active');
+        this.updatePrice();
+      }
+
+      updatePrice() {
+        if (this.selectedOption === 'subscription') {
+          const discountedPrice = this.basePrice * (1 - this.discountPercentage / 100);
+          this.subscriptionPriceDisplay.textContent = this.formatMoney(discountedPrice);
+          this.subscriptionPriceRow.style.display = 'flex';
+        } else {
+          this.subscriptionPriceRow.style.display = 'none';
+        }
+      }
+
+      formatMoney(cents) {
+        return new Intl.NumberFormat('{{ localization.language.iso_code }}', {
+          style: 'currency',
+          currency: '{{ cart.currency.iso_code }}'
+        }).format(cents / 100);
+      }
+
+      async addToCart() {
+        const formData = {
+          items: [{
+            id: {{ product.selected_or_first_available_variant.id }},
+            quantity: this.quantity,
+            properties: {
+              '_purchase_type': this.selectedOption
+            }
+          }]
+        };
+
+        try {
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+          });
+
+          if (response.ok) {
+            window.location.href = '/cart';
+          }
+        } catch (error) {
+          console.error('Error adding to cart:', error);
+        }
+      }
+    }
+
+    customElements.define('purchase-options-{{ ai_gen_id }}', PurchaseOptions{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Compra o suscripción",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Opción de compra única"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "Título",
+      "default": "Compra única"
+    },
+    {
+      "type": "text",
+      "id": "onetime_description",
+      "label": "Descripción",
+      "default": "Compra este producto una sola vez"
+    },
+    {
+      "type": "header",
+      "content": "Opción de suscripción"
+    },
+    {
+      "type": "text",
+      "id": "subscription_title",
+      "label": "Título",
+      "default": "Suscripción"
+    },
+    {
+      "type": "text",
+      "id": "subscription_description",
+      "label": "Descripción",
+      "default": "Ahorra con entregas automáticas"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_discount_badge",
+      "label": "Mostrar insignia de descuento",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "discount_percentage",
+      "label": "Porcentaje de descuento",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "text",
+      "id": "discount_badge_text",
+      "label": "Texto de insignia",
+      "default": "descuento"
+    },
+    {
+      "type": "header",
+      "content": "Precio"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Etiqueta de precio",
+      "default": "Precio"
+    },
+    {
+      "type": "text",
+      "id": "subscription_price_label",
+      "label": "Etiqueta precio suscripción",
+      "default": "Precio con suscripción"
+    },
+    {
+      "type": "header",
+      "content": "Cantidad"
+    },
+    {
+      "type": "text",
+      "id": "quantity_label",
+      "label": "Etiqueta de cantidad",
+      "default": "Cantidad"
+    },
+    {
+      "type": "header",
+      "content": "Botones"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Texto del botón",
+      "default": "Agregar al carrito"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_accelerated_checkout",
+      "label": "Mostrar botones de pago rápido",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Estilo"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "option_background",
+      "label": "Fondo de opción",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "active_background",
+      "label": "Fondo activo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color de borde",
+      "default": "#e6e6e6"
+    },
+    {
+      "type": "color",
+      "id": "border_hover_color",
+      "label": "Color borde hover",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "active_border_color",
+      "label": "Color borde activo",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Fondo de insignia",
+      "default": "#c4b1ca"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Texto de insignia",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Fondo de botón",
+      "default": "#371e54"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Fondo botón hover",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto de botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Radio borde input",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Radio borde botón",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "range",
+      "id": "option_title_size",
+      "label": "Tamaño título opción",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Tamaño descripción",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Tamaño precio",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Tamaño texto botón",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Compra o suscripción"
+    }
+  ]
+}
 {% endschema %}
