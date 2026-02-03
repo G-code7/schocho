@@ -74,7 +74,7 @@
             "underline_style": "center",
             "underline_color": "#761e0b",
             "underline_thickness": 1,
-            "underline_offset": 2,
+            "underline_offset": 3,
             "enable_glow_effect": false,
             "enable_border_effect": false,
             "menu_style": "text",
