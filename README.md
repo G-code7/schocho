@@ -1,2 +1,3 @@
 # schocho
-shopify  store 
+Pronto chocho - online store 
+
