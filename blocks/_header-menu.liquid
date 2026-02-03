@@ -731,7 +731,7 @@
     {% if block.settings.hover_underline %}
     .menu-list__link::after {
       height: calc(var(--underline-thickness, 2px) * 0.8);
-      bottom: calc(var(--underline-offset, 4px) * 0.8);
+      bottom: var(--underline-offset, 4px;
     }
     {% endif %}
   }
