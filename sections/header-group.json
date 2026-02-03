@@ -72,7 +72,7 @@
             "hover_color": "#3e2563",
             "hover_underline": true,
             "underline_style": "center",
-            "underline_color": "rgba(0,0,0,0)",
+            "underline_color": "#3e2563",
             "underline_thickness": 1.5,
             "underline_offset": 11,
             "enable_glow_effect": false,
