@@ -1,6 +1,5 @@
 {%- doc -%}
   Renders a header menu block.
-
   @param {string} [variant] - What version of the menu to render. Defaults to header menu.
   @param {string} [transparent] - Show a transparent menu
 {%- enddoc -%}
@@ -14,7 +13,7 @@
 <div id="{{ unique_id }}" class="custom-header-menu-wrapper">
   {% if block.settings.enable_hover_effect %}
     <style>
-      /* Scoping variables to this specific block only */
+      /* Variables scoped to this block */
       #{{ unique_id }} {
         --hover-scale: {{ block.settings.hover_scale }};
         --hover-transition-duration: {{ block.settings.hover_transition_duration }}ms;
@@ -26,14 +25,16 @@
         {% endif %}
         --underline-thickness: {{ block.settings.underline_thickness }}px;
         --underline-offset: {{ block.settings.underline_offset }}px;
-        --menu-top-level-font-size: {{ block.settings.type_font_primary_size }};
+        
+        /* Typography Variables */
+        --menu-font-size: {{ block.settings.menu_font_size }}px;
+        --menu-font-weight: {{ block.settings.menu_font_weight }};
       }
 
-      /* Underline effect - Scoped */
+      /* Underline effect */
       {% if block.settings.hover_underline %}
       #{{ unique_id }} .menu-list__link {
         position: relative;
-        overflow: visible; /* Changed from hidden to avoid clipping issues */
       }
 
       #{{ unique_id }} .menu-list__link::after {
@@ -66,35 +67,17 @@
       }
       {% endif %}
 
-      /* Additional Effects - Scoped */
-      {% if block.settings.enable_glow_effect %}
-      #{{ unique_id }} .menu-list__list-item:hover .menu-list__link,
-      #{{ unique_id }} .menu-list__list-item:focus-within .menu-list__link {
-        text-shadow: 0 0 8px rgba(var(--color-foreground-rgb), 0.3);
-      }
-      {% endif %}
-
-      {% if block.settings.enable_border_effect %}
-      #{{ unique_id }} .menu-list__list-item:hover .menu-list__link,
-      #{{ unique_id }} .menu-list__list-item:focus-within .menu-list__link {
-        border: 1px solid rgba(var(--color-foreground-rgb), 0.1);
-        border-radius: 4px;
-      }
-      {% endif %}
-
-      /* Hover effects - Scoped */
+      /* Hover Scale & Color Effects */
       #{{ unique_id }} .menu-list__list-item {
         transition: transform var(--hover-transition-duration, 350ms) cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
         will-change: transform;
-        opacity: 0.95;
       }
 
       #{{ unique_id }} .menu-list__list-item:hover,
       #{{ unique_id }} .menu-list__list-item:focus-within,
       #{{ unique_id }} .menu-list__list-item.menu-list__link--active {
         transform: scale(var(--hover-scale, 1.1));
-        z-index: 10; /* Increased z-index to avoid overlapping issues */
-        opacity: 1;
+        z-index: 10;
       }
 
       {% if block.settings.hover_color != 'rgba(0,0,0,0)' %}
@@ -124,7 +107,7 @@
     {% when 'navigation_bar' %}
       {% if block_settings.navigation_bar == true %}
         <div
-          class="menu-list menu-list--mobile{% if transparent == blank %} color-{{ block_settings.color_scheme_navigation_bar }}{% endif %}"
+          class="menu-list menu-list--mobile"
           style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;"
         >
           <div class="menu-list__scroll-container">
@@ -137,7 +120,7 @@
                   <a
                     href="{{ link.url }}"
                     id="MenuItem-{{ link.handle }}"
-                    class="menu-list__item"
+                    class="menu-list__item menu-list__link"
                     {% if link.current %}
                       aria-current="page"
                     {% endif %}
@@ -172,14 +155,18 @@
 </div>
 
 {% style %}
-  /* MOVING CRITICAL CSS HERE AND SCOPING IT
-    to prevent global pollution
-  */
+  /* Reset background to ensure transparency */
+  #{{ unique_id }} {
+    background-color: transparent !important;
+  }
+  
+  #{{ unique_id }} header-menu,
+  #{{ unique_id }} .header-menu__inner {
+    background: transparent;
+  }
 
   #{{ unique_id }} .menu-list {
     --menu-horizontal-gap: var(--gap-xl, 2rem);
-    --menu-vertical-gap: var(--gap-xl, 2rem);
-
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -206,13 +193,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 44px; /* Explicit value instead of variable */
     padding: 0.25rem 0.5rem;
     margin: 0 0.125rem;
   }
 
+  /* Typography Settings Applied Here */
   #{{ unique_id }} .menu-list__link {
-    font-size: var(--menu-top-level-font-size, 1rem);
+    font-size: var(--menu-font-size, 16px);
+    font-weight: var(--menu-font-weight, 400);
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -220,11 +208,11 @@
     padding: 0.5rem 1rem;
     position: relative;
     z-index: 1;
-    color: currentColor; /* Inherit color safely */
+    color: currentColor;
     line-height: 1.3;
   }
-
-  /* Fix Mobile styles specific to this block */
+  
+  /* Mobile Specifics */
   #{{ unique_id }} .menu-list--mobile {
     display: grid;
     width: 100%;
@@ -234,21 +222,21 @@
     width: max-content;
     margin-inline: auto;
     display: flex;
-    flex-direction: row; /* Force row */
+    flex-direction: row; 
   }
-
+  
   #{{ unique_id }} .menu-list__scroll-container {
      width: 100%;
      overflow-x: auto;
      -webkit-overflow-scrolling: touch;
-     scrollbar-width: none; /* Firefox */
+     scrollbar-width: none; 
   }
-
+  
   #{{ unique_id }} .menu-list__scroll-container::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none; 
   }
 
-  /* Prevent overlapping on desktop */
+  /* Visibility Controls */
   @media screen and (min-width: 990px) {
     #{{ unique_id }} .mobile\:hidden {
       display: block !important;
@@ -258,7 +246,6 @@
     }
   }
 
-  /* Prevent overlapping on mobile */
   @media screen and (max-width: 989px) {
     #{{ unique_id }} .mobile\:hidden {
       display: none !important;
@@ -268,21 +255,16 @@
     }
   }
 
-  /* Fix for the absolute positioning of Mega Menus */
+  /* Submenu Fixes */
   #{{ unique_id }} .menu-list__submenu {
     position: absolute;
     top: 100%;
     left: 0;
     width: 100%;
-    min-width: 200px; /* Prevent skinny dropdowns */
-    background: var(--gradient-background);
+    min-width: 200px; 
+    background: var(--gradient-background, #ffffff); /* Fallback to white if gradient missing */
     z-index: 20;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  }
-
-  /* Specific fix for superposed text lines */
-  #{{ unique_id }} .menu-list__item {
-     display: inline-block;
   }
 {% endstyle %}
 
@@ -305,76 +287,54 @@
     },
     {
       "type": "header",
-      "content": "t:content.typography"
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "menu_font_size",
+      "label": "Font Size",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
     },
     {
       "type": "select",
-      "id": "type_font_primary_size",
-      "label": "t:settings.top_level_size",
+      "id": "menu_font_weight",
+      "label": "Font Weight",
       "options": [
         {
-          "value": "0.625rem",
-          "label": "10px"
+          "value": "400",
+          "label": "Regular"
         },
         {
-          "value": "0.75rem",
-          "label": "12px"
+          "value": "500",
+          "label": "Medium"
         },
         {
-          "value": "0.875rem",
-          "label": "14px"
+          "value": "600",
+          "label": "Semi Bold"
         },
         {
-          "value": "1rem",
-          "label": "16px"
-        },
-        {
-          "value": "1.125rem",
-          "label": "18px"
+          "value": "700",
+          "label": "Bold"
         }
       ],
-      "default": "1rem"
-    },
-    {
-      "type": "select",
-      "id": "menu_font_style",
-      "label": "t:settings.submenu_text_style",
-      "options": [
-        {
-          "value": "regular",
-          "label": "t:options.small"
-        },
-        {
-          "value": "inverse",
-          "label": "t:options.medium"
-        },
-        {
-          "value": "inverse_large",
-          "label": "t:options.large"
-        }
-      ],
-      "default": "inverse"
+      "default": "400"
     },
     {
       "type": "select",
       "id": "type_font_primary_link",
-      "label": "t:settings.font",
+      "label": "Font Family Source",
       "options": [
         {
           "value": "body",
-          "label": "t:options.body"
-        },
-        {
-          "value": "subheading",
-          "label": "t:options.subheading"
+          "label": "Body Font"
         },
         {
           "value": "heading",
-          "label": "t:options.heading"
-        },
-        {
-          "value": "accent",
-          "label": "t:options.accent"
+          "label": "Heading Font"
         }
       ],
       "default": "heading"
@@ -485,22 +445,6 @@
     },
     {
       "type": "header",
-      "content": "Additional Effects"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_glow_effect",
-      "label": "Enable Glow Effect",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_border_effect",
-      "label": "Enable Border Effect",
-      "default": false
-    },
-    {
-      "type": "header",
       "content": "t:content.submenu_feature"
     },
     {
@@ -587,12 +531,6 @@
       "id": "navigation_bar",
       "label": "t:settings.navigation_bar",
       "default": false
-    },
-    {
-      "type": "color_scheme",
-      "id": "color_scheme_navigation_bar",
-      "label": "t:settings.navigation_bar_color_scheme",
-      "default": "primary"
     },
     {
       "type": "checkbox",
