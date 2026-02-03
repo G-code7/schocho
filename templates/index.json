@@ -637,7 +637,7 @@
         "image_aspect_ratio": "1/1",
         "image_fit": "contain",
         "image_background": "#ebe7df",
-        "transition_duration": 350,
+        "transition_duration": 400,
         "show_quantity_selector": true,
         "quantity_add_button_text": "Add to Cart",
         "added_text": "Added!",
