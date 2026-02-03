@@ -1,3 +1,4 @@
+
 {%- doc -%}
   Renders a header menu block.
 
@@ -9,19 +10,6 @@
   assign block_settings = block.settings
   assign animation_speed = 200
 %}
-
-{% if block.settings.enable_hover_effect %}
-  <style>
-    :root {
-      --hover-scale: {{ block.settings.hover_scale }};
-      --hover-margin-bottom: {{ block.settings.hover_margin_bottom }}px;
-      --hover-transition-duration: {{ block.settings.hover_transition_duration }}ms;
-      {% if block.settings.hover_color != 'rgba(0,0,0,0)' %}
-      --hover-color: {{ block.settings.hover_color }};
-      {% endif %}
-    }
-  </style>
-{% endif %}
 
 {% case variant %}
   {% when 'mobile' %}
@@ -169,27 +157,16 @@
     --menu-vertical-gap: var(--gap-xl);
 
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: var(--menu-horizontal-gap);
   }
 
   .menu-list__list {
     display: flex;
     justify-content: var(--grid-area-alignment);
-    flex-wrap: wrap;
-    gap: var(--menu-horizontal-gap);
   }
 
   .menu-list__list-item {
     flex-shrink: 0;
     white-space: nowrap;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: var(--minimum-touch-target);
   }
 
   .menu-list__list-item[aria-hidden='true'] {
@@ -204,15 +181,11 @@
     line-height: var(--menu-top-level-font-line-height);
     text-transform: var(--menu-top-level-font-case);
     color: var(--menu-top-level-font-color);
-    transition: all var(--animation-speed) var(--animation-easing);
+    transition: color var(--animation-speed) var(--animation-easing);
     text-decoration: none;
     display: flex;
     min-height: var(--minimum-touch-target);
     align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    position: relative;
 
     &:hover,
     &:focus {
@@ -616,107 +589,6 @@
     /* preserves the inherited grid layout when this submenu wrapper is used */
     display: contents;
   }
-
-  /* Hover effect styles for menu items - MEJORADO */
-  .menu-list__list-item {
-    transition: all var(--hover-transition-duration, 350ms) ease;
-  }
-
-  .menu-list__list-item:hover,
-  .menu-list__list-item:focus-within,
-  .menu-list__list-item.menu-list__link--active {
-    transform: scale(var(--hover-scale, 1.1));
-    margin-bottom: var(--hover-margin-bottom, 5px);
-    z-index: 1;
-  }
-
-  .menu-list__list-item:hover .menu-list__link,
-  .menu-list__list-item:focus-within .menu-list__link,
-  .menu-list__list-item.menu-list__link--active .menu-list__link {
-    {% if block.settings.hover_color != 'rgba(0,0,0,0)' %}
-    color: var(--hover-color) !important;
-    {% endif %}
-    
-    {% if block.settings.hover_underline %}
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 2px;
-    {% endif %}
-    
-    /* Efecto de fondo en hover */
-    background-color: rgba(var(--color-foreground-rgb), 0.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Estilos responsivos */
-  @media screen and (max-width: 749px) {
-    .menu-list {
-      --menu-horizontal-gap: var(--gap-md);
-      flex-direction: column;
-      align-items: stretch;
-      margin-top: 1rem; /* Margin top para mobile */
-    }
-
-    .menu-list__list {
-      flex-direction: column;
-      width: 100%;
-      gap: var(--gap-sm);
-    }
-
-    .menu-list__list-item {
-      width: 100%;
-      justify-content: flex-start;
-      padding: 0.5rem 1rem;
-      margin-top: 0.5rem; /* Espaciado entre items en mobile */
-    }
-
-    .menu-list__link {
-      width: 100%;
-      justify-content: flex-start;
-      padding: 0.75rem 1rem;
-    }
-
-    .menu-list__list-item:hover,
-    .menu-list__list-item:focus-within,
-    .menu-list__list-item.menu-list__link--active {
-      transform: scale(1.02); /* Efecto más sutil en mobile */
-      margin-bottom: 0;
-      margin-top: 0.25rem; /* Compensar el scale en mobile */
-    }
-
-    /* Ajustes específicos para el drawer mobile */
-    .header__drawer .menu-list__list-item {
-      margin-top: 0.75rem;
-    }
-  }
-
-  /* Ajustes para tablet */
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    .menu-list {
-      --menu-horizontal-gap: var(--gap-lg);
-    }
-
-    .menu-list__list {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .menu-list__list-item {
-      margin: 0 0.25rem;
-    }
-  }
-
-  /* Ajustes para escritorio */
-  @media screen and (min-width: 990px) {
-    .menu-list {
-      --menu-horizontal-gap: var(--gap-xl);
-    }
-
-    .menu-list__list {
-      flex-wrap: nowrap;
-      justify-content: var(--grid-area-alignment);
-    }
-  }
 {% endstylesheet %}
 
 {% schema %}
@@ -830,58 +702,6 @@
     },
     {
       "type": "header",
-      "content": "Hover Effect"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_hover_effect",
-      "label": "Enable Hover Effect",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "hover_scale",
-      "label": "Hover Scale",
-      "min": 1,
-      "max": 1.5,
-      "step": 0.1,
-      "default": 1.1,
-      "unit": "x"
-    },
-    {
-      "type": "range",
-      "id": "hover_margin_bottom",
-      "label": "Hover Margin Bottom",
-      "min": 0,
-      "max": 15,
-      "step": 1,
-      "default": 5,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "hover_transition_duration",
-      "label": "Hover Transition Duration",
-      "min": 100,
-      "max": 1000,
-      "step": 50,
-      "default": 350,
-      "unit": "ms"
-    },
-    {
-      "type": "checkbox",
-      "id": "hover_underline",
-      "label": "Hover Underline",
-      "default": false
-    },
-    {
-      "type": "color",
-      "id": "hover_color",
-      "label": "Hover Color",
-      "default": "rgba(0,0,0,0)"
-    },
-    {
-      "type": "header",
       "content": "t:content.submenu_feature"
     },
     {
@@ -969,8 +789,7 @@
     {
       "type": "checkbox",
       "id": "navigation_bar",
-      "label": "t:settings.navigation_bar",
-      "default": false
+      "label": "t:settings.navigation_bar"
     },
     {
       "type": "color_scheme",
