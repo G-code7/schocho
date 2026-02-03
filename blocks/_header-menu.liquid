@@ -1,90 +1,116 @@
 {%- doc -%}
-  Renders a header menu block.
-  @param {string} [variant] - What version of the menu to render.
-  @param {string} [transparent] - Show a transparent menu
+  Renders a header menu block con controles avanzados de tipografía y efectos.
+  @param {string} [variant] - Versión del menú (mobile, navigation_bar o default).
 {%- enddoc -%}
 
 {% liquid
   assign block_settings = block.settings
   assign animation_speed = 200
-  assign unique_id = 'HeaderMenu-' | append: block.id
+  assign unique_id = 'HeaderMenu-' | append: block.id | replace: '_', ''
 %}
 
-{% if block.settings.enable_hover_effect %}
+<div id="{{ unique_id }}" class="custom-header-menu-wrapper" {{ block.shopify_attributes }}>
   <style>
-    #{{ unique_id }} .menu-list__list-item {
-      transition: transform 300ms ease;
-    }
-    #{{ unique_id }} .menu-list__list-item:hover {
-      transform: scale({{ block.settings.hover_scale }});
-    }
-  </style>
-{% endif %}
-
-<div id="{{ unique_id }}" class="custom-header-menu-wrapper">
-  <style>
-    /* Variables CSS personalizadas */
+    /* VARIABLES DINÁMICAS BASADAS EN CONFIGURACIÓN */
     #{{ unique_id }} {
-      --menu-top-level-font-size: {{ block.settings.menu_font_size }}px;
-      --menu-top-level-font-weight: {{ block.settings.menu_font_weight }};
-    }
-
-    /* Aplicación de tipografía */
-    #{{ unique_id }} .menu-list__link {
-      font-size: var(--menu-top-level-font-size) !important;
-      font-weight: var(--menu-top-level-font-weight) !important;
-      text-transform: {{ block.settings.type_case_primary_link }};
-    }
-
-    /* Asegurar que el contenedor interno sea transparente */
-    #{{ unique_id }} .header-menu__inner {
+      --menu-font-size: {{ block.settings.menu_font_size }}px;
+      --menu-font-weight: {{ block.settings.menu_font_weight }};
+      --menu-text-color: {{ block.settings.text_color | default: 'currentColor' }};
+      --menu-hover-color: {{ block.settings.hover_text_color }};
+      --hover-duration: {{ block.settings.hover_transition_duration }}ms;
+      --item-spacing: {{ block.settings.item_spacing }}px;
       background: transparent !important;
     }
 
-    /* Margin top para mobile */
+    /* ESTILO DE LOS ENLACES (DESKTOP) */
+    #{{ unique_id }} .menu-list__link {
+      font-size: var(--menu-font-size) !important;
+      font-weight: var(--menu-font-weight) !important;
+      color: var(--menu-text-color) !important;
+      text-transform: {{ block.settings.type_case_primary_link }};
+      padding: {{ block.settings.link_padding_vertical }}px {{ block.settings.link_padding_horizontal }}px;
+      transition: all var(--hover-duration) ease;
+      position: relative;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    /* ESPACIADO ENTRE ELEMENTOS */
+    #{{ unique_id }} .menu-list__list {
+      gap: var(--item-spacing);
+      justify-content: {{ block.settings.alignment }};
+    }
+
+    /* EFECTOS ON HOVER */
+    #{{ unique_id }} .menu-list__list-item {
+      transition: transform var(--hover-duration) cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #{{ unique_id }} .menu-list__list-item:hover .menu-list__link {
+      color: var(--menu-hover-color) !important;
+    }
+
+    {% if block.settings.enable_hover_effect %}
+      #{{ unique_id }} .menu-list__list-item:hover {
+        {% if block.settings.hover_effect_type == 'scale' %}
+          transform: scale({{ block.settings.hover_scale }});
+        {% elsif block.settings.hover_effect_type == 'slide_up' %}
+          transform: translateY(-5px);
+        {% endif %}
+        z-index: 10;
+      }
+    {% endif %}
+
+    /* EFECTO SUBRAYADO ANIMADO */
+    {% if block.settings.hover_underline %}
+      #{{ unique_id }} .menu-list__link::after {
+        content: '';
+        position: absolute;
+        bottom: {{ block.settings.underline_offset }}px;
+        left: 50%;
+        width: 0;
+        height: {{ block.settings.underline_thickness }}px;
+        background-color: var(--menu-hover-color);
+        transition: all var(--hover-duration) ease;
+        transform: translateX(-50%);
+      }
+      #{{ unique_id }} .menu-list__list-item:hover .menu-list__link::after {
+        width: 80%;
+      }
+    {% endif %}
+
+    /* RESPONSIVE: AJUSTES PARA MÓVIL */
     @media screen and (max-width: 749px) {
-      #{{ unique_id }} .header__drawer,
-      #{{ unique_id }} .menu-list--mobile {
-        margin-top: 1.5rem;
+      #{{ unique_id }} {
+        --menu-font-size: {{ block.settings.mobile_font_size }}px;
+      }
+      #{{ unique_id }} .menu-list--mobile .menu-list__list {
+        flex-direction: {{ block.settings.mobile_layout }};
+        align-items: center;
+        gap: 15px;
       }
     }
   </style>
 
   {% case variant %}
     {% when 'mobile' %}
-      <div
-        class="header__drawer desktop:hidden"
-        ref="headerDrawerContainer"
-        {{ block.shopify_attributes }}
-      >
-        {% render 'header-drawer',
-          class: 'header__drawer--mobile',
-          linklist: block_settings.menu,
-          data_header_drawer_type: 'mobile-drawer'
+      <div class="header__drawer desktop:hidden" ref="headerDrawerContainer">
+        {% render 'header-drawer', 
+           class: 'header__drawer--mobile', 
+           linklist: block_settings.menu, 
+           data_header_drawer_type: 'mobile-drawer' 
         %}
       </div>
 
     {% when 'navigation_bar' %}
       {% if block_settings.navigation_bar == true %}
-        <div
-          class="menu-list menu-list--mobile"
-          style="--menu-horizontal-gap: 15px; --mobile-nav-margin: auto;"
-        >
+        <div class="menu-list menu-list--mobile">
           <div class="menu-list__scroll-container">
-            <ul
-              class="menu-list__list list-unstyled"
-              role="list"
-            >
+            <ul class="menu-list__list list-unstyled" role="list">
               {% for link in block_settings.menu.links %}
-                <li>
-                  <a
-                    href="{{ link.url }}"
-                    id="MenuItem-{{ link.handle }}"
-                    class="menu-list__item menu-list__link"
-                    {% if link.current %}
-                      aria-current="page"
-                    {% endif %}
-                  >
+                <li class="menu-list__list-item">
+                  <a href="{{ link.url }}" class="menu-list__link {% if link.current %}active{% endif %}">
                     {{- link.title -}}
                   </a>
                 </li>
@@ -93,313 +119,182 @@
           </div>
         </div>
       {% endif %}
+
     {% else %}
-      <header-menu
-        ref="headerMenu"
-        class="header-menu mobile:hidden"
-        data-animation-delay="{{ animation_speed }}"
-        {{ block.shopify_attributes }}
-        style="--submenu-animation-speed: {{ animation_speed }}ms;"
-      >
+      <header-menu class="header-menu mobile:hidden" data-animation-delay="{{ animation_speed }}">
         <div class="header-menu__inner">
           {%- render 'header-menu' %}
         </div>
-
-        <script
-          src="{{ 'header-menu.js' | asset_url }}"
-          type="module"
-          fetchpriority="low"
-        ></script>
       </header-menu>
   {% endcase %}
 </div>
 
 {% stylesheet %}
-  /* Estilos base para mobile menu */
-  .menu-list--mobile.menu-list {
-    display: grid;
-  }
+  .menu-list { display: flex; width: 100%; }
+  .menu-list__list { display: flex; list-style: none; margin: 0; padding: 0; width: 100%; }
+  .menu-list__scroll-container { width: 100%; overflow-x: auto; padding: 10px 0; }
+  .mobile\:hidden { display: block; }
+  .desktop\:hidden { display: none; }
   
-  .menu-list--mobile .menu-list__list {
-    width: max-content;
-    margin-inline: auto;
-    gap: var(--menu-horizontal-gap);
-  }
-  
-  .menu-list--mobile li {
-    width: max-content;
-    padding-block: var(--padding-sm);
-  }
-  
-  .menu-list--mobile li:first-of-type {
-    padding-inline-start: var(--menu-horizontal-gap);
-  }
-  
-  .menu-list--mobile li:last-of-type {
-    padding-inline-end: var(--menu-horizontal-gap);
-  }
-  
-  .menu-list--mobile a {
-    color: var(--color-foreground);
-  }
-
-  .menu-list__scroll-container {
-    position: relative;
-    overflow-x: auto;
-    mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
-    padding-block: var(--padding-2xs);
-  }
-
-  header-menu {
-    width: 100%;
-  }
-
-  /* Drawer menu featured content */
-  .menu-drawer__featured-content {
-    z-index: var(--layer-base);
-    container-type: inline-size;
-  }
-
-  .menu-drawer__featured-content--childlist {
-    z-index: var(--layer-flat);
-  }
-
-  .menu-drawer__featured-content-list {
-    display: flex;
-    gap: 1em;
-    overflow-x: auto;
-    padding-block-end: var(--padding-lg);
-  }
-
-  .menu-drawer__featured-content-list-item {
-    flex: 0 0 auto;
-  }
-
-  .menu-drawer__featured-content-list-item--product {
-    width: 35cqi;
-  }
-
-  .menu-drawer__featured-content-list-item--collection img.resource-card__image {
-    width: 80cqi;
-  }
-
-  .menu-drawer__featured-content-list-item:first-child {
-    margin-inline-start: var(--margin-xl);
-  }
-
-  .menu-drawer__featured-content-list-item:last-child {
-    margin-inline-end: var(--margin-xl);
-  }
-
-  .menu-list {
-    --menu-horizontal-gap: var(--gap-xl);
-    --menu-vertical-gap: var(--gap-xl);
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .menu-list__list {
-    display: flex;
-    justify-content: var(--grid-area-alignment);
-    flex-wrap: wrap;
-    gap: var(--menu-horizontal-gap);
-  }
-
-  .menu-list__list-item {
-    flex-shrink: 0;
-    white-space: nowrap;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: var(--minimum-touch-target);
-  }
-
-  .menu-list__list-item[aria-hidden='true'] {
-    visibility: hidden;
-  }
-
-  .menu-list__link {
-    font-family: var(--menu-top-level-font-family);
-    font-style: var(--menu-top-level-font-style);
-    font-weight: var(--menu-top-level-font-weight);
-    font-size: var(--menu-top-level-font-size);
-    line-height: var(--menu-top-level-font-line-height);
-    text-transform: var(--menu-top-level-font-case);
-    color: var(--menu-top-level-font-color);
-    text-decoration: none;
-    display: flex;
-    min-height: var(--minimum-touch-target);
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    position: relative;
-  }
-
-  .menu-list__link:hover,
-  .menu-list__link:focus {
-    color: var(--menu-top-level-font-color);
-  }
-
-  @media screen and (min-width: 750px) {
-    .menu-list__link {
-      font-size: var(--menu-top-level-font-size-desktop);
-    }
-  }
-
-  .menu-list:where(:has(.menu-list__list-item:hover)) .menu-list__link,
-  .menu-list:where(:has(.menu-list__list-item:focus-within)) .menu-list__link,
-  .menu-list:where(:has(.menu-list__list-item:not([aria-hidden='true']) .menu-list__link--active)) .menu-list__link {
-    color: rgb(var(--menu-top-level-font-color-rgb) / var(--opacity-subdued-text));
-  }
-
-  .menu-list:not(:has(.menu-list__list-item:hover)) .menu-list__link--active,
-  .menu-list .menu-list__list-item:where(:hover, :focus-within) .menu-list__link,
-  .menu-list .menu-list__list-item[slot='overflow'] .menu-list__link[aria-expanded='true'] {
-    color: var(--menu-top-level-font-color);
-  }
-
-  /* Responsive adjustments */
-  @media screen and (max-width: 749px) {
-    .menu-list {
-      --menu-horizontal-gap: var(--gap-md);
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .menu-list__list {
-      flex-direction: column;
-      width: 100%;
-      gap: var(--gap-sm);
-    }
-
-    .menu-list__list-item {
-      width: 100%;
-      justify-content: flex-start;
-      padding: 0.5rem 1rem;
-    }
-
-    .menu-list__link {
-      width: 100%;
-      justify-content: flex-start;
-      padding: 0.75rem 1rem;
-    }
-
-    /* Slightly more subtle hover effect on mobile */
-    .menu-list__list-item:hover,
-    .menu-list__list-item:focus-within,
-    .menu-list__list-item.menu-list__link--active {
-      transform: scale(1.02);
-    }
-  }
-
-  @media screen and (min-width: 750px) and (max-width: 989px) {
-    .menu-list {
-      --menu-horizontal-gap: var(--gap-lg);
-    }
-
-    .menu-list__list {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  }
-
-  @media screen and (min-width: 990px) {
-    .menu-list {
-      --menu-horizontal-gap: var(--gap-xl);
-    }
-
-    .menu-list__list {
-      flex-wrap: nowrap;
-      justify-content: var(--grid-area-alignment);
-    }
+  @media screen and (max-width: 989px) {
+    .mobile\:hidden { display: none !important; }
+    .desktop\:hidden { display: block !important; }
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "t:names.menu",
-  "tag": null,
+  "name": "Menú Pro Premium",
   "settings": [
     {
       "type": "link_list",
       "id": "menu",
-      "label": "t:settings.menu",
+      "label": "Seleccionar Menú",
       "default": "main-menu"
     },
     {
       "type": "header",
-      "content": "Ajustes de Tipografía"
+      "content": "Tipografía y Colores"
     },
     {
       "type": "range",
       "id": "menu_font_size",
-      "label": "Tamaño de fuente",
-      "min": 10,
-      "max": 50,
-      "step": 1,
-      "default": 16,
-      "unit": "px"
+      "label": "Tamaño de fuente (Desktop)",
+      "min": 12, "max": 40, "step": 1, "unit": "px", "default": 16
     },
     {
       "type": "select",
       "id": "menu_font_weight",
       "label": "Peso de fuente",
       "options": [
+        { "value": "300", "label": "Ligera" },
         { "value": "400", "label": "Normal" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi Bold" },
-        { "value": "700", "label": "Bold" }
+        { "value": "600", "label": "Semi-Bold" },
+        { "value": "700", "label": "Negrita" }
       ],
       "default": "400"
     },
     {
-      "type": "select",
-      "id": "type_case_primary_link",
-      "label": "t:settings.text_case",
-      "options": [
-        { "value": "none", "label": "t:options.default" },
-        { "value": "uppercase", "label": "t:options.uppercase" }
-      ],
-      "default": "none"
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "Color Hover",
+      "default": "#ff0000"
     },
     {
       "type": "header",
-      "content": "Efectos"
+      "content": "Diseño y Espaciado"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineación Horizontal",
+      "options": [
+        { "value": "flex-start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Derecha" },
+        { "value": "space-between", "label": "Distribuido" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Espacio entre pestañas",
+      "min": 0, "max": 100, "step": 5, "unit": "px", "default": 20
+    },
+    {
+      "type": "range",
+      "id": "link_padding_vertical",
+      "label": "Padding Vertical del Link",
+      "min": 0, "max": 30, "step": 1, "unit": "px", "default": 10
+    },
+    {
+      "type": "range",
+      "id": "link_padding_horizontal",
+      "label": "Padding Horizontal del Link",
+      "min": 0, "max": 40, "step": 1, "unit": "px", "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Animaciones"
     },
     {
       "type": "checkbox",
       "id": "enable_hover_effect",
-      "label": "Activar escala en Hover",
-      "default": false
+      "label": "Activar Efecto de Movimiento",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "hover_effect_type",
+      "label": "Tipo de Movimiento",
+      "options": [
+        { "value": "scale", "label": "Escalar (Agrandar)" },
+        { "value": "slide_up", "label": "Deslizar hacia arriba" }
+      ],
+      "default": "scale"
     },
     {
       "type": "range",
       "id": "hover_scale",
       "label": "Nivel de escala",
-      "min": 1.0,
-      "max": 2.0,
-      "step": 0.1,
-      "default": 1.1
+      "min": 1.0, "max": 1.3, "step": 0.1, "default": 1.1
+    },
+    {
+      "type": "checkbox",
+      "id": "hover_underline",
+      "label": "Activar Subrayado Animado",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "underline_thickness",
+      "label": "Grosor subrayado",
+      "min": 1, "max": 5, "step": 1, "unit": "px", "default": 2
+    },
+    {
+      "type": "range",
+      "id": "underline_offset",
+      "label": "Distancia subrayado",
+      "min": 0, "max": 15, "step": 1, "unit": "px", "default": 5
+    },
+    {
+      "type": "range",
+      "id": "hover_transition_duration",
+      "label": "Duración de animación (ms)",
+      "min": 100, "max": 800, "step": 50, "default": 300
     },
     {
       "type": "header",
-      "content": "t:content.mobile_layout"
+      "content": "Configuración Móvil"
     },
     {
       "type": "checkbox",
       "id": "navigation_bar",
-      "label": "t:settings.navigation_bar",
-      "default": false
+      "label": "Mostrar barra de navegación móvil",
+      "default": true
     },
     {
-      "type": "checkbox",
-      "id": "drawer_accordion",
-      "label": "t:settings.accordion",
-      "default": false
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Diseño móvil",
+      "options": [
+        { "value": "row", "label": "Horizontal (Scroll)" },
+        { "value": "column", "label": "Vertical (Lista)" }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Tamaño fuente móvil",
+      "min": 10, "max": 25, "step": 1, "unit": "px", "default": 14
     }
   ]
 }
