@@ -75,7 +75,7 @@
             "underline_color": "#761e0b",
             "underline_thickness": 1,
             "underline_offset": 2,
-            "enable_glow_effect": true,
+            "enable_glow_effect": false,
             "enable_border_effect": false,
             "menu_style": "text",
             "featured_products_aspect_ratio": "4 / 5",
