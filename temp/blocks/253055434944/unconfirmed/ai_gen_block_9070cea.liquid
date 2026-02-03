@@ -1,6 +1,594 @@
+{% doc %}
+  @prompt
+    podemos crear un menu donde tenga la posibilidad de modificar tamaños,  pesos,   animaciones on hover. 
+    a demás de ser responsive.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-menu-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+  }
+
+  .ai-menu-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ block.settings.item_spacing }}px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    justify-content: {{ block.settings.alignment }};
+    align-items: center;
+  }
+
+  .ai-menu-item-{{ ai_gen_id }} {
+    margin: 0;
+  }
+
+  .ai-menu-link-{{ ai_gen_id }} {
+    display: inline-block;
+    font-size: {{ block.settings.font_size }}px;
+    font-weight: {{ block.settings.font_weight }};
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+    text-transform: {% if block.settings.text_transform == 'uppercase' %}uppercase{% else %}none{% endif %};
+    transition: all {{ block.settings.hover_animation_speed }}s ease;
+    position: relative;
+    padding: {{ block.settings.link_padding_vertical }}px {{ block.settings.link_padding_horizontal }}px;
+  }
+
+  .ai-menu-link-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.hover_text_color }};
+    {% if block.settings.hover_effect == 'scale' %}
+      transform: scale({{ block.settings.hover_scale }});
+    {% elsif block.settings.hover_effect == 'slide_up' %}
+      transform: translateY(-{{ block.settings.hover_translate }}px);
+    {% elsif block.settings.hover_effect == 'slide_down' %}
+      transform: translateY({{ block.settings.hover_translate }}px);
+    {% endif %}
+  }
+
+  {% if block.settings.hover_effect == 'underline' %}
+    .ai-menu-link-{{ ai_gen_id }}::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: {{ block.settings.underline_thickness }}px;
+      background-color: {{ block.settings.hover_text_color }};
+      transition: width {{ block.settings.hover_animation_speed }}s ease;
+    }
+
+    .ai-menu-link-{{ ai_gen_id }}:hover::after {
+      width: 100%;
+    }
+  {% elsif block.settings.hover_effect == 'background' %}
+    .ai-menu-link-{{ ai_gen_id }} {
+      border-radius: {{ block.settings.background_radius }}px;
+    }
+
+    .ai-menu-link-{{ ai_gen_id }}:hover {
+      background-color: {{ block.settings.hover_background_color }};
+    }
+  {% endif %}
+
+  @media screen and (max-width: 749px) {
+    .ai-menu-{{ ai_gen_id }} {
+      width: 100%;
+      padding: {{ block.settings.mobile_padding_vertical }}px {{ block.settings.mobile_padding_horizontal }}px;
+    }
+
+    .ai-menu-list-{{ ai_gen_id }} {
+      flex-direction: {{ block.settings.mobile_layout }};
+      gap: {{ block.settings.mobile_item_spacing }}px;
+      justify-content: {{ block.settings.mobile_alignment }};
+    }
+
+    .ai-menu-link-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_font_size }}px;
+    }
+
+    {% if block.settings.mobile_layout == 'column' %}
+      .ai-menu-item-{{ ai_gen_id }} {
+        width: 100%;
+      }
+
+      .ai-menu-link-{{ ai_gen_id }} {
+        width: 100%;
+        text-align: {{ block.settings.mobile_text_align }};
+      }
+    {% endif %}
+  }
+{% endstyle %}
+
+<nav class="ai-menu-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <ul class="ai-menu-list-{{ ai_gen_id }}">
+    {% for i in (1..8) %}
+      {% liquid
+        assign link_key = 'menu_link_' | append: i
+        assign text_key = 'menu_text_' | append: i
+        assign link_url = block.settings[link_key]
+        assign link_text = block.settings[text_key]
+      %}
+      
+      {% if link_text != blank %}
+        <li class="ai-menu-item-{{ ai_gen_id }}">
+          <a 
+            href="{% if link_url != blank %}{{ link_url }}{% else %}#{% endif %}" 
+            class="ai-menu-link-{{ ai_gen_id }}"
+          >
+            {{ link_text }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</nav>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Menú personalizado",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Enlaces del menú"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_1",
+      "label": "Texto del enlace 1",
+      "default": "Inicio"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_1",
+      "label": "URL del enlace 1"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_2",
+      "label": "Texto del enlace 2",
+      "default": "Productos"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_2",
+      "label": "URL del enlace 2"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_3",
+      "label": "Texto del enlace 3",
+      "default": "Colecciones"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_3",
+      "label": "URL del enlace 3"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_4",
+      "label": "Texto del enlace 4",
+      "default": "Acerca de"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_4",
+      "label": "URL del enlace 4"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_5",
+      "label": "Texto del enlace 5",
+      "default": "Contacto"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_5",
+      "label": "URL del enlace 5"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_6",
+      "label": "Texto del enlace 6"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_6",
+      "label": "URL del enlace 6"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_7",
+      "label": "Texto del enlace 7"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_7",
+      "label": "URL del enlace 7"
+    },
+    {
+      "type": "text",
+      "id": "menu_text_8",
+      "label": "Texto del enlace 8"
+    },
+    {
+      "type": "url",
+      "id": "menu_link_8",
+      "label": "URL del enlace 8"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineación",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "flex-end",
+          "label": "Derecha"
+        },
+        {
+          "value": "space-between",
+          "label": "Espacio entre"
+        },
+        {
+          "value": "space-around",
+          "label": "Espacio alrededor"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Espacio entre elementos",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Padding vertical",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Tamaño de fuente",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Peso de fuente",
+      "options": [
+        {
+          "value": "300",
+          "label": "Ligera"
+        },
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Media"
+        },
+        {
+          "value": "600",
+          "label": "Semi-negrita"
+        },
+        {
+          "value": "700",
+          "label": "Negrita"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Transformación de texto",
+      "options": [
+        {
+          "value": "none",
+          "label": "Normal"
+        },
+        {
+          "value": "uppercase",
+          "label": "Mayúsculas"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "link_padding_vertical",
+      "label": "Padding vertical del enlace",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "link_padding_horizontal",
+      "label": "Padding horizontal del enlace",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Efectos hover"
+    },
+    {
+      "type": "select",
+      "id": "hover_effect",
+      "label": "Efecto al pasar el cursor",
+      "options": [
+        {
+          "value": "none",
+          "label": "Ninguno"
+        },
+        {
+          "value": "underline",
+          "label": "Subrayado"
+        },
+        {
+          "value": "scale",
+          "label": "Escalar"
+        },
+        {
+          "value": "slide_up",
+          "label": "Deslizar arriba"
+        },
+        {
+          "value": "slide_down",
+          "label": "Deslizar abajo"
+        },
+        {
+          "value": "background",
+          "label": "Fondo"
+        }
+      ],
+      "default": "underline"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "Color de texto hover",
+      "default": "#7428dc"
+    },
+    {
+      "type": "range",
+      "id": "hover_animation_speed",
+      "label": "Velocidad de animación",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "unit": "s",
+      "default": 0.3
+    },
+    {
+      "type": "range",
+      "id": "hover_scale",
+      "label": "Escala hover",
+      "min": 1,
+      "max": 1.5,
+      "step": 0.1,
+      "default": 1.1
+    },
+    {
+      "type": "range",
+      "id": "hover_translate",
+      "label": "Desplazamiento hover",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "underline_thickness",
+      "label": "Grosor del subrayado",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "hover_background_color",
+      "label": "Color de fondo hover",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "background_radius",
+      "label": "Radio del fondo",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Configuración móvil"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Diseño móvil",
+      "options": [
+        {
+          "value": "row",
+          "label": "Horizontal"
+        },
+        {
+          "value": "column",
+          "label": "Vertical"
+        }
+      ],
+      "default": "column"
+    },
+    {
+      "type": "select",
+      "id": "mobile_alignment",
+      "label": "Alineación móvil",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "flex-end",
+          "label": "Derecha"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_align",
+      "label": "Alineación de texto móvil",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "mobile_font_size",
+      "label": "Tamaño de fuente móvil",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_spacing",
+      "label": "Espacio entre elementos móvil",
+      "min": 0,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_vertical",
+      "label": "Padding vertical móvil",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_horizontal",
+      "label": "Padding horizontal móvil",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    }
+  ],
+  "presets": [
+    {
+      "name": "Menú personalizado"
+    }
+  ]
+}
 {% endschema %}
