@@ -65,7 +65,7 @@
             "menu_font_weight": "600",
             "text_color": "#3e2563",
             "hover_text_color": "#5d3594",
-            "alignment": "center",
+            "alignment": "space-between",
             "item_spacing": 30,
             "link_padding_vertical": 20,
             "link_padding_horizontal": 15,
