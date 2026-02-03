@@ -76,7 +76,7 @@
             "underline_thickness": 1,
             "underline_offset": 15,
             "hover_transition_duration": 450,
-            "navigation_bar": true,
+            "navigation_bar": false,
             "mobile_layout": "column",
             "mobile_font_size": 14
           },
