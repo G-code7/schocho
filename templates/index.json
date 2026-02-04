@@ -228,7 +228,7 @@
       "settings": {
         "media_position": "right",
         "media_width": "medium",
-        "media_height": "80svh",
+        "media_height": "80vh",
         "section_width": "full-width",
         "extend_media": true,
         "color_scheme": "scheme-1",
