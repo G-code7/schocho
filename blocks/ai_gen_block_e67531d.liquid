@@ -401,7 +401,7 @@
           assign icon_key = 'benefit_left_' | append: i | append: '_icon'
           assign heading_key = 'benefit_left_' | append: i | append: '_heading'
           assign description_key = 'benefit_left_' | append: i | append: '_description'
-          
+
           assign icon_image = block.settings[icon_key]
           assign heading = block.settings[heading_key]
           assign description = block.settings[description_key]
@@ -443,7 +443,10 @@
     <div class="wt-benefits-product__img-{{ ai_gen_id }}">
       {% if block.settings.video_shopify %}
         <div class="wt-benefits-product__media-wrapper-{{ ai_gen_id }}">
-          {{ block.settings.video_shopify | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true }}
+          {{
+            block.settings.video_shopify
+            | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true
+          }}
         </div>
       {% elsif block.settings.video_url != blank %}
         {% assign video_url = block.settings.video_url %}
@@ -487,7 +490,7 @@
           assign icon_key = 'benefit_right_' | append: i | append: '_icon'
           assign heading_key = 'benefit_right_' | append: i | append: '_heading'
           assign description_key = 'benefit_right_' | append: i | append: '_description'
-          
+
           assign icon_image = block.settings[icon_key]
           assign heading = block.settings[heading_key]
           assign description = block.settings[description_key]
@@ -530,13 +533,13 @@
       <div class="wt-benefits-product__slider-track-{{ ai_gen_id }}" data-slider-track>
         {%- comment -%} Todos los beneficios combinados {%- endcomment -%}
         {% assign slide_index = 0 %}
-        
+
         {% for i in (1..4) %}
           {% liquid
             assign icon_key = 'benefit_left_' | append: i | append: '_icon'
             assign heading_key = 'benefit_left_' | append: i | append: '_heading'
             assign description_key = 'benefit_left_' | append: i | append: '_description'
-            
+
             assign icon_image = block.settings[icon_key]
             assign heading = block.settings[heading_key]
             assign description = block.settings[description_key]
@@ -579,7 +582,7 @@
             assign icon_key = 'benefit_right_' | append: i | append: '_icon'
             assign heading_key = 'benefit_right_' | append: i | append: '_heading'
             assign description_key = 'benefit_right_' | append: i | append: '_description'
-            
+
             assign icon_image = block.settings[icon_key]
             assign heading = block.settings[heading_key]
             assign description = block.settings[description_key]
@@ -621,12 +624,28 @@
       {%- comment -%} Flechas de navegación {%- endcomment -%}
       <div class="wt-benefits-product__slider-arrows-{{ ai_gen_id }}">
         <button class="wt-benefits-product__slider-arrow-{{ ai_gen_id }}" data-slider-prev aria-label="Previous slide">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
         </button>
         <button class="wt-benefits-product__slider-arrow-{{ ai_gen_id }}" data-slider-next aria-label="Next slide">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </button>
