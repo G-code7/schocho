@@ -445,7 +445,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for i in (1..9) %}
+            {% for i in (1..12) %}
               {% liquid
                 assign row_label_key = 'row_' | append: i | append: '_label'
                 assign row_col1_key = 'row_' | append: i | append: '_col1'
@@ -1232,7 +1232,7 @@
       "default": "empty"
     },
 
-        {
+    {
       "type": "text",
       "id": "row_9_label",
       "label": "Row 9 Label"
@@ -1267,6 +1267,114 @@
       ],
       "default": "empty"
     },
+
+        {
+      "type": "text",
+      "id": "row_10_label",
+      "label": "Row 10 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_10_col1",
+      "label": "Row 10 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "select",
+      "id": "row_10_col2",
+      "label": "Row 10 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "select",
+      "id": "row_10_col3",
+      "label": "Row 10 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_11_label",
+      "label": "Row 11 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_11_col1",
+      "label": "Row 11 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "select",
+      "id": "row_11_col2",
+      "label": "Row 11 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "select",
+      "id": "row_11_col3",
+      "label": "Row 11 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "text",
+      "id": "row_12_label",
+      "label": "Row 12 Label"
+    },
+    {
+      "type": "select",
+      "id": "row_12_col1",
+      "label": "Row 12 - Column 1",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "check"
+    },
+    {
+      "type": "select",
+      "id": "row_12_col2",
+      "label": "Row 12 - Column 2",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "empty"
+    },
+    {
+      "type": "select",
+      "id": "row_12_col3",
+      "label": "Row 12 - Column 3",
+      "options": [
+        { "value": "check", "label": "✓ Checkmark" },
+        { "value": "empty", "label": "○ Empty circle" }
+      ],
+      "default": "empty"
+    },
+
+
     {
       "type": "header",
       "content": "━━━ TABLE CELLS ━━━"
