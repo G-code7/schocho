@@ -63,6 +63,8 @@
   .section--page-width {
     &.media-with-content {
       grid-template-areas: 'margin-left media margin-right' 'margin-left content margin-right';
+      display: grid;
+      align-items: stretch;
 
       @media screen and (min-width: 750px) {
         /* Wide proportion is media 3.5 parts, content 2.5 parts. Which equals 7|5. So divide the central column by 7+5 and multiply accordingly */
@@ -240,8 +242,6 @@
       grid-area: content;
       position: relative;
       z-index: 2;
-      display: grid;
-      align-items: stretch;
     }
 
     /* Video Background Styles */
