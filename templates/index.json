@@ -1071,7 +1071,7 @@
       ],
       "name": "Section video",
       "settings": {
-        "media_type_1": "image",
+        "media_type_1": "video",
         "image_1": "shopify://shop_images/Image_fx_59.jpg",
         "video_1": "shopify://files/videos/Copy of IMG_8593.MOV",
         "media_type_2": "video",
