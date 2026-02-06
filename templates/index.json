@@ -106,7 +106,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p><strong>PRONTO CHOCHO</strong> Whole-Food Protein<br/>The Way Nature Intended<br/></p>",
+                    "text": "<p><strong>PRONTO CHOCHO</strong></p><p>Whole-Food Protein<br/>The Way Nature Intended<br/></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
