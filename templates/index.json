@@ -710,7 +710,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h2>One Solution  <br/>Power Your Whole Health </h2>",
+            "text": "<h2>One Solution  <br/>For The Whole-Food Seeker</h2>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -736,7 +736,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p><strong>PRONTO CHOCHO</strong> is made with one pure ingredient that delivers complete plant-based protein for the whole-food<br/>seeker who wants to feel their best</p>",
+            "text": "",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
