@@ -1359,7 +1359,7 @@
         "container_padding": 40,
         "layout_gap": 60,
         "content_width": 33,
-        "content_gap": 24,
+        "content_gap": 30,
         "content_sticky_top": 120,
         "heading": "Why <br>PRONTO CHOCHO Is Different?",
         "heading_size": 32,
