@@ -295,6 +295,20 @@
             "font_size": 18
           }
         },
+        "text_with_icon_wNJYr6": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Concentrates",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_31_3x_b306b580-5924-4e51-9fcc-d02711aef8dc.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
         "text_with_icon_L8mBiz": {
           "type": "text_with_icon",
           "settings": {
@@ -322,20 +336,6 @@
             "type_preset": "custom",
             "font_size": 18
           }
-        },
-        "text_with_icon_wNJYr6": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "No Concentrates",
-            "icon_type": "image",
-            "custom_icon": "shopify://shop_images/Recurso_31_3x_b306b580-5924-4e51-9fcc-d02711aef8dc.png",
-            "icon_position": "left",
-            "icon_size": 38,
-            "icon_gap": 8,
-            "icon_color": "#ffffff",
-            "type_preset": "custom",
-            "font_size": 18
-          }
         }
       },
       "block_order": [
@@ -343,9 +343,9 @@
         "text_with_icon_TVyTHq",
         "text_with_icon_fwPBny",
         "text_with_icon_8FCN43",
+        "text_with_icon_wNJYr6",
         "text_with_icon_L8mBiz",
-        "text_with_icon_ADg8Ag",
-        "text_with_icon_wNJYr6"
+        "text_with_icon_ADg8Ag"
       ],
       "name": "t:names.marquee_section",
       "settings": {
