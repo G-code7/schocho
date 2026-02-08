@@ -124,37 +124,9 @@
     },
     "two_columns_acordion_slider_v3_gfGpwf": {
       "type": "two-columns-acordion-slider-v3",
-      "blocks": {
-        "accordion_item_jjRzk4": {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Selección de ingredientes",
-            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
-          }
-        },
-        "accordion_item_aEUDVC": {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Proceso artesanal",
-            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
-          }
-        },
-        "accordion_item_6LtMMi": {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Control de calidad",
-            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "accordion_item_jjRzk4",
-        "accordion_item_aEUDVC",
-        "accordion_item_6LtMMi"
-      ],
       "name": "Imagen + Acordeón inner",
       "settings": {
-        "main_image": "shopify://shop_images/freepik__la-narrativa-visual-se-desarrolla-en-el-corazn-de-__42411_ea8b51c5-c0b7-4fd2-a0a7-b68f0b396aad.png",
+        "main_image": "shopify://shop_images/meet-us-pronto-chocho.webp",
         "section_max_width": 1400,
         "section_background_color": "#ffffff",
         "section_padding_top": 40,
@@ -240,6 +212,14 @@
         "accordion_content_size": 15,
         "accordion_content_color": "#666666",
         "accordion_content_line_height": 1.6,
+        "accordion_title_1": "Selección de ingredientes",
+        "accordion_content_1": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>",
+        "accordion_title_2": "Proceso artesanal",
+        "accordion_content_2": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>",
+        "accordion_title_3": "Control de calidad",
+        "accordion_content_3": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>",
+        "accordion_title_4": "Envío sostenible",
+        "accordion_content_4": "<p>Utilizamos materiales de embalaje ecológicos y optimizamos las rutas de entrega.</p>",
         "section_padding_top_mobile": 20,
         "section_padding_bottom_mobile": 20,
         "section_padding_x_mobile": 15,
