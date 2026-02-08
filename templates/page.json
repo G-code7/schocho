@@ -137,7 +137,7 @@
         "wrapper_border_width": 0,
         "wrapper_border_color": "#e0e0e0",
         "wrapper_shadow": false,
-        "section_min_height": 600,
+        "section_min_height": 450,
         "show_badges": false,
         "badges_text": "",
         "badge_alignment": "left",

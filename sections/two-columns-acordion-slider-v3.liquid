@@ -44,9 +44,13 @@
     padding: {{ section.settings.image_padding }}px;
   }
 
-  .sync-image-wrapper-{{ section_id }} {
+    .sync-image-wrapper-{{ section_id }} {
     width: 100%;
+    {% if section.settings.image_height > 0 %}
+    height: {{ section.settings.image_height }}px;
+    {% else %}
     height: 100%;
+    {% endif %}
     {% if section.settings.image_max_height > 0 %}
     max-height: {{ section.settings.image_max_height }}px;
     {% endif %}
@@ -55,7 +59,7 @@
     border-radius: {{ section.settings.image_border_radius }}px;
     overflow: hidden;
     {% endif %}
-  }
+    }
 
   .sync-main-image-{{ section_id }} {
     width: 100%;
@@ -472,16 +476,26 @@
           <div class="sync-accordion-{{ section_id }}" data-accordion>
             {% comment %} Acordeón 1 {% endcomment %}
             {% if section.settings.accordion_title_1 != blank %}
-              <div class="sync-accordion-item-{{ section_id }}{% if section.settings.first_open %} active{% endif %}" data-accordion-index="0">
-                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="{% if section.settings.first_open %}true{% else %}false{% endif %}" aria-controls="accordion-body-{{ section_id }}-0">
+              <div
+                class="sync-accordion-item-{{ section_id }}{% if section.settings.first_open %} active{% endif %}"
+                data-accordion-index="0"
+              >
+                <button
+                  class="sync-accordion-header-{{ section_id }}"
+                  type="button"
+                  aria-expanded="{% if section.settings.first_open %}true{% else %}false{% endif %}"
+                  aria-controls="accordion-body-{{ section_id }}-0"
+                >
                   <div class="sync-accordion-left-{{ section_id }}">
                     {% if section.settings.accordion_icon_1 != blank %}
-                      <img class="sync-accordion-custom-icon-{{ section_id }}"
-                           src="{{ section.settings.accordion_icon_1 | image_url: width: 100 }}"
-                           alt="{{ section.settings.accordion_title_1 | escape }}"
-                           width="{{ section.settings.accordion_custom_icon_size }}"
-                           height="{{ section.settings.accordion_custom_icon_size }}"
-                           loading="lazy">
+                      <img
+                        class="sync-accordion-custom-icon-{{ section_id }}"
+                        src="{{ section.settings.accordion_icon_1 | image_url: width: 100 }}"
+                        alt="{{ section.settings.accordion_title_1 | escape }}"
+                        width="{{ section.settings.accordion_custom_icon_size }}"
+                        height="{{ section.settings.accordion_custom_icon_size }}"
+                        loading="lazy"
+                      >
                     {% endif %}
                     <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_1 }}</span>
                   </div>
@@ -498,15 +512,22 @@
             {% comment %} Acordeón 2 {% endcomment %}
             {% if section.settings.accordion_title_2 != blank %}
               <div class="sync-accordion-item-{{ section_id }}" data-accordion-index="1">
-                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="false" aria-controls="accordion-body-{{ section_id }}-1">
+                <button
+                  class="sync-accordion-header-{{ section_id }}"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="accordion-body-{{ section_id }}-1"
+                >
                   <div class="sync-accordion-left-{{ section_id }}">
                     {% if section.settings.accordion_icon_2 != blank %}
-                      <img class="sync-accordion-custom-icon-{{ section_id }}"
-                           src="{{ section.settings.accordion_icon_2 | image_url: width: 100 }}"
-                           alt="{{ section.settings.accordion_title_2 | escape }}"
-                           width="{{ section.settings.accordion_custom_icon_size }}"
-                           height="{{ section.settings.accordion_custom_icon_size }}"
-                           loading="lazy">
+                      <img
+                        class="sync-accordion-custom-icon-{{ section_id }}"
+                        src="{{ section.settings.accordion_icon_2 | image_url: width: 100 }}"
+                        alt="{{ section.settings.accordion_title_2 | escape }}"
+                        width="{{ section.settings.accordion_custom_icon_size }}"
+                        height="{{ section.settings.accordion_custom_icon_size }}"
+                        loading="lazy"
+                      >
                     {% endif %}
                     <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_2 }}</span>
                   </div>
@@ -523,15 +544,22 @@
             {% comment %} Acordeón 3 {% endcomment %}
             {% if section.settings.accordion_title_3 != blank %}
               <div class="sync-accordion-item-{{ section_id }}" data-accordion-index="2">
-                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="false" aria-controls="accordion-body-{{ section_id }}-2">
+                <button
+                  class="sync-accordion-header-{{ section_id }}"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="accordion-body-{{ section_id }}-2"
+                >
                   <div class="sync-accordion-left-{{ section_id }}">
                     {% if section.settings.accordion_icon_3 != blank %}
-                      <img class="sync-accordion-custom-icon-{{ section_id }}"
-                           src="{{ section.settings.accordion_icon_3 | image_url: width: 100 }}"
-                           alt="{{ section.settings.accordion_title_3 | escape }}"
-                           width="{{ section.settings.accordion_custom_icon_size }}"
-                           height="{{ section.settings.accordion_custom_icon_size }}"
-                           loading="lazy">
+                      <img
+                        class="sync-accordion-custom-icon-{{ section_id }}"
+                        src="{{ section.settings.accordion_icon_3 | image_url: width: 100 }}"
+                        alt="{{ section.settings.accordion_title_3 | escape }}"
+                        width="{{ section.settings.accordion_custom_icon_size }}"
+                        height="{{ section.settings.accordion_custom_icon_size }}"
+                        loading="lazy"
+                      >
                     {% endif %}
                     <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_3 }}</span>
                   </div>
@@ -548,15 +576,22 @@
             {% comment %} Acordeón 4 {% endcomment %}
             {% if section.settings.accordion_title_4 != blank %}
               <div class="sync-accordion-item-{{ section_id }}" data-accordion-index="3">
-                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="false" aria-controls="accordion-body-{{ section_id }}-3">
+                <button
+                  class="sync-accordion-header-{{ section_id }}"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="accordion-body-{{ section_id }}-3"
+                >
                   <div class="sync-accordion-left-{{ section_id }}">
                     {% if section.settings.accordion_icon_4 != blank %}
-                      <img class="sync-accordion-custom-icon-{{ section_id }}"
-                           src="{{ section.settings.accordion_icon_4 | image_url: width: 100 }}"
-                           alt="{{ section.settings.accordion_title_4 | escape }}"
-                           width="{{ section.settings.accordion_custom_icon_size }}"
-                           height="{{ section.settings.accordion_custom_icon_size }}"
-                           loading="lazy">
+                      <img
+                        class="sync-accordion-custom-icon-{{ section_id }}"
+                        src="{{ section.settings.accordion_icon_4 | image_url: width: 100 }}"
+                        alt="{{ section.settings.accordion_title_4 | escape }}"
+                        width="{{ section.settings.accordion_custom_icon_size }}"
+                        height="{{ section.settings.accordion_custom_icon_size }}"
+                        loading="lazy"
+                      >
                     {% endif %}
                     <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_4 }}</span>
                   </div>
@@ -577,50 +612,49 @@
 </section>
 
 <script>
-    (function() {
-      const section = document.querySelector('.sync-section-{{ section_id }}');
-      if (!section) return;
+  (function () {
+    const section = document.querySelector('.sync-section-{{ section_id }}');
+    if (!section) return;
 
-      const accordionItems = section.querySelectorAll('.sync-accordion-item-{{ section_id }}');
+    const accordionItems = section.querySelectorAll('.sync-accordion-item-{{ section_id }}');
 
-      // Funciones para el acordeón
-      function toggleAccordion(index) {
-        const item = accordionItems[index];
-        if (!item) return;
+    // Funciones para el acordeón
+    function toggleAccordion(index) {
+      const item = accordionItems[index];
+      if (!item) return;
 
-        const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
-        const isCurrentlyActive = item.classList.contains('active');
+      const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
+      const isCurrentlyActive = item.classList.contains('active');
 
-        // Si el acordeón clickeado YA está activo, solo lo cerramos
-        if (isCurrentlyActive) {
-          item.classList.remove('active');
-          header.setAttribute('aria-expanded', 'false');
-        } else {
-          // Primero cerramos TODOS los acordeones
-          accordionItems.forEach((otherItem, i) => {
-            const otherHeader = otherItem.querySelector('.sync-accordion-header-{{ section_id }}');
-            otherItem.classList.remove('active');
-            otherHeader.setAttribute('aria-expanded', 'false');
-          });
-
-          // Luego abrimos solo el clickeado
-          item.classList.add('active');
-          header.setAttribute('aria-expanded', 'true');
-        }
-      }
-
-      // Event Listeners para acordeón
-      accordionItems.forEach((item, index) => {
-        const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
-
-        header.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleAccordion(index);
+      // Si el acordeón clickeado YA está activo, solo lo cerramos
+      if (isCurrentlyActive) {
+        item.classList.remove('active');
+        header.setAttribute('aria-expanded', 'false');
+      } else {
+        // Primero cerramos TODOS los acordeones
+        accordionItems.forEach((otherItem, i) => {
+          const otherHeader = otherItem.querySelector('.sync-accordion-header-{{ section_id }}');
+          otherItem.classList.remove('active');
+          otherHeader.setAttribute('aria-expanded', 'false');
         });
-      });
 
-    })();
+        // Luego abrimos solo el clickeado
+        item.classList.add('active');
+        header.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    // Event Listeners para acordeón
+    accordionItems.forEach((item, index) => {
+      const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
+
+      header.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleAccordion(index);
+      });
+    });
+  })();
 </script>
 
 {% schema %}
@@ -649,6 +683,17 @@
       "unit": "px",
       "default": 0,
       "info": "0 = sin límite de altura"
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "label": "Altura fija de imagen (desktop)",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 0,
+      "info": "0 = altura automática (100%)"
     },
     {
       "type": "select",
