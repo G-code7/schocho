@@ -122,24 +122,24 @@
         "padding-block-end": 40
       }
     },
-    "two_columns_acordion_slider_v2_CYxA9C": {
-      "type": "two-columns-acordion-slider-v2",
+    "two_columns_acordion_slider_v3_gfGpwf": {
+      "type": "two-columns-acordion-slider-v3",
       "blocks": {
-        "accordion_item_88R87w": {
+        "accordion_item_jjRzk4": {
           "type": "accordion_item",
           "settings": {
             "accordion_title": "Selección de ingredientes",
             "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
           }
         },
-        "accordion_item_7y8W68": {
+        "accordion_item_aEUDVC": {
           "type": "accordion_item",
           "settings": {
             "accordion_title": "Proceso artesanal",
             "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
           }
         },
-        "accordion_item_NQxY7Y": {
+        "accordion_item_6LtMMi": {
           "type": "accordion_item",
           "settings": {
             "accordion_title": "Control de calidad",
@@ -148,12 +148,13 @@
         }
       },
       "block_order": [
-        "accordion_item_88R87w",
-        "accordion_item_7y8W68",
-        "accordion_item_NQxY7Y"
+        "accordion_item_jjRzk4",
+        "accordion_item_aEUDVC",
+        "accordion_item_6LtMMi"
       ],
-      "name": "Slider + Acordeón",
+      "name": "Imagen + Acordeón inner",
       "settings": {
+        "main_image": "shopify://shop_images/freepik__la-narrativa-visual-se-desarrolla-en-el-corazn-de-__42411_ea8b51c5-c0b7-4fd2-a0a7-b68f0b396aad.png",
         "section_max_width": 1400,
         "section_background_color": "#ffffff",
         "section_padding_top": 40,
@@ -167,7 +168,7 @@
         "wrapper_shadow": false,
         "section_min_height": 600,
         "show_badges": true,
-        "badges_text": "",
+        "badges_text": "Plant-Based, Non-GMO, Clean Label",
         "badge_alignment": "left",
         "badge_gap": 8,
         "badge_margin_bottom": 16,
@@ -196,20 +197,9 @@
         "image_padding_left": 0,
         "image_border_radius": 0,
         "image_object_position": "center center",
-        "transition_duration": 500,
         "show_overlay": false,
         "overlay_color": "#000000",
         "overlay_opacity": 20,
-        "autoplay": true,
-        "autoplay_delay": 4000,
-        "show_indicators": true,
-        "dot_size": 12,
-        "indicators_gap": 10,
-        "indicators_bottom": 25,
-        "dot_color": "#ffffff",
-        "dot_active_color": "#ffffff",
-        "dot_opacity": 40,
-        "dot_hover_opacity": 70,
         "content_bg_color": "#ffffff",
         "content_vertical_align": "center",
         "content_max_width": 500,
@@ -262,6 +252,6 @@
   "order": [
     "main",
     "hero_eaPBre",
-    "two_columns_acordion_slider_v2_CYxA9C"
+    "two_columns_acordion_slider_v3_gfGpwf"
   ]
 }
