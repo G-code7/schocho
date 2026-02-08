@@ -1508,7 +1508,7 @@
         "check_icon_color": "#ffffff",
         "empty_bg_color": "#f7f5f0",
         "empty_border_color": "#f3f1ec",
-        "negative_row_background": "#fceaea",
+        "negative_row_background": "#fff0f0",
         "negative_row_border": "#ffffff",
         "negative_row_label": "#cc3333",
         "negative_row_subtitle": "#994444",
