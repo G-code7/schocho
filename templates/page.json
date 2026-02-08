@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "main-page",
@@ -16,27 +17,251 @@
           "name": "Title",
           "settings": {
             "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
             "type_preset": "h2",
-            "width": "100%"
-          }
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
         "page-content": {
           "type": "page-content",
-          "settings": {}
+          "settings": {},
+          "blocks": {}
         }
       },
       "block_order": [
         "heading",
         "page-content"
       ],
+      "disabled": true,
       "settings": {
+        "content_direction": "column",
         "gap": 32,
+        "color_scheme": "",
         "padding-block-start": 40,
         "padding-block-end": 80
+      }
+    },
+    "hero_eaPBre": {
+      "type": "hero",
+      "blocks": {
+        "text_zx8qMT": {
+          "type": "text",
+          "settings": {
+            "text": "<p>The ancient secret of two moms to nourish three generations</p>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "h1",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_zx8qMT"
+      ],
+      "name": "t:names.hero",
+      "settings": {
+        "media_type_1": "image",
+        "image_1": "shopify://shop_images/Image_fx_73_1.jpg",
+        "media_type_2": "image",
+        "stack_media_on_mobile": false,
+        "custom_mobile_media": false,
+        "media_type_1_mobile": "image",
+        "media_type_2_mobile": "image",
+        "link": "",
+        "open_in_new_tab": false,
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 16,
+        "section_width": "page-width",
+        "section_height": "large",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-5",
+        "toggle_overlay": true,
+        "overlay_color": "#371e54",
+        "overlay_style": "gradient",
+        "gradient_direction": "to top",
+        "blurred_reflection": true,
+        "reflection_opacity": 75,
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "two_columns_acordion_slider_v2_CYxA9C": {
+      "type": "two-columns-acordion-slider-v2",
+      "blocks": {
+        "accordion_item_88R87w": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Selección de ingredientes",
+            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
+          }
+        },
+        "accordion_item_7y8W68": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Proceso artesanal",
+            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
+          }
+        },
+        "accordion_item_NQxY7Y": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Control de calidad",
+            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "accordion_item_88R87w",
+        "accordion_item_7y8W68",
+        "accordion_item_NQxY7Y"
+      ],
+      "name": "Slider + Acordeón",
+      "settings": {
+        "section_max_width": 1400,
+        "section_background_color": "#ffffff",
+        "section_padding_top": 40,
+        "section_padding_bottom": 40,
+        "section_padding_x": 20,
+        "background_color": "#ffffff",
+        "wrapper_border_radius": 16,
+        "wrapper_border_radius_mobile": 12,
+        "wrapper_border_width": 0,
+        "wrapper_border_color": "#e0e0e0",
+        "wrapper_shadow": false,
+        "section_min_height": 600,
+        "show_badges": true,
+        "badges_text": "",
+        "badge_alignment": "left",
+        "badge_gap": 8,
+        "badge_margin_bottom": 16,
+        "badge_background": "#f5f4ed",
+        "badge_text_color": "#3e2563",
+        "badge_border_color": "#ac9e89",
+        "badge_border_width": 1,
+        "badge_border_radius": 50,
+        "badge_font_size": 12,
+        "badge_font_size_mobile": 11,
+        "badge_font_weight": "500",
+        "badge_uppercase": false,
+        "badge_padding_x": 12,
+        "badge_padding_y": 6,
+        "badge_padding_x_mobile": 10,
+        "badge_padding_y_mobile": 4,
+        "badge_icon_size": 16,
+        "badge_icon_gap": 6,
+        "image_position": "left",
+        "mobile_image_position": "top",
+        "image_column_width": 50,
+        "image_bg_color": "#ffffff",
+        "image_padding_top": 0,
+        "image_padding_right": 0,
+        "image_padding_bottom": 0,
+        "image_padding_left": 0,
+        "image_border_radius": 0,
+        "image_object_position": "center center",
+        "transition_duration": 500,
+        "show_overlay": false,
+        "overlay_color": "#000000",
+        "overlay_opacity": 20,
+        "autoplay": true,
+        "autoplay_delay": 4000,
+        "show_indicators": true,
+        "dot_size": 12,
+        "indicators_gap": 10,
+        "indicators_bottom": 25,
+        "dot_color": "#ffffff",
+        "dot_active_color": "#ffffff",
+        "dot_opacity": 40,
+        "dot_hover_opacity": 70,
+        "content_bg_color": "#ffffff",
+        "content_vertical_align": "center",
+        "content_max_width": 500,
+        "content_padding_top": 50,
+        "content_padding_right": 50,
+        "content_padding_bottom": 50,
+        "content_padding_left": 50,
+        "title": "Descubre nuestro proceso",
+        "title_size": 36,
+        "title_size_mobile": 28,
+        "title_weight": "700",
+        "title_color": "#1a1a1a",
+        "title_margin_bottom": 20,
+        "title_line_height": 1.2,
+        "title_letter_spacing": 0,
+        "description": "<p>Conoce cada paso de nuestro proceso y descubre cómo creamos productos excepcionales para ti.</p>",
+        "description_size": 16,
+        "description_color": "#666666",
+        "description_line_height": 1.6,
+        "description_margin_bottom": 30,
+        "first_open": true,
+        "accordion_border_width": 1,
+        "accordion_border_color": "#e0e0e0",
+        "accordion_header_padding_y": 20,
+        "accordion_icon_gap": 14,
+        "accordion_custom_icon_size": 32,
+        "accordion_title_size": 18,
+        "accordion_title_weight": "500",
+        "accordion_title_color": "#1a1a1a",
+        "accordion_title_hover_color": "#5a3e85",
+        "accordion_title_active_color": "#5a3e85",
+        "accordion_toggle_size": 18,
+        "accordion_toggle_thickness": 2,
+        "accordion_toggle_color": "#5a3e85",
+        "accordion_toggle_active_color": "#5a3e85",
+        "accordion_content_padding_bottom": 20,
+        "accordion_content_indent": 0,
+        "accordion_content_size": 15,
+        "accordion_content_color": "#666666",
+        "accordion_content_line_height": 1.6,
+        "section_padding_top_mobile": 20,
+        "section_padding_bottom_mobile": 20,
+        "section_padding_x_mobile": 15,
+        "mobile_image_height": 350,
+        "mobile_image_padding": 0,
+        "mobile_content_padding": 24
       }
     }
   },
   "order": [
-    "main"
+    "main",
+    "hero_eaPBre",
+    "two_columns_acordion_slider_v2_CYxA9C"
   ]
 }
