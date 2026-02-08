@@ -1,0 +1,1508 @@
+{% assign section_id = section.id | replace: '_', '' | replace: '-', '' | slice: 0, 8 %}
+
+{% style %}
+  /* === SECCIÓN PRINCIPAL === */
+  .sync-section-{{ section_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ section.settings.section_background_color }};
+    padding: {{ section.settings.section_padding_top }}px {{ section.settings.section_padding_x }}px {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .sync-wrapper-{{ section_id }} {
+    max-width: {{ section.settings.section_max_width }}px;
+    margin: 0 auto;
+    {% if section.settings.wrapper_border_radius > 0 %}
+    border-radius: {{ section.settings.wrapper_border_radius }}px;
+    overflow: hidden;
+    {% endif %}
+    {% if section.settings.wrapper_shadow %}
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    {% endif %}
+    {% if section.settings.wrapper_border_width > 0 %}
+    border: {{ section.settings.wrapper_border_width }}px solid {{ section.settings.wrapper_border_color }};
+    {% endif %}
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .sync-container-{{ section_id }} {
+    display: flex;
+    flex-direction: {% if section.settings.image_position == 'right' %}row-reverse{% else %}row{% endif %};
+    min-height: {{ section.settings.section_min_height }}px;
+  }
+
+  /* === COLUMNA IMAGEN === */
+  .sync-image-column-{{ section_id }} {
+    flex: 0 0 {{ section.settings.image_column_width }}%;
+    position: relative;
+    overflow: hidden;
+    background-color: {{ section.settings.image_bg_color }};
+    padding: {{ section.settings.image_padding_top }}px {{ section.settings.image_padding_right }}px {{ section.settings.image_padding_bottom }}px {{ section.settings.image_padding_left }}px;
+  }
+
+  .sync-image-wrapper-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    {% if section.settings.image_border_radius > 0 %}
+    border-radius: {{ section.settings.image_border_radius }}px;
+    overflow: hidden;
+    {% endif %}
+  }
+
+  .sync-main-image-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ section.settings.image_object_position }};
+    {% if section.settings.image_border_radius > 0 %}
+    border-radius: {{ section.settings.image_border_radius }}px;
+    {% endif %}
+  }
+
+  .sync-placeholder-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    {% if section.settings.image_border_radius > 0 %}
+    border-radius: {{ section.settings.image_border_radius }}px;
+    {% endif %}
+  }
+
+  .sync-placeholder-{{ section_id }} svg {
+    width: 120px;
+    height: 120px;
+    opacity: 0.4;
+  }
+
+  /* Overlay opcional sobre imagen */
+  .sync-overlay-{{ section_id }} {
+    position: absolute;
+    top: {{ section.settings.image_padding_top }}px;
+    left: {{ section.settings.image_padding_left }}px;
+    right: {{ section.settings.image_padding_right }}px;
+    bottom: {{ section.settings.image_padding_bottom }}px;
+    background: {{ section.settings.overlay_color }};
+    opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    pointer-events: none;
+    z-index: 2;
+    {% if section.settings.image_border_radius > 0 %}
+    border-radius: {{ section.settings.image_border_radius }}px;
+    {% endif %}
+  }
+
+  /* === COLUMNA CONTENIDO === */
+  .sync-content-column-{{ section_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: {{ section.settings.content_vertical_align }};
+    padding: {{ section.settings.content_padding_top }}px {{ section.settings.content_padding_right }}px {{ section.settings.content_padding_bottom }}px {{ section.settings.content_padding_left }}px;
+    background-color: {{ section.settings.content_bg_color }};
+  }
+
+  .sync-content-{{ section_id }} {
+    max-width: {{ section.settings.content_max_width }}px;
+  }
+
+  /* === BADGE / CLAIMS === */
+  .sync-badge-container-{{ section_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: {{ section.settings.badge_gap }}px;
+    margin-bottom: {{ section.settings.badge_margin_bottom }}px;
+    {% if section.settings.badge_alignment == 'center' %}
+    justify-content: center;
+    {% elsif section.settings.badge_alignment == 'right' %}
+    justify-content: flex-end;
+    {% else %}
+    justify-content: flex-start;
+    {% endif %}
+  }
+
+  .sync-badge-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ section.settings.badge_icon_gap }}px;
+    padding: {{ section.settings.badge_padding_y }}px {{ section.settings.badge_padding_x }}px;
+    background-color: {{ section.settings.badge_background }};
+    color: {{ section.settings.badge_text_color }};
+    font-size: {{ section.settings.badge_font_size }}px;
+    font-weight: {{ section.settings.badge_font_weight }};
+    line-height: 1.2;
+    border: {{ section.settings.badge_border_width }}px solid {{ section.settings.badge_border_color }};
+    border-radius: {{ section.settings.badge_border_radius }}px;
+    {% if section.settings.badge_uppercase %}
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    {% endif %}
+  }
+
+  .sync-badge-icon-{{ section_id }} {
+    width: {{ section.settings.badge_icon_size }}px;
+    height: {{ section.settings.badge_icon_size }}px;
+    flex-shrink: 0;
+  }
+
+  .sync-badge-icon-{{ section_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Título */
+  .sync-title-{{ section_id }} {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: {{ section.settings.title_weight }};
+    color: {{ section.settings.title_color }};
+    margin: 0 0 {{ section.settings.title_margin_bottom }}px 0;
+    line-height: {{ section.settings.title_line_height }};
+    letter-spacing: {{ section.settings.title_letter_spacing }}px;
+  }
+
+  /* Descripción */
+  .sync-description-{{ section_id }} {
+    font-size: {{ section.settings.description_size }}px;
+    color: {{ section.settings.description_color }};
+    line-height: {{ section.settings.description_line_height }};
+    margin: 0 0 {{ section.settings.description_margin_bottom }}px 0;
+  }
+
+  /* === ACORDEÓN === */
+  .sync-accordion-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .sync-accordion-item-{{ section_id }} {
+    border: none;
+    border-top: {{ section.settings.accordion_border_width }}px solid {{ section.settings.accordion_border_color }};
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background-color: transparent;
+  }
+
+  .sync-accordion-item-{{ section_id }}:last-child {
+    border-bottom: {{ section.settings.accordion_border_width }}px solid {{ section.settings.accordion_border_color }};
+  }
+
+  .sync-accordion-header-{{ section_id }} {
+    width: 100%;
+    padding: {{ section.settings.accordion_header_padding_y }}px 0;
+    background-color: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: {{ section.settings.accordion_icon_gap }}px;
+    transition: all 0.3s ease;
+  }
+
+  .sync-accordion-header-{{ section_id }}:hover .sync-accordion-title-{{ section_id }} {
+    color: {{ section.settings.accordion_title_hover_color }};
+  }
+
+  .sync-accordion-left-{{ section_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ section.settings.accordion_icon_gap }}px;
+    flex: 1;
+  }
+
+  .sync-accordion-title-{{ section_id }} {
+    font-size: {{ section.settings.accordion_title_size }}px;
+    font-weight: {{ section.settings.accordion_title_weight }};
+    color: {{ section.settings.accordion_title_color }};
+    margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .sync-accordion-item-{{ section_id }}.active .sync-accordion-title-{{ section_id }} {
+    color: {{ section.settings.accordion_title_active_color }};
+  }
+
+  /* Icono personalizado (imagen PNG) */
+  .sync-accordion-custom-icon-{{ section_id }} {
+    width: {{ section.settings.accordion_custom_icon_size }}px;
+    height: {{ section.settings.accordion_custom_icon_size }}px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+
+  /* Icono + / - */
+  .sync-accordion-toggle-{{ section_id }} {
+    position: relative;
+    width: {{ section.settings.accordion_toggle_size }}px;
+    height: {{ section.settings.accordion_toggle_size }}px;
+    flex-shrink: 0;
+  }
+
+  .sync-accordion-toggle-{{ section_id }}::before,
+  .sync-accordion-toggle-{{ section_id }}::after {
+    content: '';
+    position: absolute;
+    background-color: {{ section.settings.accordion_toggle_color }};
+    transition: all 0.3s ease;
+  }
+
+  /* Línea horizontal (siempre visible) */
+  .sync-accordion-toggle-{{ section_id }}::before {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: {{ section.settings.accordion_toggle_thickness }}px;
+    transform: translateY(-50%);
+  }
+
+  /* Línea vertical (se oculta cuando está activo) */
+  .sync-accordion-toggle-{{ section_id }}::after {
+    top: 0;
+    left: 50%;
+    width: {{ section.settings.accordion_toggle_thickness }}px;
+    height: 100%;
+    transform: translateX(-50%);
+  }
+
+  .sync-accordion-item-{{ section_id }}.active .sync-accordion-toggle-{{ section_id }}::after {
+    transform: translateX(-50%) rotate(90deg);
+    opacity: 0;
+  }
+
+  .sync-accordion-item-{{ section_id }}.active .sync-accordion-toggle-{{ section_id }}::before,
+  .sync-accordion-item-{{ section_id }}.active .sync-accordion-toggle-{{ section_id }}::after {
+    background-color: {{ section.settings.accordion_toggle_active_color }};
+  }
+
+  .sync-accordion-body-{{ section_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .sync-accordion-item-{{ section_id }}.active .sync-accordion-body-{{ section_id }} {
+    max-height: 500px;
+  }
+
+  .sync-accordion-content-{{ section_id }} {
+    padding: 0 0 {{ section.settings.accordion_content_padding_bottom }}px {{ section.settings.accordion_content_indent }}px;
+    font-size: {{ section.settings.accordion_content_size }}px;
+    color: {{ section.settings.accordion_content_color }};
+    line-height: {{ section.settings.accordion_content_line_height }};
+  }
+
+  /* === RESPONSIVE === */
+  @media screen and (max-width: 990px) {
+    .sync-section-{{ section_id }} {
+      padding: {{ section.settings.section_padding_top_mobile }}px {{ section.settings.section_padding_x_mobile }}px {{ section.settings.section_padding_bottom_mobile }}px;
+    }
+
+    .sync-wrapper-{{ section_id }} {
+      {% if section.settings.wrapper_border_radius_mobile > 0 %}
+      border-radius: {{ section.settings.wrapper_border_radius_mobile }}px;
+      {% else %}
+      border-radius: 0;
+      {% endif %}
+    }
+
+    .sync-container-{{ section_id }} {
+      flex-direction: {% if section.settings.mobile_image_position == 'bottom' %}column-reverse{% else %}column{% endif %};
+      min-height: auto;
+    }
+
+    .sync-image-column-{{ section_id }} {
+      flex: none;
+      width: 100%;
+      height: {{ section.settings.mobile_image_height }}px;
+      position: relative;
+      padding: {{ section.settings.mobile_image_padding }}px;
+    }
+
+    .sync-content-column-{{ section_id }} {
+      padding: {{ section.settings.mobile_content_padding }}px;
+    }
+
+    .sync-title-{{ section_id }} {
+      font-size: {{ section.settings.title_size_mobile }}px;
+    }
+
+    .sync-description-{{ section_id }} {
+      font-size: {{ section.settings.description_size | times: 0.9 | round }}px;
+    }
+
+    .sync-overlay-{{ section_id }} {
+      top: {{ section.settings.mobile_image_padding }}px;
+      left: {{ section.settings.mobile_image_padding }}px;
+      right: {{ section.settings.mobile_image_padding }}px;
+      bottom: {{ section.settings.mobile_image_padding }}px;
+    }
+
+    .sync-badge-{{ section_id }} {
+      font-size: {{ section.settings.badge_font_size_mobile }}px;
+      padding: {{ section.settings.badge_padding_y_mobile }}px {{ section.settings.badge_padding_x_mobile }}px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .sync-image-column-{{ section_id }} {
+      height: {{ section.settings.mobile_image_height | times: 0.8 | round }}px;
+    }
+
+    .sync-title-{{ section_id }} {
+      font-size: {{ section.settings.title_size_mobile | times: 0.85 | round }}px;
+    }
+
+    .sync-accordion-header-{{ section_id }} {
+      padding: 14px 0;
+    }
+  }
+
+  /* Reducir movimiento si el usuario lo prefiere */
+  @media (prefers-reduced-motion: reduce) {
+    .sync-accordion-item-{{ section_id }},
+    .sync-accordion-toggle-{{ section_id }},
+    .sync-accordion-body-{{ section_id }} {
+      transition: none;
+    }
+  }
+{% endstyle %}
+
+<section class="sync-section-{{ section_id }}">
+  <div class="sync-wrapper-{{ section_id }}">
+    <div class="sync-container-{{ section_id }}">
+      <!-- Columna Imagen: Imagen única -->
+      <div class="sync-image-column-{{ section_id }}">
+        <div class="sync-image-wrapper-{{ section_id }}">
+          {% if section.settings.main_image != blank %}
+            <img
+              class="sync-main-image-{{ section_id }}"
+              src="{{ section.settings.main_image | image_url: width: 1200 }}"
+              srcset="
+                {{ section.settings.main_image | image_url: width: 600 }} 600w,
+                {{ section.settings.main_image | image_url: width: 900 }} 900w,
+                {{ section.settings.main_image | image_url: width: 1200 }} 1200w,
+                {{ section.settings.main_image | image_url: width: 1800 }} 1800w
+              "
+              sizes="(max-width: 990px) 100vw, {{ section.settings.image_column_width }}vw"
+              alt="{{ section.settings.main_image.alt | default: section.settings.title | escape }}"
+              loading="eager"
+              width="{{ section.settings.main_image.width }}"
+              height="{{ section.settings.main_image.height }}"
+            >
+          {% else %}
+            <div class="sync-placeholder-{{ section_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if section.settings.show_overlay %}
+          <div class="sync-overlay-{{ section_id }}"></div>
+        {% endif %}
+      </div>
+
+      <!-- Columna Contenido -->
+      <div class="sync-content-column-{{ section_id }}">
+        <div class="sync-content-{{ section_id }}">
+          {%- comment -%} ===== BADGES / CLAIMS ===== {%- endcomment -%}
+          {% if section.settings.show_badges %}
+            {%- liquid
+              assign badges_text = section.settings.badges_text
+              assign has_badges = false
+
+              if badges_text != blank
+                assign badges_array = badges_text | split: ','
+                if badges_array.size > 0
+                  assign has_badges = true
+                endif
+              endif
+            -%}
+
+            {% if has_badges %}
+              <div class="sync-badge-container-{{ section_id }}">
+                {% for badge in badges_array %}
+                  {%- assign trimmed_badge = badge | strip -%}
+                  {% if trimmed_badge != blank %}
+                    <span class="sync-badge-{{ section_id }}">
+                      {% if section.settings.badge_icon != blank %}
+                        <span class="sync-badge-icon-{{ section_id }}">
+                          <img
+                            src="{{ section.settings.badge_icon | image_url: width: 48 }}"
+                            alt=""
+                            loading="lazy"
+                            width="{{ section.settings.badge_icon_size }}"
+                            height="{{ section.settings.badge_icon_size }}"
+                          >
+                        </span>
+                      {% endif %}
+                      {{ trimmed_badge }}
+                    </span>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endif %}
+
+          {% if section.settings.title != blank %}
+            <h2 class="sync-title-{{ section_id }}">{{ section.settings.title }}</h2>
+          {% endif %}
+
+          {% if section.settings.description != blank %}
+            <div class="sync-description-{{ section_id }}">{{ section.settings.description }}</div>
+          {% endif %}
+
+          <div class="sync-accordion-{{ section_id }}" data-accordion>
+            {% for block in section.blocks %}
+              {% if block.type == 'accordion_item' %}
+                <div
+                  class="sync-accordion-item-{{ section_id }}{% if forloop.first and section.settings.first_open %} active{% endif %}"
+                  data-accordion-index="{{ forloop.index0 }}"
+                  {{ block.shopify_attributes }}
+                >
+                  <button
+                    class="sync-accordion-header-{{ section_id }}"
+                    type="button"
+                    aria-expanded="{% if forloop.first and section.settings.first_open %}true{% else %}false{% endif %}"
+                    aria-controls="accordion-body-{{ section_id }}-{{ forloop.index0 }}"
+                  >
+                    <div class="sync-accordion-left-{{ section_id }}">
+                      {% if block.settings.icon != blank %}
+                        <img
+                          class="sync-accordion-custom-icon-{{ section_id }}"
+                          src="{{ block.settings.icon | image_url: width: 100 }}"
+                          alt="{{ block.settings.accordion_title | escape }}"
+                          width="{{ section.settings.accordion_custom_icon_size }}"
+                          height="{{ section.settings.accordion_custom_icon_size }}"
+                          loading="lazy"
+                        >
+                      {% endif %}
+                      <span class="sync-accordion-title-{{ section_id }}">{{ block.settings.accordion_title }}</span>
+                    </div>
+                    <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
+                  </button>
+                  <div
+                    class="sync-accordion-body-{{ section_id }}"
+                    id="accordion-body-{{ section_id }}-{{ forloop.index0 }}"
+                  >
+                    <div class="sync-accordion-content-{{ section_id }}">
+                      {{ block.settings.accordion_content }}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+    (function() {
+      const section = document.querySelector('.sync-section-{{ section_id }}');
+      if (!section) return;
+
+      const accordionItems = section.querySelectorAll('.sync-accordion-item-{{ section_id }}');
+
+      // Funciones para el acordeón
+      function toggleAccordion(index) {
+        const item = accordionItems[index];
+        if (!item) return;
+
+        const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
+        const isCurrentlyActive = item.classList.contains('active');
+
+        // Si el acordeón clickeado YA está activo, solo lo cerramos
+        if (isCurrentlyActive) {
+          item.classList.remove('active');
+          header.setAttribute('aria-expanded', 'false');
+        } else {
+          // Primero cerramos TODOS los acordeones
+          accordionItems.forEach((otherItem, i) => {
+            const otherHeader = otherItem.querySelector('.sync-accordion-header-{{ section_id }}');
+            otherItem.classList.remove('active');
+            otherHeader.setAttribute('aria-expanded', 'false');
+          });
+
+          // Luego abrimos solo el clickeado
+          item.classList.add('active');
+          header.setAttribute('aria-expanded', 'true');
+        }
+      }
+
+      // Event Listeners para acordeón
+      accordionItems.forEach((item, index) => {
+        const header = item.querySelector('.sync-accordion-header-{{ section_id }}');
+
+        header.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleAccordion(index);
+        });
+      });
+
+    })();
+</script>
+
+{% schema %}
+{
+  "name": "Imagen + Acordeón",
+  "tag": "section",
+  "class": "section-image-accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "── Imagen Principal ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Imagen principal",
+      "info": "Selecciona cualquier imagen de tu tienda"
+    },
+    {
+      "type": "header",
+      "content": "── Contenedor Principal ──"
+    },
+    {
+      "type": "range",
+      "id": "section_max_width",
+      "label": "Ancho máximo",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Color de fondo exterior",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_x",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "── Wrapper (Caja Interior) ──"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "wrapper_border_radius",
+      "label": "Radio de borde (desktop)",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "wrapper_border_radius_mobile",
+      "label": "Radio de borde (móvil)",
+      "min": 0,
+      "max": 24,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "wrapper_border_width",
+      "label": "Grosor de borde",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "wrapper_border_color",
+      "label": "Color de borde",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "checkbox",
+      "id": "wrapper_shadow",
+      "label": "Mostrar sombra",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "section_min_height",
+      "label": "Altura mínima",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "header",
+      "content": "── Badge / Claims ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Mostrar badges",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "badges_text",
+      "label": "Badges (separados por coma)",
+      "placeholder": "Plant-Based, Non-GMO, Clean Label",
+      "info": "Ej: Plant-Based, Non-GMO, Gluten-Free"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_icon",
+      "label": "Icono para badges (opcional)"
+    },
+    {
+      "type": "select",
+      "id": "badge_alignment",
+      "label": "Alineación",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "badge_gap",
+      "label": "Espacio entre badges",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "badge_margin_bottom",
+      "label": "Margen inferior",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Badge - Estilo"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "badge_border_color",
+      "label": "Color de borde",
+      "default": "#ac9e89"
+    },
+    {
+      "type": "range",
+      "id": "badge_border_width",
+      "label": "Grosor de borde",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "badge_border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Tamaño de texto",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size_mobile",
+      "label": "Tamaño de texto (móvil)",
+      "min": 9,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "select",
+      "id": "badge_font_weight",
+      "label": "Peso de fuente",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "checkbox",
+      "id": "badge_uppercase",
+      "label": "Mayúsculas",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_x",
+      "label": "Padding horizontal",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_y",
+      "label": "Padding vertical",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_x_mobile",
+      "label": "Padding horizontal (móvil)",
+      "min": 6,
+      "max": 16,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "badge_padding_y_mobile",
+      "label": "Padding vertical (móvil)",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "badge_icon_size",
+      "label": "Tamaño de icono",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "badge_icon_gap",
+      "label": "Espacio entre icono y texto",
+      "min": 4,
+      "max": 12,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "── Posición de Imagen ──"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Posición en desktop",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_image_position",
+      "label": "Posición en móvil",
+      "options": [
+        { "value": "top", "label": "Arriba" },
+        { "value": "bottom", "label": "Abajo" }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "range",
+      "id": "image_column_width",
+      "label": "Ancho columna imagen",
+      "min": 30,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "── Configuración de Imagen ──"
+    },
+    {
+      "type": "color",
+      "id": "image_bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "image_padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_padding_right",
+      "label": "Padding derecho",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_padding_left",
+      "label": "Padding izquierdo",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Radio de borde de imagen",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "image_object_position",
+      "label": "Posición del objeto",
+      "options": [
+        { "value": "center center", "label": "Centro" },
+        { "value": "top center", "label": "Arriba" },
+        { "value": "bottom center", "label": "Abajo" },
+        { "value": "center left", "label": "Izquierda" },
+        { "value": "center right", "label": "Derecha" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_overlay",
+      "label": "Mostrar overlay",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color de overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad de overlay",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "── Contenido ──"
+    },
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "content_vertical_align",
+      "label": "Alineación vertical",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Centro" },
+        { "value": "flex-end", "label": "Abajo" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo",
+      "min": 300,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "content_padding_top",
+      "label": "Padding superior",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_padding_right",
+      "label": "Padding derecho",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_padding_bottom",
+      "label": "Padding inferior",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "content_padding_left",
+      "label": "Padding izquierdo",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "── Título ──"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Descubre nuestro proceso"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño (desktop)",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño (móvil)",
+      "min": 20,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Peso",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medio" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Margen inferior",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "label": "Altura de línea",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "label": "Espaciado de letras",
+      "min": -2,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "── Descripción ──"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "<p>Conoce cada paso de nuestro proceso y descubre cómo creamos productos excepcionales para ti.</p>"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Tamaño",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "description_line_height",
+      "label": "Altura de línea",
+      "min": 1.2,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "description_margin_bottom",
+      "label": "Margen inferior",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón - General ──"
+    },
+    {
+      "type": "checkbox",
+      "id": "first_open",
+      "label": "Primer acordeón abierto",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "accordion_border_width",
+      "label": "Grosor línea separadora",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "accordion_border_color",
+      "label": "Color línea",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón - Encabezado ──"
+    },
+    {
+      "type": "range",
+      "id": "accordion_header_padding_y",
+      "label": "Padding vertical",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "accordion_icon_gap",
+      "label": "Espacio icono-título",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "accordion_custom_icon_size",
+      "label": "Tamaño icono custom",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón - Título ──"
+    },
+    {
+      "type": "range",
+      "id": "accordion_title_size",
+      "label": "Tamaño",
+      "min": 14,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "accordion_title_weight",
+      "label": "Peso",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medio" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "accordion_title_color",
+      "label": "Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accordion_title_hover_color",
+      "label": "Color hover",
+      "default": "#5a3e85"
+    },
+    {
+      "type": "color",
+      "id": "accordion_title_active_color",
+      "label": "Color activo",
+      "default": "#5a3e85"
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón - Toggle ──"
+    },
+    {
+      "type": "range",
+      "id": "accordion_toggle_size",
+      "label": "Tamaño",
+      "min": 14,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "accordion_toggle_thickness",
+      "label": "Grosor líneas",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "accordion_toggle_color",
+      "label": "Color",
+      "default": "#5a3e85"
+    },
+    {
+      "type": "color",
+      "id": "accordion_toggle_active_color",
+      "label": "Color activo",
+      "default": "#5a3e85"
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón - Contenido ──"
+    },
+    {
+      "type": "range",
+      "id": "accordion_content_padding_bottom",
+      "label": "Padding inferior",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "accordion_content_indent",
+      "label": "Indentación izquierda",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "accordion_content_size",
+      "label": "Tamaño texto",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "accordion_content_color",
+      "label": "Color",
+      "default": "#666666"
+    },
+    {
+      "type": "range",
+      "id": "accordion_content_line_height",
+      "label": "Altura de línea",
+      "min": 1.2,
+      "max": 2.0,
+      "step": 0.1,
+      "default": 1.6
+    },
+    {
+      "type": "header",
+      "content": "── Móvil ──"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top_mobile",
+      "label": "Padding superior sección",
+      "min": 0,
+      "max": 60,
+      "step": 10,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom_mobile",
+      "label": "Padding inferior sección",
+      "min": 0,
+      "max": 60,
+      "step": 10,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_padding_x_mobile",
+      "label": "Padding horizontal sección",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_height",
+      "label": "Altura de imagen",
+      "min": 200,
+      "max": 500,
+      "step": 50,
+      "unit": "px",
+      "default": 350
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_padding",
+      "label": "Padding imagen",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_padding",
+      "label": "Padding contenido",
+      "min": 16,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion_item",
+      "name": "Item de acordeón inner",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icono del acordeón",
+          "info": "PNG o imagen pequeña junto al título"
+        },
+        {
+          "type": "text",
+          "id": "accordion_title",
+          "label": "Título",
+          "default": "Título del paso"
+        },
+        {
+          "type": "richtext",
+          "id": "accordion_content",
+          "label": "Contenido",
+          "default": "<p>Descripción detallada de este paso o sección.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Imagen + Acordeón inner",
+      "settings": {
+        "show_badges": true,
+        "badges_text": "Plant-Based, Non-GMO, Clean Label"
+      },
+      "blocks": [
+        {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Selección de ingredientes",
+            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
+          }
+        },
+        {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Proceso artesanal",
+            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
+          }
+        },
+        {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Control de calidad",
+            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
