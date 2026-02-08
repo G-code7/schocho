@@ -126,7 +126,7 @@
       "type": "two-columns-acordion-slider-v3",
       "name": "Imagen + Acordeón inner",
       "settings": {
-        "main_image": "shopify://shop_images/meet-us-pronto-chocho.webp",
+        "main_image": "shopify://shop_images/chocho-women-andean.jpg",
         "section_max_width": 1400,
         "section_background_color": "#ffffff",
         "section_padding_top": 40,
@@ -173,7 +173,7 @@
         "overlay_color": "#000000",
         "overlay_opacity": 20,
         "content_bg_color": "#ffffff",
-        "content_vertical_align": "center",
+        "content_vertical_align": "flex-start",
         "content_max_width": 500,
         "content_padding_top": 50,
         "content_padding_right": 50,
