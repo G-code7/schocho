@@ -401,45 +401,37 @@
     }
 
     /* Negative aspect rows - what Chocho doesn't contain */
+  
     .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative {
-      background-color: {{ section.settings.negative_row_background }};
-      border-color: {{ section.settings.negative_row_border }} !important;
-    }
-
-    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative:hover {
-      background-color: {{ section.settings.negative_row_background }};
-      opacity: 0.95;
+      background-color: {{ section.settings.negative_row_background }} !important;
+      border-left: 4px solid {{ section.settings.negative_row_label }};
     }
 
     .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main {
       color: {{ section.settings.negative_row_label }};
+      font-weight: 600;
     }
 
     .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-subtitle {
       color: {{ section.settings.negative_row_subtitle }};
     }
 
-    /* Add a subtle pattern or icon to negative rows */
-    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative:before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 4px;
-      height: 100%;
-      background-color: {{ section.settings.negative_row_label }};
-      opacity: 0.3;
+    /* Ajuste para no desplazar contenido */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__cell-{{ section_id }}:first-child {
+      position: relative;
     }
 
-    /* Style for empty cells in negative rows (what Chocho doesn't have) */
-    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__icon-{{ section_id }}.empty {
-      border-color: {{ section.settings.negative_row_border }};
-      background-color: {{ section.settings.negative_row_background }};
+    /* Ícono de advertencia opcional */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__cell-{{ section_id }}.highlight {
-      background-color: {{ section.settings.negative_row_background }};
-      opacity: 0.9;
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main:before {
+      content: "⚠";
+      font-size: 0.9em;
+      opacity: 0.7;
     }
 {% endstyle %}
 
