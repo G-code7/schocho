@@ -457,45 +457,105 @@
           {% endif %}
 
           <div class="sync-accordion-{{ section_id }}" data-accordion>
-            {% for block in section.blocks %}
-              {% if block.type == 'accordion_item' %}
-                <div
-                  class="sync-accordion-item-{{ section_id }}{% if forloop.first and section.settings.first_open %} active{% endif %}"
-                  data-accordion-index="{{ forloop.index0 }}"
-                  {{ block.shopify_attributes }}
-                >
-                  <button
-                    class="sync-accordion-header-{{ section_id }}"
-                    type="button"
-                    aria-expanded="{% if forloop.first and section.settings.first_open %}true{% else %}false{% endif %}"
-                    aria-controls="accordion-body-{{ section_id }}-{{ forloop.index0 }}"
-                  >
-                    <div class="sync-accordion-left-{{ section_id }}">
-                      {% if block.settings.icon != blank %}
-                        <img
-                          class="sync-accordion-custom-icon-{{ section_id }}"
-                          src="{{ block.settings.icon | image_url: width: 100 }}"
-                          alt="{{ block.settings.accordion_title | escape }}"
-                          width="{{ section.settings.accordion_custom_icon_size }}"
-                          height="{{ section.settings.accordion_custom_icon_size }}"
-                          loading="lazy"
-                        >
-                      {% endif %}
-                      <span class="sync-accordion-title-{{ section_id }}">{{ block.settings.accordion_title }}</span>
-                    </div>
-                    <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
-                  </button>
-                  <div
-                    class="sync-accordion-body-{{ section_id }}"
-                    id="accordion-body-{{ section_id }}-{{ forloop.index0 }}"
-                  >
-                    <div class="sync-accordion-content-{{ section_id }}">
-                      {{ block.settings.accordion_content }}
-                    </div>
+            {% comment %} Acordeón 1 {% endcomment %}
+            {% if section.settings.accordion_title_1 != blank %}
+              <div class="sync-accordion-item-{{ section_id }}{% if section.settings.first_open %} active{% endif %}" data-accordion-index="0">
+                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="{% if section.settings.first_open %}true{% else %}false{% endif %}" aria-controls="accordion-body-{{ section_id }}-0">
+                  <div class="sync-accordion-left-{{ section_id }}">
+                    {% if section.settings.accordion_icon_1 != blank %}
+                      <img class="sync-accordion-custom-icon-{{ section_id }}"
+                           src="{{ section.settings.accordion_icon_1 | image_url: width: 100 }}"
+                           alt="{{ section.settings.accordion_title_1 | escape }}"
+                           width="{{ section.settings.accordion_custom_icon_size }}"
+                           height="{{ section.settings.accordion_custom_icon_size }}"
+                           loading="lazy">
+                    {% endif %}
+                    <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_1 }}</span>
+                  </div>
+                  <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
+                </button>
+                <div class="sync-accordion-body-{{ section_id }}" id="accordion-body-{{ section_id }}-0">
+                  <div class="sync-accordion-content-{{ section_id }}">
+                    {{ section.settings.accordion_content_1 }}
                   </div>
                 </div>
-              {% endif %}
-            {% endfor %}
+              </div>
+            {% endif %}
+
+            {% comment %} Acordeón 2 {% endcomment %}
+            {% if section.settings.accordion_title_2 != blank %}
+              <div class="sync-accordion-item-{{ section_id }}" data-accordion-index="1">
+                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="false" aria-controls="accordion-body-{{ section_id }}-1">
+                  <div class="sync-accordion-left-{{ section_id }}">
+                    {% if section.settings.accordion_icon_2 != blank %}
+                      <img class="sync-accordion-custom-icon-{{ section_id }}"
+                           src="{{ section.settings.accordion_icon_2 | image_url: width: 100 }}"
+                           alt="{{ section.settings.accordion_title_2 | escape }}"
+                           width="{{ section.settings.accordion_custom_icon_size }}"
+                           height="{{ section.settings.accordion_custom_icon_size }}"
+                           loading="lazy">
+                    {% endif %}
+                    <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_2 }}</span>
+                  </div>
+                  <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
+                </button>
+                <div class="sync-accordion-body-{{ section_id }}" id="accordion-body-{{ section_id }}-1">
+                  <div class="sync-accordion-content-{{ section_id }}">
+                    {{ section.settings.accordion_content_2 }}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% comment %} Acordeón 3 {% endcomment %}
+            {% if section.settings.accordion_title_3 != blank %}
+              <div class="sync-accordion-item-{{ section_id }}" data-accordion-index="2">
+                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="false" aria-controls="accordion-body-{{ section_id }}-2">
+                  <div class="sync-accordion-left-{{ section_id }}">
+                    {% if section.settings.accordion_icon_3 != blank %}
+                      <img class="sync-accordion-custom-icon-{{ section_id }}"
+                           src="{{ section.settings.accordion_icon_3 | image_url: width: 100 }}"
+                           alt="{{ section.settings.accordion_title_3 | escape }}"
+                           width="{{ section.settings.accordion_custom_icon_size }}"
+                           height="{{ section.settings.accordion_custom_icon_size }}"
+                           loading="lazy">
+                    {% endif %}
+                    <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_3 }}</span>
+                  </div>
+                  <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
+                </button>
+                <div class="sync-accordion-body-{{ section_id }}" id="accordion-body-{{ section_id }}-2">
+                  <div class="sync-accordion-content-{{ section_id }}">
+                    {{ section.settings.accordion_content_3 }}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% comment %} Acordeón 4 {% endcomment %}
+            {% if section.settings.accordion_title_4 != blank %}
+              <div class="sync-accordion-item-{{ section_id }}" data-accordion-index="3">
+                <button class="sync-accordion-header-{{ section_id }}" type="button" aria-expanded="false" aria-controls="accordion-body-{{ section_id }}-3">
+                  <div class="sync-accordion-left-{{ section_id }}">
+                    {% if section.settings.accordion_icon_4 != blank %}
+                      <img class="sync-accordion-custom-icon-{{ section_id }}"
+                           src="{{ section.settings.accordion_icon_4 | image_url: width: 100 }}"
+                           alt="{{ section.settings.accordion_title_4 | escape }}"
+                           width="{{ section.settings.accordion_custom_icon_size }}"
+                           height="{{ section.settings.accordion_custom_icon_size }}"
+                           loading="lazy">
+                    {% endif %}
+                    <span class="sync-accordion-title-{{ section_id }}">{{ section.settings.accordion_title_4 }}</span>
+                  </div>
+                  <span class="sync-accordion-toggle-{{ section_id }}" aria-hidden="true"></span>
+                </button>
+                <div class="sync-accordion-body-{{ section_id }}" id="accordion-body-{{ section_id }}-3">
+                  <div class="sync-accordion-content-{{ section_id }}">
+                    {{ section.settings.accordion_content_4 }}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -552,9 +612,9 @@
 
 {% schema %}
 {
-  "name": "Imagen + Acordeón",
+  "name": "Imagen + Acordeón Fijo",
   "tag": "section",
-  "class": "section-image-accordion",
+  "class": "section-image-accordion-fixed",
   "settings": [
     {
       "type": "header",
@@ -1383,6 +1443,90 @@
     },
     {
       "type": "header",
+      "content": "── Acordeón 1 ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "accordion_icon_1",
+      "label": "Icono (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_1",
+      "label": "Título",
+      "default": "Selección de ingredientes"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_1",
+      "label": "Contenido",
+      "default": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón 2 ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "accordion_icon_2",
+      "label": "Icono (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_2",
+      "label": "Título",
+      "default": "Proceso artesanal"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_2",
+      "label": "Contenido",
+      "default": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón 3 ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "accordion_icon_3",
+      "label": "Icono (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_3",
+      "label": "Título",
+      "default": "Control de calidad"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_3",
+      "label": "Contenido",
+      "default": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
+    },
+    {
+      "type": "header",
+      "content": "── Acordeón 4 ──"
+    },
+    {
+      "type": "image_picker",
+      "id": "accordion_icon_4",
+      "label": "Icono (opcional)"
+    },
+    {
+      "type": "text",
+      "id": "accordion_title_4",
+      "label": "Título",
+      "default": "Envío sostenible"
+    },
+    {
+      "type": "richtext",
+      "id": "accordion_content_4",
+      "label": "Contenido",
+      "default": "<p>Utilizamos materiales de embalaje ecológicos y optimizamos las rutas de entrega.</p>"
+    },
+    {
+      "type": "header",
       "content": "── Móvil ──"
     },
     {
@@ -1446,62 +1590,23 @@
       "default": 24
     }
   ],
-  "blocks": [
-    {
-      "type": "accordion_item",
-      "name": "Item de acordeón inner",
-      "settings": [
-        {
-          "type": "image_picker",
-          "id": "icon",
-          "label": "Icono del acordeón",
-          "info": "PNG o imagen pequeña junto al título"
-        },
-        {
-          "type": "text",
-          "id": "accordion_title",
-          "label": "Título",
-          "default": "Título del paso"
-        },
-        {
-          "type": "richtext",
-          "id": "accordion_content",
-          "label": "Contenido",
-          "default": "<p>Descripción detallada de este paso o sección.</p>"
-        }
-      ]
-    }
-  ],
   "presets": [
     {
-      "name": "Imagen + Acordeón inner",
+      "name": "Imagen + Acordeón Fijo",
       "settings": {
         "show_badges": true,
-        "badges_text": "Plant-Based, Non-GMO, Clean Label"
-      },
-      "blocks": [
-        {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Selección de ingredientes",
-            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
-          }
-        },
-        {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Proceso artesanal",
-            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
-          }
-        },
-        {
-          "type": "accordion_item",
-          "settings": {
-            "accordion_title": "Control de calidad",
-            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
-          }
-        }
-      ]
+        "badges_text": "Plant-Based, Non-GMO, Clean Label",
+        "title": "Descubre nuestro proceso",
+        "description": "<p>Conoce cada paso de nuestro proceso y descubre cómo creamos productos excepcionales para ti.</p>",
+        "accordion_title_1": "Selección de ingredientes",
+        "accordion_content_1": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>",
+        "accordion_title_2": "Proceso artesanal",
+        "accordion_content_2": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>",
+        "accordion_title_3": "Control de calidad",
+        "accordion_content_3": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>",
+        "accordion_title_4": "Envío sostenible",
+        "accordion_content_4": "<p>Utilizamos materiales de embalaje ecológicos y optimizamos las rutas de entrega.</p>"
+      }
     }
   ]
 }
