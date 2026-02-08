@@ -1,4 +1,8 @@
-{% assign section_id = section.id | replace: '_', '' | replace: '-', '' | slice: 0, 8 %}
+{% comment %}
+  Generamos un ID único combinando el section.id con un timestamp aleatorio
+  Esto permite usar la sección múltiples veces sin conflictos de estilos
+{% endcomment %}
+{% assign section_id = section.id | append: '-' | append: section.settings.title | handle %}
 
 {% style %}
   /* === SECCIÓN PRINCIPAL === */
@@ -37,12 +41,16 @@
     position: relative;
     overflow: hidden;
     background-color: {{ section.settings.image_bg_color }};
-    padding: {{ section.settings.image_padding_top }}px {{ section.settings.image_padding_right }}px {{ section.settings.image_padding_bottom }}px {{ section.settings.image_padding_left }}px;
+    padding: {{ section.settings.image_padding }}px;
   }
 
   .sync-image-wrapper-{{ section_id }} {
     width: 100%;
     height: 100%;
+    {% if section.settings.image_max_height > 0 %}
+    max-height: {{ section.settings.image_max_height }}px;
+    {% endif %}
+    position: relative;
     {% if section.settings.image_border_radius > 0 %}
     border-radius: {{ section.settings.image_border_radius }}px;
     overflow: hidden;
@@ -52,7 +60,7 @@
   .sync-main-image-{{ section_id }} {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: {{ section.settings.image_object_fit }};
     object-position: {{ section.settings.image_object_position }};
     {% if section.settings.image_border_radius > 0 %}
     border-radius: {{ section.settings.image_border_radius }}px;
@@ -62,6 +70,7 @@
   .sync-placeholder-{{ section_id }} {
     width: 100%;
     height: 100%;
+    min-height: 400px;
     background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
     display: flex;
     align-items: center;
@@ -80,10 +89,10 @@
   /* Overlay opcional sobre imagen */
   .sync-overlay-{{ section_id }} {
     position: absolute;
-    top: {{ section.settings.image_padding_top }}px;
-    left: {{ section.settings.image_padding_left }}px;
-    right: {{ section.settings.image_padding_right }}px;
-    bottom: {{ section.settings.image_padding_bottom }}px;
+    top: {{ section.settings.image_padding }}px;
+    left: {{ section.settings.image_padding }}px;
+    right: {{ section.settings.image_padding }}px;
+    bottom: {{ section.settings.image_padding }}px;
     background: {{ section.settings.overlay_color }};
     opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     pointer-events: none;
@@ -99,12 +108,13 @@
     display: flex;
     flex-direction: column;
     justify-content: {{ section.settings.content_vertical_align }};
-    padding: {{ section.settings.content_padding_top }}px {{ section.settings.content_padding_right }}px {{ section.settings.content_padding_bottom }}px {{ section.settings.content_padding_left }}px;
+    padding: {{ section.settings.content_padding }}px;
     background-color: {{ section.settings.content_bg_color }};
   }
 
   .sync-content-{{ section_id }} {
     max-width: {{ section.settings.content_max_width }}px;
+    width: 100%;
   }
 
   /* === BADGE / CLAIMS === */
@@ -318,9 +328,12 @@
     .sync-image-column-{{ section_id }} {
       flex: none;
       width: 100%;
-      height: {{ section.settings.mobile_image_height }}px;
       position: relative;
       padding: {{ section.settings.mobile_image_padding }}px;
+    }
+
+    .sync-image-wrapper-{{ section_id }} {
+      height: {{ section.settings.mobile_image_height }}px;
     }
 
     .sync-content-column-{{ section_id }} {
@@ -349,7 +362,7 @@
   }
 
   @media screen and (max-width: 480px) {
-    .sync-image-column-{{ section_id }} {
+    .sync-image-wrapper-{{ section_id }} {
       height: {{ section.settings.mobile_image_height | times: 0.8 | round }}px;
     }
 
@@ -625,6 +638,30 @@
       "id": "main_image",
       "label": "Imagen principal",
       "info": "Selecciona cualquier imagen de tu tienda"
+    },
+    {
+      "type": "range",
+      "id": "image_max_height",
+      "label": "Altura máxima de imagen",
+      "min": 0,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "default": 0,
+      "info": "0 = sin límite de altura"
+    },
+    {
+      "type": "select",
+      "id": "image_object_fit",
+      "label": "Ajuste de imagen",
+      "options": [
+        { "value": "cover", "label": "Cover (cubre toda el área)" },
+        { "value": "contain", "label": "Contain (imagen completa visible)" },
+        { "value": "fill", "label": "Fill (estira la imagen)" },
+        { "value": "none", "label": "None (tamaño original)" }
+      ],
+      "default": "cover",
+      "info": "Cómo se ajusta la imagen al contenedor"
     },
     {
       "type": "header",
@@ -976,43 +1013,14 @@
     },
     {
       "type": "range",
-      "id": "image_padding_top",
-      "label": "Padding superior",
+      "id": "image_padding",
+      "label": "Padding uniforme alrededor de imagen",
       "min": 0,
       "max": 80,
       "step": 4,
       "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_padding_right",
-      "label": "Padding derecho",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_padding_bottom",
-      "label": "Padding inferior",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "image_padding_left",
-      "label": "Padding izquierdo",
-      "min": 0,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "default": 0
+      "default": 0,
+      "info": "Aplica el mismo padding a todos los lados"
     },
     {
       "type": "range",
@@ -1022,7 +1030,8 @@
       "max": 40,
       "step": 4,
       "unit": "px",
-      "default": 0
+      "default": 16,
+      "info": "Aplica a las 4 esquinas"
     },
     {
       "type": "select",
@@ -1092,43 +1101,14 @@
     },
     {
       "type": "range",
-      "id": "content_padding_top",
-      "label": "Padding superior",
+      "id": "content_padding",
+      "label": "Padding uniforme del contenido",
       "min": 20,
       "max": 100,
       "step": 10,
       "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "content_padding_right",
-      "label": "Padding derecho",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "content_padding_bottom",
-      "label": "Padding inferior",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
-    },
-    {
-      "type": "range",
-      "id": "content_padding_left",
-      "label": "Padding izquierdo",
-      "min": 20,
-      "max": 100,
-      "step": 10,
-      "unit": "px",
-      "default": 50
+      "default": 50,
+      "info": "Aplica el mismo padding a todos los lados"
     },
     {
       "type": "header",
