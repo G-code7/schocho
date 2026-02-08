@@ -399,6 +399,48 @@
         font-size: calc({{ section.settings.row_subtitle_size | default: 12 }}px * 0.9);
         }
     }
+
+    /* Negative aspect rows - what Chocho doesn't contain */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative {
+      background-color: {{ section.settings.negative_row_background }};
+      border-color: {{ section.settings.negative_row_border }} !important;
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative:hover {
+      background-color: {{ section.settings.negative_row_background }};
+      opacity: 0.95;
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main {
+      color: {{ section.settings.negative_row_label }};
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-subtitle {
+      color: {{ section.settings.negative_row_subtitle }};
+    }
+
+    /* Add a subtle pattern or icon to negative rows */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background-color: {{ section.settings.negative_row_label }};
+      opacity: 0.3;
+    }
+
+    /* Style for empty cells in negative rows (what Chocho doesn't have) */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__icon-{{ section_id }}.empty {
+      border-color: {{ section.settings.negative_row_border }};
+      background-color: {{ section.settings.negative_row_background }};
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__cell-{{ section_id }}.highlight {
+      background-color: {{ section.settings.negative_row_background }};
+      opacity: 0.9;
+    }
 {% endstyle %}
 
 <section
@@ -494,12 +536,14 @@
             {% for i in (1..12) %}
               {% liquid
                 assign row_label_key = 'row_' | append: i | append: '_label'
+                assign row_negative_key = 'row_' | append: i | append: '_negative'
                 assign row_subtitle_key = 'row_' | append: i | append: '_subtitle'
                 assign row_col1_key = 'row_' | append: i | append: '_col1'
                 assign row_col2_key = 'row_' | append: i | append: '_col2'
                 assign row_col3_key = 'row_' | append: i | append: '_col3'
 
                 assign row_label = section.settings[row_label_key]
+                assign row_negative = section.settings[row_negative_key]
                 assign row_subtitle = section.settings[row_subtitle_key]
                 assign row_col1 = section.settings[row_col1_key]
                 assign row_col2 = section.settings[row_col2_key]
@@ -507,7 +551,7 @@
               %}
 
               {% if row_label != blank %}
-                <tr class="comparison-table-v3__row-{{ section_id }}">
+                <tr class="comparison-table-v3__row-{{ section_id }} {% if row_negative %}comparison-table-v3__row--negative{% endif %}">
                   <td class="comparison-table-v3__cell-{{ section_id }}">
                     <div class="comparison-table-v3__row-content">
                       <div class="comparison-table-v3__row-label-main">{{ row_label }}</div>
@@ -1487,6 +1531,13 @@
       "label": "Row 12 Label"
     },
     {
+      "type": "checkbox",
+      "id": "row_12_negative",
+      "label": "Mark as negative aspect",
+      "default": true,
+      "info": "Applies a special background to highlight what Chocho doesn't contain"
+    },
+    {
       "type": "text",
       "id": "row_12_subtitle",
       "label": "Row 12 Subtitle",
@@ -1881,6 +1932,31 @@
       "id": "empty_border_color",
       "label": "Empty circle border",
       "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_background",
+      "label": "Negative aspect row background",
+      "default": "#fff5f5",
+      "info": "Background for rows highlighting what Chocho doesn't contain"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_border",
+      "label": "Negative aspect row border",
+      "default": "#ffd6d6"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_label",
+      "label": "Negative aspect label color",
+      "default": "#cc3333"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_subtitle",
+      "label": "Negative aspect subtitle color",
+      "default": "#994444"
     },
     {
       "type": "header",
