@@ -655,7 +655,7 @@
         "image_max_height": 450,
         "image_height": 0,
         "image_object_fit": "cover",
-        "section_max_width": 1400,
+        "section_max_width": 1100,
         "section_background_color": "#f5f4ed",
         "section_padding_top": 40,
         "section_padding_bottom": 40,
