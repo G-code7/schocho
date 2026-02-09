@@ -232,37 +232,11 @@
           },
           "blocks": {}
         },
-        "text_NL8Lfc": {
-          "type": "text",
-          "name": "t:names.text",
-          "settings": {
-            "text": "<p> We are wives, mothers, daughters, businesswomen. The two of us are each caring for our aging parents while raising kids across generations, including Alpha, Gen Z, and Millennials.<br/><br/></p>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "type_preset": "custom",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "text_3qgif7": {
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>Some are athletes, some are picky eaters, some have allergies, and all of them want snacks and shakes that differ from our own preferences. This makes for very cluttered pantries. In the middle of it all, we were also searching for something simple to keep ourselves strong, balanced, and feeling our best.</p>",
+            "text": "<p> We are wives, mothers, daughters, businesswomen. The two of us are each caring for our aging parents while raising kids across generations, including Alpha, Gen Z, and Millennials.<br/><br/>Some are athletes, some are picky eaters, some have allergies, and all of them want snacks and shakes that differ from our own preferences. This makes for very cluttered pantries. In the middle of it all, we were also searching for something simple to keep ourselves strong, balanced, and feeling our best.</p>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -287,7 +261,6 @@
       },
       "block_order": [
         "text_PNpfay",
-        "text_NL8Lfc",
         "text_3qgif7"
       ],
       "name": "t:names.custom_section",
@@ -370,7 +343,7 @@
             "left_image_size_mobile": 200,
             "left_image_offset": 40,
             "left_rotation_speed": 0.3,
-            "left_image_shadow": true,
+            "left_image_shadow": false,
             "left_image_mobile_behavior": "reduce",
             "left_image_mobile_opacity": 0.4,
             "show_right_image": false,
