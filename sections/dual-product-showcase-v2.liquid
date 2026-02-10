@@ -3,7 +3,7 @@
 %}
  
 {% style %}
-  .dual-showcase-{{ section_id }} {
+  section.dual-showcase-{{ section_id }} {
     --transition-speed: 0.6s;
     --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
  
@@ -121,7 +121,7 @@
   }
  
   /* Fila de iconos */
-  .dual-showcase__icons-row-{{ section_id }} {
+  section.dual-showcase-{{ section_id }} .dual-showcase__icons-row-{{ section_id }} {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -129,31 +129,35 @@
     margin-bottom: {{ section.settings.icons_margin_bottom }}px;
   }
  
-  .dual-showcase__icon-item-{{ section_id }} {
+  section.dual-showcase-{{ section_id }} .dual-showcase__icon-item-{{ section_id }} {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
   }
  
-  .dual-showcase__icon-image-{{ section_id }} {
-    width: {{ section.settings.icon_size }}px;
-    height: {{ section.settings.icon_size }}px;
-    object-fit: contain;
+  section.dual-showcase-{{ section_id }} .dual-showcase__icon-image-{{ section_id }} {
+    width: {{ section.settings.icon_size }}px !important;
+    height: {{ section.settings.icon_size }}px !important;
+    object-fit: contain !important;
+    max-width: {{ section.settings.icon_size }}px !important;
+    max-height: {{ section.settings.icon_size }}px !important;
   }
  
-  .dual-showcase__icon-circle-{{ section_id }} {
-    width: {{ section.settings.icon_size }}px;
-    height: {{ section.settings.icon_size }}px;
+  section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
+    width: {{ section.settings.icon_size }}px !important;
+    height: {{ section.settings.icon_size }}px !important;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: {{ section.settings.icon_text_size }}px;
     font-weight: 700;
+    max-width: {{ section.settings.icon_size }}px !important;
+    max-height: {{ section.settings.icon_size }}px !important;
   }
  
-  .dual-showcase__icon-label-{{ section_id }} {
+  section.dual-showcase-{{ section_id }} .dual-showcase__icon-label-{{ section_id }} {
     font-size: {{ section.settings.icon_label_size }}px;
     font-weight: {{ section.settings.icon_label_weight }};
     text-transform: uppercase;
@@ -348,17 +352,19 @@
       font-size: {{ section.settings.tablet_description_size }}px;
     }
  
-    .dual-showcase__icon-image-{{ section_id }},
-    .dual-showcase__icon-circle-{{ section_id }} {
-      width: {{ section.settings.tablet_icon_size }}px;
-      height: {{ section.settings.tablet_icon_size }}px;
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-image-{{ section_id }},
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
+      width: {{ section.settings.tablet_icon_size }}px !important;
+      height: {{ section.settings.tablet_icon_size }}px !important;
+      max-width: {{ section.settings.tablet_icon_size }}px !important;
+      max-height: {{ section.settings.tablet_icon_size }}px !important;
     }
  
-    .dual-showcase__icon-circle-{{ section_id }} {
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
       font-size: {{ section.settings.tablet_icon_text_size }}px;
     }
  
-    .dual-showcase__icon-label-{{ section_id }} {
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-label-{{ section_id }} {
       font-size: {{ section.settings.tablet_icon_label_size }}px;
     }
  
@@ -412,23 +418,25 @@
     }
  
     /* Iconos - debajo de la imagen */
-    .dual-showcase__icons-row-{{ section_id }} {
+    section.dual-showcase-{{ section_id }} .dual-showcase__icons-row-{{ section_id }} {
       order: 2;
       gap: {{ section.settings.mobile_icons_gap }}px;
       margin-bottom: {{ section.settings.mobile_icons_margin }}px;
     }
  
-    .dual-showcase__icon-image-{{ section_id }},
-    .dual-showcase__icon-circle-{{ section_id }} {
-      width: {{ section.settings.mobile_icon_size }}px;
-      height: {{ section.settings.mobile_icon_size }}px;
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-image-{{ section_id }},
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
+      width: {{ section.settings.mobile_icon_size }}px !important;
+      height: {{ section.settings.mobile_icon_size }}px !important;
+      max-width: {{ section.settings.mobile_icon_size }}px !important;
+      max-height: {{ section.settings.mobile_icon_size }}px !important;
     }
  
-    .dual-showcase__icon-circle-{{ section_id }} {
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
       font-size: {{ section.settings.mobile_icon_text_size }}px;
     }
  
-    .dual-showcase__icon-label-{{ section_id }} {
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-label-{{ section_id }} {
       font-size: {{ section.settings.mobile_icon_label_size }}px;
     }
  
@@ -491,13 +499,15 @@
       font-size: {{ section.settings.small_mobile_description_size }}px;
     }
  
-    .dual-showcase__icon-image-{{ section_id }},
-    .dual-showcase__icon-circle-{{ section_id }} {
-      width: {{ section.settings.small_mobile_icon_size }}px;
-      height: {{ section.settings.small_mobile_icon_size }}px;
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-image-{{ section_id }},
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
+      width: {{ section.settings.small_mobile_icon_size }}px !important;
+      height: {{ section.settings.small_mobile_icon_size }}px !important;
+      max-width: {{ section.settings.small_mobile_icon_size }}px !important;
+      max-height: {{ section.settings.small_mobile_icon_size }}px !important;
     }
  
-    .dual-showcase__icon-circle-{{ section_id }} {
+    section.dual-showcase-{{ section_id }} .dual-showcase__icon-circle-{{ section_id }} {
       font-size: {{ section.settings.small_mobile_icon_text_size }}px;
     }
  
@@ -728,6 +738,10 @@
                 {% if description != blank %}
                   <p class="dual-showcase__description-{{ section_id }}">
                     {{ description }}
+                  </p>
+                {% elsif product != blank and product.description != blank %}
+                  <p class="dual-showcase__description-{{ section_id }}">
+                    {{ product.description | strip_html | truncatewords: 30 }}
                   </p>
                 {% endif %}
  
