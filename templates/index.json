@@ -605,7 +605,7 @@
         "content_padding_right": 50,
         "content_padding_bottom": 50,
         "content_padding_left": 50,
-        "title": "Food That Gives Back",
+        "title": "Food that gives back",
         "title_size": 32,
         "title_size_mobile": 22,
         "title_weight": "700",
@@ -650,7 +650,7 @@
       "type": "featured-products-grid-v3-1",
       "name": "Featured Products Grid V3",
       "settings": {
-        "heading": "Three Real-Food Varieties  <br>\n<p style=\" font-size: 16px; font-weight: 500;\">Each crafted from functional <br>and nutrient-dense whole-food ingredients</p>",
+        "heading": "Three real-food varieties  <br>\n<p style=\" font-size: 16px; font-weight: 500;\">Crafted from functional, nutrient-dense whole ingredients.</p>",
         "heading_icon_size": 40,
         "heading_icon_radius": 50,
         "subtitle": "",
@@ -761,7 +761,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h2>One Solution  <br/>For The Whole-Food Seeker</h2>",
+            "text": "<p><strong>One solution for the whole-food seeker</strong></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
