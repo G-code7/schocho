@@ -962,7 +962,7 @@
         "text_CFhBfg": {
           "type": "text",
           "settings": {
-            "text": "<p>real food that gives back</p>",
+            "text": "<p>Real food that gives back</p>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -1146,7 +1146,7 @@
         "section_height_custom": 50,
         "color_scheme": "scheme-6",
         "toggle_overlay": true,
-        "overlay_color": "#1b1b1bb5",
+        "overlay_color": "#453a52b5",
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "blurred_reflection": false,
@@ -1253,7 +1253,7 @@
         "cta_hover_text_1": "#ffffff",
         "right_bg_1": "#e8e4df",
         "product_2": "product-2",
-        "custom_title_2": "ANDEAN CHOCHO with CACAO + SPIRULINA + MACA POWDER BLEND",
+        "custom_title_2": "ANDEAN CHOCHO <i>with</i> <br>CACAO + SPIRULINA + MACA POWDER BLEND",
         "description_2": "A functional food designed for energy and vitality. Nutrient-dense whole-food protein blended with ancestral superfoods to fuel focus, movement, and\nintentional living.",
         "show_product_image_2": false,
         "show_icons_2": true,
