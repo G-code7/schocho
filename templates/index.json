@@ -80,7 +80,7 @@
                   "type": "text",
                   "name": "t:names.caption",
                   "settings": {
-                    "text": "<p>Eat well. <br/>Feel good. Live better.</p>",
+                    "text": "<h1>Eat well. <br/>Feel good. Live better.</h1>",
                     "width": "100%",
                     "max_width": "narrow",
                     "alignment": "center",
