@@ -466,7 +466,13 @@
           {% endif %}
 
           {% if section.settings.title != blank %}
-            <h2 class="sync-title-{{ section_id }}">{{ section.settings.title }}</h2>
+            <h2 class="sync-title-{{ section_id }}">
+              {% if section.settings.title != blank %}
+                <h2 class="sync-title-{{ section_id }}">
+                  {{ section.settings.title | replace: '<h2', '<span' | replace: '</h2>', '</span>' }}
+                </h2>
+              {% endif %}
+            </h2>
           {% endif %}
 
           {% if section.settings.description != blank %}
