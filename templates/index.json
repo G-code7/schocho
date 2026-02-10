@@ -1347,50 +1347,50 @@
     "marquee_RgGzyN": {
       "type": "marquee",
       "blocks": {
-        "text_with_icon_A8GeMT": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "GROWN WITH INTENTION",
-            "icon_type": "none",
-            "icon_position": "left",
-            "icon_size": 24,
-            "icon_gap": 8,
-            "icon_color": "#000000",
-            "type_preset": "h2",
-            "font_size": 24
-          }
-        },
-        "text_with_icon_VVnnK8": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "CRAFTED BY TRADITION",
-            "icon_type": "none",
-            "icon_position": "left",
-            "icon_size": 24,
-            "icon_gap": 8,
-            "icon_color": "#000000",
-            "type_preset": "h2",
-            "font_size": 24
-          }
-        },
         "text_with_icon_bFtLD9": {
           "type": "text_with_icon",
           "settings": {
-            "text": "NOURISHING BY NATURE",
+            "text": "Nourishing by nature",
             "icon_type": "none",
             "icon_position": "left",
             "icon_size": 24,
             "icon_gap": 8,
             "icon_color": "#000000",
-            "type_preset": "h2",
-            "font_size": 24
+            "type_preset": "custom",
+            "font_size": 20
+          }
+        },
+        "text_with_icon_nqj4Vp": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "Crafted by tradition",
+            "icon_type": "none",
+            "icon_position": "left",
+            "icon_size": 24,
+            "icon_gap": 8,
+            "icon_color": "#000000",
+            "type_preset": "custom",
+            "font_size": 20
+          }
+        },
+        "text_with_icon_wbaC6e": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "Grow with intention",
+            "icon_type": "none",
+            "icon_position": "left",
+            "icon_size": 24,
+            "icon_gap": 8,
+            "icon_color": "#000000",
+            "type_preset": "custom",
+            "font_size": 20
           }
         }
       },
       "block_order": [
-        "text_with_icon_A8GeMT",
-        "text_with_icon_VVnnK8",
-        "text_with_icon_bFtLD9"
+        "text_with_icon_bFtLD9",
+        "text_with_icon_nqj4Vp",
+        "text_with_icon_wbaC6e"
       ],
       "name": "t:names.marquee_section",
       "settings": {
@@ -1412,7 +1412,7 @@
         "content_width": 33,
         "content_gap": 30,
         "content_sticky_top": 120,
-        "heading": "Why PRONTO CHOCHOIs Different?",
+        "heading": "Why PRONTO CHOCHO Is Different?",
         "heading_size": 32,
         "heading_weight": 600,
         "heading_line_height": 1.2,
