@@ -1545,7 +1545,7 @@
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "padding-block-start": 0,
-        "padding-block-end": 40
+        "padding-block-end": 0
       }
     },
     "blog_slider_v4_jwH7en": {
@@ -1559,8 +1559,8 @@
         "container_padding": 20,
         "header_margin_bottom": 40,
         "eyebrow": "",
-        "heading": "",
-        "subheading": "",
+        "heading": "<strong>Flavor comes from real food</strong>",
+        "subheading": "Its authentic, real-food flavor makes it easy to sweeten or spice any drink or dish, just the way you like.",
         "heading_alignment": "center",
         "heading_size": 36,
         "heading_weight": "700",
