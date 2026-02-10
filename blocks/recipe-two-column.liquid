@@ -1,4 +1,3 @@
-[file content begin]
 {% doc %}
   @prompt
     Componente de recetas para Shopify con soporte para:
@@ -390,88 +389,6 @@
     {%- comment -%} ========== LEFT COLUMN: Products + Ingredients ========== {%- endcomment -%}
     <div class="ai-recipe-left-{{ ai_gen_id }}">
       
-      {%- comment -%} ===== INGREDIENTS SECTION (MOVED AFTER PRODUCTS) ===== {%- endcomment -%}
-      {% if block.settings.show_ingredients %}
-        <div class="ai-recipe-section-{{ ai_gen_id }}">
-          {% if block.settings.ingredients_title != blank %}
-            <h3 class="ai-recipe-section-title-{{ ai_gen_id }}">{{ block.settings.ingredients_title }}</h3>
-          {% endif %}
-
-          {%- liquid
-            assign ingredients_metafield = article.metafields.recipes.ingredients
-            assign ingredients_list = ''
-            assign has_ingredients = false
-            
-            if ingredients_metafield != blank
-              assign has_ingredients = true
-              assign ingredients_value = ingredients_metafield.value
-              
-              if ingredients_value == blank
-                assign ingredients_value = ingredients_metafield
-              endif
-              
-              if ingredients_value.first != blank
-                assign temp_string = ''
-                for item in ingredients_value
-                  assign clean_item = item | strip
-                  if clean_item != blank
-                    assign temp_string = temp_string | append: clean_item
-                    unless forloop.last
-                      assign temp_string = temp_string | append: ', '
-                    endunless
-                  endif
-                endfor
-                assign ingredients_value = temp_string
-              endif
-              
-              if ingredients_value != blank
-                assign cleaned_value = ingredients_value | strip
-                
-                if cleaned_value contains ','
-                  assign raw_list = cleaned_value | split: ','
-                  assign clean_list = ''
-                  
-                  for item in raw_list
-                    assign clean_item = item | strip
-                    if clean_item != blank
-                      assign clean_list = clean_list | append: clean_item
-                      unless forloop.last
-                        assign clean_list = clean_list | append: '|||'
-                      endunless
-                    endif
-                  endfor
-                  
-                  if clean_list != blank
-                    assign ingredients_list = clean_list | split: '|||'
-                  endif
-                else
-                  assign ingredients_list = cleaned_value | split: '---'
-                endif
-              endif
-            endif
-            
-            if ingredients_list == blank or ingredients_list.size == 0
-              assign has_ingredients = false
-            endif
-          -%}
-
-          {% if has_ingredients %}
-            <ul class="ai-recipe-ingredients-{{ ai_gen_id }}">
-              {% for ingredient in ingredients_list %}
-                {%- assign clean_ingredient = ingredient | strip -%}
-                {% if clean_ingredient != blank %}
-                  <li class="ai-recipe-ingredient-{{ ai_gen_id }}">{{ clean_ingredient }}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          {% else %}
-            <div class="ai-recipe-empty-{{ ai_gen_id }}">
-              {{ block.settings.no_ingredients_text }}
-            </div>
-          {% endif %}
-        </div>
-      {% endif %}
-
       {%- comment -%} ===== PRODUCTS SECTION ===== {%- endcomment -%}
       {% if block.settings.show_products %}
         <div class="ai-recipe-section-{{ ai_gen_id }}">
@@ -566,6 +483,88 @@
           {% else %}
             <div class="ai-recipe-empty-{{ ai_gen_id }}">
               {{ block.settings.no_products_text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {%- comment -%} ===== INGREDIENTS SECTION ===== {%- endcomment -%}
+      {% if block.settings.show_ingredients %}
+        <div class="ai-recipe-section-{{ ai_gen_id }}">
+          {% if block.settings.ingredients_title != blank %}
+            <h3 class="ai-recipe-section-title-{{ ai_gen_id }}">{{ block.settings.ingredients_title }}</h3>
+          {% endif %}
+
+          {%- liquid
+            assign ingredients_metafield = article.metafields.recipes.ingredients
+            assign ingredients_list = ''
+            assign has_ingredients = false
+            
+            if ingredients_metafield != blank
+              assign has_ingredients = true
+              assign ingredients_value = ingredients_metafield.value
+              
+              if ingredients_value == blank
+                assign ingredients_value = ingredients_metafield
+              endif
+              
+              if ingredients_value.first != blank
+                assign temp_string = ''
+                for item in ingredients_value
+                  assign clean_item = item | strip
+                  if clean_item != blank
+                    assign temp_string = temp_string | append: clean_item
+                    unless forloop.last
+                      assign temp_string = temp_string | append: ', '
+                    endunless
+                  endif
+                endfor
+                assign ingredients_value = temp_string
+              endif
+              
+              if ingredients_value != blank
+                assign cleaned_value = ingredients_value | strip
+                
+                if cleaned_value contains ','
+                  assign raw_list = cleaned_value | split: ','
+                  assign clean_list = ''
+                  
+                  for item in raw_list
+                    assign clean_item = item | strip
+                    if clean_item != blank
+                      assign clean_list = clean_list | append: clean_item
+                      unless forloop.last
+                        assign clean_list = clean_list | append: '|||'
+                      endunless
+                    endif
+                  endfor
+                  
+                  if clean_list != blank
+                    assign ingredients_list = clean_list | split: '|||'
+                  endif
+                else
+                  assign ingredients_list = cleaned_value | split: '---'
+                endif
+              endif
+            endif
+            
+            if ingredients_list == blank or ingredients_list.size == 0
+              assign has_ingredients = false
+            endif
+          -%}
+
+          {% if has_ingredients %}
+            <ul class="ai-recipe-ingredients-{{ ai_gen_id }}">
+              {% for ingredient in ingredients_list %}
+                {%- assign clean_ingredient = ingredient | strip -%}
+                {% if clean_ingredient != blank %}
+                  <li class="ai-recipe-ingredient-{{ ai_gen_id }}">{{ clean_ingredient }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="ai-recipe-empty-{{ ai_gen_id }}">
+              {{ block.settings.no_ingredients_text }}
             </div>
           {% endif %}
         </div>
@@ -1146,4 +1145,3 @@
   ]
 }
 {% endschema %}
-[file content end]
