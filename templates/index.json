@@ -589,7 +589,7 @@
         "overlay_color": "#c1b1d7",
         "overlay_opacity": 20,
         "autoplay": true,
-        "autoplay_delay": 4000,
+        "autoplay_delay": 3500,
         "show_indicators": true,
         "dot_size": 12,
         "indicators_gap": 10,
