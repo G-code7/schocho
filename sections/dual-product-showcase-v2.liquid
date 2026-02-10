@@ -729,10 +729,6 @@
                   <p class="dual-showcase__description-{{ section_id }}">
                     {{ description }}
                   </p>
-                {% elsif product != blank and product.description != blank %}
-                  <p class="dual-showcase__description-{{ section_id }}">
-                    {{ product.description | strip_html | truncatewords: 30 }}
-                  </p>
                 {% endif %}
  
                 {%- comment -%} Botón CTA {%- endcomment -%}
