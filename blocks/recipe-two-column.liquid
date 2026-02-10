@@ -438,8 +438,11 @@
 
                     {%- comment -%} Product Info - Center {%- endcomment -%}
                     <a href="{{ product.url }}" class="ai-recipe-product-info-{{ ai_gen_id }} ai-recipe-product-link-{{ ai_gen_id }}">
+                      {%- liquid
+                        assign clean_title = product.title | split: ' with ' | first | split: ' With ' | first
+                      -%}
                       <h4 class="ai-recipe-product-title-{{ ai_gen_id }}">
-                        {{ product.title }}
+                        {{ clean_title }}
                       </h4>
 
                       {% if block.settings.show_price %}
