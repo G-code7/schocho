@@ -438,11 +438,8 @@
 
                     {%- comment -%} Product Info - Center {%- endcomment -%}
                     <a href="{{ product.url }}" class="ai-recipe-product-info-{{ ai_gen_id }} ai-recipe-product-link-{{ ai_gen_id }}">
-                      {%- liquid
-                        assign clean_title = product.title | split: ' with ' | first | split: ' With ' | first
-                      -%}
                       <h4 class="ai-recipe-product-title-{{ ai_gen_id }}">
-                        {{ clean_title }}
+                        {{ product.title }}
                       </h4>
 
                       {% if block.settings.show_price %}
@@ -461,28 +458,20 @@
                     {% if block.settings.show_add_to_cart %}
                       <div class="ai-recipe-product-actions-{{ ai_gen_id }}">
                         {% if product.available %}
-                          <form method="post" action="/cart/add" class="ai-recipe-form-{{ ai_gen_id }}">
+                          <form method="post" action="/cart/add">
                             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
                             <input type="hidden" name="quantity" value="1">
-                            <button 
-                              type="submit" 
-                              class="ai-recipe-add-btn-{{ ai_gen_id }}" 
-                              aria-label="Añadir {{ product.title }} al carrito"
-                            >
+                            <button type="submit" class="ai-recipe-add-btn-{{ ai_gen_id }}" aria-label="{{ block.settings.add_to_cart_text }} - {{ product.title }}">
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                               </svg>
-                              <span class="ai-recipe-btn-text-{{ ai_gen_id }}">
-                                {{- block.settings.add_to_cart_text | default: 'Añadir' -}}
-                              </span>
+                              <span class="ai-recipe-btn-text-{{ ai_gen_id }}">{{ block.settings.add_to_cart_text }}</span>
                             </button>
                           </form>
                         {% else %}
-                          <button class="ai-recipe-add-btn-{{ ai_gen_id }}" disabled>
-                            <span class="ai-recipe-btn-text-{{ ai_gen_id }}">
-                              {{- block.settings.sold_out_text | default: 'Agotado' -}}
-                            </span>
+                          <button class="ai-recipe-add-btn-{{ ai_gen_id }}" disabled aria-label="{{ block.settings.sold_out_text }}">
+                            {{ block.settings.sold_out_text }}
                           </button>
                         {% endif %}
                       </div>
