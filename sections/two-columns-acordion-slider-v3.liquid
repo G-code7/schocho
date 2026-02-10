@@ -467,14 +467,14 @@
 
           {% if section.settings.title != blank %}
             <h2 class="sync-title-{{ section_id }}">
-              {{ section.settings.title | replace: '&lt;', '<' | replace: '&gt;', '>' | replace: '&amp;', '&' | replace: '&quot;', '"' | replace: '&#39;', "'" }}
+              {{ section.settings.title }}
             </h2>
           {% endif %}
-
+            
           {% if section.settings.description != blank %}
-            <div class="sync-description-{{ section_id }}">
-               {{ section.settings.description | strip_html | replace: '&lt;span&gt;', '<span>' | replace: '&lt;/span&gt;', '</span>' | replace: '&lt;br&gt;', '<br>' }}
-            </div>
+            <h2 class="sync-description-{{ section_id }}">
+              {{ section.settings.description }}
+            </h2>
           {% endif %}
 
           <div class="sync-accordion-{{ section_id }}" data-accordion>
