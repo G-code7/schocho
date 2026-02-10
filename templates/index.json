@@ -502,8 +502,8 @@
           "settings": {
             "image": "shopify://shop_images/freepik__documentary-kitchen-photography-eyelevel-perspecti__24330.png",
             "icon": "shopify://shop_images/freepik__background__68644.png",
-            "accordion_title": "Regenerative for the Planet",
-            "accordion_content": "<p>Chocho thrives in the Andes without pesticides or heavy irrigation, naturally restoring soil health by fixing nitrogen. This low-impact, non-GMO legume acts as a model for regenerative agriculture, protecting the Earth’s resources while it grows.</p>"
+            "accordion_title": "Regenerative by Nature",
+            "accordion_content": "<p>Chocho is a unique crop that improves the soil as it grows. Its roots naturally enrich the land, and after harvest, the remaining plants are returned to the earth to restore nutrients, support soil life, and prepare fields for future crops, without the need for synthetic fertilizers or chemical inputs.<br/><br/><em><strong>What nourishes you also nourishes the earth.</strong></em></p>"
           }
         },
         "accordion_item_3TFRYD": {
@@ -511,8 +511,8 @@
           "settings": {
             "image": "shopify://shop_images/chocho-women-andean.jpg",
             "icon": "shopify://shop_images/freepik__background__68644_1.png",
-            "accordion_title": "Crafted by Honoring Tradition",
-            "accordion_content": "<p>Rooted in indigenous heritage, our chocho is hand-sown and harvested as a ritual of care for the community. This traditional approach preserves a vital cultural legacy and ensures shared prosperity for the Andean farmers who guard the land.</p>"
+            "accordion_title": "Naturally Resilient",
+            "accordion_content": "<p>Rooted in indigenous heritage, our chocho is hand-sown and harvested as a ritual of care for the community. This traditional approach preserves a vital cultural legacy and ensures shared prosperity for the Andean farmers who guard the land.</p><p><em><strong>Better for the land. Better for farmers. <br/>Better for your food.</strong></em></p>"
           }
         },
         "accordion_item_NMFNVf": {
@@ -520,15 +520,25 @@
           "settings": {
             "image": "shopify://shop_images/freepik__la-narrativa-visual-se-desarrolla-en-el-corazn-de-__42409.png",
             "icon": "shopify://shop_images/freepik__background__68644.png",
-            "accordion_title": "Thoughtful Sourcing & Preparation",
-            "accordion_content": "<p>We partner with local farmers using a meticulous, multi-day debittering process to maintain the seed's integrity.</p>"
+            "accordion_title": "Rooted in Tradition",
+            "accordion_content": "<p>Chocho is cultivated and harvested by hand through communal work that preserves cultural knowledge and supports local Andean communities. These time-honored practices honor the land, strengthen livelihoods, and keep traditional regenerative farming alive.</p><p><em><strong>Your food has a face, a place, and a story.</strong></em></p>"
+          }
+        },
+        "accordion_item_nmXbQH": {
+          "type": "accordion_item",
+          "settings": {
+            "image": "shopify://shop_images/freepik__integra-en-esta-imagen-el-empaque-de-la-marca-prof__14775.png",
+            "icon": "shopify://shop_images/freepik__background__68644.png",
+            "accordion_title": "Thoughtful Preparation",
+            "accordion_content": "<p>Prepared using ancestral Andean methods, chocho is traditionally debittered through a slow, multi-day preparation practiced for generations, then gently dried and milled into a pure, lectin-free powder close to its natural whole-food form.</p><p><em><strong>Minimal processing. Whole-food integrity. Complete nourishment, delivered pronto to your life.</strong></em></p>"
           }
         }
       },
       "block_order": [
         "accordion_item_M6VQET",
         "accordion_item_3TFRYD",
-        "accordion_item_NMFNVf"
+        "accordion_item_NMFNVf",
+        "accordion_item_nmXbQH"
       ],
       "name": "Slider + Acordeón",
       "settings": {
@@ -544,7 +554,7 @@
         "wrapper_border_color": "#e0e0e0",
         "wrapper_shadow": false,
         "section_min_height": 450,
-        "show_badges": true,
+        "show_badges": false,
         "badges_text": "Our Journey",
         "badge_alignment": "left",
         "badge_gap": 8,
@@ -595,7 +605,7 @@
         "content_padding_right": 50,
         "content_padding_bottom": 50,
         "content_padding_left": 50,
-        "title": "Discover the journey behind our protein",
+        "title": "Food That Gives Back",
         "title_size": 32,
         "title_size_mobile": 22,
         "title_weight": "700",
@@ -603,7 +613,7 @@
         "title_margin_bottom": 20,
         "title_line_height": 1.2,
         "title_letter_spacing": 0,
-        "description": "<p>through a cycle of respect that begins in the high mountains and ends by nourishing your body and the planet.</p>",
+        "description": "<p>When you choose PRONTO CHOCHO, you’re choosing more than nutrition. You’re supporting a regenerative system that restores soil, respects people, and works in harmony with nature. </p><p><em><strong>Clean nourishment grown with intention, a better way forward for you and the planet.</strong></em></p>",
         "description_size": 16,
         "description_color": "#371e54",
         "description_line_height": 1.6,
