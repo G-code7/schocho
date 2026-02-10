@@ -1357,7 +1357,7 @@
             "icon_gap": 8,
             "icon_color": "#000000",
             "type_preset": "custom",
-            "font_size": 20
+            "font_size": 18
           }
         },
         "text_with_icon_nqj4Vp": {
@@ -1370,7 +1370,7 @@
             "icon_gap": 8,
             "icon_color": "#000000",
             "type_preset": "custom",
-            "font_size": 20
+            "font_size": 18
           }
         },
         "text_with_icon_wbaC6e": {
@@ -1383,7 +1383,7 @@
             "icon_gap": 8,
             "icon_color": "#000000",
             "type_preset": "custom",
-            "font_size": 20
+            "font_size": 18
           }
         }
       },
