@@ -467,11 +467,7 @@
 
           {% if section.settings.title != blank %}
             <h2 class="sync-title-{{ section_id }}">
-              {% if section.settings.title != blank %}
-                <h2 class="sync-title-{{ section_id }}">
-                  {{ section.settings.title | replace: '<h2', '<span' | replace: '</h2>', '</span>' }}
-                </h2>
-              {% endif %}
+              {{ section.settings.title | strip_html | replace: '&lt;span&gt;', '<span>' | replace: '&lt;/span&gt;', '</span>' | replace: '&lt;br&gt;', '<br>' }}
             </h2>
           {% endif %}
 
