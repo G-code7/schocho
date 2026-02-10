@@ -472,7 +472,9 @@
           {% endif %}
 
           {% if section.settings.description != blank %}
-            <div class="sync-description-{{ section_id }}">{{ section.settings.description }}</div>
+            <div class="sync-description-{{ section_id }}">
+               {{ section.settings.description | strip_html | replace: '&lt;span&gt;', '<span>' | replace: '&lt;/span&gt;', '</span>' | replace: '&lt;br&gt;', '<br>' }}
+            </div>
           {% endif %}
 
           <div class="sync-accordion-{{ section_id }}" data-accordion>
