@@ -69,7 +69,7 @@
             "alignment": "center",
             "item_spacing": 38,
             "link_padding_vertical": 20,
-            "link_padding_horizontal": 20,
+            "link_padding_horizontal": 35,
             "enable_hover_effect": true,
             "hover_effect_type": "scale",
             "hover_scale": 1.2,
