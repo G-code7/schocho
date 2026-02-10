@@ -47,7 +47,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
+                "gap": 0,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -102,17 +102,31 @@
                   },
                   "blocks": {}
                 },
+                "spacer_LgxHBA": {
+                  "type": "spacer",
+                  "name": "t:names.spacer",
+                  "settings": {
+                    "size": "pixel",
+                    "percent_size": 100,
+                    "pixel_size": 24,
+                    "custom_mobile_size": false,
+                    "size_mobile": "percent",
+                    "percent_size_mobile": 100,
+                    "pixel_size_mobile": 120
+                  },
+                  "blocks": {}
+                },
                 "text_tFJkjg": {
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p><strong>PRONTO CHOCHO</strong></p><p>Whole-Food Protein<br/>The Way Nature Intended<br/></p>",
+                    "text": "<p><strong>PRONTO CHOCHO</strong><br/></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
                     "type_preset": "custom",
                     "font": "var(--font-body--family)",
-                    "font_size": "1.125rem",
+                    "font_size": "1.5rem",
                     "line_height": "normal",
                     "letter_spacing": "normal",
                     "case": "none",
@@ -128,13 +142,38 @@
                   },
                   "blocks": {}
                 },
-                "spacer_LgxHBA": {
+                "text_9jP7Rp": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p><strong>Whole-food protein<br/>the way nature intended<br/></strong></p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "center",
+                    "type_preset": "custom",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "tight",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "spacer_YNdCY9": {
                   "type": "spacer",
                   "name": "t:names.spacer",
                   "settings": {
                     "size": "pixel",
                     "percent_size": 100,
-                    "pixel_size": 20,
+                    "pixel_size": 24,
                     "custom_mobile_size": false,
                     "size_mobile": "percent",
                     "percent_size_mobile": 100,
@@ -142,7 +181,7 @@
                   },
                   "blocks": {}
                 },
-                "text_9jP7Rp": {
+                "text_6A74Hx": {
                   "type": "text",
                   "settings": {
                     "text": "<p>A clean, fiber-rich, complete plant protein from one <br/>of the world’s most ancient and nutrient-dense legumes<br/><br/></p>",
@@ -170,9 +209,11 @@
               },
               "block_order": [
                 "text_NtPMNL",
-                "text_tFJkjg",
                 "spacer_LgxHBA",
-                "text_9jP7Rp"
+                "text_tFJkjg",
+                "text_9jP7Rp",
+                "spacer_YNdCY9",
+                "text_6A74Hx"
               ]
             },
             "button_6mqmxL": {
