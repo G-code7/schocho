@@ -1198,7 +1198,7 @@
         "mobile_image_min_height": 260,
         "mobile_image_max_height": 400,
         "mobile_padding_y": 30,
-        "mobile_padding_x": 40,
+        "mobile_padding_x": 45,
         "mobile_image_size": 140,
         "mobile_image_margin": 18,
         "mobile_icon_size": 40,
