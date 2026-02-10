@@ -467,7 +467,7 @@
 
           {% if section.settings.title != blank %}
             <h2 class="sync-title-{{ section_id }}">
-              {{ section.settings.title | strip_html | replace: '&lt;span&gt;', '<span>' | replace: '&lt;/span&gt;', '</span>' | replace: '&lt;br&gt;', '<br>' }}
+              {{ section.settings.title | replace: '&lt;', '<' | replace: '&gt;', '>' | replace: '&amp;', '&' | replace: '&quot;', '"' | replace: '&#39;', "'" }}
             </h2>
           {% endif %}
 
