@@ -1436,8 +1436,8 @@
                   "name": "Dual Floating Images",
                   "settings": {
                     "eyebrow": "",
-                    "title": "<p>Versatil and Nutritious <br/>Endless Benefits</p>",
-                    "paragraph": "<p><br/>From smoothies and gym-bag lattes to soups and baking, PRONTO CHOCHO seamlessly upgrades any routine with versatile, plant-powered nutrition. This clean, whole-food protein supports every life stage—from childhood to active aging—offering a balanced, family-friendly solution that fits any lifestyle.<br/><br/></p>",
+                    "title": "<p><strong>Versatile and nutritious</strong></p>",
+                    "paragraph": "<p><br/>From smoothies to soups, plant-based lattes to baked goods, <strong>PRONTO CHOCHO </strong>fits easily into any routine, from the gym bag to the kitchen. <br/>It supports every stage of life, from childhood to active aging, offering a balanced, family-friendly solution for any lifestyle.</p>",
                     "eyebrow_color": "#8b7355",
                     "eyebrow_margin_bottom": 16,
                     "title_size": 32,
