@@ -761,8 +761,8 @@
         "image_object_fit": "cover",
         "section_max_width": 1100,
         "section_background_color": "#f5f4ed",
-        "section_padding_top": 40,
-        "section_padding_bottom": 40,
+        "section_padding_top": 20,
+        "section_padding_bottom": 20,
         "section_padding_x": 20,
         "background_color": "#f5f4ed",
         "wrapper_border_radius": 16,
@@ -805,7 +805,7 @@
         "content_vertical_align": "center",
         "content_max_width": 500,
         "content_padding": 50,
-        "title": "Our Commitment to Pure Nutrition",
+        "title": "One Source for Every Generation",
         "title_size": 36,
         "title_size_mobile": 28,
         "title_weight": "700",
@@ -813,11 +813,11 @@
         "title_margin_bottom": 20,
         "title_line_height": 1.2,
         "title_letter_spacing": 0,
-        "description": "<p>We are sharing the strength of the Andes through clean, whole foods with absolutely nothing to hide.</p><p>Bringing chocho to others Now we are bringing Andean chocho to others seeking simple, whole nutrition. Through our business, Andean Pacha, and our first creation, PRONTO CHOCHO signature Andean chocho powder, we are committed to producing foods for the whole-food seeker. Nothing fake. No sweeteners. No additives. No fillers. Nothing to hide.<br/>Just clean, pure nourishment you can trust.</p>",
+        "description": "<p>From student-athletes to grandparents, we found a reliable fuel that finally worked for everyone at once.</p><p><strong>A protein and fiber source for every person</strong>, occasion, and routine<br/>Our kids, teens, young adults, and husbands had more energy for sports and daily activities. We felt fuller for longer without the sugar crashes, and our baby boomer parents felt stronger and more nourished. For the first time, there was one protein and fiber source that worked for all of us. <strong>Andean chocho quickly became the reliable fuel for our busy lives.</strong></p>",
         "description_size": 16,
         "description_color": "#3e2563",
         "description_line_height": 1.6,
-        "description_margin_bottom": 30,
+        "description_margin_bottom": 20,
         "first_open": true,
         "accordion_border_width": 1,
         "accordion_border_color": "#b9a7d2",
@@ -851,7 +851,7 @@
         "section_padding_x_mobile": 15,
         "mobile_image_height": 350,
         "mobile_image_padding": 0,
-        "mobile_content_padding": 24
+        "mobile_content_padding": 20
       }
     },
     "blog_slider_v4_Gh3Rt9": {
