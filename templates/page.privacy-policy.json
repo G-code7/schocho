@@ -160,7 +160,7 @@
             "title_line_height": "1.2",
             "title_uppercase": false,
             "title_color": "#3e2563",
-            "title_margin_bottom": 0,
+            "title_margin_bottom": 40,
             "title_margin_bottom_mobile": 12,
             "paragraph_size": 14,
             "paragraph_size_mobile": 14,
