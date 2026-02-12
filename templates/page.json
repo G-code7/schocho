@@ -125,8 +125,8 @@
             "link": "",
             "open_in_new_tab": false,
             "placeholder": "",
-            "padding-block-start": 20,
-            "padding-block-end": 20,
+            "padding-block-start": 30,
+            "padding-block-end": 30,
             "padding-inline-start": 30,
             "padding-inline-end": 30
           },
@@ -175,7 +175,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/meet-us-pronto-chocho.webp",
+                    "image": "shopify://shop_images/as.png",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -270,7 +270,7 @@
                   "type": "image",
                   "name": "t:names.image",
                   "settings": {
-                    "image": "shopify://shop_images/IMG_4941_1.webp",
+                    "image": "shopify://shop_images/freepik__recrea-la-misma-imagen-pero-siguiendo-las-caracter__72241.png",
                     "link": "",
                     "image_ratio": "adapt",
                     "width": "fill",
@@ -357,7 +357,7 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 50,
+        "padding-block-start": 30,
         "padding-block-end": 30
       }
     },
