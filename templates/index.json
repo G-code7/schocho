@@ -1841,57 +1841,112 @@
         "padding-block-end": 40
       }
     },
-    "176989335875e6e1fb": {
-      "type": "_blocks",
+    "reviews_carousel_kUj6pL": {
+      "type": "reviews-carousel",
       "blocks": {
-        "ai_gen_block_f2fb669_3ECBGN": {
-          "type": "ai_gen_block_f2fb669",
+        "review_nUWfdN": {
+          "type": "review",
           "settings": {
-            "title": "Watch what our clients say",
-            "subtitle": "",
-            "title_size": 32,
-            "subtitle_size": 16,
-            "title_transform": "none",
-            "review_1_name": "María González",
-            "review_1_date": "",
-            "review_1_rating": 5,
-            "review_1_text": "Excelente producto, superó mis expectativas. La calidad es increíble y el servicio al cliente fue excepcional.",
-            "review_2_name": "Carlos Rodríguez",
-            "review_2_date": "",
-            "review_2_rating": 5,
-            "review_2_text": "Me encanta la atención al detalle. Definitivamente volveré a comprar. Muy recomendado para todos.",
-            "review_3_name": "Ana Martínez",
-            "review_3_date": "",
-            "review_3_rating": 5,
-            "review_3_text": "Producto de alta calidad y entrega rápida. Estoy muy satisfecha con mi compra. ¡5 estrellas!",
-            "show_cta_button": false,
-            "cta_button_text": "",
-            "cta_button_link": "",
-            "desktop_width_percent": 100,
-            "section_padding": 60,
-            "card_border_radius": 12,
-            "card_border_width": 1,
-            "background_color": "#efebe5",
-            "title_color": "#3e2563",
-            "subtitle_color": "#3e2563",
-            "card_background": "#efebe5",
-            "card_border_color": "#3e2563",
-            "avatar_background": "#c4b1ca",
-            "avatar_text_color": "#3e2563",
-            "name_color": "#3e2563",
-            "date_color": "#3e2563",
-            "star_color": "#3e2563",
-            "review_text_color": "#3e2563",
-            "button_background": "#371e54",
-            "button_text_color": "#ffffff",
-            "button_hover_background": "#7428dc"
-          },
-          "blocks": {}
+            "image": "shopify://shop_images/woman-celebrates-winter.jpg",
+            "review_text": "\"Este producto superó todas mis expectativas. La calidad es increíble y lo recomiendo a todo el mundo.\"",
+            "author": "María G."
+          }
+        },
+        "review_PYW8n4": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/brown-eyed-girl.jpg",
+            "review_text": "\"Me encanta la atención al detalle. Definitivamente volveré a comprar.\"",
+            "author": "Carlos R."
+          }
+        },
+        "review_AwYtLH": {
+          "type": "review",
+          "settings": {
+            "image": "shopify://shop_images/basketball-game.jpg",
+            "review_text": "\"Producto de alta calidad y entrega rápida. Muy satisfecha con mi compra.\"",
+            "author": "Ana M."
+          }
+        },
+        "review_RMTc6m": {
+          "type": "review",
+          "settings": {
+            "review_text": "\"Una experiencia de compra excelente de principio a fin. ¡Totalmente recomendado!\"",
+            "author": "Laura P."
+          }
         }
       },
       "block_order": [
-        "ai_gen_block_f2fb669_3ECBGN"
+        "review_nUWfdN",
+        "review_PYW8n4",
+        "review_AwYtLH",
+        "review_RMTc6m"
       ],
+      "name": "Carrusel de reviews",
+      "settings": {
+        "max_width": 1280,
+        "bg_color": "#efebe5",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_x": 60,
+        "title": "Lo que dicen nuestros clientes",
+        "subtitle": "",
+        "header_align": "center",
+        "header_margin_bottom": 40,
+        "title_size": 36,
+        "title_weight": "700",
+        "title_color": "#3e2563",
+        "title_uppercase": false,
+        "title_margin_bottom": 12,
+        "subtitle_size": 16,
+        "subtitle_color": "#3e2563",
+        "visible_cards": 3,
+        "visible_cards_tablet": 2,
+        "visible_cards_mobile": 2,
+        "card_width_mobile": 85,
+        "card_gap": 20,
+        "transition_duration": 350,
+        "card_bg": "#ffffff",
+        "card_border_width": 0,
+        "card_border_color": "#e0e0e0",
+        "card_radius": 12,
+        "card_padding": 20,
+        "image_bg": "#f0f0f0",
+        "image_ratio": 100,
+        "image_position": "center center",
+        "review_text_size": 14,
+        "review_text_color": "#3e2563",
+        "review_text_lh": 1.6,
+        "text_margin_bottom": 16,
+        "author_size": 13,
+        "author_weight": "700",
+        "author_color": "#3e2563",
+        "author_uppercase": true,
+        "arrow_size": 44,
+        "arrow_icon_size": 20,
+        "arrow_offset": 24,
+        "arrow_opacity": 90,
+        "arrow_radius": 60,
+        "arrow_border_width": 1,
+        "arrow_border_color": "#3e2563",
+        "arrow_bg": "#ffffff",
+        "arrow_bg_hover": "#f5f0fc",
+        "arrow_icon_color": "#3e2563",
+        "hide_arrows_mobile": false,
+        "show_dots": true,
+        "dots_margin_top": 24,
+        "dots_gap": 8,
+        "dot_size": 10,
+        "dot_color": "#c4b1ca",
+        "dot_opacity": 50,
+        "dot_active_color": "#3e2563",
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40,
+        "padding_x_mobile": 20
+      }
+    },
+    "176989335875e6e1fb": {
+      "type": "_blocks",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -2109,6 +2164,7 @@
     "17659250859c18afff",
     "blog_slider_v4_jwH7en",
     "hero_CXJpkj",
+    "reviews_carousel_kUj6pL",
     "176989335875e6e1fb",
     "blocks_VYXCmb"
   ]
