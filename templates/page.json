@@ -125,37 +125,10 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "text_Wy8TC6": {
-              "type": "text",
-              "name": "t:names.text",
-              "settings": {
-                "text": "<p>We’re Linda and Indira, two friends doing our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, and businesswomen, each caring for our aging parents while raising kids across generations, from Alpha and Gen Z to Millennials.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
             }
           },
           "block_order": [
-            "text_Rkep98",
-            "text_Wy8TC6"
+            "text_Rkep98"
           ]
         },
         "image_a8EVpR": {
@@ -250,25 +223,298 @@
         "padding-block-end": 0
       }
     },
+    "section_PmLUdF": {
+      "type": "section",
+      "blocks": {
+        "group_XJfHjh": {
+          "type": "group",
+          "name": "t:names.group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "flex-start",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "custom",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fill",
+            "custom_height": 100,
+            "inherit_color_scheme": false,
+            "color_scheme": "scheme-1",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 30,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 20,
+            "padding-block-end": 20,
+            "padding-inline-start": 20,
+            "padding-inline-end": 20
+          },
+          "blocks": {
+            "group_CUUbqY": {
+              "type": "group",
+              "name": "t:names.group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "flex-start",
+                "gap": 12,
+                "width": "custom",
+                "custom_width": 30,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "custom",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "image_VQqKRG": {
+                  "type": "image",
+                  "name": "t:names.image",
+                  "settings": {
+                    "image": "shopify://shop_images/meet-us-pronto-chocho.webp",
+                    "link": "",
+                    "image_ratio": "portrait",
+                    "width": "fill",
+                    "custom_width": 100,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_radius": 22,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_CXYcDY": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p><strong>About<br/> the founders</strong></p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "custom",
+                    "font": "var(--font-subheading--family)",
+                    "font_size": "2rem",
+                    "line_height": "tight",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "image_VQqKRG",
+                "text_CXYcDY"
+              ]
+            },
+            "group_Qi8V4Y": {
+              "type": "group",
+              "name": "t:names.group",
+              "settings": {
+                "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
+                "gap": 12,
+                "width": "custom",
+                "custom_width": 70,
+                "width_mobile": "fill",
+                "custom_width_mobile": 42,
+                "height": "fill",
+                "custom_height": 100,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "background_media": "none",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "image_hNmY3c": {
+                  "type": "image",
+                  "name": "t:names.image",
+                  "settings": {
+                    "image": "shopify://shop_images/IMG_4941_1.webp",
+                    "link": "",
+                    "image_ratio": "landscape",
+                    "width": "custom",
+                    "custom_width": 95,
+                    "width_mobile": "fill",
+                    "custom_width_mobile": 100,
+                    "height": "fit",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_radius": 22,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "text_XF3wLK": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>We’re Linda and Indira, two friends doing our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, and businesswomen, each caring for our aging parents while raising kids across generations, from Alpha and Gen Z to Millennials.</p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "image_hNmY3c",
+                "text_XF3wLK"
+              ]
+            }
+          },
+          "block_order": [
+            "group_CUUbqY",
+            "group_Qi8V4Y"
+          ]
+        }
+      },
+      "block_order": [
+        "group_XJfHjh"
+      ],
+      "name": "t:names.custom_section",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "small",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 30,
+        "padding-block-end": 30
+      }
+    },
     "slider_content_7DH4hx": {
       "type": "slider-content",
       "blocks": {
         "slide_3XnQwV": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_4941_1.webp"
+            "image": "shopify://shop_images/freepik__importante-integrar-el-empaque-adjuntado-en-esta-i__14776.png"
           }
         },
         "slide_qeMRLU": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_4829_1.webp"
+            "image": "shopify://shop_images/freepik__documentary-kitchen-photography-eyelevel-perspecti__24330.png"
           }
         },
         "slide_pUrN6X": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_4783.webp"
+            "image": "shopify://shop_images/freepik__integra-en-esta-imagen-el-empaque-de-la-marca-prof__14775.png"
           }
         }
       },
@@ -280,12 +526,12 @@
       "name": "Slider + Contenido",
       "settings": {
         "section_max_width": 1400,
-        "section_background_color": "#ffffff",
+        "section_background_color": "#f5f4ed",
         "section_padding_top": 40,
         "section_padding_bottom": 40,
         "section_padding_x": 20,
-        "section_min_height": 550,
-        "wrapper_bg_color": "#ffffff",
+        "section_min_height": 400,
+        "wrapper_bg_color": "#371e54",
         "wrapper_border_radius": 16,
         "wrapper_border_radius_mobile": 0,
         "wrapper_border_width": 0,
@@ -328,7 +574,7 @@
         "content_padding_right": 50,
         "content_padding_bottom": 50,
         "content_padding_left": 50,
-        "eyebrow": "Our Story",
+        "eyebrow": "",
         "eyebrow_size": 13,
         "eyebrow_weight": "600",
         "eyebrow_color": "#5a3e85",
@@ -344,7 +590,7 @@
         "title_letter_spacing": 0,
         "title_margin_bottom": 12,
         "subtitle": "Some are athletes, some are picky eaters, some have allergies, and all of them want snacks and shakes that differ from our own preferences.",
-        "subtitle_size": 18,
+        "subtitle_size": 16,
         "subtitle_weight": "400",
         "subtitle_color": "#371e54",
         "subtitle_margin_bottom": 20,
@@ -742,6 +988,7 @@
     "main",
     "section_qFEW64",
     "blocks_EnhCeh",
+    "section_PmLUdF",
     "slider_content_7DH4hx",
     "two_columns_acordion_slider_v3_zWCHzC",
     "two_columns_acordion_slider_v3_LE6zFr",
