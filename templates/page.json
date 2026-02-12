@@ -127,8 +127,8 @@
             "placeholder": "",
             "padding-block-start": 20,
             "padding-block-end": 20,
-            "padding-inline-start": 20,
-            "padding-inline-end": 20
+            "padding-inline-start": 30,
+            "padding-inline-end": 30
           },
           "blocks": {
             "group_CUUbqY": {
@@ -177,7 +177,7 @@
                   "settings": {
                     "image": "shopify://shop_images/meet-us-pronto-chocho.webp",
                     "link": "",
-                    "image_ratio": "portrait",
+                    "image_ratio": "adapt",
                     "width": "fill",
                     "custom_width": 100,
                     "width_mobile": "fill",
@@ -272,9 +272,9 @@
                   "settings": {
                     "image": "shopify://shop_images/IMG_4941_1.webp",
                     "link": "",
-                    "image_ratio": "landscape",
-                    "width": "custom",
-                    "custom_width": 95,
+                    "image_ratio": "adapt",
+                    "width": "fill",
+                    "custom_width": 100,
                     "width_mobile": "fill",
                     "custom_width_mobile": 100,
                     "height": "fit",
@@ -294,8 +294,8 @@
                   "name": "t:names.text",
                   "settings": {
                     "text": "<p>We’re Linda and Indira, two friends doing our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, and businesswomen, each caring for our aging parents while raising kids across generations, from Alpha and Gen Z to Millennials.</p>",
-                    "width": "fit-content",
-                    "max_width": "normal",
+                    "width": "100%",
+                    "max_width": "none",
                     "alignment": "left",
                     "type_preset": "rte",
                     "font": "var(--font-body--family)",
@@ -520,7 +520,7 @@
         "show_overlay": false,
         "overlay_color": "#000000",
         "overlay_opacity": 20,
-        "content_bg_color": "#f5f4ed",
+        "content_bg_color": "#fdfdf8",
         "content_vertical_align": "flex-start",
         "content_max_width": 500,
         "content_padding": 50,
