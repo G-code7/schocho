@@ -390,7 +390,7 @@
       ],
       "name": "Slider + Contenido",
       "settings": {
-        "section_max_width": 1400,
+        "section_max_width": 1120,
         "section_background_color": "#f5f4ed",
         "section_padding_top": 40,
         "section_padding_bottom": 40,
