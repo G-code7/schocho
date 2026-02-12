@@ -485,7 +485,7 @@
             "icon_size": 24,
             "icon_gap": 8,
             "icon_color": "#000000",
-            "type_preset": "h2",
+            "type_preset": "body",
             "font_size": 24
           }
         },
@@ -498,7 +498,7 @@
             "icon_size": 24,
             "icon_gap": 8,
             "icon_color": "#000000",
-            "type_preset": "h2",
+            "type_preset": "body",
             "font_size": 24
           }
         },
@@ -511,7 +511,7 @@
             "icon_size": 24,
             "icon_gap": 8,
             "icon_color": "#000000",
-            "type_preset": "h2",
+            "type_preset": "body",
             "font_size": 24
           }
         }
