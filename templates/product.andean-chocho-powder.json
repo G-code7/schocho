@@ -567,7 +567,7 @@
             "title_alignment": "center",
             "title_size": 32,
             "title_color": "#371e54",
-            "title_bottom_spacing": 12,
+            "title_bottom_spacing": 0,
             "media_image": "shopify://shop_images/as.png",
             "video_url": "",
             "gif_url": "",
