@@ -120,7 +120,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p><strong>PRONTO CHOCHO</strong>™<br/></p>",
+                    "text": "<p><strong>PRONTO CHOCHO</strong></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
