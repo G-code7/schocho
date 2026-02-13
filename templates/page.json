@@ -171,34 +171,11 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "image_VQqKRG": {
-                  "type": "image",
-                  "name": "t:names.image",
-                  "settings": {
-                    "image": "shopify://shop_images/IMG_4837.heic",
-                    "link": "",
-                    "image_ratio": "adapt",
-                    "width": "fill",
-                    "custom_width": 100,
-                    "width_mobile": "fill",
-                    "custom_width_mobile": 100,
-                    "height": "fit",
-                    "border": "none",
-                    "border_width": 1,
-                    "border_opacity": 100,
-                    "border_radius": 22,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
                 "text_CXYcDY": {
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p><strong>About<br/> the founders</strong></p>",
+                    "text": "<p><strong>Our story</strong></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -219,11 +196,37 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "text_U9nGdB": {
+                  "type": "text",
+                  "name": "t:names.text",
+                  "settings": {
+                    "text": "<p>We’re Linda and Indira, two friends doing our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, and businesswomen, each caring for our aging parents while raising kids across generations, from Alpha and Gen Z to Millennials Some are athletes, some are picky eaters, some have allergies, and all of them want snacks and shakes that differ from our own preferences.<br/><br/> <strong>The result? </strong>Very cluttered pantries. In the middle of it all, we were searching for something simple to keep ourselves strong, balanced, and feeling our best.</p>",
+                    "width": "100%",
+                    "max_width": "none",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
-                "image_VQqKRG",
-                "text_CXYcDY"
+                "text_CXYcDY",
+                "text_U9nGdB"
               ]
             },
             "group_Qi8V4Y": {
@@ -288,37 +291,10 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
-                },
-                "text_XF3wLK": {
-                  "type": "text",
-                  "name": "t:names.text",
-                  "settings": {
-                    "text": "<p>We’re Linda and Indira, two friends doing our best to keep family life running smoothly while wearing all the hats life throws our way. We are wives, mothers, daughters, and businesswomen, each caring for our aging parents while raising kids across generations, from Alpha and Gen Z to Millennials.</p>",
-                    "width": "100%",
-                    "max_width": "none",
-                    "alignment": "left",
-                    "type_preset": "rte",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
                 }
               },
               "block_order": [
-                "image_hNmY3c",
-                "text_XF3wLK"
+                "image_hNmY3c"
               ]
             }
           },
