@@ -608,7 +608,7 @@
             "card_border_radius": 12,
             "card_border_width": 1,
             "card_border_color": "#e6e6e6",
-            "icon_size": 48,
+            "icon_size": 32,
             "icon_text_gap": 16,
             "heading_size": 18,
             "heading_color": "#1b1b1b",
