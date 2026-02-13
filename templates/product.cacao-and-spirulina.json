@@ -1525,33 +1525,6 @@
     },
     "1770999633cf821450": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_9bedadc_GwaG9F": {
-          "type": "ai_gen_block_9bedadc",
-          "settings": {
-            "show_label": false,
-            "label_text": "",
-            "desktop_width_percent": 80,
-            "background_color": "#f1efea",
-            "border_radius": 22,
-            "padding_vertical": 20,
-            "padding_horizontal": 20,
-            "button_size": 50,
-            "icon_size": 24,
-            "button_color": "#f1efea",
-            "button_icon_color": "#371e54",
-            "button_hover_color": "#3e2563",
-            "button_hover_icon_color": "#ffffff",
-            "button_border_radius": 26,
-            "label_size": 14,
-            "label_color": "#3e2563"
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_9bedadc_GwaG9F"
-      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
