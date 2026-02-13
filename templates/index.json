@@ -404,7 +404,7 @@
           "type": "ai_gen_block_fb2d752",
           "settings": {
             "title": "<p>A longevity food <br/>rooted in the Andes<br/><br/></p>",
-            "paragraph": "<p>Known for its exceptional balance of protein, fiber, healthy fats, and micronutrients, chocho has nourished Andean communities for generations, and now it is available to you, <strong>PRONTO!</strong><br/><br/><strong>Real-food nourishment. Regenerative by nature.<br/>Minimally processed. Simple. Traditional. Intentional.</strong><br/><br/><br/></p>",
+            "paragraph": "<p>Known for its exceptional balance of protein, fiber, healthy fats, and micronutrients, chocho has nourished Andean communities for generations, and now it is available to you, <strong>PRONTO!</strong><br/><br/><strong>Real-food nourishment. <br/>Minimally processed. Traditional. </strong><br/><br/><br/></p>",
             "title_size": 32,
             "title_size_mobile": 22,
             "title_weight": "700",
