@@ -758,7 +758,7 @@
             "background_color": "#00000026",
             "corner_radius": 0,
             "padding-block-start": 0,
-            "padding-block-end": 80,
+            "padding-block-end": 60,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
@@ -794,7 +794,7 @@
         "overlay_color": "#f5f4ed",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 80,
+        "padding-block-start": 60,
         "padding-block-end": 0
       }
     },
