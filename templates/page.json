@@ -1159,11 +1159,11 @@
                 "text_RYz87B": {
                   "type": "text",
                   "settings": {
-                    "text": "<h5><em>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment.</em></h5><h5>We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. From soil to table, our choices are guided by care for the body, the community, and the planet.</h5>",
+                    "text": "<h4>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment.</h4><h4>We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. From soil to table, our choices are guided by care for the body, the community, and the planet.</h4>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "rte",
+                    "type_preset": "paragraph",
                     "font": "var(--font-body--family)",
                     "font_size": "1rem",
                     "line_height": "normal",
