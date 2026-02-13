@@ -1,6 +1,343 @@
+{% doc %}
+  @prompt
+    me gustaría un narrow -  botones de direccion a la izquierda  y derecha para ir al siguiente articulo o al anterior. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% liquid
+  assign current_article = article
+  assign blog_handle = current_article.blog.handle
+  assign current_index = 0
+  
+  for a in blogs[blog_handle].articles
+    if a.id == current_article.id
+      assign current_index = forloop.index0
+      break
+    endif
+  endfor
+  
+  assign prev_index = current_index | minus: 1
+  assign next_index = current_index | plus: 1
+  
+  assign prev_article = nil
+  assign next_article = nil
+  
+  for a in blogs[blog_handle].articles
+    if forloop.index0 == prev_index
+      assign prev_article = a
+    endif
+    if forloop.index0 == next_index
+      assign next_article = a
+    endif
+  endfor
+%}
+
+{% style %}
+  .ai-article-nav-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-article-nav__container-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-article-nav__button-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: {{ block.settings.button_size }}px;
+    height: {{ block.settings.button_size }}px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_icon_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .ai-article-nav__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+    color: {{ block.settings.button_hover_icon_color }};
+    transform: scale(1.05);
+  }
+
+  .ai-article-nav__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .ai-article-nav__button-{{ ai_gen_id }} svg {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+  }
+
+  .ai-article-nav__center-{{ ai_gen_id }} {
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .ai-article-nav__label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.label_size }}px;
+    color: {{ block.settings.label_color }};
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-article-nav__container-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_vertical | times: 0.7 }}px {{ block.settings.padding_horizontal | times: 0.7 }}px;
+    }
+
+    .ai-article-nav__button-{{ ai_gen_id }} {
+      width: {{ block.settings.button_size | times: 0.8 }}px;
+      height: {{ block.settings.button_size | times: 0.8 }}px;
+    }
+
+    .ai-article-nav__button-{{ ai_gen_id }} svg {
+      width: {{ block.settings.icon_size | times: 0.8 }}px;
+      height: {{ block.settings.icon_size | times: 0.8 }}px;
+    }
+
+    .ai-article-nav__label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.label_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<article-navigation-{{ ai_gen_id }} class="ai-article-nav-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-article-nav__container-{{ ai_gen_id }}">
+    {% if prev_article %}
+      <a 
+        href="{{ prev_article.url }}" 
+        class="ai-article-nav__button-{{ ai_gen_id }}"
+        aria-label="Artículo anterior"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </a>
+    {% else %}
+      <button 
+        class="ai-article-nav__button-{{ ai_gen_id }}" 
+        disabled
+        aria-label="No hay artículo anterior"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+
+    {% if block.settings.show_label %}
+      <div class="ai-article-nav__center-{{ ai_gen_id }}">
+        <p class="ai-article-nav__label-{{ ai_gen_id }}">{{ block.settings.label_text }}</p>
+      </div>
+    {% endif %}
+
+    {% if next_article %}
+      <a 
+        href="{{ next_article.url }}" 
+        class="ai-article-nav__button-{{ ai_gen_id }}"
+        aria-label="Siguiente artículo"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </a>
+    {% else %}
+      <button 
+        class="ai-article-nav__button-{{ ai_gen_id }}" 
+        disabled
+        aria-label="No hay siguiente artículo"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    {% endif %}
+  </div>
+</article-navigation-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ArticleNavigation{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('article-navigation-{{ ai_gen_id }}', ArticleNavigation{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Navegación de artículos",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_label",
+      "label": "Mostrar etiqueta central",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_text",
+      "label": "Texto de etiqueta",
+      "default": "Navegación"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Estilo del contenedor"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Radio del borde",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Espaciado vertical",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Espaciado horizontal",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Botones"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "label": "Tamaño del botón",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del icono",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Color del botón",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "button_icon_color",
+      "label": "Color del icono",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Color del botón al pasar",
+      "default": "#7428dc"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_icon_color",
+      "label": "Color del icono al pasar",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Radio del borde del botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Etiqueta"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Tamaño de texto",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Color del texto",
+      "default": "#3e2563"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Navegación de artículos"
+    }
+  ]
+}
 {% endschema %}
