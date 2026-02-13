@@ -54,37 +54,11 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "text_YEYxjU": {
-              "type": "text",
-              "name": "t:names.heading",
-              "settings": {
-                "text": "<h2>New arrivals</h2>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "text_NQYhhB": {
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>We make things that work better and last longer. Our products solve real problems with clean design and honest materials.</p>",
+                "text": "<p>At <strong>PRONTO CHOCHO</strong>, we believe good food should be simple, nourishing, and rooted in where it comes from.</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -108,7 +82,6 @@
             }
           },
           "block_order": [
-            "text_YEYxjU",
             "text_NQYhhB"
           ]
         },
@@ -401,11 +374,11 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>PRONTO CHOCHO™</p>",
+            "text": "<p>PRONTO CHOCHO</p>",
             "width": "100%",
             "max_width": "none",
             "alignment": "center",
-            "type_preset": "h2",
+            "type_preset": "h1",
             "font": "var(--font-heading--family)",
             "font_size": "7.5rem",
             "line_height": "tight",
