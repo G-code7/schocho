@@ -961,7 +961,7 @@
       ],
       "name": "Slider + Acordeón",
       "settings": {
-        "section_max_width": 1000,
+        "section_max_width": 1150,
         "section_background_color": "#ffffff",
         "section_padding_top": 40,
         "section_padding_bottom": 40,
