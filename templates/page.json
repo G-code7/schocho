@@ -919,29 +919,37 @@
         "accordion_item_pQ7myA": {
           "type": "accordion_item",
           "settings": {
-            "accordion_title": "Selección de ingredientes",
-            "accordion_content": "<p>Seleccionamos cuidadosamente los mejores ingredientes de proveedores locales y sostenibles.</p>"
+            "accordion_title": "Transparency",
+            "accordion_content": "<p>We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust.<br/><br/></p>"
           }
         },
         "accordion_item_H3LrCK": {
           "type": "accordion_item",
           "settings": {
-            "accordion_title": "Proceso artesanal",
-            "accordion_content": "<p>Cada producto es elaborado siguiendo técnicas artesanales combinadas con innovación moderna.</p>"
+            "accordion_title": "Regenerative Stewardship",
+            "accordion_content": "<p>We protect and restore the land that feeds us by supporting soil health, preserving biodiversity, and farming practices that give more than they take, ensuring the Andes can nourish generations to come.</p>"
           }
         },
         "accordion_item_QEF3QU": {
           "type": "accordion_item",
           "settings": {
-            "accordion_title": "Control de calidad",
-            "accordion_content": "<p>Rigurosos controles en cada etapa para asegurar la mejor calidad.</p>"
+            "accordion_title": "Nourishment with Purpose",
+            "accordion_content": "<p>Our foods are designed to deliver real benefits through functional, whole-food nutrition: complete plant protein, naturally occurring fiber, and sustained energy, using an ancestral crop that has nourished Andean communities for centuries.</p>"
+          }
+        },
+        "accordion_item_F4k8WR": {
+          "type": "accordion_item",
+          "settings": {
+            "accordion_title": "Community & Reciprocity",
+            "accordion_content": "<p>Well-being is shared. We uplift Andean farmers through fair partnerships, honoring the hands and hearts that cultivate our crops and ensuring that prosperity flows back to the communities who make our food possible.</p>"
           }
         }
       },
       "block_order": [
         "accordion_item_pQ7myA",
         "accordion_item_H3LrCK",
-        "accordion_item_QEF3QU"
+        "accordion_item_QEF3QU",
+        "accordion_item_F4k8WR"
       ],
       "name": "Slider + Acordeón",
       "settings": {
