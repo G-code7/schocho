@@ -150,7 +150,7 @@
                   "type": "icon",
                   "name": "t:names.icon",
                   "settings": {
-                    "icon": "price_tag",
+                    "icon": "tiktok",
                     "width": 28,
                     "link": "",
                     "open_in_new_tab": false
@@ -161,7 +161,7 @@
                   "type": "icon",
                   "name": "t:names.icon",
                   "settings": {
-                    "icon": "price_tag",
+                    "icon": "whatsapp",
                     "width": 28,
                     "link": "",
                     "open_in_new_tab": false
@@ -172,7 +172,7 @@
                   "type": "icon",
                   "name": "t:names.icon",
                   "settings": {
-                    "icon": "price_tag",
+                    "icon": "youtube",
                     "width": 28,
                     "link": "",
                     "open_in_new_tab": false
@@ -183,7 +183,7 @@
                   "type": "icon",
                   "name": "t:names.icon",
                   "settings": {
-                    "icon": "price_tag",
+                    "icon": "instagram",
                     "width": 28,
                     "link": "",
                     "open_in_new_tab": false
