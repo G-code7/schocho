@@ -1210,7 +1210,7 @@
                 "text_eqiPLw": {
                   "type": "text",
                   "settings": {
-                    "text": "<h5><em><strong>To bring real nourishment back to the table.</strong></em></h5><h5>We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</h5>",
+                    "text": "<h5><strong>To bring real nourishment back to the table.</strong></h5><h5>We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</h5>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
