@@ -1073,6 +1073,7 @@
           "static": true,
           "settings": {
             "media_type": "image",
+            "image": "shopify://shop_images/freepik__integra-el-empaque-de-pronto-chcocho-en-esta-image__57577.png",
             "link": "",
             "video_loop": true,
             "video_autoplay": false,
