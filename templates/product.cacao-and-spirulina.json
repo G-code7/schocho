@@ -648,12 +648,72 @@
             "show_slider_dots": true
           },
           "blocks": {}
+        },
+        "wt_benefits_products_DcLknP": {
+          "type": "wt-benefits-products",
+          "name": "Benefits with v2",
+          "settings": {
+            "section_title": "The pillars of Nutrition",
+            "title_alignment": "center",
+            "title_size": 32,
+            "title_color": "#371e54",
+            "title_bottom_spacing": 0,
+            "media_image": "shopify://shop_images/as.png",
+            "video_url": "",
+            "gif_url": "",
+            "media_max_width": 440,
+            "media_border_radius": 8,
+            "section_gap_top": 60,
+            "section_gap_bottom": 60,
+            "column_gap": 20,
+            "benefits_gap": 20,
+            "background_color": "#f5f4ed",
+            "card_background": "#f5f4ed",
+            "card_padding": 24,
+            "card_border_radius": 12,
+            "card_border_width": 1,
+            "card_border_color": "#371e54",
+            "show_icons": false,
+            "icon_size": 12,
+            "icon_text_gap": 10,
+            "heading_size": 18,
+            "heading_color": "#3e2563",
+            "text_size": 14,
+            "text_color": "#371e54",
+            "benefit_left_1_heading": "",
+            "benefit_left_1_description": "<p><strong>Complete, bioavailable plant protein</strong>with<strong>9/9 essential amino acids</strong>to support muscle maintenance and recovery</p>",
+            "benefit_left_2_heading": "",
+            "benefit_left_2_description": "<p><strong>Naturally occurring fiber</strong>to promote satiety, gut health, and digestive comfort<br/><br/></p>",
+            "benefit_left_3_heading": "",
+            "benefit_left_3_description": "",
+            "benefit_left_4_heading": "",
+            "benefit_left_4_description": "",
+            "benefit_right_1_heading": "",
+            "benefit_right_1_description": "<p><strong>Naturally occurring plant-based fats</strong>to support metabolic health and nutrient absorption.</p>",
+            "benefit_right_2_heading": "",
+            "benefit_right_2_description": "<p><strong>Naturally low-glycemic</strong>with slow digesting carbohydrates to support sustained energy and healthy blood sugar response<br/></p>",
+            "benefit_right_3_heading": "",
+            "benefit_right_3_description": "",
+            "benefit_right_4_heading": "",
+            "benefit_right_4_description": "",
+            "mobile_gap": 32,
+            "mobile_media_order": "1",
+            "mobile_benefits_order": "2",
+            "mobile_slides_to_show": 2,
+            "mobile_slider_gap": 16,
+            "slider_autoplay": true,
+            "slider_autoplay_speed": 4000,
+            "show_slider_arrows": true,
+            "show_slider_dots": true
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_hNCtpX",
         "text_Ez4jLA",
-        "ai_gen_block_e67531d_wENzTJ"
+        "ai_gen_block_e67531d_wENzTJ",
+        "wt_benefits_products_DcLknP"
       ],
       "settings": {
         "content_direction": "column",
@@ -1554,6 +1614,63 @@
         "padding-block-start": 80,
         "padding-block-end": 80
       }
+    },
+    "1770999633cf821450": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_9bedadc_GwaG9F": {
+          "type": "ai_gen_block_9bedadc",
+          "settings": {
+            "show_label": false,
+            "label_text": "",
+            "desktop_width_percent": 80,
+            "background_color": "#f1efea",
+            "border_radius": 22,
+            "padding_vertical": 20,
+            "padding_horizontal": 20,
+            "button_size": 50,
+            "icon_size": 24,
+            "button_color": "#f1efea",
+            "button_icon_color": "#371e54",
+            "button_hover_color": "#3e2563",
+            "button_hover_icon_color": "#ffffff",
+            "button_border_radius": 26,
+            "label_size": 14,
+            "label_color": "#3e2563"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_9bedadc_GwaG9F"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
@@ -1562,6 +1679,7 @@
     "blocks_wy8CWj",
     "hero_8wt9xX",
     "section_BhP8Fy",
-    "section_Kc4ing"
+    "section_Kc4ing",
+    "1770999633cf821450"
   ]
 }
