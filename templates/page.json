@@ -919,6 +919,7 @@
         "accordion_item_pQ7myA": {
           "type": "accordion_item",
           "settings": {
+            "icon": "shopify://shop_images/freepik__background__68644_1.png",
             "accordion_title": "Transparency",
             "accordion_content": "<p>We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust.<br/><br/></p>"
           }
@@ -926,6 +927,7 @@
         "accordion_item_H3LrCK": {
           "type": "accordion_item",
           "settings": {
+            "icon": "shopify://shop_images/freepik__background__68644_1.png",
             "accordion_title": "Regenerative Stewardship",
             "accordion_content": "<p>We protect and restore the land that feeds us by supporting soil health, preserving biodiversity, and farming practices that give more than they take, ensuring the Andes can nourish generations to come.</p>"
           }
@@ -933,6 +935,7 @@
         "accordion_item_QEF3QU": {
           "type": "accordion_item",
           "settings": {
+            "icon": "shopify://shop_images/freepik__background__68644_1.png",
             "accordion_title": "Nourishment with Purpose",
             "accordion_content": "<p>Our foods are designed to deliver real benefits through functional, whole-food nutrition: complete plant protein, naturally occurring fiber, and sustained energy, using an ancestral crop that has nourished Andean communities for centuries.</p>"
           }
@@ -940,6 +943,7 @@
         "accordion_item_F4k8WR": {
           "type": "accordion_item",
           "settings": {
+            "icon": "shopify://shop_images/freepik__background__68644_1.png",
             "accordion_title": "Community & Reciprocity",
             "accordion_content": "<p>Well-being is shared. We uplift Andean farmers through fair partnerships, honoring the hands and hearts that cultivate our crops and ensuring that prosperity flows back to the communities who make our food possible.</p>"
           }
@@ -972,7 +976,7 @@
         "badge_margin_bottom": 16,
         "badge_background": "#f5f4ed",
         "badge_text_color": "#3e2563",
-        "badge_border_color": "#ac9e89",
+        "badge_border_color": "#3e2563",
         "badge_border_width": 1,
         "badge_border_radius": 50,
         "badge_font_size": 12,
@@ -1037,17 +1041,17 @@
         "accordion_custom_icon_size": 32,
         "accordion_title_size": 18,
         "accordion_title_weight": "500",
-        "accordion_title_color": "#1a1a1a",
+        "accordion_title_color": "#3e2563",
         "accordion_title_hover_color": "#5a3e85",
         "accordion_title_active_color": "#5a3e85",
-        "accordion_toggle_size": 18,
-        "accordion_toggle_thickness": 2,
+        "accordion_toggle_size": 16,
+        "accordion_toggle_thickness": 1,
         "accordion_toggle_color": "#5a3e85",
         "accordion_toggle_active_color": "#5a3e85",
         "accordion_content_padding_bottom": 20,
         "accordion_content_indent": 0,
         "accordion_content_size": 15,
-        "accordion_content_color": "#666666",
+        "accordion_content_color": "#3e2563",
         "accordion_content_line_height": 1.6,
         "section_padding_top_mobile": 20,
         "section_padding_bottom_mobile": 20,
