@@ -27,7 +27,7 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 12,
             "width": "custom",
-            "custom_width": 50,
+            "custom_width": 40,
             "width_mobile": "fit-content",
             "custom_width_mobile": 100,
             "height": "fit",
@@ -211,14 +211,14 @@
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
+            "horizontal_alignment": "flex-end",
             "vertical_alignment": "flex-start",
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 46,
+            "gap": 26,
             "width": "custom",
-            "custom_width": 90,
+            "custom_width": 60,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "height": "fit",
@@ -245,27 +245,6 @@
             "padding-inline-end": 0
           },
           "blocks": {
-            "menu_4xfbKd": {
-              "type": "menu",
-              "name": "t:names.menu",
-              "settings": {
-                "menu": "footer-1",
-                "heading": "POLICYS",
-                "menu_spacing": 12,
-                "show_as_accordion": true,
-                "accordion_icon": "plus",
-                "accordion_dividers": false,
-                "inherit_color_scheme": true,
-                "color_scheme": "scheme-c798e23d-d7c4-4346-b4cb-2139cd8ca362",
-                "heading_preset": "h3",
-                "link_preset": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
             "menu_HKT4A3": {
               "type": "menu",
               "name": "t:names.menu",
@@ -275,11 +254,11 @@
                 "menu_spacing": 12,
                 "show_as_accordion": true,
                 "accordion_icon": "plus",
-                "accordion_dividers": true,
+                "accordion_dividers": false,
                 "inherit_color_scheme": true,
                 "color_scheme": "",
-                "heading_preset": "h3",
-                "link_preset": "",
+                "heading_preset": "h6",
+                "link_preset": "paragraph",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -331,7 +310,6 @@
             }
           },
           "block_order": [
-            "menu_4xfbKd",
             "menu_HKT4A3",
             "menu_RPUDRk",
             "menu_xctKtb"
