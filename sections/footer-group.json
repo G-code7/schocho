@@ -388,6 +388,18 @@
           },
           "blocks": {}
         },
+        "divider_HycR3H": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 0.5,
+            "corner_radius": "square",
+            "width_percent": 45,
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        },
         "button_NJkqAb": {
           "type": "button",
           "name": "t:names.button",
@@ -427,6 +439,18 @@
             "border_radius": 4,
             "hover_animation": "lift",
             "transition_duration": 0.3
+          },
+          "blocks": {}
+        },
+        "divider_rLpDzG": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 0.5,
+            "corner_radius": "square",
+            "width_percent": 45,
+            "padding-block-start": 0,
+            "padding-block-end": 0
           },
           "blocks": {}
         },
@@ -472,6 +496,18 @@
           },
           "blocks": {}
         },
+        "divider_qzenLf": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 1,
+            "corner_radius": "square",
+            "width_percent": 45,
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        },
         "button_yG63GX": {
           "type": "button",
           "name": "t:names.button",
@@ -514,6 +550,18 @@
           },
           "blocks": {}
         },
+        "divider_BddE9d": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 0.5,
+            "corner_radius": "square",
+            "width_percent": 45,
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        },
         "button_q3Qmnm": {
           "type": "button",
           "name": "t:names.button",
@@ -553,6 +601,18 @@
             "border_radius": 4,
             "hover_animation": "lift",
             "transition_duration": 0.3
+          },
+          "blocks": {}
+        },
+        "divider_wwFB6p": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 0.5,
+            "corner_radius": "square",
+            "width_percent": 45,
+            "padding-block-start": 0,
+            "padding-block-end": 0
           },
           "blocks": {}
         },
@@ -601,10 +661,15 @@
       },
       "block_order": [
         "footer_copyright_N8HV7P",
+        "divider_HycR3H",
         "button_NJkqAb",
+        "divider_rLpDzG",
         "button_kyF3hq",
+        "divider_qzenLf",
         "button_yG63GX",
+        "divider_BddE9d",
         "button_q3Qmnm",
+        "divider_wwFB6p",
         "button_JV9a7d"
       ],
       "name": "t:names.custom_section",
