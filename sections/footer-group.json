@@ -350,6 +350,20 @@
         "padding-block-end": 40
       }
     },
+    "divider_h8i9Jh": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-4",
+        "section_width": "page-width",
+        "thickness": 1,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 10,
+        "padding-block-end": 18
+      }
+    },
     "footer": {
       "type": "footer",
       "custom_css": [],
@@ -626,6 +640,7 @@
   },
   "order": [
     "section_btMtg7",
+    "divider_h8i9Jh",
     "footer",
     "section_VJizyR"
   ]
