@@ -9,13 +9,13 @@
  */
 {
   "sections": {
-    "hero_6pywei": {
-      "type": "hero",
+    "section_gbnPgF": {
+      "type": "section",
       "blocks": {
-        "text_PaMYM3": {
+        "text_4X8mjt": {
           "type": "text",
           "settings": {
-            "text": "<p>The ancient secret of two moms to nourish three generations</p>",
+            "text": "<h1>Real nourishment begins long before it reaches your table. </h1>",
             "width": "fit-content",
             "max_width": "narrow",
             "alignment": "left",
@@ -36,21 +36,39 @@
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "text_mMANee": {
+          "type": "text",
+          "settings": {
+            "text": "<p>It starts in the soil, in the hands that cultivate it, and in the traditions that shape it.</p>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "paragraph",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
-        "text_PaMYM3"
+        "text_4X8mjt",
+        "text_mMANee"
       ],
-      "name": "t:names.hero",
+      "name": "t:names.custom_section",
       "settings": {
-        "media_type_1": "image",
-        "media_type_2": "image",
-        "stack_media_on_mobile": false,
-        "custom_mobile_media": false,
-        "media_type_1_mobile": "image",
-        "media_type_2_mobile": "image",
-        "link": "",
-        "open_in_new_tab": false,
         "content_direction": "column",
         "vertical_on_mobile": true,
         "horizontal_alignment": "flex-start",
@@ -58,19 +76,25 @@
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 16,
+        "gap": 12,
         "section_width": "page-width",
-        "section_height": "large",
+        "section_height": "medium",
         "section_height_custom": 50,
-        "color_scheme": "scheme-5",
-        "toggle_overlay": true,
+        "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
         "overlay_color": "#00000026",
-        "overlay_style": "gradient",
+        "overlay_style": "solid",
         "gradient_direction": "to top",
-        "blurred_reflection": false,
-        "reflection_opacity": 75,
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "two_column_accordion_slider_TWkqgy": {
@@ -889,7 +913,7 @@
     }
   },
   "order": [
-    "hero_6pywei",
+    "section_gbnPgF",
     "two_column_accordion_slider_TWkqgy",
     "main",
     "slider_content_etcYKh",
