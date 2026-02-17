@@ -284,25 +284,20 @@
       "blocks": {
         "slide_erXhKj": {
           "type": "slide",
-          "settings": {}
-        },
-        "slide_n4hcN8": {
-          "type": "slide",
           "settings": {
             "image": "shopify://shop_images/IMG_4838_1.heic"
           }
         },
-        "slide_TaN8mG": {
+        "slide_n4hcN8": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_4838_1.heic"
+            "image": "shopify://shop_images/IMG_4578.heic"
           }
         }
       },
       "block_order": [
         "slide_erXhKj",
-        "slide_n4hcN8",
-        "slide_TaN8mG"
+        "slide_n4hcN8"
       ],
       "name": "Slider + Contenido",
       "settings": {
