@@ -84,11 +84,11 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>At <strong>PRONTO CHOCHO</strong>, we believe good food should be simple, nourishing, and rooted in where it comes from.</p>",
+                "text": "<p><strong>Be part of our story<br/>Iconos de social media</strong></p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "rte",
+                "type_preset": "custom",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
