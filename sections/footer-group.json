@@ -374,27 +374,6 @@
     "section_VJizyR": {
       "type": "section",
       "blocks": {
-        "footer_copyright_N8HV7P": {
-          "type": "footer-copyright",
-          "settings": {
-            "show_powered_by": false,
-            "font_size": "0.75rem",
-            "case": "none"
-          },
-          "blocks": {}
-        },
-        "divider_HycR3H": {
-          "type": "_divider",
-          "name": "t:names.divider",
-          "settings": {
-            "thickness": 0.5,
-            "corner_radius": "square",
-            "width_percent": 45,
-            "padding-block-start": 0,
-            "padding-block-end": 0
-          },
-          "blocks": {}
-        },
         "button_NJkqAb": {
           "type": "button",
           "name": "t:names.button",
@@ -655,8 +634,6 @@
         }
       },
       "block_order": [
-        "footer_copyright_N8HV7P",
-        "divider_HycR3H",
         "button_NJkqAb",
         "divider_rLpDzG",
         "button_kyF3hq",
@@ -700,39 +677,13 @@
     "section_wRHy7w": {
       "type": "section",
       "blocks": {
-        "text_8LxWdy": {
-          "type": "text",
-          "name": "t:names.text",
-          "settings": {
-            "text": "<p><em><strong>PRONTO CHOCHO</strong></em><em> is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
-            "width": "fit-content",
-            "max_width": "none",
-            "alignment": "left",
-            "type_preset": "custom",
-            "font": "var(--font-body--family)",
-            "font_size": "0.75rem",
-            "line_height": "normal",
-            "letter_spacing": "normal",
-            "case": "none",
-            "wrap": "pretty",
-            "color": "var(--color-foreground)",
-            "background": false,
-            "background_color": "#00000026",
-            "corner_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "spacer_3CTMcq": {
           "type": "spacer",
           "name": "t:names.spacer",
           "settings": {
             "size": "pixel",
             "percent_size": 100,
-            "pixel_size": 32,
+            "pixel_size": 52,
             "custom_mobile_size": false,
             "size_mobile": "percent",
             "percent_size_mobile": 100,
@@ -742,7 +693,6 @@
         }
       },
       "block_order": [
-        "text_8LxWdy",
         "spacer_3CTMcq"
       ],
       "name": "t:names.custom_section",
