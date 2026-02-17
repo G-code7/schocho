@@ -1,6 +1,338 @@
+{% doc %}
+  @prompt
+    Crea una sección personalizada para Shopify basada en bloques dinámicos que utilice un efecto de Sticky Stacking Cards. La arquitectura de la sección debe permitir que cada tarjeta ocupe el 100% de la altura de la pantalla (100vh), asegurando que el efecto de apilamiento sea totalmente inmersivo mientras el usuario hace scroll. Las tarjetas deben permitir márgenes laterales para no tocar los bordes físicos de la pantalla, pero su contenedor vertical debe abarcar todo el espacio visual disponible.
+    
+    Cada bloque de tarjeta debe ser editable de forma independiente desde el personalizador, incluyendo campos para el texto del título, el cuerpo del mensaje, y selectores para el color de fondo, color del título, color del texto descriptivo, color del borde y tipografía. Es indispensable que cada tarjeta incluya un control de alineación de texto individual (izquierda, derecha, centrado o justificado). La sección debe incluir un border-radius de 15px en las cuatro esquinas, un borde delgado de 1px y padding interno ajustable. Integra una animación de entrada suave para el contenido y asegúrate de que sea totalmente responsivo; en móviles, las tarjetas deben adaptarse para mantener la legibilidad, ya sea conservando el efecto o mediante un scroll fluido. Incluye controles globales para el espaciado superior e inferior de toda la sección.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-cards-container-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ block.settings.section_padding_top }}px;
+    padding-bottom: {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-sticky-cards-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-sticky-card-{{ ai_gen_id }} {
+    position: sticky;
+    top: 0;
+    width: calc(100% - {{ block.settings.card_margin_horizontal }}px);
+    height: 100vh;
+    margin: 0 auto {{ block.settings.card_spacing }}px;
+    padding: {{ block.settings.card_padding }}px;
+    background-color: {{ block.settings.card_background }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .ai-sticky-card-content-{{ ai_gen_id }} {
+    max-width: 800px;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: ai-sticky-card-fade-in-{{ ai_gen_id }} 0.8s ease-out forwards;
+  }
+
+  @keyframes ai-sticky-card-fade-in-{{ ai_gen_id }} {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ai-sticky-card-title-{{ ai_gen_id }} {
+    margin: 0 0 20px;
+    color: {{ block.settings.title_color }};
+    font-family: {{ block.settings.title_font.family }}, {{ block.settings.title_font.fallback_families }};
+    font-weight: {{ block.settings.title_font.weight }};
+    font-size: {{ block.settings.title_size }}px;
+    line-height: 1.2;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-sticky-card-body-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.body_color }};
+    font-family: {{ block.settings.body_font.family }}, {{ block.settings.body_font.fallback_families }};
+    font-weight: {{ block.settings.body_font.weight }};
+    font-size: {{ block.settings.body_size }}px;
+    line-height: 1.6;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-sticky-card-{{ ai_gen_id }} {
+      height: auto;
+      min-height: 100vh;
+      position: relative;
+      width: calc(100% - {{ block.settings.card_margin_horizontal | times: 0.5 }}px);
+      padding: {{ block.settings.card_padding | times: 0.7 }}px;
+    }
+
+    .ai-sticky-card-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.7 }}px;
+    }
+
+    .ai-sticky-card-body-{{ ai_gen_id }} {
+      font-size: {{ block.settings.body_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<sticky-cards-{{ ai_gen_id }} class="ai-sticky-cards-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-sticky-cards-wrapper-{{ ai_gen_id }}">
+    <div class="ai-sticky-card-{{ ai_gen_id }}">
+      <div class="ai-sticky-card-content-{{ ai_gen_id }}">
+        {% if block.settings.card_title != blank %}
+          <h2 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.card_title }}</h2>
+        {% endif %}
+        {% if block.settings.card_body != blank %}
+          <div class="ai-sticky-card-body-{{ ai_gen_id }}">{{ block.settings.card_body }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</sticky-cards-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyCards{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.initializeObserver();
+      }
+
+      initializeObserver() {
+        const cards = this.querySelectorAll('.ai-sticky-card-{{ ai_gen_id }}');
+        
+        const observerOptions = {
+          threshold: [0, 0.5, 1],
+          rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.zIndex = Math.round(entry.intersectionRatio * 100);
+            }
+          });
+        }, observerOptions);
+
+        cards.forEach(card => {
+          observer.observe(card);
+        });
+      }
+    }
+
+    customElements.define('sticky-cards-{{ ai_gen_id }}', StickyCards{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Sticky stacking card",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido de la tarjeta"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_title",
+      "label": "Título",
+      "default": "Tarjeta apilable"
+    },
+    {
+      "type": "richtext",
+      "id": "card_body",
+      "label": "Texto descriptivo",
+      "default": "<p>Esta es una tarjeta con efecto de apilamiento sticky. Desplázate para ver el efecto inmersivo.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Estilo de la tarjeta"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Color de fondo",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Color del borde",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Grosor del borde",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Padding interno",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_margin_horizontal",
+      "label": "Margen lateral",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_spacing",
+      "label": "Espaciado entre tarjetas",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Tipografía del título"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "default": "montserrat_n7"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 20,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía del cuerpo"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Fuente del texto",
+      "default": "montserrat_n4"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Tamaño del texto",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Color del texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado de la sección"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky stacking card"
+    }
+  ],
+  "tag": null
+}
 {% endschema %}
