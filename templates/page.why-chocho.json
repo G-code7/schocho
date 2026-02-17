@@ -288,11 +288,15 @@
         },
         "slide_n4hcN8": {
           "type": "slide",
-          "settings": {}
+          "settings": {
+            "image": "shopify://shop_images/IMG_4838_1.heic"
+          }
         },
         "slide_TaN8mG": {
           "type": "slide",
-          "settings": {}
+          "settings": {
+            "image": "shopify://shop_images/IMG_4838_1.heic"
+          }
         }
       },
       "block_order": [
