@@ -1,6 +1,696 @@
+{% doc %}
+  @prompt
+    Crea una sección personalizada para Shopify basada en bloques dinámicos que utilice un efecto de Sticky Stacking Cards. La arquitectura de la sección debe permitir añadir múltiples tarjetas, donde cada una se quede fija al llegar a la parte superior de la pantalla mientras la siguiente sube y se posiciona justo encima, creando un efecto de apilamiento visual durante el scroll. Cada bloque de tarjeta debe ser editable de forma totalmente independiente desde el personalizador, incluyendo campos específicos para cambiar el texto del título y el cuerpo del mensaje, así como selectores para el color de fondo de la tarjeta, el color del título, el color del texto descriptivo, el color del borde y la tipografía.
+    
+    Es indispensable que cada tarjeta incluya un control de alineación de texto individual que permita elegir entre izquierda, derecha, centrado o justificado para cada bloque. La sección debe incluir controles para ajustar un border-radius de 15px en las cuatro esquinas de cada tarjeta y un borde delgado de 1px. Se deben poder definir márgenes internos (padding) específicos para cada tarjeta para que el contenido respire correctamente. Además, integra una animación de entrada suave para el contenido de cada bloque y asegúrate de que el diseño sea totalmente responsivo; en dispositivos móviles, las tarjetas deben mantener el efecto de apilamiento o transformarse en un scroll vertical fluido. Finalmente, incluye controles globales para el espaciado superior e inferior (padding top y bottom) de toda la sección para separarla de otros elementos de la página.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-cards-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ block.settings.section_padding_top }}px;
+    padding-bottom: {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-sticky-cards-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-sticky-card-{{ ai_gen_id }} {
+    position: sticky;
+    top: 20px;
+    margin-bottom: 20px;
+    background-color: var(--ai-card-bg-{{ ai_gen_id }});
+    border: 1px solid var(--ai-card-border-{{ ai_gen_id }});
+    border-radius: 15px;
+    padding: var(--ai-card-padding-{{ ai_gen_id }});
+    text-align: var(--ai-card-align-{{ ai_gen_id }});
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .ai-sticky-card-{{ ai_gen_id }}.ai-visible-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-sticky-card-title-{{ ai_gen_id }} {
+    color: var(--ai-card-title-color-{{ ai_gen_id }});
+    font-family: {{ block.settings.title_font.family }}, {{ block.settings.title_font.fallback_families }};
+    font-weight: {{ block.settings.title_font.weight }};
+    font-size: 32px;
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .ai-sticky-card-body-{{ ai_gen_id }} {
+    color: var(--ai-card-body-color-{{ ai_gen_id }});
+    font-family: {{ block.settings.body_font.family }}, {{ block.settings.body_font.fallback_families }};
+    font-weight: {{ block.settings.body_font.weight }};
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-sticky-cards-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.section_padding_top | times: 0.6 }}px;
+      padding-bottom: {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-sticky-card-{{ ai_gen_id }} {
+      position: relative;
+      top: 0;
+      margin-bottom: 16px;
+    }
+
+    .ai-sticky-card-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-sticky-card-body-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<sticky-cards-{{ ai_gen_id }} class="ai-sticky-cards-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-sticky-cards-container-{{ ai_gen_id }}">
+    {% if block.settings.card_1_enabled %}
+      <div 
+        class="ai-sticky-card-{{ ai_gen_id }}" 
+        data-card-index="1"
+        style="
+          --ai-card-bg-{{ ai_gen_id }}: {{ block.settings.card_1_bg }};
+          --ai-card-border-{{ ai_gen_id }}: {{ block.settings.card_1_border }};
+          --ai-card-title-color-{{ ai_gen_id }}: {{ block.settings.card_1_title_color }};
+          --ai-card-body-color-{{ ai_gen_id }}: {{ block.settings.card_1_body_color }};
+          --ai-card-padding-{{ ai_gen_id }}: {{ block.settings.card_1_padding }}px;
+          --ai-card-align-{{ ai_gen_id }}: {{ block.settings.card_1_alignment }};
+        "
+      >
+        {% if block.settings.card_1_title != blank %}
+          <h3 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_1_body != blank %}
+          <div class="ai-sticky-card-body-{{ ai_gen_id }}">{{ block.settings.card_1_body }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.card_2_enabled %}
+      <div 
+        class="ai-sticky-card-{{ ai_gen_id }}" 
+        data-card-index="2"
+        style="
+          --ai-card-bg-{{ ai_gen_id }}: {{ block.settings.card_2_bg }};
+          --ai-card-border-{{ ai_gen_id }}: {{ block.settings.card_2_border }};
+          --ai-card-title-color-{{ ai_gen_id }}: {{ block.settings.card_2_title_color }};
+          --ai-card-body-color-{{ ai_gen_id }}: {{ block.settings.card_2_body_color }};
+          --ai-card-padding-{{ ai_gen_id }}: {{ block.settings.card_2_padding }}px;
+          --ai-card-align-{{ ai_gen_id }}: {{ block.settings.card_2_alignment }};
+        "
+      >
+        {% if block.settings.card_2_title != blank %}
+          <h3 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_2_body != blank %}
+          <div class="ai-sticky-card-body-{{ ai_gen_id }}">{{ block.settings.card_2_body }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.card_3_enabled %}
+      <div 
+        class="ai-sticky-card-{{ ai_gen_id }}" 
+        data-card-index="3"
+        style="
+          --ai-card-bg-{{ ai_gen_id }}: {{ block.settings.card_3_bg }};
+          --ai-card-border-{{ ai_gen_id }}: {{ block.settings.card_3_border }};
+          --ai-card-title-color-{{ ai_gen_id }}: {{ block.settings.card_3_title_color }};
+          --ai-card-body-color-{{ ai_gen_id }}: {{ block.settings.card_3_body_color }};
+          --ai-card-padding-{{ ai_gen_id }}: {{ block.settings.card_3_padding }}px;
+          --ai-card-align-{{ ai_gen_id }}: {{ block.settings.card_3_alignment }};
+        "
+      >
+        {% if block.settings.card_3_title != blank %}
+          <h3 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.card_3_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_3_body != blank %}
+          <div class="ai-sticky-card-body-{{ ai_gen_id }}">{{ block.settings.card_3_body }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.card_4_enabled %}
+      <div 
+        class="ai-sticky-card-{{ ai_gen_id }}" 
+        data-card-index="4"
+        style="
+          --ai-card-bg-{{ ai_gen_id }}: {{ block.settings.card_4_bg }};
+          --ai-card-border-{{ ai_gen_id }}: {{ block.settings.card_4_border }};
+          --ai-card-title-color-{{ ai_gen_id }}: {{ block.settings.card_4_title_color }};
+          --ai-card-body-color-{{ ai_gen_id }}: {{ block.settings.card_4_body_color }};
+          --ai-card-padding-{{ ai_gen_id }}: {{ block.settings.card_4_padding }}px;
+          --ai-card-align-{{ ai_gen_id }}: {{ block.settings.card_4_alignment }};
+        "
+      >
+        {% if block.settings.card_4_title != blank %}
+          <h3 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.card_4_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_4_body != blank %}
+          <div class="ai-sticky-card-body-{{ ai_gen_id }}">{{ block.settings.card_4_body }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.card_5_enabled %}
+      <div 
+        class="ai-sticky-card-{{ ai_gen_id }}" 
+        data-card-index="5"
+        style="
+          --ai-card-bg-{{ ai_gen_id }}: {{ block.settings.card_5_bg }};
+          --ai-card-border-{{ ai_gen_id }}: {{ block.settings.card_5_border }};
+          --ai-card-title-color-{{ ai_gen_id }}: {{ block.settings.card_5_title_color }};
+          --ai-card-body-color-{{ ai_gen_id }}: {{ block.settings.card_5_body_color }};
+          --ai-card-padding-{{ ai_gen_id }}: {{ block.settings.card_5_padding }}px;
+          --ai-card-align-{{ ai_gen_id }}: {{ block.settings.card_5_alignment }};
+        "
+      >
+        {% if block.settings.card_5_title != blank %}
+          <h3 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.card_5_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_5_body != blank %}
+          <div class="ai-sticky-card-body-{{ ai_gen_id }}">{{ block.settings.card_5_body }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</sticky-cards-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyCards{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.cards = [];
+        this.observer = null;
+      }
+
+      connectedCallback() {
+        this.cards = Array.from(this.querySelectorAll('.ai-sticky-card-{{ ai_gen_id }}'));
+        this.setupIntersectionObserver();
+      }
+
+      setupIntersectionObserver() {
+        const options = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.1
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('ai-visible-{{ ai_gen_id }}');
+            }
+          });
+        }, options);
+
+        this.cards.forEach((card) => {
+          this.observer.observe(card);
+        });
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+    }
+
+    customElements.define('sticky-cards-{{ ai_gen_id }}', StickyCards{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Sticky stacking cards",
+  "tag": null,
+  "class": "ai-sticky-stacking-cards",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Title font",
+      "default": "montserrat_n7"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Body font",
+      "default": "montserrat_n4"
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_1_enabled",
+      "label": "Enable card 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Primera tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_body",
+      "label": "Body text",
+      "default": "Esta es la primera tarjeta con efecto sticky. Mientras haces scroll, se quedará fija en la parte superior."
+    },
+    {
+      "type": "select",
+      "id": "card_1_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justify"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "card_1_bg",
+      "label": "Background color",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "card_1_title_color",
+      "label": "Title color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_1_body_color",
+      "label": "Body color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_1_border",
+      "label": "Border color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "card_1_padding",
+      "label": "Internal padding",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_2_enabled",
+      "label": "Enable card 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Segunda tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_body",
+      "label": "Body text",
+      "default": "La segunda tarjeta se apilará sobre la primera creando un efecto visual atractivo."
+    },
+    {
+      "type": "select",
+      "id": "card_2_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justify"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "card_2_bg",
+      "label": "Background color",
+      "default": "#c2afcb"
+    },
+    {
+      "type": "color",
+      "id": "card_2_title_color",
+      "label": "Title color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_2_body_color",
+      "label": "Body color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_2_border",
+      "label": "Border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_2_padding",
+      "label": "Internal padding",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_3_enabled",
+      "label": "Enable card 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Tercera tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_body",
+      "label": "Body text",
+      "default": "Cada tarjeta puede tener su propio estilo, colores y contenido personalizado."
+    },
+    {
+      "type": "select",
+      "id": "card_3_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justify"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "card_3_bg",
+      "label": "Background color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_3_title_color",
+      "label": "Title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_3_body_color",
+      "label": "Body color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_3_border",
+      "label": "Border color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_3_padding",
+      "label": "Internal padding",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_4_enabled",
+      "label": "Enable card 4",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Cuarta tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_body",
+      "label": "Body text",
+      "default": "Puedes añadir hasta 5 tarjetas con efecto de apilamiento."
+    },
+    {
+      "type": "select",
+      "id": "card_4_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justify"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "card_4_bg",
+      "label": "Background color",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "card_4_title_color",
+      "label": "Title color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_4_body_color",
+      "label": "Body color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_4_border",
+      "label": "Border color",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "card_4_padding",
+      "label": "Internal padding",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_5_enabled",
+      "label": "Enable card 5",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "card_5_title",
+      "label": "Title",
+      "default": "Quinta tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_5_body",
+      "label": "Body text",
+      "default": "Personaliza cada tarjeta de forma independiente con sus propios colores y estilos."
+    },
+    {
+      "type": "select",
+      "id": "card_5_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justify"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "color",
+      "id": "card_5_bg",
+      "label": "Background color",
+      "default": "#bd5131"
+    },
+    {
+      "type": "color",
+      "id": "card_5_title_color",
+      "label": "Title color",
+      "default": "#fcf6eb"
+    },
+    {
+      "type": "color",
+      "id": "card_5_body_color",
+      "label": "Body color",
+      "default": "#fcf6eb"
+    },
+    {
+      "type": "color",
+      "id": "card_5_border",
+      "label": "Border color",
+      "default": "#e2c8f3"
+    },
+    {
+      "type": "range",
+      "id": "card_5_padding",
+      "label": "Internal padding",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky stacking cards"
+    }
+  ]
+}
 {% endschema %}
