@@ -16,7 +16,7 @@
           "type": "text",
           "name": "t:names.heading",
           "settings": {
-            "text": "<h1>We'd love to chat!</h1>",
+            "text": "<h1><strong>Connect with us</strong></h1>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
@@ -42,7 +42,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>Our team is available to respond between the hours of 9:30-4pm CT Monday - Friday. Simply submit your request, and we'll get back to you ASAP.<br/><br/></p>",
+            "text": "<p>For questions about <strong>PRONTO CHOCHO™</strong>, collaborations, partnerships, or support, our team is ready to assist. Share your message below and we’ll respond shortly.</p>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "center",
