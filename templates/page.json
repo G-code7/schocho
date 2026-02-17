@@ -911,7 +911,7 @@
             "title_font_size": 28,
             "content_font_size": 16,
             "philosophy_title": "Our Philosophy",
-            "philosophy_content": "<p><em>True wellness nourishes more than the body. </em>It supports vitality, honors where food comes from, and creates balance between people, land, and community. At Andean Pacha, we believe food should work <em>with</em> your body and with the earth, never at the expense of either. That’s why we make food with nothing to hide: no added sugars, no unnecessary ingredients, no shortcuts, just real, chocho-based foods, thoughtfully prepared. Rooted in Andean wisdom, our foods are crafted to nourish deeply, respect nature’s rhythms, and contribute to collective well-being.</p>",
+            "philosophy_content": "<p><em>True wellness nourishes more than the body. </em>It supports vitality, honors where food comes from, and creates balance between people, land, and community. At Andean Pacha, we believe food should work <em>with</em> your body and <em>with </em>the earth, never at the expense of either. That’s why we make food with nothing to hide: no added sugars, no unnecessary ingredients, no shortcuts, just real, chocho-based foods, thoughtfully prepared. Rooted in Andean wisdom, our foods are crafted to nourish deeply, respect nature’s rhythms, and contribute to collective well-being.</p>",
             "philosophy_bg_color": "#b29fbb",
             "philosophy_hover_bg_color": "#f1e6e4",
             "philosophy_border_color": "#3e2563",
