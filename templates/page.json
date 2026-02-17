@@ -737,9 +737,9 @@
         "section_padding_top_mobile": 20,
         "section_padding_bottom_mobile": 20,
         "section_padding_x_mobile": 15,
-        "mobile_image_height": 350,
+        "mobile_image_height": 200,
         "mobile_image_padding": 0,
-        "mobile_content_padding": 24
+        "mobile_content_padding": 20
       }
     },
     "section_aAWFmn": {
@@ -803,35 +803,6 @@
         "gradient_direction": "to top",
         "padding-block-start": 10,
         "padding-block-end": 10
-      }
-    },
-    "marquee_arQpDj": {
-      "type": "marquee",
-      "blocks": {
-        "text_with_icon_JNF476": {
-          "type": "text_with_icon",
-          "settings": {
-            "text": "Nothing to hide.   Just clean, pure nourishment you can trust.",
-            "icon_type": "none",
-            "icon_position": "left",
-            "icon_size": 24,
-            "icon_gap": 8,
-            "icon_color": "#000000",
-            "type_preset": "custom",
-            "font_size": 18
-          }
-        }
-      },
-      "block_order": [
-        "text_with_icon_JNF476"
-      ],
-      "name": "t:names.marquee_section",
-      "settings": {
-        "movement_direction": "normal",
-        "color_scheme": "scheme-4",
-        "padding-block-start": 20,
-        "padding-block-end": 20,
-        "gap_between_elements": 60
       }
     },
     "section_qFEW64": {
@@ -1412,7 +1383,6 @@
     "two_columns_acordion_slider_v3_LE6zFr",
     "two_columns_acordion_slider_v3_AMDgtV",
     "section_aAWFmn",
-    "marquee_arQpDj",
     "section_qFEW64",
     "17713454923a611d55",
     "17713429461bcf360c",
