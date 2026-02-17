@@ -84,7 +84,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p><strong>Be part of our story<br/></strong></p>",
+                "text": "<p>Be part of our story<br/></p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -286,33 +286,11 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "menu_xctKtb": {
-              "type": "menu",
-              "name": "t:names.menu",
-              "settings": {
-                "menu": "pronto-help",
-                "heading": "PRONTO HELP",
-                "menu_spacing": 12,
-                "show_as_accordion": true,
-                "accordion_icon": "plus",
-                "accordion_dividers": true,
-                "inherit_color_scheme": true,
-                "color_scheme": "",
-                "heading_preset": "h3",
-                "link_preset": "paragraph",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
             }
           },
           "block_order": [
             "menu_HKT4A3",
-            "menu_RPUDRk",
-            "menu_xctKtb"
+            "menu_RPUDRk"
           ]
         }
       },
