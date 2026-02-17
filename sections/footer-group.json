@@ -330,12 +330,43 @@
     },
     "footer": {
       "type": "footer",
+      "blocks": {
+        "text_M63XrL": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p>2026 PRONTO CHOCHO™ <em>is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
+            "width": "fit-content",
+            "max_width": "none",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "0.75rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_M63XrL"
+      ],
       "custom_css": [],
       "name": "Footer",
       "settings": {
         "section_width": "full-width",
         "gap": 0,
-        "color_scheme": "scheme-4",
+        "color_scheme": "scheme-a85a6988-74ba-4518-aecf-133d4642576c",
         "padding-block-start": 0,
         "padding-block-end": 0
       }
@@ -748,7 +779,7 @@
       "type": "divider",
       "name": "t:names.divider_section",
       "settings": {
-        "color_scheme": "scheme-4",
+        "color_scheme": "scheme-a85a6988-74ba-4518-aecf-133d4642576c",
         "section_width": "page-width",
         "thickness": 0.5,
         "corner_radius": "square",
