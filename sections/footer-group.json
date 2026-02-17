@@ -356,7 +356,7 @@
       "settings": {
         "color_scheme": "scheme-4",
         "section_width": "page-width",
-        "thickness": 1,
+        "thickness": 0.5,
         "corner_radius": "square",
         "width_percent": 100,
         "alignment_horizontal": "center",
@@ -708,7 +708,7 @@
       "settings": {
         "color_scheme": "scheme-4",
         "section_width": "page-width",
-        "thickness": 1,
+        "thickness": 0.5,
         "corner_radius": "square",
         "width_percent": 100,
         "alignment_horizontal": "center",
