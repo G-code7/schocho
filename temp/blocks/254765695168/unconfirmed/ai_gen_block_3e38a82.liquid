@@ -1,6 +1,263 @@
+{% doc %}
+  @prompt
+    Crea una sección personalizada para Shopify basada en bloques dinámicos (blocks) que utilice un efecto de Sticky Stacking Cards con desplazamiento vertical inmersivo. La arquitectura debe permitir que cada tarjeta ocupe el 100% de la altura de la pantalla (100vh), pero configurada de tal manera que, al scrollear, la tarjeta activa se deslice hacia arriba revelando la siguiente, manteniendo un ligero desfase (offset) para que las tarjetas anteriores queden parcialmente visibles en la parte superior, simulando un mazo de cartas apilado.
+    
+    Cada bloque (tarjeta) debe ser editable de forma independiente desde el personalizador de Shopify con las siguientes opciones:
+    
+    Contenido: Campos para Título y Texto Descriptivo extensos.
+    
+    Estilo Personalizado: Selectores individuales para color de fondo, color de fuente (título y cuerpo), color del borde de 1px y selección de tipografía.
+    
+    Alineación Dinámica: Control para elegir la alineación del texto (izquierda, derecha, centrado o justificado) por cada bloque.
+    
+    Diseño Fino: Border-radius de 15px en las cuatro esquinas y controles de padding interno para que el texto no toque los bordes.
+    
+    La sección debe incluir una animación de entrada suave para el contenido de cada tarjeta. Es crucial que el diseño sea totalmente responsivo: en dispositivos móviles, las tarjetas deben adaptarse para mantener la legibilidad y el efecto de apilamiento visual. Incluye controles globales para el espaciado superior e inferior (padding top/bottom) de la sección completa para una integración perfecta con el resto del sitio.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-card-{{ ai_gen_id }} {
+    position: sticky;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .ai-sticky-card-inner-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 1200px;
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.card_padding }}px;
+    box-sizing: border-box;
+    text-align: {{ block.settings.text_alignment }};
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .ai-sticky-card-inner-{{ ai_gen_id }}.ai-visible-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-sticky-card-title-{{ ai_gen_id }} {
+    font-family: {{ block.settings.title_font.family }}, {{ block.settings.title_font.fallback_families }};
+    font-weight: {{ block.settings.title_font.weight }};
+    font-style: {{ block.settings.title_font.style }};
+    color: {{ block.settings.title_color }};
+    margin: 0 0 20px 0;
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  .ai-sticky-card-description-{{ ai_gen_id }} {
+    font-family: {{ block.settings.description_font.family }}, {{ block.settings.description_font.fallback_families }};
+    font-weight: {{ block.settings.description_font.weight }};
+    font-style: {{ block.settings.description_font.style }};
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-sticky-card-{{ ai_gen_id }} {
+      min-height: auto;
+      padding: 15px;
+    }
+
+    .ai-sticky-card-inner-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .ai-sticky-card-title-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-sticky-card-description-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<sticky-card-{{ ai_gen_id }} class="ai-sticky-card-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-sticky-card-inner-{{ ai_gen_id }}">
+    {% if block.settings.title != blank %}
+      <h2 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+    {% endif %}
+    {% if block.settings.description != blank %}
+      <div class="ai-sticky-card-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+    {% endif %}
+  </div>
+</sticky-card-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyCard{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.cardInner = null;
+      }
+
+      connectedCallback() {
+        this.cardInner = this.querySelector('.ai-sticky-card-inner-{{ ai_gen_id }}');
+        this.setupIntersectionObserver();
+        this.setupStickyPosition();
+      }
+
+      setupStickyPosition() {
+        const allCards = document.querySelectorAll('[class*="ai-sticky-card-"]');
+        const cardArray = Array.from(allCards);
+        const currentIndex = cardArray.indexOf(this);
+        
+        if (currentIndex !== -1) {
+          const offset = currentIndex * 40;
+          this.style.top = offset + 'px';
+          this.style.zIndex = 10 - currentIndex;
+        }
+      }
+
+      setupIntersectionObserver() {
+        const options = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.2
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              this.cardInner.classList.add('ai-visible-{{ ai_gen_id }}');
+            }
+          });
+        }, options);
+
+        if (this.cardInner) {
+          observer.observe(this.cardInner);
+        }
+      }
+    }
+
+    customElements.define('sticky-card-{{ ai_gen_id }}', StickyCard{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Sticky card",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Título de la tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descripción",
+      "default": "Escribe aquí una descripción detallada para esta tarjeta. Puedes incluir información relevante que se mostrará de forma destacada."
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "default": "montserrat_n7"
+    },
+    {
+      "type": "font_picker",
+      "id": "description_font",
+      "label": "Fuente de la descripción",
+      "default": "montserrat_n4"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color del borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Espaciado interno",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sticky card"
+    }
+  ]
+}
 {% endschema %}
