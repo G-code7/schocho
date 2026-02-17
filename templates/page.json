@@ -806,6 +806,85 @@
         "padding-block-end": 0
       }
     },
+    "1771342060ca6e5dc6": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_59708de_crjcj7": {
+          "type": "ai_gen_block_59708de",
+          "settings": {
+            "section_padding_top": 50,
+            "section_padding_bottom": 50,
+            "gap_between_boxes": 30,
+            "gap_between_boxes_mobile": 20,
+            "box_padding_vertical": 30,
+            "box_padding_horizontal": 25,
+            "title_margin_bottom": 15,
+            "box_left_title": "Our Mission",
+            "box_left_content": "<p><em>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment.<br/></em>We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. From soil to table, our choices are guided by care for the body, the community, and the planet.</p>",
+            "box_left_bg_color": "#f5f4ed",
+            "box_left_border_color": "#3e2563",
+            "box_left_title_color": "#3e2563",
+            "box_left_text_color": "#3e2563",
+            "box_left_font": "montserrat_n5",
+            "box_left_title_size": 20,
+            "box_left_text_size": 14,
+            "box_left_line_height": 1.5,
+            "box_center_title": "Filosofía",
+            "box_center_content": "<p>True wellness nourishes more than the body. It supports vitality, honors where food comes from, and creates balance between people, land, and community.</p><p>At Andean Pacha, we believe food should work <em>with</em> your body and <em>with</em> the earth, never at the expense of either. </p><p>That’s why we make food with nothing to hide: no added sugars, no unnecessary ingredients, no shortcuts, just real, chocho-based foods, thoughtfully prepared. Rooted in Andean wisdom, our foods are crafted to nourish deeply, respect nature’s rhythms, and contribute to collective well-being.</p><p><strong>We live this philosophy every day through:</strong></p>",
+            "box_center_bg_color": "#c2afcb",
+            "box_center_border_color": "#3e2563",
+            "box_center_title_color": "#3e2563",
+            "box_center_text_color": "#3e2563",
+            "box_center_font": "montserrat_n5",
+            "box_center_title_size": 20,
+            "box_center_text_size": 14,
+            "box_center_line_height": 1.5,
+            "box_center_padding_vertical": 50,
+            "box_right_title": "Our Vision",
+            "box_right_content": "<p><em>To bring real nourishment back to the table. </em>We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</p>",
+            "box_right_bg_color": "#f5f4ed",
+            "box_right_border_color": "#3e2563",
+            "box_right_title_color": "#3e2563",
+            "box_right_text_color": "#3e2563",
+            "box_right_font": "montserrat_n5",
+            "box_right_title_size": 20,
+            "box_right_text_size": 14,
+            "box_right_line_height": 1.5
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_59708de_crjcj7"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "two_columns_acordion_slider_v2_K6VCty": {
       "type": "two-columns-acordion-slider-v2",
       "blocks": {
@@ -1005,50 +1084,23 @@
             "column_gap": 30,
             "mobile_gap": 20,
             "mobile_center_order": "1",
-            "box_background": "#ffffff",
-            "border_color": "#000000",
+            "box_background": "#f1e6e4",
+            "border_color": "#371e54",
             "border_width": 1,
             "border_radius": 15,
             "side_padding": 30,
-            "side_padding_vertical": 30,
-            "center_padding_vertical": 60,
-            "text_color": "#000000",
+            "side_padding_vertical": 40,
+            "center_padding_vertical": 70,
+            "text_color": "#371e54",
             "title_size": 20,
             "content_size": 14,
             "title_spacing": 15
           },
           "blocks": {}
-        },
-        "ai_gen_block_cc33b3c_db6YqG": {
-          "type": "ai_gen_block_cc33b3c",
-          "settings": {
-            "desktop_width_percent": 100,
-            "card_height": 400,
-            "gap": 16,
-            "border_radius": 8,
-            "overlay_color": "#371e54",
-            "title_color": "#ffffff",
-            "title_size": 20,
-            "title_padding": 20,
-            "panel_background": "#3e2563",
-            "description_color": "#ffffff",
-            "description_size": 14,
-            "panel_padding": 20,
-            "card_1_title": "Transparency",
-            "card_1_description": "We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust.",
-            "card_2_title": "Ethical sourcing",
-            "card_2_description": "Trabajamos con proveedores que comparten nuestros valores éticos.",
-            "card_3_title": "Community impact",
-            "card_3_description": "Apoyamos a las comunidades locales a través de nuestras iniciativas.",
-            "card_4_title": "Transparent practices",
-            "card_4_description": "Mantenemos total transparencia en todos nuestros procesos."
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "ai_gen_block_3314923_hJ7FU4",
-        "ai_gen_block_cc33b3c_db6YqG"
+        "ai_gen_block_3314923_hJ7FU4"
       ],
       "settings": {
         "content_direction": "column",
@@ -1077,199 +1129,6 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
-    },
-    "media_with_content_c9LLYd": {
-      "type": "media-with-content",
-      "blocks": {
-        "media": {
-          "type": "_media-without-appearance",
-          "static": true,
-          "settings": {
-            "media_type": "image",
-            "image": "shopify://shop_images/freepik__integra-el-empaque-de-pronto-chcocho-en-esta-image__57577.png",
-            "link": "",
-            "video_loop": true,
-            "video_autoplay": false,
-            "image_position": "cover",
-            "video_position": "cover"
-          },
-          "blocks": {}
-        },
-        "content": {
-          "type": "_content-without-appearance",
-          "static": true,
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "space-between",
-            "gap": 24
-          },
-          "blocks": {
-            "group_JWErik": {
-              "type": "group",
-              "settings": {
-                "content_direction": "column",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "center",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "inherit_color_scheme": true,
-                "color_scheme": "",
-                "background_media": "none",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "link": "",
-                "open_in_new_tab": false,
-                "placeholder": "",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {
-                "text_yyHm7m": {
-                  "type": "text",
-                  "name": "t:names.heading",
-                  "settings": {
-                    "text": "<p><strong>Our Mission</strong></p>",
-                    "width": "fit-content",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "h3",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "text_RYz87B": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h4>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment.</h4><h4>We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. From soil to table, our choices are guided by care for the body, the community, and the planet.</h4>",
-                    "width": "100%",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "paragraph",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "text_cikkNd": {
-                  "type": "text",
-                  "name": "t:names.heading",
-                  "settings": {
-                    "text": "<p><strong>Our Vision</strong></p>",
-                    "width": "fit-content",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "h3",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 55,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "text_eqiPLw": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h5><strong>To bring real nourishment back to the table.</strong></h5><h5>We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</h5>",
-                    "width": "fit-content",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "rte",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "text_yyHm7m",
-                "text_RYz87B",
-                "text_cikkNd",
-                "text_eqiPLw"
-              ]
-            }
-          },
-          "block_order": [
-            "group_JWErik"
-          ]
-        }
-      },
-      "name": "t:names.editorial",
-      "settings": {
-        "media_position": "left",
-        "media_width": "medium",
-        "media_height": "auto",
-        "section_width": "full-width",
-        "extend_media": true,
-        "color_scheme": "scheme-3",
-        "padding-block-start": 0,
-        "padding-block-end": 0
-      }
     }
   },
   "order": [
@@ -1281,9 +1140,9 @@
     "two_columns_acordion_slider_v3_LE6zFr",
     "two_columns_acordion_slider_v3_AMDgtV",
     "section_qFEW64",
+    "1771342060ca6e5dc6",
     "two_columns_acordion_slider_v2_K6VCty",
     "177134140547b83b70",
-    "1771341019615bc842",
-    "media_with_content_c9LLYd"
+    "1771341019615bc842"
   ]
 }
