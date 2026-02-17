@@ -649,7 +649,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "scheme-4",
+        "color_scheme": "scheme-a85a6988-74ba-4518-aecf-133d4642576c",
         "custom_background_color": "#f5f5f5",
         "background_media": "none",
         "video_position": "cover",
@@ -664,20 +664,6 @@
         "gradient_direction": "to top",
         "padding-block-start": 0,
         "padding-block-end": 0
-      }
-    },
-    "divider_f99rH9": {
-      "type": "divider",
-      "name": "t:names.divider_section",
-      "settings": {
-        "color_scheme": "scheme-4",
-        "section_width": "page-width",
-        "thickness": 0.5,
-        "corner_radius": "square",
-        "width_percent": 100,
-        "alignment_horizontal": "center",
-        "padding-block-start": 10,
-        "padding-block-end": 18
       }
     },
     "section_wRHy7w": {
@@ -741,7 +727,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "scheme-4",
+        "color_scheme": "scheme-a85a6988-74ba-4518-aecf-133d4642576c",
         "custom_background_color": "#f5f5f5",
         "background_media": "none",
         "video_position": "cover",
@@ -757,13 +743,27 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
+    },
+    "divider_f99rH9": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "scheme-4",
+        "section_width": "page-width",
+        "thickness": 0.5,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 10,
+        "padding-block-end": 18
+      }
     }
   },
   "order": [
     "section_btMtg7",
     "footer",
-    "divider_f99rH9",
     "section_VJizyR",
-    "section_wRHy7w"
+    "section_wRHy7w",
+    "divider_f99rH9"
   ]
 }
