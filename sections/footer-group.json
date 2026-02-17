@@ -80,6 +80,20 @@
               },
               "blocks": {}
             },
+            "spacer_F9GDrE": {
+              "type": "spacer",
+              "name": "t:names.spacer",
+              "settings": {
+                "size": "pixel",
+                "percent_size": 100,
+                "pixel_size": 12,
+                "custom_mobile_size": false,
+                "size_mobile": "percent",
+                "percent_size_mobile": 100,
+                "pixel_size_mobile": 120
+              },
+              "blocks": {}
+            },
             "text_NQYhhB": {
               "type": "text",
               "name": "t:names.text",
@@ -201,6 +215,7 @@
           },
           "block_order": [
             "email_signup_f9fexp",
+            "spacer_F9GDrE",
             "text_NQYhhB",
             "group_dRzcE6"
           ]
@@ -379,7 +394,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>© 2026 PRONTO CHOCHO.  PRONTO CHOCHO™ <em>is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
+            "text": "<p>© 2026 PRONTO CHOCHO.  PRONTO CHOCHO™ is a registered trademark of Andean Pacha, LLC. All rights reserved.</p>",
             "width": "fit-content",
             "max_width": "none",
             "alignment": "left",
