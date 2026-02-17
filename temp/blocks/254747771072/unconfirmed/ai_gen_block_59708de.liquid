@@ -1,6 +1,481 @@
+{% doc %}
+  @prompt
+    Entendido, Brigitte. Vamos a elevar el nivel de este prompt para que no sea solo una estructura fija, sino una sección dinámica y editable dentro del personalizador de Shopify. Como tu Directora Financiera, esto es estratégico: una sección que puedas editar por separado te ahorra horas de soporte técnico en el futuro.
+    
+    Aquí tienes el prompt redactado en párrafos continuos para que Shopify (o tu desarrollador) cree una sección con bloques independientes:
+    
+    Prompt para Sección Dinámica y Editable en Shopify
+    Diseña una sección personalizada para Shopify basada en bloques independientes que permita editar el contenido y estilo de cada uno de los tres recuadros de forma individual desde el editor del tema. La estructura debe permitir que cada bloque (Misión, Filosofía y Visión) tenga sus propios ajustes de personalización para cambiar el color de fondo, el color del borde, el color de la tipografía y la selección de fuentes de manera separada, asegurando que el diseño de uno no afecte obligatoriamente a los otros. El bloque central debe mantener la capacidad de ser más alto y bajo que los laterales mediante un ajuste de padding vertical independiente, logrando el efecto de desfase simétrico que sobresale por arriba y por abajo cuando los tres elementos están alineados al centro.
+    
+    Adicionalmente, la sección debe incluir controles globales de espaciado que permitan definir márgenes superiores e inferiores (padding/margin top y bottom) para separar esta sección de otros elementos de la página. Cada recuadro debe mantener el borde de 1px con un radio de 15px en las cuatro esquinas, y el sistema debe estar optimizado para que, al cargar el texto extenso de la cliente, se pueda ajustar el interlineado y el tamaño de la letra de forma específica para cada bloque. Esta configuración debe ser totalmente responsiva, asegurando que en dispositivos móviles los bloques se apilen verticalmente manteniendo sus estilos individuales de color y espaciado.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-mvp-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ block.settings.section_padding_top }}px;
+    padding-bottom: {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-mvp-container-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ block.settings.gap_between_boxes }}px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-mvp-box-{{ ai_gen_id }} {
+    flex: 1;
+    border: 1px solid;
+    border-radius: 15px;
+    padding: {{ block.settings.box_padding_vertical }}px {{ block.settings.box_padding_horizontal }}px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-mvp-box-left-{{ ai_gen_id }} {
+    background-color: {{ block.settings.box_left_bg_color }};
+    border-color: {{ block.settings.box_left_border_color }};
+  }
+
+  .ai-mvp-box-center-{{ ai_gen_id }} {
+    background-color: {{ block.settings.box_center_bg_color }};
+    border-color: {{ block.settings.box_center_border_color }};
+    padding-top: {{ block.settings.box_center_padding_vertical }}px;
+    padding-bottom: {{ block.settings.box_center_padding_vertical }}px;
+  }
+
+  .ai-mvp-box-right-{{ ai_gen_id }} {
+    background-color: {{ block.settings.box_right_bg_color }};
+    border-color: {{ block.settings.box_right_border_color }};
+  }
+
+  .ai-mvp-title-{{ ai_gen_id }} {
+    margin: 0 0 {{ block.settings.title_margin_bottom }}px 0;
+    font-weight: 700;
+  }
+
+  .ai-mvp-title-left-{{ ai_gen_id }} {
+    color: {{ block.settings.box_left_title_color }};
+    font-family: {{ block.settings.box_left_font.family }}, {{ block.settings.box_left_font.fallback_families }};
+    font-size: {{ block.settings.box_left_title_size }}px;
+  }
+
+  .ai-mvp-title-center-{{ ai_gen_id }} {
+    color: {{ block.settings.box_center_title_color }};
+    font-family: {{ block.settings.box_center_font.family }}, {{ block.settings.box_center_font.fallback_families }};
+    font-size: {{ block.settings.box_center_title_size }}px;
+  }
+
+  .ai-mvp-title-right-{{ ai_gen_id }} {
+    color: {{ block.settings.box_right_title_color }};
+    font-family: {{ block.settings.box_right_font.family }}, {{ block.settings.box_right_font.fallback_families }};
+    font-size: {{ block.settings.box_right_title_size }}px;
+  }
+
+  .ai-mvp-content-{{ ai_gen_id }} {
+    margin: 0;
+  }
+
+  .ai-mvp-content-left-{{ ai_gen_id }} {
+    color: {{ block.settings.box_left_text_color }};
+    font-family: {{ block.settings.box_left_font.family }}, {{ block.settings.box_left_font.fallback_families }};
+    font-size: {{ block.settings.box_left_text_size }}px;
+    line-height: {{ block.settings.box_left_line_height }};
+  }
+
+  .ai-mvp-content-center-{{ ai_gen_id }} {
+    color: {{ block.settings.box_center_text_color }};
+    font-family: {{ block.settings.box_center_font.family }}, {{ block.settings.box_center_font.fallback_families }};
+    font-size: {{ block.settings.box_center_text_size }}px;
+    line-height: {{ block.settings.box_center_line_height }};
+  }
+
+  .ai-mvp-content-right-{{ ai_gen_id }} {
+    color: {{ block.settings.box_right_text_color }};
+    font-family: {{ block.settings.box_right_font.family }}, {{ block.settings.box_right_font.fallback_families }};
+    font-size: {{ block.settings.box_right_text_size }}px;
+    line-height: {{ block.settings.box_right_line_height }};
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-mvp-container-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: {{ block.settings.gap_between_boxes_mobile }}px;
+    }
+
+    .ai-mvp-box-center-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.box_padding_vertical }}px;
+      padding-bottom: {{ block.settings.box_padding_vertical }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-mvp-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-mvp-container-{{ ai_gen_id }}">
+    <div class="ai-mvp-box-{{ ai_gen_id }} ai-mvp-box-left-{{ ai_gen_id }}">
+      <h3 class="ai-mvp-title-{{ ai_gen_id }} ai-mvp-title-left-{{ ai_gen_id }}">
+        {{ block.settings.box_left_title }}
+      </h3>
+      <div class="ai-mvp-content-{{ ai_gen_id }} ai-mvp-content-left-{{ ai_gen_id }}">
+        {{ block.settings.box_left_content }}
+      </div>
+    </div>
+
+    <div class="ai-mvp-box-{{ ai_gen_id }} ai-mvp-box-center-{{ ai_gen_id }}">
+      <h3 class="ai-mvp-title-{{ ai_gen_id }} ai-mvp-title-center-{{ ai_gen_id }}">
+        {{ block.settings.box_center_title }}
+      </h3>
+      <div class="ai-mvp-content-{{ ai_gen_id }} ai-mvp-content-center-{{ ai_gen_id }}">
+        {{ block.settings.box_center_content }}
+      </div>
+    </div>
+
+    <div class="ai-mvp-box-{{ ai_gen_id }} ai-mvp-box-right-{{ ai_gen_id }}">
+      <h3 class="ai-mvp-title-{{ ai_gen_id }} ai-mvp-title-right-{{ ai_gen_id }}">
+        {{ block.settings.box_right_title }}
+      </h3>
+      <div class="ai-mvp-content-{{ ai_gen_id }} ai-mvp-content-right-{{ ai_gen_id }}">
+        {{ block.settings.box_right_content }}
+      </div>
+    </div>
+  </div>
+</div>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "MVF blocks",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Espaciado de sección"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Margen superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Margen inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Espaciado entre recuadros"
+    },
+    {
+      "type": "range",
+      "id": "gap_between_boxes",
+      "label": "Espacio entre recuadros (escritorio)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "gap_between_boxes_mobile",
+      "label": "Espacio entre recuadros (móvil)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Espaciado interno de recuadros"
+    },
+    {
+      "type": "range",
+      "id": "box_padding_vertical",
+      "label": "Padding vertical",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "box_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "title_margin_bottom",
+      "label": "Espacio debajo del título",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Recuadro izquierdo - Misión"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "box_left_title",
+      "label": "Título",
+      "default": "Misión"
+    },
+    {
+      "type": "richtext",
+      "id": "box_left_content",
+      "label": "Contenido",
+      "default": "<p>Nuestra misión es proporcionar productos de la más alta calidad que mejoren la vida de nuestros clientes.</p>"
+    },
+    {
+      "type": "color",
+      "id": "box_left_bg_color",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "box_left_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "box_left_title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "box_left_text_color",
+      "label": "Color del texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "font_picker",
+      "id": "box_left_font",
+      "label": "Fuente",
+      "default": "montserrat_n5"
+    },
+    {
+      "type": "range",
+      "id": "box_left_title_size",
+      "label": "Tamaño del título",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "box_left_text_size",
+      "label": "Tamaño del texto",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "box_left_line_height",
+      "label": "Interlineado",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "Recuadro central - Filosofía"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "box_center_title",
+      "label": "Título",
+      "default": "Filosofía"
+    },
+    {
+      "type": "richtext",
+      "id": "box_center_content",
+      "label": "Contenido",
+      "default": "<p>Creemos en la innovación constante, la sostenibilidad y el compromiso con nuestros valores fundamentales.</p>"
+    },
+    {
+      "type": "color",
+      "id": "box_center_bg_color",
+      "label": "Color de fondo",
+      "default": "#c2afcb"
+    },
+    {
+      "type": "color",
+      "id": "box_center_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "box_center_title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "box_center_text_color",
+      "label": "Color del texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "font_picker",
+      "id": "box_center_font",
+      "label": "Fuente",
+      "default": "montserrat_n5"
+    },
+    {
+      "type": "range",
+      "id": "box_center_title_size",
+      "label": "Tamaño del título",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "box_center_text_size",
+      "label": "Tamaño del texto",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "box_center_line_height",
+      "label": "Interlineado",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "box_center_padding_vertical",
+      "label": "Padding vertical (desfase)",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Recuadro derecho - Visión"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "box_right_title",
+      "label": "Título",
+      "default": "Visión"
+    },
+    {
+      "type": "richtext",
+      "id": "box_right_content",
+      "label": "Contenido",
+      "default": "<p>Aspiramos a ser líderes globales en nuestro sector, reconocidos por nuestra excelencia y dedicación.</p>"
+    },
+    {
+      "type": "color",
+      "id": "box_right_bg_color",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "box_right_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "box_right_title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "box_right_text_color",
+      "label": "Color del texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "font_picker",
+      "id": "box_right_font",
+      "label": "Fuente",
+      "default": "montserrat_n5"
+    },
+    {
+      "type": "range",
+      "id": "box_right_title_size",
+      "label": "Tamaño del título",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "box_right_text_size",
+      "label": "Tamaño del texto",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "box_right_line_height",
+      "label": "Interlineado",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.5
+    }
+  ],
+  "presets": [
+    {
+      "name": "MVF blocks"
+    }
+  ]
+}
 {% endschema %}
