@@ -1,6 +1,342 @@
+{% doc %}
+  @prompt
+    Aquí tienes el prompt redactado de forma técnica y continua para que lo pegues directamente en el chat de soporte de Shopify, en una herramienta de IA de desarrollo o se lo pases a tu programador. Está diseñado para que no haya margen de error con las dimensiones del cuadro central.
+    
+    Prompt para Desarrollo de Sección en Shopify
+    Diseña una sección personalizada para Shopify compuesta por tres columnas horizontales donde cada bloque tenga un fondo blanco sólido, un borde negro delgado de 1px y un redondeo de esquinas de 15px aplicado por igual a las cuatro esquinas de cada recuadro. La estructura debe configurarse de modo que los tres bloques estén alineados verticalmente al centro dentro del contenedor principal, pero el bloque central, correspondiente a Our Philosophy, debe poseer un padding vertical mucho más amplio que los bloques laterales de Our Mission y Our Vision, logrando así que el recuadro del medio sobresalga visualmente tanto por arriba como por abajo de los otros dos de forma simétrica. Asegúrate de que el texto interno respete un padding lateral generoso para que no toque los bordes y que los títulos se presenten en negrita, mientras que los párrafos extensos deben tener un interlineado de 1.5 para garantizar la legibilidad del contenido que ha suministrado la cliente.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-three-column-container-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-three-column-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ block.settings.column_gap }}px;
+    width: 100%;
+  }
+
+  .ai-three-column-item-{{ ai_gen_id }} {
+    flex: 1;
+    background-color: {{ block.settings.box_background }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: {{ block.settings.side_padding }}px;
+  }
+
+  .ai-three-column-item-{{ ai_gen_id }}--center {
+    padding-top: {{ block.settings.center_padding_vertical }}px;
+    padding-bottom: {{ block.settings.center_padding_vertical }}px;
+  }
+
+  .ai-three-column-item-{{ ai_gen_id }}--side {
+    padding-top: {{ block.settings.side_padding_vertical }}px;
+    padding-bottom: {{ block.settings.side_padding_vertical }}px;
+  }
+
+  .ai-three-column-title-{{ ai_gen_id }} {
+    font-weight: 700;
+    margin: 0 0 {{ block.settings.title_spacing }}px 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.title_size }}px;
+  }
+
+  .ai-three-column-content-{{ ai_gen_id }} {
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.content_size }}px;
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-three-column-wrapper-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: {{ block.settings.mobile_gap }}px;
+    }
+
+    .ai-three-column-item-{{ ai_gen_id }}--center {
+      order: {{ block.settings.mobile_center_order }};
+    }
+  }
+{% endstyle %}
+
+<three-column-section-{{ ai_gen_id }}
+  class="ai-three-column-container-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-three-column-wrapper-{{ ai_gen_id }}">
+    <div class="ai-three-column-item-{{ ai_gen_id }} ai-three-column-item-{{ ai_gen_id }}--side">
+      {% if block.settings.left_title != blank %}
+        <h3 class="ai-three-column-title-{{ ai_gen_id }}">{{ block.settings.left_title }}</h3>
+      {% endif %}
+      {% if block.settings.left_content != blank %}
+        <div class="ai-three-column-content-{{ ai_gen_id }}">{{ block.settings.left_content }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ai-three-column-item-{{ ai_gen_id }} ai-three-column-item-{{ ai_gen_id }}--center">
+      {% if block.settings.center_title != blank %}
+        <h3 class="ai-three-column-title-{{ ai_gen_id }}">{{ block.settings.center_title }}</h3>
+      {% endif %}
+      {% if block.settings.center_content != blank %}
+        <div class="ai-three-column-content-{{ ai_gen_id }}">{{ block.settings.center_content }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ai-three-column-item-{{ ai_gen_id }} ai-three-column-item-{{ ai_gen_id }}--side">
+      {% if block.settings.right_title != blank %}
+        <h3 class="ai-three-column-title-{{ ai_gen_id }}">{{ block.settings.right_title }}</h3>
+      {% endif %}
+      {% if block.settings.right_content != blank %}
+        <div class="ai-three-column-content-{{ ai_gen_id }}">{{ block.settings.right_content }}</div>
+      {% endif %}
+    </div>
+  </div>
+</three-column-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ThreeColumnSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+      }
+    }
+
+    customElements.define('three-column-section-{{ ai_gen_id }}', ThreeColumnSection{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Three column section",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Left column"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "left_title",
+      "label": "Title",
+      "default": "Our Mission"
+    },
+    {
+      "type": "richtext",
+      "id": "left_content",
+      "label": "Content",
+      "default": "<p>We are committed to delivering exceptional quality and innovation in everything we do. Our mission is to create products that inspire and empower our customers to achieve their goals.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Center column"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "center_title",
+      "label": "Title",
+      "default": "Our Philosophy"
+    },
+    {
+      "type": "richtext",
+      "id": "center_content",
+      "label": "Content",
+      "default": "<p>We believe in the power of collaboration, creativity, and continuous improvement. Our philosophy is rooted in respect for our customers, our team, and the environment. We strive to build lasting relationships based on trust, transparency, and mutual success. Every decision we make is guided by our core values and our commitment to making a positive impact in the world.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Right column"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "right_title",
+      "label": "Title",
+      "default": "Our Vision"
+    },
+    {
+      "type": "richtext",
+      "id": "right_content",
+      "label": "Content",
+      "default": "<p>To be the leading brand in our industry, recognized for our commitment to excellence, sustainability, and customer satisfaction. We envision a future where our products make a meaningful difference.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "mobile_center_order",
+      "label": "Mobile center position",
+      "options": [
+        {
+          "value": "0",
+          "label": "First"
+        },
+        {
+          "value": "1",
+          "label": "Second"
+        },
+        {
+          "value": "2",
+          "label": "Third"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Box style"
+    },
+    {
+      "type": "color",
+      "id": "box_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Horizontal padding",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "side_padding_vertical",
+      "label": "Side columns vertical",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "center_padding_vertical",
+      "label": "Center column vertical",
+      "min": 40,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "content_size",
+      "label": "Content size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Title spacing",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    }
+  ],
+  "presets": [
+    {
+      "name": "Three column section"
+    }
+  ]
+}
 {% endschema %}
