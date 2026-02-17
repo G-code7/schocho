@@ -1,6 +1,332 @@
+{% doc %}
+  @prompt
+    Crea una sección para Shopify basada en bloques repetibles que replique un efecto de tarjetas apiladas dinámicas mediante scroll. La arquitectura debe permitir que cada tarjeta ocupe el cien por ciento de la altura de la pantalla y se fije en la parte superior. Al scrollear, la tarjeta activa debe reducir ligeramente su escala y aumentar su opacidad de sombra mientras la siguiente tarjeta sube y se posiciona encima, creando un efecto de profundidad donde las tarjetas anteriores parecen alejarse al fondo a medida que las nuevas llegan al frente.
+    
+    Cada bloque de tarjeta debe ser editable de forma independiente en el personalizador con las siguientes funciones:
+    
+    Contenido: Campos de texto para título y descripción extensa.
+    
+    Estilo: Selectores de color para fondo de tarjeta, tipografía y borde de un píxel, con un redondeo de esquinas de quince píxeles.
+    
+    Alineación: Un control para elegir alineación de texto (izquierda, derecha, centrado o justificado) por cada tarjeta.
+    
+    Espaciado: Controles de márgenes internos (padding) y externos para cada bloque, permitiendo que las tarjetas tengan aire visual alrededor.
+    
+    La sección debe incluir una animación de entrada suave para el contenido interno y ser totalmente responsiva, asegurando que el efecto de escala y apilamiento funcione con fluidez en dispositivos móviles. Incluye controles globales para los márgenes superiores e inferiores de toda la sección para separarla del resto de la página.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-stacked-card-{{ ai_gen_id }} {
+    display: block;
+    position: sticky;
+    top: 0;
+    width: {{ block.settings.desktop_width_percent }}%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  }
+
+  .ai-stacked-card-inner-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    color: {{ block.settings.card_text_color }};
+    border: 1px solid {{ block.settings.card_border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.card_padding_vertical }}px {{ block.settings.card_padding_horizontal }}px;
+    margin: {{ block.settings.card_margin_vertical }}px {{ block.settings.card_margin_horizontal }}px;
+    width: calc(100% - {{ block.settings.card_margin_horizontal | times: 2 }}px);
+    max-width: 1200px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: {{ block.settings.text_alignment }};
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .ai-stacked-card-inner-{{ ai_gen_id }}.ai-visible-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-stacked-card-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+  }
+
+  .ai-stacked-card-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_font_size }}px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-stacked-card-{{ ai_gen_id }} {
+      height: auto;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .ai-stacked-card-inner-{{ ai_gen_id }} {
+      min-height: 300px;
+      padding: {{ block.settings.card_padding_vertical | times: 0.7 }}px {{ block.settings.card_padding_horizontal | times: 0.7 }}px;
+    }
+
+    .ai-stacked-card-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_font_size | times: 0.7 }}px;
+    }
+
+    .ai-stacked-card-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<stacked-card-{{ ai_gen_id }} class="ai-stacked-card-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-stacked-card-inner-{{ ai_gen_id }}">
+    {% if block.settings.card_title != blank %}
+      <h2 class="ai-stacked-card-title-{{ ai_gen_id }}">{{ block.settings.card_title }}</h2>
+    {% endif %}
+    {% if block.settings.card_description != blank %}
+      <div class="ai-stacked-card-description-{{ ai_gen_id }}">{{ block.settings.card_description }}</div>
+    {% endif %}
+  </div>
+</stacked-card-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StackedCard{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.observer = null;
+      }
+
+      connectedCallback() {
+        this.setupIntersectionObserver();
+        this.setupScrollEffect();
+      }
+
+      setupIntersectionObserver() {
+        const options = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.1
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            const cardInner = this.querySelector('.ai-stacked-card-inner-{{ ai_gen_id }}');
+            if (entry.isIntersecting) {
+              cardInner.classList.add('ai-visible-{{ ai_gen_id }}');
+            }
+          });
+        }, options);
+
+        this.observer.observe(this);
+      }
+
+      setupScrollEffect() {
+        let ticking = false;
+
+        const updateCard = () => {
+          const rect = this.getBoundingClientRect();
+          const cardTop = rect.top;
+          const windowHeight = window.innerHeight;
+          
+          if (cardTop <= 0) {
+            const scrollProgress = Math.abs(cardTop) / windowHeight;
+            const scale = Math.max(0.85, 1 - scrollProgress * 0.15);
+            const shadowIntensity = Math.min(0.4, scrollProgress * 0.4);
+            
+            this.style.transform = 'scale(' + scale + ')';
+            this.style.boxShadow = '0 ' + (shadowIntensity * 20) + 'px ' + (shadowIntensity * 40) + 'px rgba(0, 0, 0, ' + shadowIntensity + ')';
+          } else {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+          }
+          
+          ticking = false;
+        };
+
+        const onScroll = () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateCard);
+            ticking = true;
+          }
+        };
+
+        window.addEventListener('scroll', onScroll);
+        updateCard();
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+    }
+
+    customElements.define('stacked-card-{{ ai_gen_id }}', StackedCard{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Tarjeta apilada",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "text",
+      "id": "card_title",
+      "label": "Título",
+      "default": "Título de tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_description",
+      "label": "Descripción",
+      "default": "Esta es una descripción extensa para la tarjeta apilada. Puedes agregar todo el contenido que necesites aquí para crear una experiencia visual impactante."
+    },
+    {
+      "type": "header",
+      "content": "Estilo"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Color de fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación de texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "card_padding_vertical",
+      "label": "Padding vertical",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "card_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_margin_vertical",
+      "label": "Margen vertical",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_margin_horizontal",
+      "label": "Margen horizontal",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño título",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "label": "Tamaño descripción",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tarjeta apilada"
+    }
+  ]
+}
 {% endschema %}
