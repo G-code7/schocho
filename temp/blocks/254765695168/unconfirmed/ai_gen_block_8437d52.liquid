@@ -1,6 +1,296 @@
+{% doc %}
+  @prompt
+    Crea una sección personalizada para Shopify estructurada mediante bloques repetibles que permita añadir múltiples tarjetas con un efecto de superposición de tipo sticky. La arquitectura debe garantizar que cada tarjeta ocupe el cien por ciento de la altura de la pantalla y se estacione en la parte superior, permitiendo que la siguiente tarjeta suba durante el scroll y cubra por completo a la anterior para generar una transición inmersiva de pantalla completa. Cada bloque debe ser un elemento independiente con controles específicos dentro del personalizador para editar el título y el texto descriptivo, además de contar con selectores individuales para el color de fondo, el color de la tipografía, el color del borde de un píxel y la elección de la fuente. Es fundamental que cada tarjeta incluya su propio control de alineación de texto para elegir entre izquierda, derecha, centrado o justificado, junto con controles de márgenes internos y externos personalizados por bloque para ajustar el aire visual de cada contenido. La sección debe integrar un redondeo de esquinas de quince píxeles, animaciones de entrada suaves para los elementos internos y una adaptabilidad total para dispositivos móviles, incluyendo controles globales para los márgenes superiores e inferiores de toda la sección.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-sticky-cards-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ section.settings.section_padding_top }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom }}px;
+  }
+
+  .ai-sticky-card-{{ ai_gen_id }} {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ block.settings.background_color }};
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_right }}px {{ block.settings.padding_bottom }}px {{ block.settings.padding_left }}px;
+    margin-top: {{ block.settings.margin_top }}px;
+    margin-bottom: {{ block.settings.margin_bottom }}px;
+    overflow: hidden;
+  }
+
+  .ai-sticky-card-content-{{ ai_gen_id }} {
+    max-width: 800px;
+    width: 100%;
+    text-align: {{ block.settings.text_alignment }};
+    opacity: 0;
+    transform: translateY(30px);
+    animation: ai-sticky-card-fade-in-{{ ai_gen_id }} 0.8s ease-out forwards;
+  }
+
+  @keyframes ai-sticky-card-fade-in-{{ ai_gen_id }} {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ai-sticky-card-title-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-family: {{ block.settings.title_font.family }}, {{ block.settings.title_font.fallback_families }};
+    font-weight: {{ block.settings.title_font.weight }};
+    font-style: {{ block.settings.title_font.style }};
+    margin: 0 0 20px 0;
+    font-size: 48px;
+    line-height: 1.2;
+  }
+
+  .ai-sticky-card-description-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-family: {{ block.settings.description_font.family }}, {{ block.settings.description_font.fallback_families }};
+    font-weight: {{ block.settings.description_font.weight }};
+    font-style: {{ block.settings.description_font.style }};
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-sticky-card-title-{{ ai_gen_id }} {
+      font-size: 32px;
+    }
+
+    .ai-sticky-card-description-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+
+    .ai-sticky-card-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top | times: 0.6 }}px {{ block.settings.padding_right | times: 0.6 }}px {{ block.settings.padding_bottom | times: 0.6 }}px {{ block.settings.padding_left | times: 0.6 }}px;
+    }
+  }
+{% endstyle %}
+
+<sticky-card-{{ ai_gen_id }} class="ai-sticky-cards-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-sticky-card-{{ ai_gen_id }}">
+    <div class="ai-sticky-card-content-{{ ai_gen_id }}">
+      {% if block.settings.title != blank %}
+        <h2 class="ai-sticky-card-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+      {% endif %}
+      {% if block.settings.description != blank %}
+        <div class="ai-sticky-card-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+      {% endif %}
+    </div>
+  </div>
+</sticky-card-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class StickyCard{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.observeCard();
+      }
+
+      observeCard() {
+        const card = this.querySelector('.ai-sticky-card-{{ ai_gen_id }}');
+        const content = this.querySelector('.ai-sticky-card-content-{{ ai_gen_id }}');
+        
+        if (!card || !content) return;
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                content.style.animationPlayState = 'running';
+              }
+            });
+          },
+          {
+            threshold: 0.3
+          }
+        );
+
+        observer.observe(card);
+      }
+    }
+
+    customElements.define('sticky-card-{{ ai_gen_id }}', StickyCard{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Tarjeta sticky",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Título",
+      "default": "Título de la tarjeta"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "<p>Esta es una descripción de ejemplo para la tarjeta con efecto sticky. Personaliza este texto según tus necesidades.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Fuente del título",
+      "default": "montserrat_n7"
+    },
+    {
+      "type": "font_picker",
+      "id": "description_font",
+      "label": "Fuente de la descripción",
+      "default": "montserrat_n4"
+    },
+    {
+      "type": "header",
+      "content": "Alineación"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado interno"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Derecho",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Izquierdo",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Espaciado externo"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tarjeta sticky"
+    }
+  ],
+  "tag": null
+}
 {% endschema %}
