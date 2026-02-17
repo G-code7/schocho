@@ -1,6 +1,394 @@
+{% doc %}
+  @prompt
+    Crea una sección de 4 columnas (Cards). Cada card debe tener una imagen de fondo con un overlay oscuro gradual en la parte inferior. El título (ej. Regenerative for the planet) debe estar siempre visible. Al hacer 'hover', la card debe deslizar un panel de texto hacia arriba mostrando el texto descriptivo de cada card,
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-cards-container-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-cards-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ block.settings.gap }}px;
+  }
+
+  .ai-card-{{ ai_gen_id }} {
+    position: relative;
+    height: {{ block.settings.card_height }}px;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    cursor: pointer;
+  }
+
+  .ai-card-background-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-card-background-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-card-background-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-card-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, {{ block.settings.overlay_color }}, transparent);
+    pointer-events: none;
+  }
+
+  .ai-card-title-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: {{ block.settings.title_padding }}px;
+    left: {{ block.settings.title_padding }}px;
+    right: {{ block.settings.title_padding }}px;
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0;
+    z-index: 2;
+  }
+
+  .ai-card-description-panel-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: {{ block.settings.panel_background }};
+    padding: {{ block.settings.panel_padding }}px;
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+    z-index: 3;
+  }
+
+  .ai-card-{{ ai_gen_id }}:hover .ai-card-description-panel-{{ ai_gen_id }} {
+    transform: translateY(0);
+  }
+
+  .ai-card-description-text-{{ ai_gen_id }} {
+    color: {{ block.settings.description_color }};
+    font-size: {{ block.settings.description_size }}px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-cards-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-cards-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-card-{{ ai_gen_id }} {
+      height: {{ block.settings.card_height | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<cards-hover-{{ ai_gen_id }} class="ai-cards-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-cards-grid-{{ ai_gen_id }}">
+    {% for i in (1..4) %}
+      {% liquid
+        assign image_key = 'card_' | append: i | append: '_image'
+        assign title_key = 'card_' | append: i | append: '_title'
+        assign description_key = 'card_' | append: i | append: '_description'
+        
+        assign card_image = block.settings[image_key]
+        assign card_title = block.settings[title_key]
+        assign card_description = block.settings[description_key]
+      %}
+      
+      <div class="ai-card-{{ ai_gen_id }}">
+        {% if card_image %}
+          <img
+            src="{{ card_image | image_url: width: 800 }}"
+            alt="{{ card_image.alt | escape }}"
+            loading="lazy"
+            width="{{ card_image.width }}"
+            height="{{ card_image.height }}"
+            class="ai-card-background-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-card-background-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+          </div>
+        {% endif %}
+        
+        <div class="ai-card-overlay-{{ ai_gen_id }}"></div>
+        
+        {% if card_title != blank %}
+          <h3 class="ai-card-title-{{ ai_gen_id }}">{{ card_title }}</h3>
+        {% endif %}
+        
+        <div class="ai-card-description-panel-{{ ai_gen_id }}">
+          {% if card_description != blank %}
+            <p class="ai-card-description-text-{{ ai_gen_id }}">{{ card_description }}</p>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</cards-hover-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CardsHover{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.cards = this.querySelectorAll('.ai-card-{{ ai_gen_id }}');
+      }
+    }
+
+    customElements.define('cards-hover-{{ ai_gen_id }}', CardsHover{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Cards con hover",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "label": "Altura de card",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espacio entre cards",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color de overlay",
+      "default": "rgba(0, 0, 0, 0.6)"
+    },
+    {
+      "type": "header",
+      "content": "Título"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Panel de descripción"
+    },
+    {
+      "type": "color",
+      "id": "panel_background",
+      "label": "Fondo",
+      "default": "rgba(0, 0, 0, 0.9)"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color de texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Tamaño de texto",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "panel_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Título",
+      "default": "Regenerative for the planet"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_description",
+      "label": "Descripción",
+      "default": "Nuestro compromiso con prácticas sostenibles que regeneran el medio ambiente."
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Título",
+      "default": "Ethical sourcing"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_description",
+      "label": "Descripción",
+      "default": "Trabajamos con proveedores que comparten nuestros valores éticos."
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Título",
+      "default": "Community impact"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_description",
+      "label": "Descripción",
+      "default": "Apoyamos a las comunidades locales a través de nuestras iniciativas."
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Imagen"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Título",
+      "default": "Transparent practices"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_description",
+      "label": "Descripción",
+      "default": "Mantenemos total transparencia en todos nuestros procesos."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cards con hover"
+    }
+  ]
+}
 {% endschema %}
