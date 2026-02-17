@@ -482,14 +482,14 @@
         "ai_gen_block_82957e3_nWfwaC": {
           "type": "ai_gen_block_82957e3",
           "settings": {
-            "card_title": "Título de tarjeta",
-            "card_description": "Esta es una descripción extensa para la tarjeta apilada. Puedes agregar todo el contenido que necesites aquí para crear una experiencia visual impactante.",
-            "card_background": "#efebe5",
-            "card_text_color": "#3e2563",
+            "card_title": "Regenerative for the Planet",
+            "card_description": "Between 10,000 and 14,000 feet, chocho thrives where few crops can, growing under intense sun and cold mountain nights. It requires little water and naturally resists pests, reducing the need for heavy irrigation, synthetic fertilizers, or chemical pesticides.As a nitrogen-fixing legume, it restores soil health by drawing nitrogen from the air and returning it to the earth. After harvest, remaining plant matter is returned to the soil to support soil life. Long before “regenerative agriculture” had a name, Andean farmers cultivated chocho in balance with Pachamama, Mother Earth.PRONTO CHOCHO honors this legacy by delivering clean nourishment that supports both your body and the planet.",
+            "card_background": "#3e2563",
+            "card_text_color": "#efebe5",
             "card_border_color": "#3e2563",
-            "text_alignment": "center",
+            "text_alignment": "justify",
             "card_padding_vertical": 60,
-            "card_padding_horizontal": 40,
+            "card_padding_horizontal": 70,
             "card_margin_vertical": 20,
             "card_margin_horizontal": 20,
             "title_font_size": 40,
@@ -501,14 +501,33 @@
         "ai_gen_block_82957e3_g6Uq3r": {
           "type": "ai_gen_block_82957e3",
           "settings": {
-            "card_title": "Título de tarjeta",
-            "card_description": "Esta es una descripción extensa para la tarjeta apilada. Puedes agregar todo el contenido que necesites aquí para crear una experiencia visual impactante.",
-            "card_background": "#efebe5",
-            "card_text_color": "#3e2563",
+            "card_title": "Crafted by Honoring Tradition",
+            "card_description": "Every scoop of PRONTO CHOCHO begins in the Andean highlands, where chocho has been cultivated for generations in mineral-rich soils. Here, farming is more than labor - it is a way of life rooted in respect for land and community.At the start of the rainy season, farmers hand-sow each seed. When harvest arrives, pods are gathered, sun-dried beneath mountain skies, and through communal work the “pearls of the Andes” are carefully removed, examined, and selected - a shared ritual reflecting generations of agricultural knowledge while supporting and strengthening local farming livelihoods.",
+            "card_background": "#ee542f",
+            "card_text_color": "#ffffff",
             "card_border_color": "#3e2563",
-            "text_alignment": "center",
+            "text_alignment": "justify",
             "card_padding_vertical": 60,
-            "card_padding_horizontal": 40,
+            "card_padding_horizontal": 70,
+            "card_margin_vertical": 20,
+            "card_margin_horizontal": 20,
+            "title_font_size": 40,
+            "description_font_size": 16,
+            "desktop_width_percent": 100
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_82957e3_QWfNq8": {
+          "type": "ai_gen_block_82957e3",
+          "settings": {
+            "card_title": "Thoughtful Sourcing & Preparation",
+            "card_description": "We partner directly with Andean farmers who cultivate chocho through sustainable, regenerative practices rooted in tradition, preserving both agricultural knowledge and community well-being.Preparation follows ancestral methods. Chocho is carefully debittered and cooked through a slow, multi-day process practiced by Indigenous communities for generations - a craft requiring patience, precision, and respect for the seed. It is then gently dried and milled into a pure powder close to its natural whole-food form.No fillers. No additives. No shortcuts.Just minimally processed nourishment. Never isolated or bleached. Delivered pronto to your life with its full nutritional integrity intact.",
+            "card_background": "#14513f",
+            "card_text_color": "#ffffff",
+            "card_border_color": "#3e2563",
+            "text_alignment": "justify",
+            "card_padding_vertical": 60,
+            "card_padding_horizontal": 70,
             "card_margin_vertical": 20,
             "card_margin_horizontal": 20,
             "title_font_size": 40,
@@ -520,7 +539,8 @@
       },
       "block_order": [
         "ai_gen_block_82957e3_nWfwaC",
-        "ai_gen_block_82957e3_g6Uq3r"
+        "ai_gen_block_82957e3_g6Uq3r",
+        "ai_gen_block_82957e3_QWfNq8"
       ],
       "settings": {
         "content_direction": "column",
@@ -552,31 +572,6 @@
     },
     "1771348801ad45dc51": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_8437d52_ax9LBr": {
-          "type": "ai_gen_block_8437d52",
-          "settings": {
-            "title": "Título de la tarjeta",
-            "description": "<p>Esta es una descripción de ejemplo para la tarjeta con efecto sticky. Personaliza este texto según tus necesidades.</p>",
-            "background_color": "#efebe5",
-            "text_color": "#3e2563",
-            "border_color": "#3e2563",
-            "title_font": "montserrat_n7",
-            "description_font": "montserrat_n4",
-            "text_alignment": "center",
-            "padding_top": 60,
-            "padding_right": 40,
-            "padding_bottom": 60,
-            "padding_left": 40,
-            "margin_top": 0,
-            "margin_bottom": 0
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_8437d52_ax9LBr"
-      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
