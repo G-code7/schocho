@@ -395,9 +395,9 @@
         "subtitle_color": "#444444",
         "subtitle_margin_bottom": 20,
         "paragraph": "<p>Grown for centuries in the Andes, chocho is one of the world’s most ancient and nutritionally robust legumes. It naturally provides complete amino acids alongside fiber, healthy fats, and essential micronutrients in one whole-food source.</p><p>This profile reflects what modern longevity research continues to show: in the world’s Blue Zones, legumes are a foundational part of daily nutrition. Chocho carries forward this same tradition, bridging ancestral nourishment with modern longevity lifestyles.</p><p><em><strong>*Blue Zones longevity research by Dan Buettner highlights legumes as a staple in long-lived populations.</strong></em></p>",
-        "paragraph_size": 15,
+        "paragraph_size": 16,
         "paragraph_color": "#3e2563",
-        "paragraph_line_height": 1.7,
+        "paragraph_line_height": 1.4,
         "section_padding_top_mobile": 20,
         "section_padding_bottom_mobile": 20,
         "section_padding_x_mobile": 0,
@@ -408,19 +408,6 @@
     "hero_CtRMrE": {
       "type": "hero",
       "blocks": {
-        "spacer_RCXAYq": {
-          "type": "spacer",
-          "settings": {
-            "size": "pixel",
-            "percent_size": 100,
-            "pixel_size": 24,
-            "custom_mobile_size": false,
-            "size_mobile": "percent",
-            "percent_size_mobile": 100,
-            "pixel_size_mobile": 120
-          },
-          "blocks": {}
-        },
         "marquee_PbjzUE": {
           "type": "_marquee",
           "settings": {
@@ -465,13 +452,12 @@
         }
       },
       "block_order": [
-        "spacer_RCXAYq",
         "marquee_PbjzUE"
       ],
       "name": "t:names.hero_marquee",
       "settings": {
         "media_type_1": "image",
-        "image_1": "shopify://shop_images/IMG_5534.heic",
+        "image_1": "shopify://shop_images/freepik__recrea-la-misma-imagen-pero-siguiendo-las-caracter__72241.png",
         "media_type_2": "image",
         "stack_media_on_mobile": false,
         "custom_mobile_media": false,
@@ -479,24 +465,24 @@
         "media_type_2_mobile": "image",
         "link": "",
         "open_in_new_tab": false,
-        "content_direction": "row",
+        "content_direction": "column",
         "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
+        "horizontal_alignment": "center",
         "vertical_alignment": "center",
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "space-between",
+        "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
         "section_width": "full-width",
-        "section_height": "large",
+        "section_height": "small",
         "section_height_custom": 50,
-        "color_scheme": "scheme-5",
+        "color_scheme": "scheme-4",
         "toggle_overlay": true,
-        "overlay_color": "#00000026",
-        "overlay_style": "gradient",
+        "overlay_color": "#2e2e2e1e",
+        "overlay_style": "solid",
         "gradient_direction": "to top",
         "blurred_reflection": false,
-        "reflection_opacity": 75,
+        "reflection_opacity": 2,
         "padding-block-start": 0,
         "padding-block-end": 40
       }
