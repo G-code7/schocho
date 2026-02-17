@@ -832,14 +832,14 @@
             "mission_hover_bg_color": "#b29fbb",
             "mission_border_color": "#3e2563",
             "mission_text_color": "#3e2563",
-            "mission_text_align": "left",
+            "mission_text_align": "justify",
             "vision_title": "Our Vision",
             "vision_content": "<p>To bring real nourishment back to the table. We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</p>",
             "vision_bg_color": "#efebe5",
             "vision_hover_bg_color": "#b29fbb",
             "vision_border_color": "#3e2563",
             "vision_text_color": "#3e2563",
-            "vision_text_align": "center"
+            "vision_text_align": "justify"
           },
           "blocks": {}
         }
