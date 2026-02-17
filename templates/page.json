@@ -918,19 +918,19 @@
             "philosophy_text_color": "#3e2563",
             "philosophy_text_align": "justify",
             "mission_title": "Our Mision",
-            "mission_content": "<p>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment. We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. From soil to table, our choices are guided by care for the body, the community, and the planet.</p>",
+            "mission_content": "<p>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment. <br/>We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. <br/>From soil to table, our choices are guided by care for the body, the community, and the planet.</p>",
             "mission_bg_color": "#efebe5",
             "mission_hover_bg_color": "#b29fbb",
             "mission_border_color": "#3e2563",
             "mission_text_color": "#3e2563",
-            "mission_text_align": "justify",
+            "mission_text_align": "left",
             "vision_title": "Our Vision",
-            "vision_content": "<p>To bring real nourishment back to the table. We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</p>",
+            "vision_content": "<p>To bring real nourishment back to the table.<br/> We envision a future where food is honest, functional, <br/>and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</p>",
             "vision_bg_color": "#efebe5",
             "vision_hover_bg_color": "#b29fbb",
             "vision_border_color": "#3e2563",
             "vision_text_color": "#3e2563",
-            "vision_text_align": "justify"
+            "vision_text_align": "left"
           },
           "blocks": {}
         }
