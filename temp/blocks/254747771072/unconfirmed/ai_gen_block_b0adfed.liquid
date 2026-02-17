@@ -1,6 +1,644 @@
+{% doc %}
+  @prompt
+    Diseña una sección personalizada para Shopify basada en bloques independientes que permita editar el estilo de cada uno de los tres recuadros de forma individual, asegurando que el contenedor global esté perfectamente centrado en la pantalla. La estructura debe configurarse para que el bloque central, destinado a la Filosofía, sea visualmente más largo y sobresalga de manera simétrica tanto por la parte superior como por la inferior respecto a los bloques laterales de Misión y Visión. Para lograr este efecto de desfase, el bloque del medio debe contar con un ajuste de padding vertical independiente y una propiedad de posicionamiento que le permita romper la línea horizontal de los otros dos recuadros, mientras todos permanecen alineados al centro vertical del contenedor.
+    
+    Cada bloque debe incluir controles específicos de alineación de texto para elegir entre izquierda, derecha, centrado o justificado, además de permitir la personalización individual de colores de fondo, bordes, tipografía y espaciado interno. Integra una animación de entrada escalonada donde el bloque central aparezca primero, seguido por los laterales, y añade un efecto de hover suave que cambie el color de fondo o la elevación de la sombra al pasar el cursor. La sección debe ser completamente responsiva, permitiendo que en móviles los bloques se apilen verticalmente manteniendo sus estilos, y debe incluir controles globales para definir los márgenes de separación (padding top y bottom) con el resto de los elementos de la página.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-mvp-container-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ block.settings.section_padding_top }}px;
+    padding-bottom: {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-mvp-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ block.settings.gap_between_blocks }}px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-mvp-block-{{ ai_gen_id }} {
+    flex: 1;
+    background-color: {{ block.settings.block_bg_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: {{ block.settings.block_padding }}px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .ai-mvp-block-{{ ai_gen_id }}.ai-mvp-visible-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-mvp-block-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.block_hover_bg_color }};
+    box-shadow: 0 {{ block.settings.shadow_elevation }}px {{ block.settings.shadow_elevation | times: 2 }}px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-mvp-block-left-{{ ai_gen_id }} {
+    background-color: {{ block.settings.left_bg_color }};
+    border: {{ block.settings.left_border_width }}px solid {{ block.settings.left_border_color }};
+    border-radius: {{ block.settings.left_border_radius }}px;
+    padding: {{ block.settings.left_padding }}px;
+  }
+
+  .ai-mvp-block-left-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.left_hover_bg_color }};
+  }
+
+  .ai-mvp-block-center-{{ ai_gen_id }} {
+    background-color: {{ block.settings.center_bg_color }};
+    border: {{ block.settings.center_border_width }}px solid {{ block.settings.center_border_color }};
+    border-radius: {{ block.settings.center_border_radius }}px;
+    padding-top: {{ block.settings.center_padding_vertical }}px;
+    padding-bottom: {{ block.settings.center_padding_vertical }}px;
+    padding-left: {{ block.settings.center_padding_horizontal }}px;
+    padding-right: {{ block.settings.center_padding_horizontal }}px;
+    position: relative;
+    top: {{ block.settings.center_vertical_offset }}px;
+    animation-delay: 0s;
+  }
+
+  .ai-mvp-block-center-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.center_hover_bg_color }};
+  }
+
+  .ai-mvp-block-right-{{ ai_gen_id }} {
+    background-color: {{ block.settings.right_bg_color }};
+    border: {{ block.settings.right_border_width }}px solid {{ block.settings.right_border_color }};
+    border-radius: {{ block.settings.right_border_radius }}px;
+    padding: {{ block.settings.right_padding }}px;
+  }
+
+  .ai-mvp-block-right-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.right_hover_bg_color }};
+  }
+
+  .ai-mvp-block-left-{{ ai_gen_id }}.ai-mvp-visible-{{ ai_gen_id }} {
+    animation-delay: 0.3s;
+  }
+
+  .ai-mvp-block-right-{{ ai_gen_id }}.ai-mvp-visible-{{ ai_gen_id }} {
+    animation-delay: 0.3s;
+  }
+
+  .ai-mvp-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: {{ block.settings.title_color }};
+  }
+
+  .ai-mvp-content-{{ ai_gen_id }} {
+    font-size: {{ block.settings.content_font_size }}px;
+    line-height: 1.6;
+    margin: 0;
+    color: {{ block.settings.content_color }};
+  }
+
+  .ai-mvp-text-left-{{ ai_gen_id }} {
+    text-align: left;
+  }
+
+  .ai-mvp-text-center-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-mvp-text-right-{{ ai_gen_id }} {
+    text-align: right;
+  }
+
+  .ai-mvp-text-justify-{{ ai_gen_id }} {
+    text-align: justify;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-mvp-wrapper-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: {{ block.settings.gap_between_blocks | divided_by: 2 }}px;
+    }
+
+    .ai-mvp-block-center-{{ ai_gen_id }} {
+      top: 0;
+    }
+
+    .ai-mvp-block-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<mvp-blocks-{{ ai_gen_id }} class="ai-mvp-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-mvp-wrapper-{{ ai_gen_id }}">
+    <div class="ai-mvp-block-{{ ai_gen_id }} ai-mvp-block-left-{{ ai_gen_id }} ai-mvp-text-{{ block.settings.left_text_align }}-{{ ai_gen_id }}" data-block="left">
+      <h3 class="ai-mvp-title-{{ ai_gen_id }}" style="color: {{ block.settings.left_title_color }};">
+        {{ block.settings.left_title }}
+      </h3>
+      <div class="ai-mvp-content-{{ ai_gen_id }}" style="color: {{ block.settings.left_content_color }};">
+        {{ block.settings.left_content }}
+      </div>
+    </div>
+
+    <div class="ai-mvp-block-{{ ai_gen_id }} ai-mvp-block-center-{{ ai_gen_id }} ai-mvp-text-{{ block.settings.center_text_align }}-{{ ai_gen_id }}" data-block="center">
+      <h3 class="ai-mvp-title-{{ ai_gen_id }}" style="color: {{ block.settings.center_title_color }};">
+        {{ block.settings.center_title }}
+      </h3>
+      <div class="ai-mvp-content-{{ ai_gen_id }}" style="color: {{ block.settings.center_content_color }};">
+        {{ block.settings.center_content }}
+      </div>
+    </div>
+
+    <div class="ai-mvp-block-{{ ai_gen_id }} ai-mvp-block-right-{{ ai_gen_id }} ai-mvp-text-{{ block.settings.right_text_align }}-{{ ai_gen_id }}" data-block="right">
+      <h3 class="ai-mvp-title-{{ ai_gen_id }}" style="color: {{ block.settings.right_title_color }};">
+        {{ block.settings.right_title }}
+      </h3>
+      <div class="ai-mvp-content-{{ ai_gen_id }}" style="color: {{ block.settings.right_content_color }};">
+        {{ block.settings.right_content }}
+      </div>
+    </div>
+  </div>
+</mvp-blocks-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class MvpBlocks{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.initAnimation();
+      }
+
+      initAnimation() {
+        const blocks = this.querySelectorAll('.ai-mvp-block-{{ ai_gen_id }}');
+        const centerBlock = this.querySelector('[data-block="center"]');
+        const leftBlock = this.querySelector('[data-block="left"]');
+        const rightBlock = this.querySelector('[data-block="right"]');
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                centerBlock.classList.add('ai-mvp-visible-{{ ai_gen_id }}');
+              }, 100);
+
+              setTimeout(() => {
+                leftBlock.classList.add('ai-mvp-visible-{{ ai_gen_id }}');
+                rightBlock.classList.add('ai-mvp-visible-{{ ai_gen_id }}');
+              }, 400);
+
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.2
+        });
+
+        observer.observe(this);
+      }
+    }
+
+    customElements.define('mvp-blocks-{{ ai_gen_id }}', MvpBlocks{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Misión visión filosofía",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Espaciado de sección"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "gap_between_blocks",
+      "label": "Espacio entre bloques",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Estilo global de bloques"
+    },
+    {
+      "type": "color",
+      "id": "block_bg_color",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "block_hover_bg_color",
+      "label": "Color de fondo al hover",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Ancho de borde",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "block_padding",
+      "label": "Padding interno",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "shadow_elevation",
+      "label": "Elevación de sombra",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Tipografía global"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño de título",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color de título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "content_font_size",
+      "label": "Tamaño de contenido",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Color de contenido",
+      "default": "#3e2563"
+    },
+    {
+      "type": "header",
+      "content": "Bloque izquierdo"
+    },
+    {
+      "type": "text",
+      "id": "left_title",
+      "label": "Título",
+      "default": "Misión"
+    },
+    {
+      "type": "richtext",
+      "id": "left_content",
+      "label": "Contenido",
+      "default": "<p>Nuestra misión es ofrecer productos de calidad que transformen la vida de nuestros clientes.</p>"
+    },
+    {
+      "type": "select",
+      "id": "left_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "left_bg_color",
+      "label": "Fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "left_hover_bg_color",
+      "label": "Fondo al hover",
+      "default": "#e5e0d9"
+    },
+    {
+      "type": "color",
+      "id": "left_border_color",
+      "label": "Borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "left_border_width",
+      "label": "Ancho de borde",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "left_border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "left_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "left_title_color",
+      "label": "Color de título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "left_content_color",
+      "label": "Color de contenido",
+      "default": "#3e2563"
+    },
+    {
+      "type": "header",
+      "content": "Bloque central"
+    },
+    {
+      "type": "text",
+      "id": "center_title",
+      "label": "Título",
+      "default": "Filosofía"
+    },
+    {
+      "type": "richtext",
+      "id": "center_content",
+      "label": "Contenido",
+      "default": "<p>Creemos en la innovación constante, la sostenibilidad y el compromiso con nuestros valores fundamentales.</p>"
+    },
+    {
+      "type": "select",
+      "id": "center_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "center_vertical_offset",
+      "label": "Desplazamiento vertical",
+      "min": -50,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": -20
+    },
+    {
+      "type": "color",
+      "id": "center_bg_color",
+      "label": "Fondo",
+      "default": "#c2afcb"
+    },
+    {
+      "type": "color",
+      "id": "center_hover_bg_color",
+      "label": "Fondo al hover",
+      "default": "#b5a1bf"
+    },
+    {
+      "type": "color",
+      "id": "center_border_color",
+      "label": "Borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "center_border_width",
+      "label": "Ancho de borde",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "center_border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "center_padding_vertical",
+      "label": "Padding vertical",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "center_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "center_title_color",
+      "label": "Color de título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "center_content_color",
+      "label": "Color de contenido",
+      "default": "#3e2563"
+    },
+    {
+      "type": "header",
+      "content": "Bloque derecho"
+    },
+    {
+      "type": "text",
+      "id": "right_title",
+      "label": "Título",
+      "default": "Visión"
+    },
+    {
+      "type": "richtext",
+      "id": "right_content",
+      "label": "Contenido",
+      "default": "<p>Aspiramos a ser líderes en nuestro sector, reconocidos por nuestra excelencia y dedicación.</p>"
+    },
+    {
+      "type": "select",
+      "id": "right_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "color",
+      "id": "right_bg_color",
+      "label": "Fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "right_hover_bg_color",
+      "label": "Fondo al hover",
+      "default": "#e5e0d9"
+    },
+    {
+      "type": "color",
+      "id": "right_border_color",
+      "label": "Borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "right_border_width",
+      "label": "Ancho de borde",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "right_border_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "right_padding",
+      "label": "Padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "color",
+      "id": "right_title_color",
+      "label": "Color de título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "right_content_color",
+      "label": "Color de contenido",
+      "default": "#3e2563"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Misión visión filosofía"
+    }
+  ]
+}
 {% endschema %}
