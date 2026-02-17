@@ -379,7 +379,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>© 2026 PRONTO CHOCHO™ <em>is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
+            "text": "<p>© 2026 PRONTO CHOCHO.  PRONTO CHOCHO™ <em>is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
             "width": "fit-content",
             "max_width": "none",
             "alignment": "left",
