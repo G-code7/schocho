@@ -1,6 +1,461 @@
+{% doc %}
+  @prompt
+    Diseña una sección personalizada para Shopify basada en bloques independientes con una disposición de cuadrícula específica (Grid). La estructura debe presentar un bloque superior único para 'Filosofía' que ocupe el 100% del ancho del contenedor, y justo debajo, dos bloques para 'Misión' y 'Visión' dispuestos uno al lado del otro, cada uno ocupando el 50% del ancho, de modo que el conjunto inferior iguale exactamente el ancho del bloque superior. El contenedor global debe estar perfectamente centrado en la pantalla y permitir controles de margen (padding/margin top y bottom) para separar la sección de otros elementos.
+    
+    Cada uno de los tres recuadros debe ser editable de forma individual desde el personalizador de Shopify, permitiendo cambiar colores de fondo, bordes de 1px con esquinas redondeadas de 15px, color de tipografía y alineación de texto (izquierda, derecha, centrado o justificado). Integra una animación de entrada escalonada donde primero aparezca el bloque superior de Filosofía y luego, simultáneamente, los dos bloques inferiores. Añade también un efecto de hover para cada recuadro que permita un cambio sutil en el color de fondo o una elevación de sombra para indicar interactividad al usuario. Esta sección debe ser completamente responsiva, transformándose en una sola columna vertical en dispositivos móviles, manteniendo el orden de Filosofía arriba y luego Misión y Visión, con todos sus estilos y animaciones activos.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-grid-container-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-grid-wrapper-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: {{ block.settings.gap }}px;
+  }
+
+  .ai-grid-row-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.gap }}px;
+  }
+
+  .ai-grid-box-{{ ai_gen_id }} {
+    background-color: {{ block.settings.philosophy_bg_color }};
+    border: 1px solid {{ block.settings.philosophy_border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.box_padding }}px;
+    text-align: {{ block.settings.philosophy_text_align }};
+    color: {{ block.settings.philosophy_text_color }};
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .ai-grid-box-{{ ai_gen_id }}.ai-animate-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-grid-box-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.philosophy_hover_bg_color }};
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .ai-grid-box-mission-{{ ai_gen_id }} {
+    background-color: {{ block.settings.mission_bg_color }};
+    border: 1px solid {{ block.settings.mission_border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.box_padding }}px;
+    text-align: {{ block.settings.mission_text_align }};
+    color: {{ block.settings.mission_text_color }};
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .ai-grid-box-mission-{{ ai_gen_id }}.ai-animate-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-grid-box-mission-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.mission_hover_bg_color }};
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .ai-grid-box-vision-{{ ai_gen_id }} {
+    background-color: {{ block.settings.vision_bg_color }};
+    border: 1px solid {{ block.settings.vision_border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.box_padding }}px;
+    text-align: {{ block.settings.vision_text_align }};
+    color: {{ block.settings.vision_text_color }};
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .ai-grid-box-vision-{{ ai_gen_id }}.ai-animate-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-grid-box-vision-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.vision_hover_bg_color }};
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .ai-grid-box-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .ai-grid-box-content-{{ ai_gen_id }} {
+    font-size: {{ block.settings.content_font_size }}px;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-grid-row-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstyle %}
+
+<brand-grid-{{ ai_gen_id }} class="ai-grid-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-grid-wrapper-{{ ai_gen_id }}">
+    <div class="ai-grid-box-{{ ai_gen_id }}" data-delay="0">
+      {% if block.settings.philosophy_title != blank %}
+        <h3 class="ai-grid-box-title-{{ ai_gen_id }}">{{ block.settings.philosophy_title }}</h3>
+      {% endif %}
+      {% if block.settings.philosophy_content != blank %}
+        <div class="ai-grid-box-content-{{ ai_gen_id }}">{{ block.settings.philosophy_content }}</div>
+      {% endif %}
+    </div>
+
+    <div class="ai-grid-row-{{ ai_gen_id }}">
+      <div class="ai-grid-box-mission-{{ ai_gen_id }}" data-delay="300">
+        {% if block.settings.mission_title != blank %}
+          <h3 class="ai-grid-box-title-{{ ai_gen_id }}">{{ block.settings.mission_title }}</h3>
+        {% endif %}
+        {% if block.settings.mission_content != blank %}
+          <div class="ai-grid-box-content-{{ ai_gen_id }}">{{ block.settings.mission_content }}</div>
+        {% endif %}
+      </div>
+
+      <div class="ai-grid-box-vision-{{ ai_gen_id }}" data-delay="300">
+        {% if block.settings.vision_title != blank %}
+          <h3 class="ai-grid-box-title-{{ ai_gen_id }}">{{ block.settings.vision_title }}</h3>
+        {% endif %}
+        {% if block.settings.vision_content != blank %}
+          <div class="ai-grid-box-content-{{ ai_gen_id }}">{{ block.settings.vision_content }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</brand-grid-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BrandGrid{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.animateBoxes();
+      }
+
+      animateBoxes() {
+        const boxes = this.querySelectorAll('[data-delay]');
+        
+        boxes.forEach((box) => {
+          const delay = parseInt(box.getAttribute('data-delay'));
+          
+          setTimeout(() => {
+            box.classList.add('ai-animate-{{ ai_gen_id }}');
+          }, delay);
+        });
+      }
+    }
+
+    customElements.define('brand-grid-{{ ai_gen_id }}', BrandGrid{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Grid de marca",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Diseño general"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Margen superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Margen inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espacio entre bloques",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "box_padding",
+      "label": "Relleno interno",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño de título",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_font_size",
+      "label": "Tamaño de contenido",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Filosofía"
+    },
+    {
+      "type": "text",
+      "id": "philosophy_title",
+      "label": "Título",
+      "default": "Nuestra Filosofía"
+    },
+    {
+      "type": "richtext",
+      "id": "philosophy_content",
+      "label": "Contenido",
+      "default": "<p>Creemos en la excelencia y la innovación constante para ofrecer el mejor servicio a nuestros clientes.</p>"
+    },
+    {
+      "type": "color",
+      "id": "philosophy_bg_color",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "philosophy_hover_bg_color",
+      "label": "Fondo al pasar",
+      "default": "#e5e4dd"
+    },
+    {
+      "type": "color",
+      "id": "philosophy_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "philosophy_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "select",
+      "id": "philosophy_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Misión"
+    },
+    {
+      "type": "text",
+      "id": "mission_title",
+      "label": "Título",
+      "default": "Nuestra Misión"
+    },
+    {
+      "type": "richtext",
+      "id": "mission_content",
+      "label": "Contenido",
+      "default": "<p>Proporcionar productos de calidad que mejoren la vida de nuestros clientes.</p>"
+    },
+    {
+      "type": "color",
+      "id": "mission_bg_color",
+      "label": "Color de fondo",
+      "default": "#c2afcb"
+    },
+    {
+      "type": "color",
+      "id": "mission_hover_bg_color",
+      "label": "Fondo al pasar",
+      "default": "#b29fbb"
+    },
+    {
+      "type": "color",
+      "id": "mission_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "mission_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "select",
+      "id": "mission_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Visión"
+    },
+    {
+      "type": "text",
+      "id": "vision_title",
+      "label": "Título",
+      "default": "Nuestra Visión"
+    },
+    {
+      "type": "richtext",
+      "id": "vision_content",
+      "label": "Contenido",
+      "default": "<p>Ser líderes en nuestro sector, reconocidos por nuestra innovación y compromiso.</p>"
+    },
+    {
+      "type": "color",
+      "id": "vision_bg_color",
+      "label": "Color de fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "vision_hover_bg_color",
+      "label": "Fondo al pasar",
+      "default": "#dfdbd5"
+    },
+    {
+      "type": "color",
+      "id": "vision_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "vision_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "select",
+      "id": "vision_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "justify",
+          "label": "Justificado"
+        }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Grid de marca"
+    }
+  ]
+}
 {% endschema %}
