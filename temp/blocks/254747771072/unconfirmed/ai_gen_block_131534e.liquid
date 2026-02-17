@@ -1,6 +1,461 @@
+{% doc %}
+  @prompt
+    Diseña una sección personalizada para Shopify basada en bloques independientes que permita editar el estilo de cada uno de los tres recuadros de forma individual. La estructura global de la sección debe garantizar que el contenedor de los tres bloques esté perfectamente centrado en la pantalla, eliminando cualquier desplazamiento hacia los lados. Cada bloque debe incluir un control de alineación de texto que permita al usuario elegir entre izquierda, derecha, centrado o justificado de forma independiente para cada recuadro.
+    
+    Para el comportamiento visual, integra una animación de entrada (fade-in o slide-up) escalonada: el bloque central de "Filosofía" debe aparecer primero, seguido por el de la izquierda y finalmente el de la derecha, creando un efecto de enfoque dinámico al cargar la página. Además, añade una animación de hover para cada recuadro; al pasar el cursor, el bloque debe realizar una transición suave, como un cambio sutil en el color de fondo, un ligero escalado (zoom-in del 2%) o una sombra proyectada más profunda para indicar interactividad.
+    
+    El bloque central debe conservar su capacidad de ser más alto y bajo que los laterales mediante un ajuste de padding vertical único, manteniendo el desfase simétrico. Todos los bloques deben ofrecer controles individuales para cambiar colores de fondo, bordes, tipografía y espaciado interno, además de controles globales para los márgenes superiores e inferiores de la sección completa. Los tres recuadros deben mantener su borde de 1px con esquinas redondeadas de 15px y ser completamente responsivos, apilándose verticalmente en dispositivos móviles sin perder sus animaciones ni sus estilos personalizados.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-three-blocks-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ section.settings.margin_top }}px;
+    padding-bottom: {{ section.settings.margin_bottom }}px;
+    overflow: hidden;
+  }
+
+  .ai-three-blocks-container-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: {{ section.settings.gap_between_blocks }}px;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-block-item-{{ ai_gen_id }} {
+    flex: 1;
+    border: 1px solid;
+    border-radius: 15px;
+    transition: all 0.4s ease;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .ai-block-item-{{ ai_gen_id }}.ai-animated-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-block-item-{{ ai_gen_id }}:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-block-left-{{ ai_gen_id }} {
+    background-color: {{ section.settings.left_bg_color }};
+    border-color: {{ section.settings.left_border_color }};
+    color: {{ section.settings.left_text_color }};
+    padding: {{ section.settings.left_padding_vertical }}px {{ section.settings.left_padding_horizontal }}px;
+    animation-delay: 0.2s;
+  }
+
+  .ai-block-center-{{ ai_gen_id }} {
+    background-color: {{ section.settings.center_bg_color }};
+    border-color: {{ section.settings.center_border_color }};
+    color: {{ section.settings.center_text_color }};
+    padding: {{ section.settings.center_padding_vertical }}px {{ section.settings.center_padding_horizontal }}px;
+    animation-delay: 0s;
+  }
+
+  .ai-block-right-{{ ai_gen_id }} {
+    background-color: {{ section.settings.right_bg_color }};
+    border-color: {{ section.settings.right_border_color }};
+    color: {{ section.settings.right_text_color }};
+    padding: {{ section.settings.right_padding_vertical }}px {{ section.settings.right_padding_horizontal }}px;
+    animation-delay: 0.4s;
+  }
+
+  .ai-block-title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.title_font_size }}px;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  .ai-block-content-{{ ai_gen_id }} {
+    font-size: {{ section.settings.content_font_size }}px;
+    line-height: 1.6;
+  }
+
+  .ai-text-left-{{ ai_gen_id }} {
+    text-align: left;
+  }
+
+  .ai-text-center-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-text-right-{{ ai_gen_id }} {
+    text-align: right;
+  }
+
+  .ai-text-justify-{{ ai_gen_id }} {
+    text-align: justify;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-three-blocks-container-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .ai-block-item-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-block-left-{{ ai_gen_id }},
+    .ai-block-center-{{ ai_gen_id }},
+    .ai-block-right-{{ ai_gen_id }} {
+      animation-delay: 0s;
+    }
+
+    .ai-block-left-{{ ai_gen_id }} {
+      animation-delay: 0s;
+    }
+
+    .ai-block-center-{{ ai_gen_id }} {
+      animation-delay: 0.15s;
+    }
+
+    .ai-block-right-{{ ai_gen_id }} {
+      animation-delay: 0.3s;
+    }
+  }
+{% endstyle %}
+
+<three-blocks-section-{{ ai_gen_id }} class="ai-three-blocks-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-three-blocks-container-{{ ai_gen_id }}">
+    <div class="ai-block-item-{{ ai_gen_id }} ai-block-left-{{ ai_gen_id }} ai-text-{{ section.settings.left_text_align }}-{{ ai_gen_id }}">
+      <h3 class="ai-block-title-{{ ai_gen_id }}">{{ section.settings.left_title }}</h3>
+      <div class="ai-block-content-{{ ai_gen_id }}">{{ section.settings.left_content }}</div>
+    </div>
+
+    <div class="ai-block-item-{{ ai_gen_id }} ai-block-center-{{ ai_gen_id }} ai-text-{{ section.settings.center_text_align }}-{{ ai_gen_id }}">
+      <h3 class="ai-block-title-{{ ai_gen_id }}">{{ section.settings.center_title }}</h3>
+      <div class="ai-block-content-{{ ai_gen_id }}">{{ section.settings.center_content }}</div>
+    </div>
+
+    <div class="ai-block-item-{{ ai_gen_id }} ai-block-right-{{ ai_gen_id }} ai-text-{{ section.settings.right_text_align }}-{{ ai_gen_id }}">
+      <h3 class="ai-block-title-{{ ai_gen_id }}">{{ section.settings.right_title }}</h3>
+      <div class="ai-block-content-{{ ai_gen_id }}">{{ section.settings.right_content }}</div>
+    </div>
+  </div>
+</three-blocks-section-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ThreeBlocksSection{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.initAnimation();
+      }
+
+      initAnimation() {
+        const blocks = this.querySelectorAll('.ai-block-item-{{ ai_gen_id }}');
+        
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('ai-animated-{{ ai_gen_id }}');
+            }
+          });
+        }, {
+          threshold: 0.2
+        });
+
+        blocks.forEach(block => {
+          observer.observe(block);
+        });
+      }
+    }
+
+    customElements.define('three-blocks-section-{{ ai_gen_id }}', ThreeBlocksSection{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Tres bloques editables",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración global"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo",
+      "min": 800,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "gap_between_blocks",
+      "label": "Espacio entre bloques",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margen superior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margen inferior",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño de título",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_font_size",
+      "label": "Tamaño de contenido",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Bloque izquierdo"
+    },
+    {
+      "type": "text",
+      "id": "left_title",
+      "label": "Título",
+      "default": "Misión"
+    },
+    {
+      "type": "richtext",
+      "id": "left_content",
+      "label": "Contenido",
+      "default": "<p>Nuestra misión es ofrecer productos de calidad excepcional que mejoren la vida de nuestros clientes.</p>"
+    },
+    {
+      "type": "select",
+      "id": "left_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centrado" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "left_bg_color",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "left_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "left_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "left_padding_vertical",
+      "label": "Espaciado vertical",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "left_padding_horizontal",
+      "label": "Espaciado horizontal",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Bloque central"
+    },
+    {
+      "type": "text",
+      "id": "center_title",
+      "label": "Título",
+      "default": "Filosofía"
+    },
+    {
+      "type": "richtext",
+      "id": "center_content",
+      "label": "Contenido",
+      "default": "<p>Creemos en la innovación constante, la sostenibilidad y el compromiso con nuestros valores fundamentales para crear un impacto positivo.</p>"
+    },
+    {
+      "type": "select",
+      "id": "center_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centrado" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "center_bg_color",
+      "label": "Color de fondo",
+      "default": "#c2afcb"
+    },
+    {
+      "type": "color",
+      "id": "center_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "center_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "center_padding_vertical",
+      "label": "Espaciado vertical",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "center_padding_horizontal",
+      "label": "Espaciado horizontal",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Bloque derecho"
+    },
+    {
+      "type": "text",
+      "id": "right_title",
+      "label": "Título",
+      "default": "Visión"
+    },
+    {
+      "type": "richtext",
+      "id": "right_content",
+      "label": "Contenido",
+      "default": "<p>Aspiramos a ser líderes en nuestro sector, reconocidos por nuestra excelencia y dedicación a la satisfacción del cliente.</p>"
+    },
+    {
+      "type": "select",
+      "id": "right_text_align",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centrado" },
+        { "value": "right", "label": "Derecha" },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "color",
+      "id": "right_bg_color",
+      "label": "Color de fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "right_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "right_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "right_padding_vertical",
+      "label": "Espaciado vertical",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "right_padding_horizontal",
+      "label": "Espaciado horizontal",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tres bloques editables"
+    }
+  ],
+  "tag": null
+}
 {% endschema %}
