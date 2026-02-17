@@ -379,7 +379,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>2026 PRONTO CHOCHO™ <em>is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
+            "text": "<p>© 2026 PRONTO CHOCHO™ <em>is a registered trademark of Andean Pacha, LLC. All rights reserved.</em></p>",
             "width": "fit-content",
             "max_width": "none",
             "alignment": "left",
@@ -761,7 +761,7 @@
           "settings": {
             "size": "pixel",
             "percent_size": 100,
-            "pixel_size": 60,
+            "pixel_size": 32,
             "custom_mobile_size": false,
             "size_mobile": "percent",
             "percent_size_mobile": 100,
@@ -802,20 +802,6 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
-    },
-    "divider_f99rH9": {
-      "type": "divider",
-      "name": "t:names.divider_section",
-      "settings": {
-        "color_scheme": "scheme-a85a6988-74ba-4518-aecf-133d4642576c",
-        "section_width": "page-width",
-        "thickness": 0.5,
-        "corner_radius": "square",
-        "width_percent": 100,
-        "alignment_horizontal": "center",
-        "padding-block-start": 10,
-        "padding-block-end": 18
-      }
     }
   },
   "order": [
@@ -824,7 +810,6 @@
     "section_XB9TL6",
     "divider_c7G4Dh",
     "section_VJizyR",
-    "section_wRHy7w",
-    "divider_f99rH9"
+    "section_wRHy7w"
   ]
 }
