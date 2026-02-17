@@ -806,6 +806,75 @@
         "padding-block-end": 0
       }
     },
+    "17713454923a611d55": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_f5f056d_NPM6Tr": {
+          "type": "ai_gen_block_f5f056d",
+          "settings": {
+            "max_width": 1200,
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "gap": 20,
+            "box_padding": 30,
+            "title_font_size": 24,
+            "content_font_size": 16,
+            "philosophy_title": "Nuestra Filosofía",
+            "philosophy_content": "<p>True wellness nourishes more than the body. It supports vitality, honors where food comes from, and creates balance between people, land, and community. At Andean Pacha, we believe food should work <em>with</em> your body and <em>with</em> the earth, never at the expense of either. </p><p>That’s why we make food with nothing to hide: no added sugars, no unnecessary ingredients, no shortcuts, just real, chocho-based foods, thoughtfully prepared. Rooted in Andean wisdom, our foods are crafted to nourish deeply, respect nature’s rhythms, and contribute to collective well-being.</p>",
+            "philosophy_bg_color": "#f5f4ed",
+            "philosophy_hover_bg_color": "#e5e4dd",
+            "philosophy_border_color": "#3e2563",
+            "philosophy_text_color": "#3e2563",
+            "philosophy_text_align": "justify",
+            "mission_title": "Our Mision",
+            "mission_content": "<p>To transform chocho, an ancient Andean legume, into everyday foods that deliver real nourishment. We work directly with Andean farmers, respect the land that grows our ingredients, and design foods that support people’s health without compromise. From soil to table, our choices are guided by care for the body, the community, and the planet.</p>",
+            "mission_bg_color": "#c2afcb",
+            "mission_hover_bg_color": "#b29fbb",
+            "mission_border_color": "#3e2563",
+            "mission_text_color": "#3e2563",
+            "mission_text_align": "left",
+            "vision_title": "Our Vision",
+            "vision_content": "<p>To bring real nourishment back to the table. We envision a future where food is honest, functional, and deeply satisfying, where families trust what they eat, where ancestral crops are valued again, and where every product supports both human well-being and a healthier food system.</p>",
+            "vision_bg_color": "#efebe5",
+            "vision_hover_bg_color": "#dfdbd5",
+            "vision_border_color": "#3e2563",
+            "vision_text_color": "#3e2563",
+            "vision_text_align": "center"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_f5f056d_NPM6Tr"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "17713429461bcf360c": {
       "type": "_blocks",
       "blocks": {
@@ -1250,6 +1319,7 @@
     "two_columns_acordion_slider_v3_LE6zFr",
     "two_columns_acordion_slider_v3_AMDgtV",
     "section_qFEW64",
+    "17713454923a611d55",
     "17713429461bcf360c",
     "17713427687534c1ec",
     "1771342612ca9753ef",
