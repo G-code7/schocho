@@ -476,68 +476,167 @@
         "padding-block-end": 40
       }
     },
-    "1771347202f4ec5965": {
+    "17713489911e830caa": {
       "type": "_blocks",
       "blocks": {
-        "ai_gen_block_7ea8cf0_C9nbAA": {
-          "type": "ai_gen_block_7ea8cf0",
+        "ai_gen_block_82957e3_nWfwaC": {
+          "type": "ai_gen_block_82957e3",
           "settings": {
-            "section_padding_top": 50,
-            "section_padding_bottom": 50,
-            "title_font": "montserrat_n7",
-            "body_font": "montserrat_n4",
-            "card_1_enabled": true,
-            "card_1_title": "Primera tarjeta",
-            "card_1_body": "Esta es la primera tarjeta con efecto sticky. Mientras haces scroll, se quedará fija en la parte superior.",
-            "card_1_alignment": "left",
-            "card_1_bg": "#efebe5",
-            "card_1_title_color": "#3e2563",
-            "card_1_body_color": "#3e2563",
-            "card_1_border": "#3e2563",
-            "card_1_padding": 40,
-            "card_2_enabled": true,
-            "card_2_title": "Segunda tarjeta",
-            "card_2_body": "La segunda tarjeta se apilará sobre la primera creando un efecto visual atractivo.",
-            "card_2_alignment": "left",
-            "card_2_bg": "#c2afcb",
-            "card_2_title_color": "#3e2563",
-            "card_2_body_color": "#3e2563",
-            "card_2_border": "#ffffff",
-            "card_2_padding": 40,
-            "card_3_enabled": true,
-            "card_3_title": "Tercera tarjeta",
-            "card_3_body": "Cada tarjeta puede tener su propio estilo, colores y contenido personalizado.",
-            "card_3_alignment": "left",
-            "card_3_bg": "#3e2563",
-            "card_3_title_color": "#ffffff",
-            "card_3_body_color": "#ffffff",
-            "card_3_border": "#ffffff",
-            "card_3_padding": 40,
-            "card_4_enabled": false,
-            "card_4_title": "Cuarta tarjeta",
-            "card_4_body": "Puedes añadir hasta 5 tarjetas con efecto de apilamiento.",
-            "card_4_alignment": "center",
-            "card_4_bg": "#f5f4ed",
-            "card_4_title_color": "#3e2563",
-            "card_4_body_color": "#3e2563",
-            "card_4_border": "#3e2563",
-            "card_4_padding": 40,
-            "card_5_enabled": false,
-            "card_5_title": "Quinta tarjeta",
-            "card_5_body": "Personaliza cada tarjeta de forma independiente con sus propios colores y estilos.",
-            "card_5_alignment": "right",
-            "card_5_bg": "#bd5131",
-            "card_5_title_color": "#fcf6eb",
-            "card_5_body_color": "#fcf6eb",
-            "card_5_border": "#e2c8f3",
-            "card_5_padding": 40
+            "card_title": "Título de tarjeta",
+            "card_description": "Esta es una descripción extensa para la tarjeta apilada. Puedes agregar todo el contenido que necesites aquí para crear una experiencia visual impactante.",
+            "card_background": "#efebe5",
+            "card_text_color": "#3e2563",
+            "card_border_color": "#3e2563",
+            "text_alignment": "center",
+            "card_padding_vertical": 60,
+            "card_padding_horizontal": 40,
+            "card_margin_vertical": 20,
+            "card_margin_horizontal": 20,
+            "title_font_size": 40,
+            "description_font_size": 16,
+            "desktop_width_percent": 100
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_82957e3_g6Uq3r": {
+          "type": "ai_gen_block_82957e3",
+          "settings": {
+            "card_title": "Título de tarjeta",
+            "card_description": "Esta es una descripción extensa para la tarjeta apilada. Puedes agregar todo el contenido que necesites aquí para crear una experiencia visual impactante.",
+            "card_background": "#efebe5",
+            "card_text_color": "#3e2563",
+            "card_border_color": "#3e2563",
+            "text_alignment": "center",
+            "card_padding_vertical": 60,
+            "card_padding_horizontal": 40,
+            "card_margin_vertical": 20,
+            "card_margin_horizontal": 20,
+            "title_font_size": 40,
+            "description_font_size": 16,
+            "desktop_width_percent": 100
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "ai_gen_block_7ea8cf0_C9nbAA"
+        "ai_gen_block_82957e3_nWfwaC",
+        "ai_gen_block_82957e3_g6Uq3r"
       ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1771348801ad45dc51": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_8437d52_ax9LBr": {
+          "type": "ai_gen_block_8437d52",
+          "settings": {
+            "title": "Título de la tarjeta",
+            "description": "<p>Esta es una descripción de ejemplo para la tarjeta con efecto sticky. Personaliza este texto según tus necesidades.</p>",
+            "background_color": "#efebe5",
+            "text_color": "#3e2563",
+            "border_color": "#3e2563",
+            "title_font": "montserrat_n7",
+            "description_font": "montserrat_n4",
+            "text_alignment": "center",
+            "padding_top": 60,
+            "padding_right": 40,
+            "padding_bottom": 60,
+            "padding_left": 40,
+            "margin_top": 0,
+            "margin_bottom": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_8437d52_ax9LBr"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1771348461cf50d32e": {
+      "type": "_blocks",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1771347202f4ec5965": {
+      "type": "_blocks",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -598,35 +697,36 @@
     },
     "1771347849e2a3db15": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_c7598ed_Jt8DwV": {
-          "type": "ai_gen_block_c7598ed",
-          "settings": {
-            "card_title": "Tarjeta apilable",
-            "card_body": "<p>Esta es una tarjeta con efecto de apilamiento sticky. Desplázate para ver el efecto inmersivo.</p>",
-            "text_alignment": "center",
-            "card_background": "#3e2563",
-            "card_border_color": "#ffffff",
-            "card_border_width": 1,
-            "card_padding": 40,
-            "card_margin_horizontal": 40,
-            "card_spacing": 20,
-            "title_font": "montserrat_n7",
-            "title_size": 48,
-            "title_color": "#ffffff",
-            "body_font": "montserrat_n4",
-            "body_size": 16,
-            "body_color": "#ffffff",
-            "section_padding_top": 0,
-            "section_padding_bottom": 0,
-            "desktop_width_percent": 100
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_c7598ed_Jt8DwV"
-      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "1771348626bb743e9e": {
+      "type": "_blocks",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
@@ -798,9 +898,13 @@
     "main",
     "slider_content_etcYKh",
     "hero_CtRMrE",
+    "17713489911e830caa",
+    "1771348801ad45dc51",
+    "1771348461cf50d32e",
     "1771347202f4ec5965",
     "1771338161557a2c20",
     "1771347849e2a3db15",
+    "1771348626bb743e9e",
     "two_column_accordion_slider_jDKme8"
   ]
 }
