@@ -220,7 +220,7 @@
               "type": "button",
               "settings": {
                 "label": "EXPLORE MORE",
-                "link": "shopify://pages/why-chocho",
+                "link": "shopify://pages/food-with-purpose",
                 "open_in_new_tab": false,
                 "style_class": "button-secondary",
                 "show_icon": true,
