@@ -728,7 +728,7 @@
                 {%- comment -%} Título {%- endcomment -%}
                 <h2 class="dual-showcase__title-{{ section_id }}">
                   {% if custom_title != blank %}
-                    {{ custom_title | metafield_tag }}
+                    {{ custom_title | metafield_tag | strip_html }}
                   {% elsif product != blank %}
                     {{ product.title }}
                   {% endif %}
