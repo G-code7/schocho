@@ -383,7 +383,7 @@
     <input type="hidden" name="form_type" value="product">
     <input type="hidden" name="utf8" value="✓">
     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
-    <input type="hidden" name="quantity" value="1" data-quantity-input-hidden>
+    <input type="hidden" name="selling_plan" value="{{ monthly_plan.id }}" data-selling-plan-input>
     {%- assign current_variant = product.selected_or_first_available_variant -%}
     {%- assign selling_plan_id = '' -%}
 
@@ -643,18 +643,29 @@
       }
     }
 
+    const sellingPlanInput = container.querySelector('[data-selling-plan-input]');
+    const planId = "{{ monthly_plan.id }}";
+
     function selectOption(option) {
-      currentOption = option;
-      
-      options.forEach(opt => {
+    currentOption = option;
+    
+    options.forEach(opt => {
         const isSelected = opt.dataset.option === option;
         opt.classList.toggle('active', isSelected);
         opt.classList.toggle('inactive', !isSelected);
         opt.querySelector('input').checked = isSelected;
-      });
+    });
 
-      purchaseTypeInput.value = option;
-      updatePrices();
+    // Actualizar el input que Shopify lee para crear la suscripción
+    if (option === 'subscription') {
+        sellingPlanInput.value = planId;
+        sellingPlanInput.disabled = false;
+    } else {
+        sellingPlanInput.value = "";
+        sellingPlanInput.disabled = true; // Al deshabilitarlo, Shopify ignora la suscripción
+    }
+    
+    updatePrices();
     }
 
     function updateQuantity(change) {
