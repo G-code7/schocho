@@ -1,0 +1,506 @@
+{% comment %}
+  HTML Text Block
+  Para usar dentro de secciones que aceptan blocks (como Rich Content)
+{% endcomment %}
+
+{%- liquid
+  assign text = block.settings.text
+  assign width = block.settings.width
+  assign max_width = block.settings.max_width
+  assign alignment = block.settings.alignment
+  assign type_preset = block.settings.type_preset
+  assign font = block.settings.font
+  assign font_size = block.settings.font_size
+  assign line_height = block.settings.line_height
+  assign letter_spacing = block.settings.letter_spacing
+  assign case = block.settings.case
+  assign wrap = block.settings.wrap
+  assign color = block.settings.color
+  assign background = block.settings.background
+  assign background_color = block.settings.background_color
+  assign corner_radius = block.settings.corner_radius
+  assign padding_block_start = block.settings.padding-block-start
+  assign padding_block_end = block.settings.padding-block-end
+  assign padding_inline_start = block.settings.padding-inline-start
+  assign padding_inline_end = block.settings.padding-inline-end
+-%}
+
+{%- capture wrapper_style -%}
+  {%- if width == 'fit-content' -%}
+    width: fit-content;
+  {%- else -%}
+    width: 100%;
+    text-align: {{ alignment }};
+  {%- endif -%}
+
+  {%- case max_width -%}
+    {%- when 'narrow' -%}
+      max-width: 600px;
+    {%- when 'normal' -%}
+      max-width: 900px;
+    {%- when 'none' -%}
+      max-width: none;
+  {%- endcase -%}
+
+  {%- if background -%}
+    background-color: {{ background_color }};
+    border-radius: {{ corner_radius }}px;
+    padding: {{ padding_block_start }}px {{ padding_inline_end }}px {{ padding_block_end }}px {{ padding_inline_start }}px;
+  {%- else -%}
+    padding-top: {{ padding_block_start }}px;
+    padding-bottom: {{ padding_block_end }}px;
+    padding-left: {{ padding_inline_start }}px;
+    padding-right: {{ padding_inline_end }}px;
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture text_style -%}
+  {%- if type_preset == 'custom' -%}
+    font-family: {{ font }};
+    font-size: {{ font_size }};
+    
+    {%- case line_height -%}
+      {%- when 'tight' -%}
+        line-height: 1.2;
+      {%- when 'normal' -%}
+        line-height: 1.5;
+      {%- when 'loose' -%}
+        line-height: 1.8;
+    {%- endcase -%}
+
+    {%- case letter_spacing -%}
+      {%- when 'tight' -%}
+        letter-spacing: -0.02em;
+      {%- when 'normal' -%}
+        letter-spacing: 0;
+      {%- when 'loose' -%}
+        letter-spacing: 0.05em;
+    {%- endcase -%}
+
+    text-transform: {{ case }};
+    color: {{ color }};
+
+    {%- case wrap -%}
+      {%- when 'pretty' -%}
+        text-wrap: pretty;
+      {%- when 'balance' -%}
+        text-wrap: balance;
+      {%- when 'nowrap' -%}
+        white-space: nowrap;
+    {%- endcase -%}
+  {%- elsif type_preset == 'rte' -%}
+    /* Estilos RTE por defecto del tema */
+  {%- else -%}
+    color: {{ color }};
+  {%- endif -%}
+{%- endcapture -%}
+
+<div class="html-text-block{% if type_preset != 'custom' and type_preset != 'rte' %} {{ type_preset }}{% endif %}{% if type_preset == 'rte' %} rte{% endif %}" style="{{ wrapper_style }}" {{ block.shopify_attributes }}>
+  <div class="html-text-content" style="{{ text_style }}">
+    {{ text }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "HTML Text",
+  "tag": null,
+  "settings": [
+    {
+      "type": "html",
+      "id": "text",
+      "label": "HTML Content",
+      "default": "<p>Use <strong>HTML</strong> tags like &lt;br&gt;, &lt;i&gt;, &lt;strong&gt;, &lt;span&gt;</p>",
+      "info": "You can use any HTML tags: <br>, <strong>, <i>, <em>, <span>, etc."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "options": [
+        {
+          "value": "fit-content",
+          "label": "Fit content"
+        },
+        {
+          "value": "100%",
+          "label": "Fill width"
+        }
+      ],
+      "default": "fit-content"
+    },
+    {
+      "type": "select",
+      "id": "max_width",
+      "label": "Max width",
+      "options": [
+        {
+          "value": "narrow",
+          "label": "Narrow (600px)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal (900px)"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "Alignment",
+      "default": "left",
+      "info": "Only applies when width is set to 'Fill width'"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "Type preset",
+      "options": [
+        {
+          "value": "rte",
+          "label": "Default (RTE)"
+        },
+        {
+          "value": "paragraph",
+          "label": "Paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "Heading 1"
+        },
+        {
+          "value": "h2",
+          "label": "Heading 2"
+        },
+        {
+          "value": "h3",
+          "label": "Heading 3"
+        },
+        {
+          "value": "h4",
+          "label": "Heading 4"
+        },
+        {
+          "value": "h5",
+          "label": "Heading 5"
+        },
+        {
+          "value": "h6",
+          "label": "Heading 6"
+        },
+        {
+          "value": "custom",
+          "label": "Custom"
+        }
+      ],
+      "default": "rte",
+      "info": "Select 'Custom' to customize font, size, and other typography settings"
+    },
+    {
+      "type": "select",
+      "id": "font",
+      "label": "Font family",
+      "options": [
+        {
+          "value": "var(--font-body--family)",
+          "label": "Body"
+        },
+        {
+          "value": "var(--font-subheading--family)",
+          "label": "Subheading"
+        },
+        {
+          "value": "var(--font-heading--family)",
+          "label": "Heading"
+        },
+        {
+          "value": "var(--font-accent--family)",
+          "label": "Accent"
+        }
+      ],
+      "default": "var(--font-body--family)",
+      "info": "Only applies when 'Type preset' is set to 'Custom'"
+    },
+    {
+      "type": "select",
+      "id": "font_size",
+      "label": "Font size",
+      "options": [
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "0.625rem",
+          "label": "10px"
+        },
+        {
+          "value": "0.75rem",
+          "label": "12px"
+        },
+        {
+          "value": "0.875rem",
+          "label": "14px"
+        },
+        {
+          "value": "1rem",
+          "label": "16px"
+        },
+        {
+          "value": "1.125rem",
+          "label": "18px"
+        },
+        {
+          "value": "1.25rem",
+          "label": "20px"
+        },
+        {
+          "value": "1.5rem",
+          "label": "24px"
+        },
+        {
+          "value": "2rem",
+          "label": "32px"
+        },
+        {
+          "value": "2.5rem",
+          "label": "40px"
+        },
+        {
+          "value": "3rem",
+          "label": "48px"
+        },
+        {
+          "value": "3.5rem",
+          "label": "56px"
+        },
+        {
+          "value": "4.5rem",
+          "label": "72px"
+        },
+        {
+          "value": "5.5rem",
+          "label": "88px"
+        },
+        {
+          "value": "7.5rem",
+          "label": "120px"
+        },
+        {
+          "value": "9.5rem",
+          "label": "152px"
+        },
+        {
+          "value": "11.5rem",
+          "label": "184px"
+        }
+      ],
+      "default": "1rem",
+      "info": "Only applies when 'Type preset' is set to 'Custom'"
+    },
+    {
+      "type": "select",
+      "id": "line_height",
+      "label": "Line height",
+      "options": [
+        {
+          "value": "tight",
+          "label": "Tight (1.2)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal (1.5)"
+        },
+        {
+          "value": "loose",
+          "label": "Loose (1.8)"
+        }
+      ],
+      "default": "normal",
+      "info": "Only applies when 'Type preset' is set to 'Custom'"
+    },
+    {
+      "type": "select",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "options": [
+        {
+          "value": "tight",
+          "label": "Tight (-0.02em)"
+        },
+        {
+          "value": "normal",
+          "label": "Normal (0)"
+        },
+        {
+          "value": "loose",
+          "label": "Loose (0.05em)"
+        }
+      ],
+      "default": "normal",
+      "info": "Only applies when 'Type preset' is set to 'Custom'"
+    },
+    {
+      "type": "select",
+      "id": "case",
+      "label": "Text case",
+      "options": [
+        {
+          "value": "none",
+          "label": "Default"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
+      ],
+      "default": "none",
+      "info": "Only applies when 'Type preset' is set to 'Custom'"
+    },
+    {
+      "type": "select",
+      "id": "wrap",
+      "label": "Text wrap",
+      "options": [
+        {
+          "value": "pretty",
+          "label": "Pretty"
+        },
+        {
+          "value": "balance",
+          "label": "Balance"
+        },
+        {
+          "value": "nowrap",
+          "label": "No wrap"
+        }
+      ],
+      "default": "pretty",
+      "info": "Only applies when 'Type preset' is set to 'Custom'"
+    },
+    {
+      "type": "select",
+      "id": "color",
+      "label": "Text color",
+      "options": [
+        {
+          "value": "var(--color-foreground)",
+          "label": "Text"
+        },
+        {
+          "value": "var(--color-foreground-heading)",
+          "label": "Heading"
+        },
+        {
+          "value": "var(--color-primary)",
+          "label": "Link/Primary"
+        }
+      ],
+      "default": "var(--color-foreground)",
+      "info": "Only applies when 'Type preset' is set to 'Custom' or headings"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "background",
+      "label": "Show background",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "alpha": true,
+      "default": "rgba(0, 0, 0, 0.15)",
+      "info": "Only applies when 'Show background' is enabled"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "label": "Corner radius",
+      "default": 0,
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "info": "Only applies when 'Show background' is enabled"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right padding",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "HTML Text",
+      "settings": {
+        "text": "<p>This is <strong>bold</strong> and <i>italic</i> text with a<br>line break</p>"
+      }
+    },
+    {
+      "name": "HTML Heading",
+      "settings": {
+        "text": "<h2>Custom <br><strong>HTML</strong> Heading</h2>",
+        "type_preset": "custom",
+        "font_size": "2.5rem"
+      }
+    }
+  ]
+}
+{% endschema %}
