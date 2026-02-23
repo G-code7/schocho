@@ -1,23 +1,53 @@
 {% comment %}
   Purchase Options Block - Subscribe & Save
-  Optimizado para Shopify Subscriptions App y planes mensuales.
+  Integración completa con Shopify Subscriptions App
 {% endcomment %}
 
 {% assign block_id = block.id | replace: '_', '' | downcase %}
 
 {%- liquid
   assign current_variant = product.selected_or_first_available_variant
+  
+  # Buscar el plan de suscripción mensual automáticamente
   assign selling_plan_id = ""
   assign discount_value = 0
   
   for group in product.selling_plan_groups
     for plan in group.selling_plans
-      if plan.name contains 'month' or plan.options[0].value contains 'month' or plan.name contains 'Mensual'
+      # Buscar plan mensual por nombre o frecuencia
+      assign plan_name_lower = plan.name | downcase
+      assign plan_option_lower = plan.options[0].value | downcase
+      
+      if plan_name_lower contains 'month' or plan_option_lower contains 'month' or plan_name_lower contains 'mensual' or plan_name_lower contains 'mes'
         assign selling_plan_id = plan.id
-        assign discount_value = plan.price_adjustments[0].value | default: 0
+        
+        # Obtener el descuento del plan (si existe)
+        if plan.price_adjustments.size > 0
+          assign adjustment = plan.price_adjustments[0]
+          if adjustment.value_type == 'percentage'
+            assign discount_value = adjustment.value
+          elsif adjustment.value_type == 'fixed_amount'
+            # Calcular porcentaje aproximado para mostrar
+            assign discount_value = adjustment.value | times: 100.0 | divided_by: current_variant.price | round
+          endif
+        endif
+        
+        # Si no hay descuento en el plan, usar el de settings
+        if discount_value == 0
+          assign discount_value = block.settings.subscription_discount
+        endif
+        
+        # Guardar el nombre del plan para mostrar
+        assign plan_name = plan.name
+        assign plan_frequency = plan.options[0].value
       endif
     endfor
   endfor
+  
+  # Si no se encontró plan, usar el descuento de settings como fallback
+  if selling_plan_id == ""
+    assign discount_value = block.settings.subscription_discount
+  endif
 -%}
 
 {% style %}
@@ -360,6 +390,18 @@
     display: block;
   }
 
+  .visually-hidden {
+    position: absolute !important;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    word-wrap: normal !important;
+  }
+
   @media screen and (max-width: 749px) {
     .purchase-options__title-{{ block_id }} {
       font-size: {{ block.settings.title_font_size | times: 0.9 }}px;
@@ -397,60 +439,61 @@
   >
     <input type="hidden" name="form_type" value="product">
     <input type="hidden" name="utf8" value="✓">
-    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
-    <input type="hidden" name="selling_plan" value="{{ monthly_plan.id }}" data-selling-plan-input>
-    {%- assign current_variant = product.selected_or_first_available_variant -%}
-    {%- assign selling_plan_id = '' -%}
-
-    {%- for group in product.selling_plan_groups -%}
-      {%- for plan in group.selling_plans -%}
-        {% comment %} Buscamos el plan mensual que configuraste {% endcomment %}
-        {%- if plan.name contains 'month' or plan.options[0].value contains '1 month' -%}
-          {%- assign selling_plan_id = plan.id -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endfor -%}
-
-    <input type="hidden" name="selling_plan" value="{{ selling_plan_id }}" id="selling-plan-input-{{ block_id }}">
+    <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+    
+    {% comment %} INPUT CRÍTICO PARA SUSCRIPCIONES - Solo se envía cuando está activo {% endcomment %}
+    <input 
+      type="hidden" 
+      name="selling_plan" 
+      value="{{ selling_plan_id }}" 
+      data-selling-plan-input
+      {% if selling_plan_id == "" %}disabled{% endif %}
+    >
 
     {% comment %} Opción de Suscripción {% endcomment %}
     <div
-      class="purchase-options__option-{{ block_id }} active"
+      class="purchase-options__option-{{ block_id }} {% if selling_plan_id != "" %}active{% else %}inactive{% endif %}"
       data-option="subscription"
-      data-discount="{{ block.settings.subscription_discount }}"
+      data-plan-id="{{ selling_plan_id }}"
+      data-discount="{{ discount_value }}"
     >
       <label class="purchase-options__label-{{ block_id }}">
         <input
           type="radio"
-          name="purchase_option"
+          name="purchase_option_ui"
           value="subscription"
           class="visually-hidden"
-          checked
+          {% if selling_plan_id != "" %}checked{% else %}disabled{% endif %}
         >
         <span class="purchase-options__radio-{{ block_id }}"></span>
         <span class="purchase-options__content-{{ block_id }}">
           <div class="purchase-options__header-{{ block_id }}">
             <div class="purchase-options__title-wrap-{{ block_id }}">
-              <h3 class="purchase-options__title-{{ block_id }}">{{ block.settings.subscription_title }}</h3>
+              <h3 class="purchase-options__title-{{ block_id }}">
+                {{ block.settings.subscription_title }}
+                {% if plan_frequency != blank %}
+                  <span style="font-weight: 400; font-size: 0.9em;">({{ plan_frequency }})</span>
+                {% endif %}
+              </h3>
               <p class="purchase-options__subtitle-{{ block_id }}">{{ block.settings.subscription_subtitle }}</p>
             </div>
             <div class="purchase-options__price-wrap-{{ block_id }}">
               <span class="purchase-options__price-main-{{ block_id }}">
-                <s data-compare-price>
-                  {{-
-                    product.selected_or_first_available_variant.compare_at_price
-                    | default: product.selected_or_first_available_variant.price
-                    | money
-                  -}}
-                </s>
-                <span data-subscription-price></span>
+                {% if selling_plan_id != "" %}
+                  <s data-compare-price>{{ current_variant.price | money }}</s>
+                  <span data-subscription-price></span>
+                {% else %}
+                  <span style="color: #999; font-size: 0.9em;">No disponible</span>
+                {% endif %}
               </span>
-              <span class="purchase-options__price-per-{{ block_id }}">
-                <span data-price-per-serving></span> / {{ block.settings.per_unit_text }}
-              </span>
+              {% if selling_plan_id != "" %}
+                <span class="purchase-options__price-per-{{ block_id }}">
+                  <span data-price-per-serving></span> / {{ block.settings.per_unit_text }}
+                </span>
+              {% endif %}
             </div>
           </div>
-          {% if block.settings.show_benefits %}
+          {% if block.settings.show_benefits and selling_plan_id != "" %}
             <ul class="purchase-options__benefits-{{ block_id }}">
               {% for i in (1..4) %}
                 {% assign benefit_key = 'benefit_' | append: i %}
@@ -467,15 +510,16 @@
 
     {% comment %} Opción de Compra Única {% endcomment %}
     <div
-      class="purchase-options__option-{{ block_id }} inactive"
+      class="purchase-options__option-{{ block_id }} {% if selling_plan_id == "" %}active{% else %}inactive{% endif %}"
       data-option="onetime"
     >
       <label class="purchase-options__label-{{ block_id }}">
         <input
           type="radio"
-          name="purchase_option"
+          name="purchase_option_ui"
           value="onetime"
           class="visually-hidden"
+          {% if selling_plan_id == "" %}checked{% endif %}
         >
         <span class="purchase-options__radio-{{ block_id }}"></span>
         <span class="purchase-options__content-{{ block_id }}">
@@ -486,7 +530,7 @@
             </div>
             <div class="purchase-options__price-wrap-{{ block_id }}">
               <span class="purchase-options__price-main-{{ block_id }}">
-                <span data-onetime-price>{{ product.selected_or_first_available_variant.price | money }}</span>
+                <span data-onetime-price>{{ current_variant.price | money }}</span>
               </span>
               <span class="purchase-options__price-per-{{ block_id }}">
                 <span data-onetime-price-per></span> / {{ block.settings.per_unit_text }}
@@ -497,17 +541,18 @@
       </label>
     </div>
 
-    {% comment %} Ahorro Total {% endcomment %}
-    <div class="purchase-options__savings-{{ block_id }}">
-      <span class="purchase-options__savings-text-{{ block_id }}">
-        {{ block.settings.savings_text }}
-        <span class="purchase-options__savings-amount-{{ block_id }}" data-savings-amount></span>
-      </span>
-      <span class="purchase-options__savings-price-{{ block_id }}">
-        <s data-total-compare></s>
-        <span data-total-price></span>
-      </span>
-    </div>
+    {% comment %} Ahorro Total - Solo mostrar si hay plan de suscripción {% endcomment %}
+    {% if selling_plan_id != "" %}
+      <div class="purchase-options__savings-{{ block_id }}">
+        <span class="purchase-options__savings-text-{{ block_id }}">
+          {{ block.settings.savings_text }} <span class="purchase-options__savings-amount-{{ block_id }}" data-savings-amount></span>
+        </span>
+        <span class="purchase-options__savings-price-{{ block_id }}">
+          <s data-total-compare></s>
+          <span data-total-price></span>
+        </span>
+      </div>
+    {% endif %}
 
     {% comment %} Cantidad {% endcomment %}
     <div class="purchase-options__quantity-{{ block_id }}">
@@ -524,6 +569,7 @@
         <input
           type="number"
           class="purchase-options__quantity-input-{{ block_id }}"
+          name="quantity"
           value="1"
           min="1"
           max="99"
@@ -547,18 +593,16 @@
         type="submit"
         class="purchase-options__submit-{{ block_id }}"
         data-add-to-cart
-        {% unless product.selected_or_first_available_variant.available %}
-          disabled
-        {% endunless %}
+        {% unless current_variant.available %}disabled{% endunless %}
       >
-        {% if product.selected_or_first_available_variant.available %}
+        {% if current_variant.available %}
           {{ block.settings.add_to_cart_text }}
         {% else %}
           {{ block.settings.sold_out_text }}
         {% endif %}
       </button>
 
-      {% if block.settings.show_shop_pay and product.selected_or_first_available_variant.available %}
+      {% if block.settings.show_shop_pay and current_variant.available %}
         <div class="purchase-options__shop-pay-{{ block_id }}">
           {{ form | payment_button }}
         </div>
@@ -575,33 +619,24 @@
     const container = document.querySelector(`.purchase-options-${blockId}`);
     if (!container) return;
 
-    const form = container.querySelector(`[data-product-form]`);
-    const options = container.querySelectorAll(`[data-option]`);
-    const quantityVisible = container.querySelector(`[data-quantity-visible]`);
-    const quantityHidden = container.querySelector(`[data-quantity-input-hidden]`);
-    const decreaseBtn = container.querySelector(`[data-quantity-decrease]`);
-    const increaseBtn = container.querySelector(`[data-quantity-increase]`);
-    const addToCartBtn = container.querySelector(`[data-add-to-cart]`);
-    const purchaseTypeInput = container.querySelector(`[data-purchase-type]`);
-    const errorMessage = container.querySelector(`[data-error-message]`);
+    const form = container.querySelector('[data-product-form]');
+    const sellingPlanInput = container.querySelector('[data-selling-plan-input]');
+    const options = container.querySelectorAll('[data-option]');
+    const quantityInput = container.querySelector('[data-quantity-visible]');
+    const decreaseBtn = container.querySelector('[data-quantity-decrease]');
+    const increaseBtn = container.querySelector('[data-quantity-increase]');
+    const addToCartBtn = container.querySelector('[data-add-to-cart]');
+    const errorMessage = container.querySelector('[data-error-message]');
 
-    // Precios base
-    const basePrice = {{ product.selected_or_first_available_variant.price }};
-    const comparePrice = {{ product.selected_or_first_available_variant.compare_at_price | default: product.selected_or_first_available_variant.price }};
-    const discountPercent = {{ block.settings.subscription_discount }};
+    // Datos desde Liquid
+    const basePrice = {{ current_variant.price }};
+    const comparePrice = {{ current_variant.compare_at_price | default: current_variant.price }};
+    const discountPercent = {{ discount_value | default: block.settings.subscription_discount }};
     const servingsPerUnit = {{ block.settings.servings_per_unit | default: 1 }};
-
-    // Elementos de precio
-    const subscriptionPriceEl = container.querySelector(`[data-subscription-price]`);
-    const onetimePriceEl = container.querySelector(`[data-onetime-price]`);
-    const pricePerServingEl = container.querySelector(`[data-price-per-serving]`);
-    const onetimePricePerEl = container.querySelector(`[data-onetime-price-per]`);
-    const savingsAmountEl = container.querySelector(`[data-savings-amount]`);
-    const totalCompareEl = container.querySelector(`[data-total-compare]`);
-    const totalPriceEl = container.querySelector(`[data-total-price]`);
+    const planId = "{{ selling_plan_id }}";
 
     let currentQuantity = 1;
-    let currentOption = 'subscription';
+    let currentOption = planId ? 'subscription' : 'onetime';
 
     function formatMoney(cents) {
       return new Intl.NumberFormat('{{ shop.locale }}', {
@@ -640,47 +675,57 @@
     function updatePrices() {
       const prices = calculatePrices();
 
-      // Actualizar precios mostrados
-      subscriptionPriceEl.textContent = formatMoney(prices.subscriptionUnit);
-      onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
+      // Actualizar elementos de precio
+      const subPriceEl = container.querySelector('[data-subscription-price]');
+      const onetimePriceEl = container.querySelector('[data-onetime-price]');
+      const pricePerServingEl = container.querySelector('[data-price-per-serving]');
+      const onetimePricePerEl = container.querySelector('[data-onetime-price-per]');
+      const savingsAmountEl = container.querySelector('[data-savings-amount]');
+      const totalCompareEl = container.querySelector('[data-total-compare]');
+      const totalPriceEl = container.querySelector('[data-total-price]');
+
+      if (subPriceEl) subPriceEl.textContent = formatMoney(prices.subscriptionUnit);
+      if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
+      if (pricePerServingEl) pricePerServingEl.textContent = formatMoney(prices.subscriptionPerServing);
+      if (onetimePricePerEl) onetimePricePerEl.textContent = formatMoney(prices.onetimePerServing);
       
-      pricePerServingEl.textContent = formatMoney(prices.subscriptionPerServing);
-      onetimePricePerEl.textContent = formatMoney(prices.onetimePerServing);
+      if (savingsAmountEl) savingsAmountEl.textContent = formatMoney(prices.savings);
       
-      savingsAmountEl.textContent = formatMoney(prices.savings);
-      
-      if (currentOption === 'subscription') {
-        totalCompareEl.textContent = formatMoney(prices.compareTotal);
-        totalPriceEl.textContent = formatMoney(prices.subscriptionTotal);
-      } else {
-        totalCompareEl.style.display = 'none';
-        totalPriceEl.textContent = formatMoney(prices.onetimeTotal);
+      if (totalCompareEl && totalPriceEl) {
+        if (currentOption === 'subscription') {
+          totalCompareEl.textContent = formatMoney(prices.compareTotal);
+          totalCompareEl.style.display = 'inline';
+          totalPriceEl.textContent = formatMoney(prices.subscriptionTotal);
+        } else {
+          totalCompareEl.style.display = 'none';
+          totalPriceEl.textContent = formatMoney(prices.onetimeTotal);
+        }
       }
     }
 
-    const sellingPlanInput = container.querySelector('[data-selling-plan-input]');
-    const planId = "{{ monthly_plan.id }}";
-
     function selectOption(option) {
-    currentOption = option;
-    
-    options.forEach(opt => {
+      if (option === 'subscription' && !planId) return; // No permitir suscripción si no hay plan
+      
+      currentOption = option;
+      
+      options.forEach(opt => {
         const isSelected = opt.dataset.option === option;
         opt.classList.toggle('active', isSelected);
         opt.classList.toggle('inactive', !isSelected);
-        opt.querySelector('input').checked = isSelected;
-    });
+        const radio = opt.querySelector('input[type="radio"]');
+        if (radio) radio.checked = isSelected;
+      });
 
-    // Actualizar el input que Shopify lee para crear la suscripción
-    if (option === 'subscription') {
+      // Actualizar el input de selling_plan para Shopify
+      if (option === 'subscription' && planId) {
         sellingPlanInput.value = planId;
         sellingPlanInput.disabled = false;
-    } else {
-        sellingPlanInput.value = "";
-        sellingPlanInput.disabled = true; // Al deshabilitarlo, Shopify ignora la suscripción
-    }
-    
-    updatePrices();
+      } else {
+        sellingPlanInput.value = '';
+        sellingPlanInput.disabled = true;
+      }
+      
+      updatePrices();
     }
 
     function updateQuantity(change) {
@@ -689,8 +734,7 @@
       if (newQuantity > 99) newQuantity = 99;
       
       currentQuantity = newQuantity;
-      quantityVisible.value = currentQuantity;
-      quantityHidden.value = currentQuantity;
+      quantityInput.value = currentQuantity;
       updatePrices();
     }
 
@@ -704,17 +748,16 @@
     decreaseBtn.addEventListener('click', () => updateQuantity(-1));
     increaseBtn.addEventListener('click', () => updateQuantity(1));
 
-    quantityVisible.addEventListener('change', (e) => {
+    quantityInput.addEventListener('change', (e) => {
       let value = parseInt(e.target.value) || 1;
       if (value < 1) value = 1;
       if (value > 99) value = 99;
       currentQuantity = value;
-      quantityVisible.value = value;
-      quantityHidden.value = value;
+      quantityInput.value = value;
       updatePrices();
     });
 
-    // Form submission con cart drawer
+    // Form submission
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -726,6 +769,13 @@
 
       const formData = new FormData(form);
       
+      // Debug: mostrar qué se está enviando
+      console.log('Enviando al carrito:', {
+        id: formData.get('id'),
+        quantity: formData.get('quantity'),
+        selling_plan: formData.get('selling_plan')
+      });
+
       try {
         const response = await fetch('/cart/add.js', {
           method: 'POST',
@@ -735,11 +785,10 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Disparar evento para actualizar el carrito (funciona con drawer de Shopify)
-          const cartUpdateEvent = new CustomEvent('cart:updated', {
+          // Evento para actualizar carrito
+          document.dispatchEvent(new CustomEvent('cart:updated', {
             detail: { variant: data }
-          });
-          document.dispatchEvent(cartUpdateEvent);
+          }));
 
           // Abrir cart drawer si existe
           const cartDrawer = document.querySelector('cart-drawer, [data-cart-drawer], #CartDrawer');
@@ -750,16 +799,17 @@
               cartDrawer.classList.add('is-open');
               document.body.classList.add('cart-drawer-open');
             }
+          } else {
+            // Fallback: redirigir al carrito
+            {% unless block.settings.stay_on_page %}
+              window.location.href = '/cart';
+            {% endunless %}
           }
-
-          // O redirigir al carrito si no hay drawer
-          {% unless block.settings.stay_on_page %}
-            window.location.href = '/cart';
-          {% endunless %}
         } else {
           throw new Error(data.description || 'Error adding to cart');
         }
       } catch (error) {
+        console.error('Error:', error);
         errorMessage.textContent = error.message;
         errorMessage.classList.add('visible');
       } finally {
@@ -813,7 +863,8 @@
     {
       "type": "range",
       "id": "subscription_discount",
-      "label": "Discount percentage",
+      "label": "Fallback discount percentage",
+      "info": "Used if no discount found in selling plan",
       "min": 5,
       "max": 50,
       "step": 1,
@@ -830,7 +881,7 @@
       "type": "text",
       "id": "benefit_1",
       "label": "Benefit 1",
-      "default": "Save $10/bag on every subscription order"
+      "default": "Save money on every order"
     },
     {
       "type": "text",
@@ -848,7 +899,7 @@
       "type": "text",
       "id": "benefit_4",
       "label": "Benefit 4",
-      "default": "Pre-shipment reminders (no surprise charges)"
+      "default": "Pre-shipment reminders"
     },
     {
       "type": "header",
