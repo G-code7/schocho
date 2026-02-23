@@ -1,0 +1,1224 @@
+{% comment %}
+  Purchase Options Block - Subscribe & Save
+  Diseño mejorado con opciones de compra única vs suscripción
+{% endcomment %}
+
+{% assign block_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .purchase-options-{{ block_id }} {
+    width: 100%;
+    max-width: 100%;
+    font-family: var(--font-body-family), -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .purchase-options__badge-{{ block_id }} {
+    display: inline-block;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    font-size: {{ block.settings.badge_font_size }}px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .purchase-options__option-{{ block_id }} {
+    position: relative;
+    border: 2px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: {{ block.settings.option_bg_color }};
+  }
+
+  .purchase-options__option-{{ block_id }}:hover {
+    border-color: {{ block.settings.border_hover_color }};
+  }
+
+  .purchase-options__option-{{ block_id }}.active {
+    border-color: {{ block.settings.active_border_color }};
+    background-color: {{ block.settings.active_bg_color }};
+  }
+
+  .purchase-options__option-{{ block_id }}.inactive {
+    opacity: 0.6;
+    border-color: {{ block.settings.inactive_border_color }};
+    background-color: {{ block.settings.inactive_bg_color }};
+  }
+
+  .purchase-options__label-{{ block_id }} {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    margin: 0;
+    width: 100%;
+  }
+
+  .purchase-options__radio-{{ block_id }} {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border: 2px solid {{ block.settings.radio_border_color }};
+    border-radius: 50%;
+    margin-right: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    background-color: {{ block.settings.radio_bg_color }};
+    transition: all 0.2s ease;
+  }
+
+  .purchase-options__option-{{ block_id }}.active .purchase-options__radio-{{ block_id }} {
+    border-color: {{ block.settings.active_radio_color }};
+  }
+
+  .purchase-options__radio-{{ block_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: {{ block.settings.active_radio_color }};
+    transition: transform 0.2s ease;
+  }
+
+  .purchase-options__option-{{ block_id }}.active .purchase-options__radio-{{ block_id }}::after {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .purchase-options__content-{{ block_id }} {
+    flex: 1;
+    width: 100%;
+  }
+
+  .purchase-options__header-{{ block_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .purchase-options__title-wrap-{{ block_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .purchase-options__title-{{ block_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 800;
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .purchase-options__subtitle-{{ block_id }} {
+    font-size: {{ block.settings.subtitle_font_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .purchase-options__price-wrap-{{ block_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .purchase-options__price-main-{{ block_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    font-weight: 800;
+    color: {{ block.settings.price_color }};
+    line-height: 1.2;
+  }
+
+  .purchase-options__price-main-{{ block_id }} s {
+    color: {{ block.settings.compare_price_color }};
+    font-weight: 400;
+    margin-right: 4px;
+    opacity: 0.7;
+    text-decoration: line-through;
+  }
+
+  .purchase-options__price-per-{{ block_id }} {
+    font-size: {{ block.settings.price_per_font_size }}px;
+    color: {{ block.settings.price_per_color }};
+    font-weight: 400;
+  }
+
+  .purchase-options__benefits-{{ block_id }} {
+    margin-top: 12px;
+    margin-left: 30px;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .purchase-options__benefits-{{ block_id }} li {
+    position: relative;
+    padding-left: 16px;
+    font-size: {{ block.settings.benefit_font_size }}px;
+    color: {{ block.settings.benefit_color }};
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .purchase-options__benefits-{{ block_id }} li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: {{ block.settings.benefit_check_color }};
+    font-weight: 700;
+  }
+
+  .purchase-options__savings-{{ block_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: {{ block.settings.savings_bg_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .purchase-options__savings-text-{{ block_id }} {
+    font-size: {{ block.settings.savings_font_size }}px;
+    color: {{ block.settings.savings_text_color }};
+  }
+
+  .purchase-options__savings-amount-{{ block_id }} {
+    font-size: {{ block.settings.savings_font_size }}px;
+    font-weight: 800;
+    color: {{ block.settings.savings_amount_color }};
+  }
+
+  .purchase-options__savings-price-{{ block_id }} {
+    font-size: {{ block.settings.savings_font_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.savings_text_color }};
+  }
+
+  .purchase-options__savings-price-{{ block_id }} s {
+    color: {{ block.settings.compare_price_color }};
+    font-weight: 400;
+    margin-right: 4px;
+    opacity: 0.7;
+  }
+
+  .purchase-options__quantity-{{ block_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .purchase-options__quantity-label-{{ block_id }} {
+    font-size: {{ block.settings.label_font_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.label_color }};
+  }
+
+  .purchase-options__quantity-selector-{{ block_id }} {
+    display: flex;
+    align-items: center;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    overflow: hidden;
+    background-color: {{ block.settings.input_bg_color }};
+  }
+
+  .purchase-options__quantity-btn-{{ block_id }} {
+    width: 44px;
+    height: 44px;
+    border: none;
+    background-color: transparent;
+    color: {{ block.settings.input_text_color }};
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+
+  .purchase-options__quantity-btn-{{ block_id }}:hover {
+    background-color: {{ block.settings.input_hover_bg_color }};
+  }
+
+  .purchase-options__quantity-input-{{ block_id }} {
+    width: 60px;
+    height: 44px;
+    border: none;
+    border-left: 1px solid {{ block.settings.input_border_color }};
+    border-right: 1px solid {{ block.settings.input_border_color }};
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: {{ block.settings.input_text_color }};
+    background-color: transparent;
+    -moz-appearance: textfield;
+  }
+
+  .purchase-options__quantity-input-{{ block_id }}::-webkit-outer-spin-button,
+  .purchase-options__quantity-input-{{ block_id }}::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .purchase-options__buttons-{{ block_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .purchase-options__submit-{{ block_id }} {
+    width: 100%;
+    padding: 16px 24px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .purchase-options__submit-{{ block_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-1px);
+  }
+
+  .purchase-options__submit-{{ block_id }}:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .purchase-options__submit-{{ block_id }}.loading {
+    color: transparent;
+  }
+
+  .purchase-options__submit-{{ block_id }}.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid {{ block.settings.button_text_color }};
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .purchase-options__shop-pay-{{ block_id }} {
+    width: 100%;
+    --shop-pay-button-height: 48px;
+  }
+
+  .purchase-options__error-{{ block_id }} {
+    color: {{ block.settings.error_color }};
+    font-size: 14px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .purchase-options__error-{{ block_id }}.visible {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .purchase-options__title-{{ block_id }} {
+      font-size: {{ block.settings.title_font_size | times: 0.9 }}px;
+    }
+    
+    .purchase-options__price-main-{{ block_id }} {
+      font-size: {{ block.settings.price_font_size | times: 0.9 }}px;
+    }
+    
+    .purchase-options__header-{{ block_id }} {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .purchase-options__price-wrap-{{ block_id }} {
+      align-items: flex-start;
+      width: 100%;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+{% endstyle %}
+
+<div class="purchase-options-{{ block_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.show_badge %}
+    <span class="purchase-options__badge-{{ block_id }}">{{ block.settings.badge_text }}</span>
+  {% endif %}
+
+  <form
+    action="/cart/add"
+    method="post"
+    enctype="multipart/form-data"
+    class="purchase-options__form-{{ block_id }}"
+    data-product-form
+  >
+    <input type="hidden" name="form_type" value="product">
+    <input type="hidden" name="utf8" value="✓">
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
+    <input type="hidden" name="quantity" value="1" data-quantity-input-hidden>
+    <input type="hidden" name="properties[_purchase_type]" value="subscription" data-purchase-type>
+
+    {% comment %} Opción de Suscripción {% endcomment %}
+    <div
+      class="purchase-options__option-{{ block_id }} active"
+      data-option="subscription"
+      data-discount="{{ block.settings.subscription_discount }}"
+    >
+      <label class="purchase-options__label-{{ block_id }}">
+        <input
+          type="radio"
+          name="purchase_option"
+          value="subscription"
+          class="visually-hidden"
+          checked
+        >
+        <span class="purchase-options__radio-{{ block_id }}"></span>
+        <span class="purchase-options__content-{{ block_id }}">
+          <div class="purchase-options__header-{{ block_id }}">
+            <div class="purchase-options__title-wrap-{{ block_id }}">
+              <h3 class="purchase-options__title-{{ block_id }}">{{ block.settings.subscription_title }}</h3>
+              <p class="purchase-options__subtitle-{{ block_id }}">{{ block.settings.subscription_subtitle }}</p>
+            </div>
+            <div class="purchase-options__price-wrap-{{ block_id }}">
+              <span class="purchase-options__price-main-{{ block_id }}">
+                <s data-compare-price>{{ product.selected_or_first_available_variant.compare_at_price | default: product.selected_or_first_available_variant.price | money }}</s>
+                <span data-subscription-price></span>
+              </span>
+              <span class="purchase-options__price-per-{{ block_id }}">
+                <span data-price-per-serving></span> / {{ block.settings.per_unit_text }}
+              </span>
+            </div>
+          </div>
+          {% if block.settings.show_benefits %}
+            <ul class="purchase-options__benefits-{{ block_id }}">
+              {% for i in (1..4) %}
+                {% assign benefit_key = 'benefit_' | append: i %}
+                {% assign benefit = block.settings[benefit_key] %}
+                {% if benefit != blank %}
+                  <li>{{ benefit }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </span>
+      </label>
+    </div>
+
+    {% comment %} Opción de Compra Única {% endcomment %}
+    <div
+      class="purchase-options__option-{{ block_id }} inactive"
+      data-option="onetime"
+    >
+      <label class="purchase-options__label-{{ block_id }}">
+        <input
+          type="radio"
+          name="purchase_option"
+          value="onetime"
+          class="visually-hidden"
+        >
+        <span class="purchase-options__radio-{{ block_id }}"></span>
+        <span class="purchase-options__content-{{ block_id }}">
+          <div class="purchase-options__header-{{ block_id }}">
+            <div class="purchase-options__title-wrap-{{ block_id }}">
+              <h3 class="purchase-options__title-{{ block_id }}">{{ block.settings.onetime_title }}</h3>
+              <p class="purchase-options__subtitle-{{ block_id }}">{{ block.settings.onetime_subtitle }}</p>
+            </div>
+            <div class="purchase-options__price-wrap-{{ block_id }}">
+              <span class="purchase-options__price-main-{{ block_id }}">
+                <span data-onetime-price>{{ product.selected_or_first_available_variant.price | money }}</span>
+              </span>
+              <span class="purchase-options__price-per-{{ block_id }}">
+                <span data-onetime-price-per></span> / {{ block.settings.per_unit_text }}
+              </span>
+            </div>
+          </div>
+        </span>
+      </label>
+    </div>
+
+    {% comment %} Ahorro Total {% endcomment %}
+    <div class="purchase-options__savings-{{ block_id }}">
+      <span class="purchase-options__savings-text-{{ block_id }}">
+        {{ block.settings.savings_text }} <span class="purchase-options__savings-amount-{{ block_id }}" data-savings-amount></span>
+      </span>
+      <span class="purchase-options__savings-price-{{ block_id }}">
+        <s data-total-compare></s>
+        <span data-total-price></span>
+      </span>
+    </div>
+
+    {% comment %} Cantidad {% endcomment %}
+    <div class="purchase-options__quantity-{{ block_id }}">
+      <span class="purchase-options__quantity-label-{{ block_id }}">{{ block.settings.quantity_label }}</span>
+      <div class="purchase-options__quantity-selector-{{ block_id }}">
+        <button
+          type="button"
+          class="purchase-options__quantity-btn-{{ block_id }}"
+          data-quantity-decrease
+          aria-label="Decrease quantity"
+        >−</button>
+        <input
+          type="number"
+          class="purchase-options__quantity-input-{{ block_id }}"
+          value="1"
+          min="1"
+          max="99"
+          data-quantity-visible
+          aria-label="Quantity"
+        >
+        <button
+          type="button"
+          class="purchase-options__quantity-btn-{{ block_id }}"
+          data-quantity-increase
+          aria-label="Increase quantity"
+        >+</button>
+      </div>
+    </div>
+
+    {% comment %} Botones {% endcomment %}
+    <div class="purchase-options__buttons-{{ block_id }}">
+      <button
+        type="submit"
+        class="purchase-options__submit-{{ block_id }}"
+        data-add-to-cart
+        {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+      >
+        {% if product.selected_or_first_available_variant.available %}
+          {{ block.settings.add_to_cart_text }}
+        {% else %}
+          {{ block.settings.sold_out_text }}
+        {% endif %}
+      </button>
+
+      {% if block.settings.show_shop_pay and product.selected_or_first_available_variant.available %}
+        <div class="purchase-options__shop-pay-{{ block_id }}">
+          {{ form | payment_button }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="purchase-options__error-{{ block_id }}" data-error-message></div>
+  </form>
+</div>
+
+<script>
+  (function() {
+    const blockId = '{{ block_id }}';
+    const container = document.querySelector(`.purchase-options-${blockId}`);
+    if (!container) return;
+
+    const form = container.querySelector(`[data-product-form]`);
+    const options = container.querySelectorAll(`[data-option]`);
+    const quantityVisible = container.querySelector(`[data-quantity-visible]`);
+    const quantityHidden = container.querySelector(`[data-quantity-input-hidden]`);
+    const decreaseBtn = container.querySelector(`[data-quantity-decrease]`);
+    const increaseBtn = container.querySelector(`[data-quantity-increase]`);
+    const addToCartBtn = container.querySelector(`[data-add-to-cart]`);
+    const purchaseTypeInput = container.querySelector(`[data-purchase-type]`);
+    const errorMessage = container.querySelector(`[data-error-message]`);
+
+    // Precios base
+    const basePrice = {{ product.selected_or_first_available_variant.price }};
+    const comparePrice = {{ product.selected_or_first_available_variant.compare_at_price | default: product.selected_or_first_available_variant.price }};
+    const discountPercent = {{ block.settings.subscription_discount }};
+    const servingsPerUnit = {{ block.settings.servings_per_unit | default: 1 }};
+
+    // Elementos de precio
+    const subscriptionPriceEl = container.querySelector(`[data-subscription-price]`);
+    const onetimePriceEl = container.querySelector(`[data-onetime-price]`);
+    const pricePerServingEl = container.querySelector(`[data-price-per-serving]`);
+    const onetimePricePerEl = container.querySelector(`[data-onetime-price-per]`);
+    const savingsAmountEl = container.querySelector(`[data-savings-amount]`);
+    const totalCompareEl = container.querySelector(`[data-total-compare]`);
+    const totalPriceEl = container.querySelector(`[data-total-price]`);
+
+    let currentQuantity = 1;
+    let currentOption = 'subscription';
+
+    function formatMoney(cents) {
+      return new Intl.NumberFormat('{{ shop.locale }}', {
+        style: 'currency',
+        currency: '{{ shop.currency }}',
+        minimumFractionDigits: 2
+      }).format(cents / 100);
+    }
+
+    function calculatePrices() {
+      const subscriptionUnitPrice = Math.round(basePrice * (1 - discountPercent / 100));
+      const onetimeUnitPrice = basePrice;
+      
+      const subscriptionTotal = subscriptionUnitPrice * currentQuantity;
+      const onetimeTotal = onetimeUnitPrice * currentQuantity;
+      const compareTotal = comparePrice * currentQuantity;
+      
+      const savingsPerUnit = basePrice - subscriptionUnitPrice;
+      const totalSavings = savingsPerUnit * currentQuantity;
+
+      const subscriptionPerServing = subscriptionUnitPrice / servingsPerUnit;
+      const onetimePerServing = onetimeUnitPrice / servingsPerUnit;
+
+      return {
+        subscriptionUnit: subscriptionUnitPrice,
+        onetimeUnit: onetimeUnitPrice,
+        subscriptionTotal: subscriptionTotal,
+        onetimeTotal: onetimeTotal,
+        compareTotal: compareTotal,
+        savings: totalSavings,
+        subscriptionPerServing: subscriptionPerServing,
+        onetimePerServing: onetimePerServing
+      };
+    }
+
+    function updatePrices() {
+      const prices = calculatePrices();
+
+      // Actualizar precios mostrados
+      subscriptionPriceEl.textContent = formatMoney(prices.subscriptionUnit);
+      onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
+      
+      pricePerServingEl.textContent = formatMoney(prices.subscriptionPerServing);
+      onetimePricePerEl.textContent = formatMoney(prices.onetimePerServing);
+      
+      savingsAmountEl.textContent = formatMoney(prices.savings);
+      
+      if (currentOption === 'subscription') {
+        totalCompareEl.textContent = formatMoney(prices.compareTotal);
+        totalPriceEl.textContent = formatMoney(prices.subscriptionTotal);
+      } else {
+        totalCompareEl.style.display = 'none';
+        totalPriceEl.textContent = formatMoney(prices.onetimeTotal);
+      }
+    }
+
+    function selectOption(option) {
+      currentOption = option;
+      
+      options.forEach(opt => {
+        const isSelected = opt.dataset.option === option;
+        opt.classList.toggle('active', isSelected);
+        opt.classList.toggle('inactive', !isSelected);
+        opt.querySelector('input').checked = isSelected;
+      });
+
+      purchaseTypeInput.value = option;
+      updatePrices();
+    }
+
+    function updateQuantity(change) {
+      let newQuantity = currentQuantity + change;
+      if (newQuantity < 1) newQuantity = 1;
+      if (newQuantity > 99) newQuantity = 99;
+      
+      currentQuantity = newQuantity;
+      quantityVisible.value = currentQuantity;
+      quantityHidden.value = currentQuantity;
+      updatePrices();
+    }
+
+    // Event listeners
+    options.forEach(option => {
+      option.addEventListener('click', () => {
+        selectOption(option.dataset.option);
+      });
+    });
+
+    decreaseBtn.addEventListener('click', () => updateQuantity(-1));
+    increaseBtn.addEventListener('click', () => updateQuantity(1));
+
+    quantityVisible.addEventListener('change', (e) => {
+      let value = parseInt(e.target.value) || 1;
+      if (value < 1) value = 1;
+      if (value > 99) value = 99;
+      currentQuantity = value;
+      quantityVisible.value = value;
+      quantityHidden.value = value;
+      updatePrices();
+    });
+
+    // Form submission con cart drawer
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (addToCartBtn.disabled) return;
+      
+      addToCartBtn.classList.add('loading');
+      addToCartBtn.disabled = true;
+      errorMessage.classList.remove('visible');
+
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Disparar evento para actualizar el carrito (funciona con drawer de Shopify)
+          const cartUpdateEvent = new CustomEvent('cart:updated', {
+            detail: { variant: data }
+          });
+          document.dispatchEvent(cartUpdateEvent);
+
+          // Abrir cart drawer si existe
+          const cartDrawer = document.querySelector('cart-drawer, [data-cart-drawer], #CartDrawer');
+          if (cartDrawer) {
+            if (typeof cartDrawer.open === 'function') {
+              cartDrawer.open();
+            } else {
+              cartDrawer.classList.add('is-open');
+              document.body.classList.add('cart-drawer-open');
+            }
+          }
+
+          // O redirigir al carrito si no hay drawer
+          {% unless block.settings.stay_on_page %}
+            window.location.href = '/cart';
+          {% endunless %}
+        } else {
+          throw new Error(data.description || 'Error adding to cart');
+        }
+      } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.classList.add('visible');
+      } finally {
+        addToCartBtn.classList.remove('loading');
+        addToCartBtn.disabled = false;
+      }
+    });
+
+    // Inicializar
+    updatePrices();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Purchase Options",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Badge - Most Popular"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "Most Popular"
+    },
+    {
+      "type": "header",
+      "content": "Subscription Option"
+    },
+    {
+      "type": "text",
+      "id": "subscription_title",
+      "label": "Title",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "subscription_subtitle",
+      "label": "Subtitle",
+      "default": "15 servings per bag"
+    },
+    {
+      "type": "range",
+      "id": "subscription_discount",
+      "label": "Discount percentage",
+      "min": 5,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Show benefits list",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Benefit 1",
+      "default": "Save $10/bag on every subscription order"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Easily change your quantities"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Cancel any time"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4",
+      "label": "Benefit 4",
+      "default": "Pre-shipment reminders (no surprise charges)"
+    },
+    {
+      "type": "header",
+      "content": "One-time Purchase Option"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "Title",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "onetime_subtitle",
+      "label": "Subtitle",
+      "default": "15 servings per bag"
+    },
+    {
+      "type": "header",
+      "content": "Pricing Settings"
+    },
+    {
+      "type": "number",
+      "id": "servings_per_unit",
+      "label": "Servings per unit",
+      "default": 15
+    },
+    {
+      "type": "text",
+      "id": "per_unit_text",
+      "label": "Per unit text",
+      "default": "serving"
+    },
+    {
+      "type": "text",
+      "id": "savings_text",
+      "label": "Savings text",
+      "default": "You're saving"
+    },
+    {
+      "type": "text",
+      "id": "quantity_label",
+      "label": "Quantity label",
+      "default": "Quantity"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Add to cart text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Sold out text",
+      "default": "Sold Out"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shop_pay",
+      "label": "Show Shop Pay / Accelerated checkout",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stay_on_page",
+      "label": "Stay on page after adding to cart",
+      "default": false,
+      "info": "If unchecked, will redirect to cart page"
+    },
+    {
+      "type": "header",
+      "content": "Colors - General"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color (subscription)",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Compare at price color",
+      "default": "#999999"
+    },
+    {
+      "type": "color",
+      "id": "price_per_color",
+      "label": "Price per serving color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "benefit_color",
+      "label": "Benefit text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "benefit_check_color",
+      "label": "Benefit checkmark color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error message color",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Badge"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge background",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Options"
+    },
+    {
+      "type": "color",
+      "id": "option_bg_color",
+      "label": "Option background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "active_bg_color",
+      "label": "Active option background",
+      "default": "#FCF3EC"
+    },
+    {
+      "type": "color",
+      "id": "inactive_bg_color",
+      "label": "Inactive option background",
+      "default": "#FFFCF8"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#E6E6E6"
+    },
+    {
+      "type": "color",
+      "id": "border_hover_color",
+      "label": "Border hover color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "active_border_color",
+      "label": "Active border color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "inactive_border_color",
+      "label": "Inactive border color",
+      "default": "#FAEADE"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Radio Button"
+    },
+    {
+      "type": "color",
+      "id": "radio_bg_color",
+      "label": "Radio background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "radio_border_color",
+      "label": "Radio border color",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "color",
+      "id": "active_radio_color",
+      "label": "Active radio color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Savings Bar"
+    },
+    {
+      "type": "color",
+      "id": "savings_bg_color",
+      "label": "Savings background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "savings_text_color",
+      "label": "Savings text color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "savings_amount_color",
+      "label": "Savings amount color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Quantity Input"
+    },
+    {
+      "type": "color",
+      "id": "input_bg_color",
+      "label": "Input background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border color",
+      "default": "#DDDDDD"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "input_hover_bg_color",
+      "label": "Input hover background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "header",
+      "content": "Colors - Buttons"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Typography Sizes"
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Badge font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title font size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "label": "Price font size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "price_per_font_size",
+      "label": "Price per serving font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "benefit_font_size",
+      "label": "Benefit font size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "savings_font_size",
+      "label": "Savings font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button font size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Border Radius"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Option border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Input border radius",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Purchase Options"
+    }
+  ]
+}
+{% endschema %}
