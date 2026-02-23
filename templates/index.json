@@ -1079,7 +1079,7 @@
         "content_width": 33,
         "content_gap": 30,
         "content_sticky_top": 120,
-        "heading": "Why <br>PRONTO CHOCHO <br>is different",
+        "heading": "Why PRONTO CHOCHO is different",
         "heading_size": 32,
         "heading_weight": 600,
         "heading_line_height": 1.2,
@@ -1882,6 +1882,7 @@
         "review_AwYtLH",
         "review_RMTc6m"
       ],
+      "disabled": true,
       "name": "Carrusel de reviews",
       "settings": {
         "max_width": 1280,
