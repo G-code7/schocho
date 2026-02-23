@@ -349,16 +349,16 @@
     .purchase-options__title-{{ block_id }} {
       font-size: {{ block.settings.title_font_size | times: 0.9 }}px;
     }
-    
+
     .purchase-options__price-main-{{ block_id }} {
       font-size: {{ block.settings.price_font_size | times: 0.9 }}px;
     }
-    
+
     .purchase-options__header-{{ block_id }} {
       flex-wrap: wrap;
       gap: 8px;
     }
-    
+
     .purchase-options__price-wrap-{{ block_id }} {
       align-items: flex-start;
       width: 100%;
@@ -384,7 +384,19 @@
     <input type="hidden" name="utf8" value="✓">
     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
     <input type="hidden" name="quantity" value="1" data-quantity-input-hidden>
-    <input type="hidden" name="properties[_purchase_type]" value="subscription" data-purchase-type>
+    {%- assign current_variant = product.selected_or_first_available_variant -%}
+    {%- assign selling_plan_id = '' -%}
+
+    {%- for group in product.selling_plan_groups -%}
+      {%- for plan in group.selling_plans -%}
+        {% comment %} Buscamos el plan mensual que configuraste {% endcomment %}
+        {%- if plan.name contains 'month' or plan.options[0].value contains '1 month' -%}
+          {%- assign selling_plan_id = plan.id -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+
+    <input type="hidden" name="selling_plan" value="{{ selling_plan_id }}" id="selling-plan-input-{{ block_id }}">
 
     {% comment %} Opción de Suscripción {% endcomment %}
     <div
@@ -409,7 +421,13 @@
             </div>
             <div class="purchase-options__price-wrap-{{ block_id }}">
               <span class="purchase-options__price-main-{{ block_id }}">
-                <s data-compare-price>{{ product.selected_or_first_available_variant.compare_at_price | default: product.selected_or_first_available_variant.price | money }}</s>
+                <s data-compare-price>
+                  {{-
+                    product.selected_or_first_available_variant.compare_at_price
+                    | default: product.selected_or_first_available_variant.price
+                    | money
+                  -}}
+                </s>
                 <span data-subscription-price></span>
               </span>
               <span class="purchase-options__price-per-{{ block_id }}">
@@ -467,7 +485,8 @@
     {% comment %} Ahorro Total {% endcomment %}
     <div class="purchase-options__savings-{{ block_id }}">
       <span class="purchase-options__savings-text-{{ block_id }}">
-        {{ block.settings.savings_text }} <span class="purchase-options__savings-amount-{{ block_id }}" data-savings-amount></span>
+        {{ block.settings.savings_text }}
+        <span class="purchase-options__savings-amount-{{ block_id }}" data-savings-amount></span>
       </span>
       <span class="purchase-options__savings-price-{{ block_id }}">
         <s data-total-compare></s>
@@ -484,7 +503,9 @@
           class="purchase-options__quantity-btn-{{ block_id }}"
           data-quantity-decrease
           aria-label="Decrease quantity"
-        >−</button>
+        >
+          −
+        </button>
         <input
           type="number"
           class="purchase-options__quantity-input-{{ block_id }}"
@@ -499,7 +520,9 @@
           class="purchase-options__quantity-btn-{{ block_id }}"
           data-quantity-increase
           aria-label="Increase quantity"
-        >+</button>
+        >
+          +
+        </button>
       </div>
     </div>
 
@@ -509,7 +532,9 @@
         type="submit"
         class="purchase-options__submit-{{ block_id }}"
         data-add-to-cart
-        {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+        {% unless product.selected_or_first_available_variant.available %}
+          disabled
+        {% endunless %}
       >
         {% if product.selected_or_first_available_variant.available %}
           {{ block.settings.add_to_cart_text }}
