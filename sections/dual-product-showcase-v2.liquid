@@ -728,7 +728,7 @@
                 {%- comment -%} Título {%- endcomment -%}
                 <h2 class="dual-showcase__title-{{ section_id }}">
                   {% if custom_title != blank %}
-                    {{ custom_title }}
+                    {{ custom_title | metafield_tag }}
                   {% elsif product != blank %}
                     {{ product.title }}
                   {% endif %}
@@ -1842,7 +1842,8 @@
     {
       "type": "richtext",
       "id": "custom_title_2",
-      "label": "<h3>Title</h3>"
+      "label": "Title",
+      "default": "<p>Your title here</p>"
     },
     {
       "type": "textarea",
@@ -1987,7 +1988,8 @@
     {
       "type": "richtext",
       "id": "custom_title_3",
-      "label": "<h3>Title</h3>"
+      "label": "Title",
+      "default": "<p>Your title here</p>"
     },
     {
       "type": "textarea",
@@ -2132,7 +2134,8 @@
     {
       "type": "richtext",
       "id": "custom_title_4",
-      "label": "<h3>Title</h3>"
+      "label": "Title",
+      "default": "<p>Your title here</p>"
     },
     {
       "type": "textarea",
@@ -2277,7 +2280,8 @@
     {
       "type": "richtext",
       "id": "custom_title_5",
-      "label": "<h3>Title</h3>"
+      "label": "Title",
+      "default": "<p>Your title here</p>"
     },
     {
       "type": "textarea",
