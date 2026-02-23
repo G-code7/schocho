@@ -458,7 +458,7 @@
                   "settings": {
                     "open_first": false,
                     "allow_multiple": false,
-                    "show_top_border": true,
+                    "show_top_border": false,
                     "background_color": "rgba(0,0,0,0)",
                     "hover_background": "#efedf5",
                     "content_background": "#efedf5",
