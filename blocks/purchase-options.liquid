@@ -1,9 +1,24 @@
 {% comment %}
   Purchase Options Block - Subscribe & Save
-  Diseño mejorado con opciones de compra única vs suscripción
+  Optimizado para Shopify Subscriptions App y planes mensuales.
 {% endcomment %}
 
 {% assign block_id = block.id | replace: '_', '' | downcase %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign selling_plan_id = ""
+  assign discount_value = 0
+  
+  for group in product.selling_plan_groups
+    for plan in group.selling_plans
+      if plan.name contains 'month' or plan.options[0].value contains 'month' or plan.name contains 'Mensual'
+        assign selling_plan_id = plan.id
+        assign discount_value = plan.price_adjustments[0].value | default: 0
+      endif
+    endfor
+  endfor
+-%}
 
 {% style %}
   .purchase-options-{{ block_id }} {
