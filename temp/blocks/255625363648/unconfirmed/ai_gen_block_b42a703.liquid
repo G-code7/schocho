@@ -1,6 +1,631 @@
+{% doc %}
+  @prompt
+    vamos a crear una sección nueva que es para faq's contendrá  titulo, subtitulo  y preguntas y respuestas quiero colocar cuantas preguntas y respuestas  haga falta. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-faq-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0 0 {{ block.settings.title_spacing }}px 0;
+    font-weight: 700;
+  }
+
+  .ai-faq-subtitle-{{ ai_gen_id }} {
+    color: {{ block.settings.subtitle_color }};
+    font-size: {{ block.settings.subtitle_size }}px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-faq-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.item_spacing }}px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }} {
+    border: {{ block.settings.item_border_width }}px solid {{ block.settings.item_border_color }};
+    border-radius: {{ block.settings.item_border_radius }}px;
+    background-color: {{ block.settings.item_background_color }};
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.item_hover_background }};
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.question_padding }}px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    color: {{ block.settings.question_color }};
+    font-size: {{ block.settings.question_size }}px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.question_hover_color }};
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+    color: {{ block.settings.icon_color }};
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 {{ block.settings.question_padding }}px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 1000px;
+    padding: 0 {{ block.settings.question_padding }}px {{ block.settings.question_padding }}px;
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} {
+    color: {{ block.settings.answer_color }};
+    font-size: {{ block.settings.answer_size }}px;
+    line-height: 1.6;
+  }
+
+  .ai-faq-empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: {{ block.settings.subtitle_color }};
+    font-size: 16px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding | times: 0.6 }}px 16px;
+    }
+
+    .ai-faq-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.7 }}px;
+    }
+
+    .ai-faq-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size | times: 0.9 }}px;
+    }
+
+    .ai-faq-question-{{ ai_gen_id }} {
+      font-size: {{ block.settings.question_size | times: 0.9 }}px;
+      padding: {{ block.settings.question_padding | times: 0.8 }}px;
+    }
+
+    .ai-faq-answer-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.question_padding | times: 0.8 }}px;
+    }
+
+    .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.question_padding | times: 0.8 }}px {{ block.settings.question_padding | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    {% if block.settings.title != blank or block.settings.subtitle != blank %}
+      <div class="ai-faq-header-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h2 class="ai-faq-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+        {% endif %}
+        {% if block.settings.subtitle != blank %}
+          <div class="ai-faq-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% assign has_faqs = false %}
+    {% for i in (1..10) %}
+      {% assign question_key = 'question_' | append: i %}
+      {% assign answer_key = 'answer_' | append: i %}
+      {% assign question = block.settings[question_key] %}
+      {% assign answer = block.settings[answer_key] %}
+      {% if question != blank and answer != blank %}
+        {% assign has_faqs = true %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_faqs %}
+      <div class="ai-faq-list-{{ ai_gen_id }}">
+        {% for i in (1..10) %}
+          {% assign question_key = 'question_' | append: i %}
+          {% assign answer_key = 'answer_' | append: i %}
+          {% assign question = block.settings[question_key] %}
+          {% assign answer = block.settings[answer_key] %}
+          
+          {% if question != blank and answer != blank %}
+            <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+              <button 
+                class="ai-faq-question-{{ ai_gen_id }}"
+                aria-expanded="false"
+                data-faq-button
+              >
+                <span>{{ question }}</span>
+                <svg class="ai-faq-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="ai-faq-answer-{{ ai_gen_id }}" data-faq-answer>
+                <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+                  {{ answer }}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="ai-faq-empty-state-{{ ai_gen_id }}">
+        Agrega tus preguntas y respuestas frecuentes para comenzar
+      </div>
+    {% endif %}
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.items = this.querySelectorAll('[data-faq-item]');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.items.forEach((item) => {
+          const button = item.querySelector('[data-faq-button]');
+          
+          button.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            if (isActive) {
+              item.classList.remove('active');
+              button.setAttribute('aria-expanded', 'false');
+            } else {
+              item.classList.add('active');
+              button.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Preguntas frecuentes",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Preguntas frecuentes"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Encuentra respuestas a las preguntas más comunes"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Espaciado del encabezado",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 1"
+    },
+    {
+      "type": "text",
+      "id": "question_1",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_1",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 2"
+    },
+    {
+      "type": "text",
+      "id": "question_2",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_2",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 3"
+    },
+    {
+      "type": "text",
+      "id": "question_3",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_3",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 4"
+    },
+    {
+      "type": "text",
+      "id": "question_4",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_4",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 5"
+    },
+    {
+      "type": "text",
+      "id": "question_5",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_5",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 6"
+    },
+    {
+      "type": "text",
+      "id": "question_6",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_6",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 7"
+    },
+    {
+      "type": "text",
+      "id": "question_7",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_7",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 8"
+    },
+    {
+      "type": "text",
+      "id": "question_8",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_8",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 9"
+    },
+    {
+      "type": "text",
+      "id": "question_9",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_9",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Pregunta 10"
+    },
+    {
+      "type": "text",
+      "id": "question_10",
+      "label": "Pregunta"
+    },
+    {
+      "type": "textarea",
+      "id": "answer_10",
+      "label": "Respuesta"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Espaciado de la sección",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Espaciado entre preguntas",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "item_border_radius",
+      "label": "Radio del borde",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "item_border_width",
+      "label": "Ancho del borde",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "question_padding",
+      "label": "Espaciado interno",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo de la sección",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Fondo de pregunta",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "item_hover_background",
+      "label": "Fondo al pasar el cursor",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "item_border_color",
+      "label": "Color del borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Color de la pregunta",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "question_hover_color",
+      "label": "Color al pasar el cursor",
+      "default": "#7428dc"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Color de la respuesta",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color del icono",
+      "default": "#3e2563"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Espaciado del título",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño del subtítulo",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Tamaño de la pregunta",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "label": "Tamaño de la respuesta",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Preguntas frecuentes"
+    }
+  ]
+}
 {% endschema %}
