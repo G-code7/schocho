@@ -44,7 +44,7 @@
           "type": "_product-details",
           "static": true,
           "settings": {
-            "width": "custom",
+            "width": "fit-content",
             "custom_width": 100,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
@@ -222,7 +222,7 @@
               },
               "blocks": {}
             },
-            "group_dTHcXb": {
+            "group_z4Y4XA": {
               "type": "group",
               "name": "Product form",
               "settings": {
@@ -233,10 +233,10 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 10,
+                "gap": 15,
                 "width": "fit-content",
                 "custom_width": 80,
-                "width_mobile": "fit-content",
+                "width_mobile": "fill",
                 "custom_width_mobile": 100,
                 "height": "fit",
                 "custom_height": 100,
@@ -262,7 +262,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "subscriptions_app_block_KVnpJT": {
+                "subscriptions_app_block_8awJjj": {
                   "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
                   "settings": {
                     "color_text_body": "#6d7175",
@@ -271,11 +271,12 @@
                     "border_thickness": 1,
                     "border_radius": 0,
                     "subscription_policy_url": "",
-                    "product": "{{product}}"
+                    "product": "{{ closest.product }}"
                   }
                 },
-                "price_tMxUbj": {
+                "price_fbReaa": {
                   "type": "price",
+                  "disabled": true,
                   "settings": {
                     "show_sale_price_first": true,
                     "show_installments": true,
@@ -296,7 +297,7 @@
                   },
                   "blocks": {}
                 },
-                "variant_picker_KePPVa": {
+                "variant_picker_jgEFC3": {
                   "type": "variant-picker",
                   "settings": {
                     "variant_style": "buttons",
@@ -309,7 +310,7 @@
                   },
                   "blocks": {}
                 },
-                "buy_buttons_6p8c63": {
+                "buy_buttons_AqCnic": {
                   "type": "buy-buttons",
                   "settings": {
                     "stacking": false,
@@ -346,10 +347,10 @@
                 }
               },
               "block_order": [
-                "subscriptions_app_block_KVnpJT",
-                "price_tMxUbj",
-                "variant_picker_KePPVa",
-                "buy_buttons_6p8c63"
+                "subscriptions_app_block_8awJjj",
+                "price_fbReaa",
+                "variant_picker_jgEFC3",
+                "buy_buttons_AqCnic"
               ]
             },
             "group_8ePU6U": {
@@ -428,7 +429,7 @@
             "group_4we3XL",
             "ai_gen_block_3fb8129_RhWB7i",
             "text_LbbLqQ",
-            "group_dTHcXb",
+            "group_z4Y4XA",
             "group_8ePU6U"
           ]
         }
