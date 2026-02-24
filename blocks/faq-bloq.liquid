@@ -1,10 +1,6 @@
 {% comment %}
-  FAQ Section - JSON Powered
-  Características:
-  - Carga de FAQs mediante JSON
-  - Control tipográfico completo (tamaño, peso, altura de línea, espaciado)
-  - Múltiples fuentes de Google Fonts
-  - Sistema de diseño flexible
+  FAQ Section - JSON Powered (Corregido)
+  Procesa el JSON mediante JavaScript ya que Shopify Liquid no tiene parse_json
 {% endcomment %}
 
 {% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
@@ -293,52 +289,13 @@
     {% assign faqs_json = block.settings.faqs_json | strip %}
     
     {% if faqs_json != blank %}
-      {% assign faqs = faqs_json | parse_json %}
+      <div class="ai-faq-list-{{ ai_gen_id }}" id="faq-list-{{ ai_gen_id }}">
+        {% comment %} El contenido se renderizará vía JavaScript {% endcomment %}
+      </div>
       
-      {% if faqs.size > 0 %}
-        <div class="ai-faq-list-{{ ai_gen_id }}">
-          {% for faq in faqs %}
-            {% if faq.question != blank and faq.answer != blank %}
-              <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
-                <button 
-                  class="ai-faq-question-{{ ai_gen_id }}"
-                  aria-expanded="{% if block.settings.enable_accordion %}false{% else %}true{% endif %}"
-                  {% unless block.settings.enable_accordion %}disabled{% endunless %}
-                  data-faq-button
-                >
-                  <span>{{ faq.question }}</span>
-                  
-                  {% if block.settings.icon_style == 'chevron' %}
-                    <svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                  {% elsif block.settings.icon_style == 'plus' %}
-                    <svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line class="icon-plus" x1="12" y1="5" x2="12" y2="19"></line>
-                      <line class="icon-plus" x1="5" y1="12" x2="19" y2="12"></line>
-                      <line class="icon-minus" x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  {% elsif block.settings.icon_style == 'arrow' %}
-                    <svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <polyline points="19 12 12 19 5 12"></polyline>
-                    </svg>
-                  {% endif %}
-                </button>
-                <div class="ai-faq-answer-{{ ai_gen_id }}" data-faq-answer>
-                  <div class="ai-faq-answer-content-{{ ai_gen_id }}">
-                    {{ faq.answer }}
-                  </div>
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% else %}
-        <div class="ai-faq-empty-state-{{ ai_gen_id }}">
-          El formato JSON no es válido o está vacío
-        </div>
-      {% endif %}
+      <div class="ai-faq-empty-state-{{ ai_gen_id }}" id="faq-empty-{{ ai_gen_id }}" style="display: none;">
+        Error al cargar las preguntas. Verifica el formato JSON.
+      </div>
     {% else %}
       <div class="ai-faq-empty-state-{{ ai_gen_id }}">
         Agrega tus preguntas y respuestas en formato JSON para comenzar
@@ -349,32 +306,115 @@
 
 <script>
   (function() {
+    // JSON de FAQs escapado correctamente para JavaScript
+    const faqsData = {{ block.settings.faqs_json | json }};
+    const containerId = 'faq-list-{{ ai_gen_id }}';
+    const emptyId = 'faq-empty-{{ ai_gen_id }}';
+    const enableAccordion = {{ block.settings.enable_accordion | json }};
+    const expandFirst = {{ block.settings.expand_first | json }};
+    const allowMultiple = {{ block.settings.allow_multiple_open | json }};
+    const iconStyle = {{ block.settings.icon_style | json }};
+    const questionPadding = {{ block.settings.question_padding | json }};
+
     class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
       constructor() {
         super();
       }
 
       connectedCallback() {
-        this.items = this.querySelectorAll('[data-faq-item]');
-        this.accordionEnabled = {{ block.settings.enable_accordion | json }};
-        this.expandFirst = {{ block.settings.expand_first | json }};
+        this.renderFAQs();
+        this.setupEventListeners();
+      }
+
+      renderFAQs() {
+        const container = this.querySelector('#' + containerId);
+        const emptyState = this.querySelector('#' + emptyId);
         
-        if (this.accordionEnabled) {
-          this.setupEventListeners();
-          
-          if (this.expandFirst && this.items.length > 0) {
-            this.toggleItem(this.items[0], true);
+        if (!container) return;
+
+        try {
+          // Parsear el JSON si es string, o usar directamente si ya es objeto
+          let faqs = faqsData;
+          if (typeof faqsData === 'string') {
+            faqs = JSON.parse(faqsData);
           }
+
+          if (!Array.isArray(faqs) || faqs.length === 0) {
+            throw new Error('No hay FAQs válidas');
+          }
+
+          let html = '';
+          
+          faqs.forEach((faq, index) => {
+            if (!faq.question || !faq.answer) return;
+            
+            const isActive = (index === 0 && expandFirst) ? 'active' : '';
+            const ariaExpanded = (index === 0 && expandFirst) ? 'true' : 'false';
+            const disabledAttr = enableAccordion ? '' : 'disabled';
+            
+            let iconSvg = '';
+            if (iconStyle === 'chevron') {
+              iconSvg = `<svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+            } else if (iconStyle === 'plus') {
+              iconSvg = `<svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line class="icon-plus" x1="12" y1="5" x2="12" y2="19"></line><line class="icon-plus" x1="5" y1="12" x2="19" y2="12"></line><line class="icon-minus" x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+            } else if (iconStyle === 'arrow') {
+              iconSvg = `<svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+            }
+
+            html += `
+              <div class="ai-faq-item-{{ ai_gen_id }} ${isActive}" data-faq-item>
+                <button 
+                  class="ai-faq-question-{{ ai_gen_id }}"
+                  aria-expanded="${ariaExpanded}"
+                  ${disabledAttr}
+                  data-faq-button
+                >
+                  <span>${this.escapeHtml(faq.question)}</span>
+                  ${iconSvg}
+                </button>
+                <div class="ai-faq-answer-{{ ai_gen_id }}" data-faq-answer>
+                  <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+                    ${faq.answer}
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          container.innerHTML = html;
+          
+          // Si expandFirst está activo, ajustar el primer item
+          if (expandFirst && enableAccordion) {
+            const firstItem = container.querySelector('[data-faq-item]');
+            if (firstItem) {
+              const answer = firstItem.querySelector('[data-faq-answer]');
+              answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+          }
+
+        } catch (error) {
+          console.error('Error cargando FAQs:', error);
+          container.style.display = 'none';
+          if (emptyState) emptyState.style.display = 'block';
         }
       }
 
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
       setupEventListeners() {
+        if (!enableAccordion) return;
+        
+        this.items = this.querySelectorAll('[data-faq-item]');
+        
         this.items.forEach((item) => {
           const button = item.querySelector('[data-faq-button]');
           
           button.addEventListener('click', () => {
             const isActive = item.classList.contains('active');
-            const allowMultiple = {{ block.settings.allow_multiple_open | json }};
             
             if (!allowMultiple && !isActive) {
               this.items.forEach((otherItem) => {
@@ -391,13 +431,16 @@
 
       toggleItem(item, expand) {
         const button = item.querySelector('[data-faq-button]');
+        const answer = item.querySelector('[data-faq-answer]');
         
         if (expand) {
           item.classList.add('active');
           button.setAttribute('aria-expanded', 'true');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
         } else {
           item.classList.remove('active');
           button.setAttribute('aria-expanded', 'false');
+          answer.style.maxHeight = '0px';
         }
       }
     }
@@ -422,7 +465,7 @@
       "id": "faqs_json",
       "label": "Preguntas y Respuestas (JSON)",
       "info": "Formato: [{\"question\": \"¿Pregunta?\", \"answer\": \"Respuesta\"}]",
-      "default": "[\n  {\n    \"question\": \"¿Cuál es el tiempo de envío?\",\n    \"answer\": \"El tiempo de envío estándar es de 3-5 días hábiles.\"\n  },\n  {\n    \"question\": \"¿Ofrecen garantía?\",\n    \"answer\": \"Sí, todos nuestros productos incluyen garantía de 12 meses.\"\n  },\n  {\n    \"question\": \"¿Puedo devolver un producto?\",\n    \"answer\": \"Aceptamos devoluciones dentro de los 30 días posteriores a la compra.\"\n  }\n]"
+      "default": "[\n  {\n    \"question\": \"¿Cuál es el tiempo de envío?\",\n    \"answer\": \"El tiempo de envío estándar es de <strong>3-5 días hábiles</strong>.\"\n  },\n  {\n    \"question\": \"¿Ofrecen garantía?\",\n    \"answer\": \"Sí, garantía de 12 meses.\"\n  }\n]"
     },
     {
       "type": "header",
