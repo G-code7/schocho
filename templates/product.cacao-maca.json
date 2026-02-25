@@ -451,7 +451,7 @@
         "text_with_icon_FGC4De": {
           "type": "text_with_icon",
           "settings": {
-            "text": "GROWN WITH INTENTION.",
+            "text": "Thoughtfully sourced.",
             "icon_type": "none",
             "icon_position": "left",
             "icon_size": 24,
@@ -464,7 +464,7 @@
         "text_with_icon_c6WFVR": {
           "type": "text_with_icon",
           "settings": {
-            "text": "CRAFTED BY TRADITION.",
+            "text": "Traditionally prepared.",
             "icon_type": "none",
             "icon_position": "left",
             "icon_size": 24,
@@ -477,7 +477,7 @@
         "text_with_icon_zFwd7K": {
           "type": "text_with_icon",
           "settings": {
-            "text": "NOURISHING BY NATURE.",
+            "text": "Delivered with purpose.",
             "icon_type": "none",
             "icon_position": "left",
             "icon_size": 24,
@@ -535,7 +535,7 @@
           "type": "wt-benefits-products",
           "name": "Benefits with v2",
           "settings": {
-            "section_title": "The pillars of Nutrition",
+            "section_title": "Why this protein works",
             "title_alignment": "center",
             "title_size": 32,
             "title_color": "#371e54",
@@ -563,17 +563,17 @@
             "text_size": 14,
             "text_color": "#371e54",
             "benefit_left_1_heading": "",
-            "benefit_left_1_description": "<p><strong>Andean Chocho </strong>delivers complete plant protein with naturally occurring fiber, plant-based fats, and essential micronutrients in a whole-food form<br/></p>",
+            "benefit_left_1_description": "<p><strong>Andean Chocho</strong> provides complete plant protein, prebiotic fiber, and plant-based fats in a whole-food matrix. </p>",
             "benefit_left_2_heading": "",
-            "benefit_left_2_description": "<p><strong>Ginger </strong>traditionally supports digestive comfort and gut function, helping the body better tolerate and utilize nutrients<br/></p>",
+            "benefit_left_2_description": "<p><strong>Ginger</strong> supports digestive comfort and gut function, helping the body process and absorb nutrients more easily. <br/></p>",
             "benefit_left_3_heading": "",
             "benefit_left_3_description": "",
             "benefit_left_4_heading": "",
             "benefit_left_4_description": "",
             "benefit_right_1_heading": "",
-            "benefit_right_1_description": "<p><strong>Turmeric </strong>provides natural antioxidants that support a healthy inflammatory response and everyday joint comfort</p>",
+            "benefit_right_1_description": "<p><strong>Turmeric</strong> provides natural antioxidants that support a healthy inflammatory response and everyday joint wellness.</p>",
             "benefit_right_2_heading": "",
-            "benefit_right_2_description": "<p><strong>Black pepper </strong>enhances turmeric bioavailability, helping the body absorb and use its beneficial compounds more effectively</p>",
+            "benefit_right_2_description": "<p><strong>Black Pepper</strong> enhances turmeric bioavailability, helping the body absorb its beneficial compounds more effectively.<strong> </strong></p>",
             "benefit_right_3_heading": "",
             "benefit_right_3_description": "",
             "benefit_right_4_heading": "",
@@ -653,58 +653,9 @@
           "blocks": {
             "text_k6tert": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Pure. Ancient Food. </p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "custom",
-                "font": "var(--font-heading--family)",
-                "font_size": "5.5rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "text_VrDdEN": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Minimally processed. </p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "custom",
-                "font": "var(--font-heading--family)",
-                "font_size": "5.5rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "text_qYgach": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Nutrient-dense. Whole-food nourishment, redefined.</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -728,9 +679,7 @@
             }
           },
           "block_order": [
-            "text_k6tert",
-            "text_VrDdEN",
-            "text_qYgach"
+            "text_k6tert"
           ]
         }
       },
@@ -759,7 +708,7 @@
         "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
         "section_width": "page-width",
-        "section_height": "large",
+        "section_height": "medium",
         "section_height_custom": 50,
         "color_scheme": "scheme-5",
         "toggle_overlay": true,
@@ -793,7 +742,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-51d242b0-56a6-49a9-a4c8-fa8920560d98",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -818,7 +767,7 @@
               "type": "icon",
               "settings": {
                 "icon": "eye",
-                "image_upload": "shopify://shop_images/Recurso_54_3x_91ebdbda-2193-47aa-82c2-910fe7f130fc.png",
+                "image_upload": "shopify://shop_images/Recurso_59_3x_be1dbabf-9370-430e-b6f7-e3582452b791.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -867,7 +816,7 @@
                 "text_wJyNmR": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Intentional design</h2>",
+                    "text": "<p><strong>Regenerative Stewardship</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -892,7 +841,7 @@
                 "text_yXtfhT": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Everything starts with why: pure, gluten-free nutrition without compromise.</p>",
+                    "text": "<p>We protect and restore the land that feeds us by supporting soil health, preserving biodiversity, and farming practices that give more than they take, ensuring the Andes can nourish generations to come.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -944,7 +893,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-51d242b0-56a6-49a9-a4c8-fa8920560d98",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -1399,7 +1348,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-51d242b0-56a6-49a9-a4c8-fa8920560d98",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
