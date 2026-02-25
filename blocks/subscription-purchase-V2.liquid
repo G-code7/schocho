@@ -1,0 +1,997 @@
+{% comment %}
+  Ka'Chava Style Multi-Product Subscription
+  Combina funcionalidad de selector de productos con estética Ka'Chava
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | slice: 0, 8 %}
+
+{% comment %} Recolectar productos seleccionados {% endcomment %}
+{% assign selected_products = "" | split: "," %}
+{% for i in (1..6) %}
+  {% capture setting_id %}product_{{ i }}{% endcapture %}
+  {% if block.settings[setting_id] != blank %}
+    {% assign prod = all_products[block.settings[setting_id]] %}
+    {% if prod != empty %}
+      {% assign selected_products = selected_products | push: prod %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% if selected_products.size == 0 %}
+  <div style="padding: 40px; text-align: center; background: #f5f5f5; border-radius: 12px; border: 2px dashed #ccc;">
+    <p style="font-weight: 600; color: #333; margin-bottom: 8px;">Selecciona productos</p>
+    <p style="font-size: 13px; color: #666;">Elige hasta 6 productos en la configuración del bloque</p>
+  </div>
+{% else %}
+
+{% style %}
+  .kachava-subscription-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    font-family: inherit;
+  }
+
+  /* Título de sección */
+  .kachava-subscription__title-{{ ai_gen_id }} {
+    font-size: 22px;
+    font-weight: 800;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 20px;
+    text-align: left;
+  }
+
+  /* Grid de Productos - Estilo Ka'Chava */
+  .kachava-subscription__products-{{ ai_gen_id }} {
+    margin-bottom: 24px;
+  }
+
+  .kachava-subscription__products-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 16px;
+  }
+
+  .kachava-subscription__products-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .kachava-subscription__product-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 8px;
+    background: #F3F3F3;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+
+  .kachava-subscription__product-{{ ai_gen_id }}.has-quantity {
+    border-color: #4A6B1A;
+    background: #FCF3EC;
+  }
+
+  .kachava-subscription__product-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    background: #4A6B1A;
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 4px 6px;
+    border-radius: 50%;
+    text-transform: uppercase;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+    transform: rotate(-10deg);
+  }
+
+  .kachava-subscription__product-image-{{ ai_gen_id }} {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #e0e0e0;
+  }
+
+  .kachava-subscription__product-name-{{ ai_gen_id }} {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    color: {{ block.settings.text_color }};
+    line-height: 1.2;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+  }
+
+  .kachava-subscription__quantity-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    position: relative;
+  }
+
+  .kachava-subscription__quantity-select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 8px 28px 8px 12px;
+    border: 1px solid #CCCCCC;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    appearance: none;
+    text-align: center;
+    color: {{ block.settings.text_color }};
+  }
+
+  .kachava-subscription__quantity-arrow-{{ ai_gen_id }} {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    pointer-events: none;
+    width: 12px;
+    height: 12px;
+    color: {{ block.settings.text_color }};
+  }
+
+  /* Opciones de Compra - Estilo Ka'Chava */
+  .kachava-subscription__options-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .kachava-subscription__option-{{ ai_gen_id }} {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .kachava-subscription__option-input-{{ ai_gen_id }} {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .kachava-subscription__card-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border: 2px solid;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  /* Suscripción - Colores Ka'Chava */
+  .kachava-subscription__option--subscribe-{{ ai_gen_id }} .kachava-subscription__card-{{ ai_gen_id }} {
+    background-color: #FCF3EC;
+    border-color: #FAEADE;
+  }
+
+  .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} {
+    border-color: #4A6B1A;
+    border-width: 3px;
+    box-shadow: 0 2px 8px rgba(74, 107, 26, 0.15);
+  }
+
+  /* One-time */
+  .kachava-subscription__option--onetime-{{ ai_gen_id }} .kachava-subscription__card-{{ ai_gen_id }} {
+    background-color: #FFFCF8;
+    border-color: #FAEADE;
+    opacity: 0.6;
+  }
+
+  .kachava-subscription__option--onetime-{{ ai_gen_id }} .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} {
+    opacity: 1;
+    border-color: #4A6B1A;
+    border-width: 3px;
+  }
+
+  /* Radio Button Custom */
+  .kachava-subscription__radio-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid #CCCCCC;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: all 0.2s ease;
+    background: white;
+  }
+
+  .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} .kachava-subscription__radio-{{ ai_gen_id }} {
+    border-color: #4A6B1A;
+    background-color: #4A6B1A;
+  }
+
+  .kachava-subscription__radio-inner-{{ ai_gen_id }} {
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} .kachava-subscription__radio-inner-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  /* Contenido de tarjeta */
+  .kachava-subscription__content-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .kachava-subscription__header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .kachava-subscription__title-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 800;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .kachava-subscription__subtitle-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    margin: 4px 0 12px;
+    opacity: 0.8;
+  }
+
+  .kachava-subscription__pricing-{{ ai_gen_id }} {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+
+  .kachava-subscription__price-original-{{ ai_gen_id }} {
+    font-size: 18px;
+    color: {{ block.settings.text_color }};
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .kachava-subscription__price-{{ ai_gen_id }} {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .kachava-subscription__option--subscribe-{{ ai_gen_id }} .kachava-subscription__price-{{ ai_gen_id }} {
+    color: #4A6B1A;
+  }
+
+  .kachava-subscription__option--onetime-{{ ai_gen_id }} .kachava-subscription__price-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+  }
+
+  .kachava-subscription__per-serving-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+
+  .kachava-subscription__benefits-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .kachava-subscription__benefit-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    padding-left: 18px;
+    position: relative;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .kachava-subscription__benefit-{{ ai_gen_id }}::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4A6B1A;
+    font-weight: 700;
+  }
+
+  /* Summary y Botón */
+  .kachava-subscription__summary-{{ ai_gen_id }} {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #F5F5F5;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .kachava-subscription__savings-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    color: #4A6B1A;
+    margin: 0 0 16px;
+  }
+
+  .kachava-subscription__button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px;
+    background-color: #4A6B1A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .kachava-subscription__button-{{ ai_gen_id }}:hover:not(:disabled) {
+    background-color: #3A5510;
+    transform: translateY(-2px);
+  }
+
+  .kachava-subscription__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Trust Badges */
+  .kachava-subscription__trust-badges-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  .kachava-subscription__badge-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    font-weight: 600;
+  }
+
+  .kachava-subscription__badge-icon-{{ ai_gen_id }} {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: #4A6B1A;
+  }
+
+  .kachava-subscription__error-{{ ai_gen_id }} {
+    color: #D82C0D;
+    font-size: 14px;
+    margin-top: 12px;
+    text-align: center;
+    display: none;
+  }
+
+  .kachava-subscription__error-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .kachava-subscription__products-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .kachava-subscription__card-{{ ai_gen_id }} {
+      padding: 16px;
+    }
+
+    .kachava-subscription__title-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+
+    .kachava-subscription__trust-badges-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+  }
+{% endstyle %}
+
+<div class="kachava-subscription-{{ ai_gen_id }}" data-block-id="{{ block.id }}">
+  {% if block.settings.title != blank %}
+    <h3 class="kachava-subscription__title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
+  {% endif %}
+
+  <form 
+    method="post" 
+    action="{{ routes.cart_add_url }}" 
+    accept-charset="UTF-8" 
+    enctype="multipart/form-data"
+    id="kachava-form-{{ ai_gen_id }}"
+  >
+    <input type="hidden" name="form_type" value="product">
+    <input type="hidden" name="utf8" value="✓">
+
+    {% comment %} PRODUCTOS CON QUANTITY SELECTORS {% endcomment %}
+    <div class="kachava-subscription__products-{{ ai_gen_id }}">
+      <h4 class="kachava-subscription__products-title-{{ ai_gen_id }}">{{ block.settings.products_title | default: "Choose your favorite flavors:" }}</h4>
+      
+      <ul class="kachava-subscription__products-grid-{{ ai_gen_id }}">
+        {% for prod in selected_products %}
+          {% assign first_variant = prod.selected_or_first_available_variant %}
+          {% assign has_sub = false %}
+          {% assign sub_price = first_variant.price %}
+          
+          {% if prod.selling_plan_groups.size > 0 %}
+            {% assign has_sub = true %}
+            {% assign sub_group = prod.selling_plan_groups.first %}
+            {% assign sub_plan = sub_group.selling_plans.first %}
+            {% assign sub_allocation = first_variant.selling_plan_allocations | where: 'selling_plan_id', sub_plan.id | first %}
+            {% if sub_allocation %}
+              {% assign sub_price = sub_allocation.per_delivery_price %}
+            {% endif %}
+          {% endif %}
+          
+          <li 
+            class="kachava-subscription__product-{{ ai_gen_id }}"
+            data-product-id="{{ prod.id }}"
+            data-variant-id="{{ first_variant.id }}"
+            data-has-subscription="{{ has_sub }}"
+            data-price="{{ first_variant.price }}"
+            data-sub-price="{{ sub_price }}"
+            {% if has_sub and sub_plan %}data-selling-plan-id="{{ sub_plan.id }}"{% endif %}
+          >
+            {% if forloop.first and block.settings.show_best_seller_badge %}
+              <span class="kachava-subscription__product-badge-{{ ai_gen_id }}">Best Seller</span>
+            {% endif %}
+            
+            {% if prod.featured_image %}
+              <img 
+                src="{{ prod.featured_image | img_url: 'compact' }}" 
+                alt="{{ prod.title }}"
+                class="kachava-subscription__product-image-{{ ai_gen_id }}"
+                loading="lazy"
+              >
+            {% else %}
+              <div class="kachava-subscription__product-image-{{ ai_gen_id }}" style="background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">
+                {{ prod.title | slice: 0, 2 | upcase }}
+              </div>
+            {% endif %}
+            
+            <span class="kachava-subscription__product-name-{{ ai_gen_id }}">{{ prod.title | truncatewords: 2 }}</span>
+            
+            <div class="kachava-subscription__quantity-wrapper-{{ ai_gen_id }}">
+              <select 
+                class="kachava-subscription__quantity-select-{{ ai_gen_id }}"
+                name="updates[{{ first_variant.id }}]"
+                data-quantity-select
+                data-variant-id="{{ first_variant.id }}"
+                aria-label="Quantity for {{ prod.title }}"
+              >
+                {% for i in (0..6) %}
+                  <option value="{{ i }}"{% if i == 0 %} selected{% endif %}>{{ i }}</option>
+                {% endfor %}
+              </select>
+              <svg class="kachava-subscription__quantity-arrow-{{ ai_gen_id }}" viewBox="0 0 7.41 12" fill="currentColor">
+                <path d="M1.41 0 0 1.41 4.58 6 0 10.59 1.41 12l6-6Z"/>
+              </svg>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% comment %} OPCIONES DE COMPRA {% endcomment %}
+    <div class="kachava-subscription__options-{{ ai_gen_id }}">
+      
+      {% comment %} Verificar si algún producto tiene suscripción {% endcomment %}
+      {% assign any_has_subscription = false %}
+      {% for prod in selected_products %}
+        {% if prod.selling_plan_groups.size > 0 %}
+          {% assign any_has_subscription = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+
+      {% if any_has_subscription %}
+        <label class="kachava-subscription__option-{{ ai_gen_id }} kachava-subscription__option--subscribe-{{ ai_gen_id }}">
+          <input 
+            type="radio" 
+            name="purchase_type" 
+            value="subscription" 
+            class="kachava-subscription__option-input-{{ ai_gen_id }}"
+            checked
+            data-purchase-type="subscription"
+          >
+          <div class="kachava-subscription__card-{{ ai_gen_id }}">
+            <div class="kachava-subscription__radio-{{ ai_gen_id }}">
+              <div class="kachava-subscription__radio-inner-{{ ai_gen_id }}"></div>
+            </div>
+            <div class="kachava-subscription__content-{{ ai_gen_id }}">
+              <div class="kachava-subscription__header-{{ ai_gen_id }}">
+                <div>
+                  <h3 class="kachava-subscription__title-{{ ai_gen_id }}">{{ block.settings.subscribe_title | default: "Subscribe & Save" }}</h3>
+                  <p class="kachava-subscription__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_text | default: "15 servings per bag" }}</p>
+                </div>
+              </div>
+              <div class="kachava-subscription__pricing-{{ ai_gen_id }}">
+                <span class="kachava-subscription__price-original-{{ ai_gen_id }}" data-total-original>--</span>
+                <span class="kachava-subscription__price-{{ ai_gen_id }}" data-total-subscription>--</span>
+                <span style="font-size: 13px; color: #666; font-weight: 500;">/ bag</span>
+              </div>
+              <p class="kachava-subscription__per-serving-{{ ai_gen_id }}">{{ block.settings.per_serving_sub | default: "$3.99 per serving" }}</p>
+              
+              {% if block.settings.show_benefits %}
+                <ul class="kachava-subscription__benefits-{{ ai_gen_id }}">
+                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Save on every subscription order</li>
+                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Easily change your quantities</li>
+                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Cancel any time</li>
+                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Pre-shipment reminders (no surprise charges)</li>
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+        </label>
+      {% endif %}
+
+      <label class="kachava-subscription__option-{{ ai_gen_id }} kachava-subscription__option--onetime-{{ ai_gen_id }}">
+        <input 
+          type="radio" 
+          name="purchase_type" 
+          value="onetime" 
+          class="kachava-subscription__option-input-{{ ai_gen_id }}"
+          data-purchase-type="onetime"
+          {% unless any_has_subscription %}checked{% endunless %}
+        >
+        <div class="kachava-subscription__card-{{ ai_gen_id }}">
+          <div class="kachava-subscription__radio-{{ ai_gen_id }}">
+            <div class="kachava-subscription__radio-inner-{{ ai_gen_id }}"></div>
+          </div>
+          <div class="kachava-subscription__content-{{ ai_gen_id }}">
+            <div class="kachava-subscription__header-{{ ai_gen_id }}">
+              <div>
+                <h3 class="kachava-subscription__title-{{ ai_gen_id }}">{{ block.settings.onetime_title | default: "One-time purchase" }}</h3>
+                <p class="kachava-subscription__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_text | default: "15 servings per bag" }}</p>
+              </div>
+            </div>
+            <div class="kachava-subscription__pricing-{{ ai_gen_id }}">
+              <span class="kachava-subscription__price-{{ ai_gen_id }}" data-total-onetime>--</span>
+              <span style="font-size: 13px; color: #666; font-weight: 500;">/ bag</span>
+            </div>
+            <p class="kachava-subscription__per-serving-{{ ai_gen_id }}">{{ block.settings.per_serving_onetime | default: "$4.66 per serving" }}</p>
+          </div>
+        </div>
+      </label>
+    </div>
+
+    {% comment %} SUMMARY Y BOTÓN {% endcomment %}
+    <div class="kachava-subscription__summary-{{ ai_gen_id }}">
+      <p class="kachava-subscription__savings-{{ ai_gen_id }}" data-savings-text style="display: none;">
+        You're saving <span data-savings-amount>$0.00</span> with subscription!
+      </p>
+      
+      <button 
+        type="submit" 
+        class="kachava-subscription__button-{{ ai_gen_id }}"
+        id="add-to-cart-{{ ai_gen_id }}"
+        disabled
+      >
+        {{ block.settings.button_text | default: "Add to Cart" }}
+      </button>
+      
+      <div class="kachava-subscription__error-{{ ai_gen_id }}" data-error-message></div>
+    </div>
+
+    {% comment %} TRUST BADGES {% endcomment %}
+    {% if block.settings.show_trust_badges %}
+      <div class="kachava-subscription__trust-badges-{{ ai_gen_id }}">
+        <div class="kachava-subscription__badge-{{ ai_gen_id }}">
+          <svg class="kachava-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          <span>{{ block.settings.badge_1_text | default: "Money-Back Guarantee" }}</span>
+        </div>
+        <div class="kachava-subscription__badge-{{ ai_gen_id }}">
+          <svg class="kachava-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+          <span>{{ block.settings.badge_2_text | default: "Secure Checkout" }}</span>
+        </div>
+        <div class="kachava-subscription__badge-{{ ai_gen_id }}">
+          <svg class="kachava-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>{{ block.settings.badge_3_text | default: "Fast Shipping" }}</span>
+        </div>
+      </div>
+    {% endif %}
+  </form>
+</div>
+
+<script>
+  (function() {
+    const blockId = '{{ ai_gen_id }}';
+    const form = document.getElementById('kachava-form-' + blockId);
+    const quantitySelects = form.querySelectorAll('[data-quantity-select]');
+    const purchaseTypeRadios = form.querySelectorAll('[data-purchase-type]');
+    const savingsText = form.querySelector('[data-savings-text]');
+    const savingsAmount = form.querySelector('[data-savings-amount]');
+    const errorMessage = form.querySelector('[data-error-message]');
+    const addToCartBtn = document.getElementById('add-to-cart-' + blockId);
+    
+    // Datos de productos
+    const products = {};
+    {% for prod in selected_products %}
+      {% assign first_variant = prod.selected_or_first_available_variant %}
+      {% assign has_sub = false %}
+      {% assign sub_price = first_variant.price %}
+      {% if prod.selling_plan_groups.size > 0 %}
+        {% assign has_sub = true %}
+        {% assign sub_group = prod.selling_plan_groups.first %}
+        {% assign sub_plan = sub_group.selling_plans.first %}
+        {% assign sub_allocation = first_variant.selling_plan_allocations | where: 'selling_plan_id', sub_plan.id | first %}
+        {% if sub_allocation %}
+          {% assign sub_price = sub_allocation.per_delivery_price %}
+        {% endif %}
+      {% endif %}
+      
+      products['{{ first_variant.id }}'] = {
+        price: {{ first_variant.price }},
+        subscriptionPrice: {{ sub_price }},
+        hasSubscription: {{ has_sub }},
+        sellingPlanId: {% if sub_plan %}'{{ sub_plan.id }}'{% else %}null{% endif %}
+      };
+    {% endfor %}
+
+    function calculateTotals() {
+      let totalOnetime = 0;
+      let totalSubscription = 0;
+      let hasAnyQuantity = false;
+
+      quantitySelects.forEach(select => {
+        const quantity = parseInt(select.value) || 0;
+        const variantId = select.dataset.variantId;
+        const product = products[variantId];
+        
+        if (product && quantity > 0) {
+          hasAnyQuantity = true;
+          totalOnetime += product.price * quantity;
+          totalSubscription += product.subscriptionPrice * quantity;
+        }
+      });
+
+      // Actualizar UI de precios
+      const onetimeEl = form.querySelector('[data-total-onetime]');
+      const subscriptionEl = form.querySelector('[data-total-subscription]');
+      const originalEl = form.querySelector('[data-total-original]');
+      
+      if (onetimeEl) onetimeEl.textContent = formatMoney(totalOnetime);
+      if (subscriptionEl) subscriptionEl.textContent = formatMoney(totalSubscription);
+      if (originalEl) originalEl.textContent = formatMoney(totalOnetime);
+      
+      // Mostrar ahorros
+      const savings = totalOnetime - totalSubscription;
+      const isSubscription = form.querySelector('[data-purchase-type="subscription"]:checked') !== null;
+      
+      if (savingsText && savingsAmount) {
+        if (savings > 0 && isSubscription) {
+          savingsAmount.textContent = formatMoney(savings);
+          savingsText.style.display = 'block';
+        } else {
+          savingsText.style.display = 'none';
+        }
+      }
+
+      // Habilitar/deshabilitar botón
+      if (addToCartBtn) {
+        addToCartBtn.disabled = !hasAnyQuantity;
+      }
+
+      return { totalOnetime, totalSubscription, hasAnyQuantity, savings };
+    }
+
+    function formatMoney(cents) {
+      return '$' + (cents / 100).toFixed(2);
+    }
+
+    // Event listeners
+    quantitySelects.forEach(select => {
+      select.addEventListener('change', function() {
+        // Actualizar clase visual
+        const productItem = this.closest('.kachava-subscription__product-' + blockId);
+        if (this.value > 0) {
+          productItem.classList.add('has-quantity');
+        } else {
+          productItem.classList.remove('has-quantity');
+        }
+        calculateTotals();
+      });
+    });
+
+    purchaseTypeRadios.forEach(radio => {
+      radio.addEventListener('change', calculateTotals);
+    });
+
+    // Submit del form
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const originalText = addToCartBtn.textContent;
+      addToCartBtn.disabled = true;
+      addToCartBtn.textContent = 'Adding...';
+      errorMessage.classList.remove('active');
+
+      const isSubscription = form.querySelector('[data-purchase-type="subscription"]:checked') !== null;
+      const items = [];
+
+      quantitySelects.forEach(select => {
+        const quantity = parseInt(select.value) || 0;
+        if (quantity > 0) {
+          const variantId = select.dataset.variantId;
+          const product = products[variantId];
+          
+          const item = {
+            id: variantId,
+            quantity: quantity
+          };
+
+          // Agregar selling_plan si es suscripción y el producto lo tiene
+          if (isSubscription && product.hasSubscription && product.sellingPlanId) {
+            item.selling_plan = product.sellingPlanId;
+          }
+
+          items.push(item);
+        }
+      });
+
+      if (items.length === 0) {
+        errorMessage.textContent = 'Please select at least one product';
+        errorMessage.classList.add('active');
+        addToCartBtn.disabled = false;
+        addToCartBtn.textContent = originalText;
+        return;
+      }
+
+      try {
+        // Agregar items uno por uno para manejar selling plans correctamente
+        for (const item of items) {
+          const formData = new FormData();
+          formData.append('id', item.id);
+          formData.append('quantity', item.quantity);
+          if (item.selling_plan) {
+            formData.append('selling_plan', item.selling_plan);
+          }
+
+          const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.description || 'Error adding to cart');
+          }
+        }
+
+        // Éxito
+        document.dispatchEvent(new CustomEvent('cart:updated'));
+        
+        // Abrir cart drawer si existe
+        const cartDrawer = document.querySelector('cart-drawer');
+        if (cartDrawer && typeof cartDrawer.open === 'function') {
+          cartDrawer.open();
+        } else {
+          // Fallback: redirigir a cart
+          window.location.href = '/cart';
+        }
+
+      } catch (err) {
+        errorMessage.textContent = err.message || 'Unable to add to cart. Please try again.';
+        errorMessage.classList.add('active');
+        addToCartBtn.disabled = false;
+        addToCartBtn.textContent = originalText;
+      }
+    });
+
+    // Calcular totales iniciales
+    calculateTotals();
+  })();
+</script>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Ka'Chava Subscription",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Superblend Shake"
+    },
+    {
+      "type": "text",
+      "id": "products_title",
+      "label": "Products section title",
+      "default": "Choose your favorite flavors:"
+    },
+    {
+      "type": "header",
+      "content": "Product Selection",
+      "info": "Select up to 6 products to display"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product 1"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product 2"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product 3"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product 4"
+    },
+    {
+      "type": "product",
+      "id": "product_5",
+      "label": "Product 5"
+    },
+    {
+      "type": "product",
+      "id": "product_6",
+      "label": "Product 6"
+    },
+    {
+      "type": "header",
+      "content": "Display Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_best_seller_badge",
+      "label": "Show 'Best Seller' badge on first product",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Show subscription benefits list",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Subscription Card"
+    },
+    {
+      "type": "text",
+      "id": "subscribe_title",
+      "label": "Title",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "servings_text",
+      "label": "Servings text",
+      "default": "15 servings per bag"
+    },
+    {
+      "type": "text",
+      "id": "per_serving_sub",
+      "label": "Per serving (subscription)",
+      "default": "$3.99 per serving"
+    },
+    {
+      "type": "header",
+      "content": "One-time Card"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "Title",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "per_serving_onetime",
+      "label": "Per serving (one-time)",
+      "default": "$4.66 per serving"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "header",
+      "content": "Trust Badges"
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Badge 1",
+      "default": "Money-Back Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Badge 2",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "text",
+      "id": "badge_3_text",
+      "label": "Badge 3",
+      "default": "Fast Shipping"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2A2A2A"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ka'Chava Subscription"
+    }
+  ]
+}
+{% endschema %}
