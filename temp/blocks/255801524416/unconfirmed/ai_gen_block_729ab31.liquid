@@ -1,6 +1,906 @@
+{% doc %}
+  @prompt
+    I need a product purchase option component for my Shopify store using Shopify Subscriptions. The design should follow this aesthetic and structure:
+    Layout Requirements:
+    Two radio button cards stacked vertically
+    Subscription card (top):
+    Green border highlight (#4A6B1A) when selected
+    Light beige/cream background (#FCF3EC)
+    'Subscribe & Save' label in bold
+    '15 servings' subtitle
+    Strikethrough original price + discounted subscription price in green
+    Per-serving cost below
+    Bullet list of benefits (Save $X/bag, easily change quantities, cancel anytime, pre-shipment reminders)
+    One-time purchase card (bottom):
+    Neutral border (#FAEADE) with lighter background (#FFFCF8)
+    'One-time purchase' label
+    '15 servings' subtitle
+    Regular price display
+    Per-serving cost
+    Reduced opacity (60%) when not selected
+    Interactive Elements:
+    Custom radio buttons with green fill when selected
+    Smooth transition between states
+    Price summary showing total savings
+    Dynamic 'Add to Cart' button
+    Trust badges below (Money-Back Guarantee, Secure Checkout, Fast Shipping)
+    Technical specs:
+    Must work with Shopify Subscriptions app
+    Responsive grid layout
+    Accessible (ARIA labels, keyboard navigation)
+    Clean, modern typography with bold headings
+    Mobile-first approach with proper spacing
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-subscription-purchase-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-subscription-purchase__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }} {
+    position: relative;
+    border-radius: {{ block.settings.border_radius }}px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }} input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .ai-subscription-purchase__card-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    padding: {{ block.settings.card_padding }}px;
+    border: {{ block.settings.border_width }}px solid;
+    border-radius: {{ block.settings.border_radius }}px;
+    transition: all 0.3s ease;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }}--subscription .ai-subscription-purchase__card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.subscription_bg_color }};
+    border-color: {{ block.settings.subscription_border_color }};
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }}--subscription input:checked ~ .ai-subscription-purchase__card-{{ ai_gen_id }} {
+    border-color: {{ block.settings.subscription_selected_border }};
+    border-width: {{ block.settings.selected_border_width }}px;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }}--onetime .ai-subscription-purchase__card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.onetime_bg_color }};
+    border-color: {{ block.settings.onetime_border_color }};
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }}--onetime input:checked ~ .ai-subscription-purchase__card-{{ ai_gen_id }} {
+    border-color: {{ block.settings.onetime_selected_border }};
+    border-width: {{ block.settings.selected_border_width }}px;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }}--onetime:not(:has(input:checked)) .ai-subscription-purchase__card-{{ ai_gen_id }} {
+    opacity: {{ block.settings.unselected_opacity | divided_by: 100.0 }};
+  }
+
+  .ai-subscription-purchase__radio-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.radio_size }}px;
+    height: {{ block.settings.radio_size }}px;
+    border: 2px solid {{ block.settings.radio_border_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-top: 4px;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }} input:checked ~ .ai-subscription-purchase__card-{{ ai_gen_id }} .ai-subscription-purchase__radio-{{ ai_gen_id }} {
+    border-color: {{ block.settings.radio_selected_color }};
+    background-color: {{ block.settings.radio_selected_color }};
+  }
+
+  .ai-subscription-purchase__radio-inner-{{ ai_gen_id }} {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }} input:checked ~ .ai-subscription-purchase__card-{{ ai_gen_id }} .ai-subscription-purchase__radio-inner-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-subscription-purchase__content-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-subscription-purchase__header-{{ ai_gen_id }} {
+    margin-bottom: 8px;
+  }
+
+  .ai-subscription-purchase__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 4px 0;
+  }
+
+  .ai-subscription-purchase__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_font_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .ai-subscription-purchase__pricing-{{ ai_gen_id }} {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .ai-subscription-purchase__original-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    color: {{ block.settings.text_color }};
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .ai-subscription-purchase__price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.subscription_price_color }};
+  }
+
+  .ai-subscription-purchase__option-{{ ai_gen_id }}--onetime .ai-subscription-purchase__price-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-subscription-purchase__per-serving-{{ ai_gen_id }} {
+    font-size: {{ block.settings.per_serving_font_size }}px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+
+  .ai-subscription-purchase__benefits-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-subscription-purchase__benefit-{{ ai_gen_id }} {
+    font-size: {{ block.settings.benefit_font_size }}px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 6px;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .ai-subscription-purchase__benefit-{{ ai_gen_id }}::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: {{ block.settings.subscription_price_color }};
+    font-weight: 700;
+  }
+
+  .ai-subscription-purchase__summary-{{ ai_gen_id }} {
+    margin-top: 20px;
+    padding: {{ block.settings.summary_padding }}px;
+    background-color: {{ block.settings.summary_bg_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-subscription-purchase__summary-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.summary_font_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 8px 0;
+  }
+
+  .ai-subscription-purchase__savings-{{ ai_gen_id }} {
+    font-size: {{ block.settings.savings_font_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.subscription_price_color }};
+    margin: 0;
+  }
+
+  .ai-subscription-purchase__button-{{ ai_gen_id }} {
+    width: 100%;
+    margin-top: 16px;
+    padding: {{ block.settings.button_padding }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-subscription-purchase__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-subscription-purchase__trust-badges-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid {{ block.settings.onetime_border_color }};
+  }
+
+  .ai-subscription-purchase__badge-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    flex: 1;
+  }
+
+  .ai-subscription-purchase__badge-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.badge_icon_size }}px;
+    height: {{ block.settings.badge_icon_size }}px;
+    color: {{ block.settings.subscription_price_color }};
+  }
+
+  .ai-subscription-purchase__badge-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.badge_font_size }}px;
+    color: {{ block.settings.text_color }};
+    font-weight: 600;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-subscription-purchase__trust-badges-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ai-subscription-purchase__badge-{{ ai_gen_id }} {
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+  }
+{% endstyle %}
+
+<subscription-purchase-{{ ai_gen_id }}
+  class="ai-subscription-purchase-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-subscription-purchase__container-{{ ai_gen_id }}">
+    <label class="ai-subscription-purchase__option-{{ ai_gen_id }} ai-subscription-purchase__option-{{ ai_gen_id }}--subscription">
+      <input
+        type="radio"
+        name="purchase-option-{{ ai_gen_id }}"
+        value="subscription"
+        checked
+        aria-label="Subscribe and save option"
+      >
+      <div class="ai-subscription-purchase__card-{{ ai_gen_id }}">
+        <div class="ai-subscription-purchase__radio-{{ ai_gen_id }}">
+          <div class="ai-subscription-purchase__radio-inner-{{ ai_gen_id }}"></div>
+        </div>
+        <div class="ai-subscription-purchase__content-{{ ai_gen_id }}">
+          <div class="ai-subscription-purchase__header-{{ ai_gen_id }}">
+            <h3 class="ai-subscription-purchase__title-{{ ai_gen_id }}">{{ block.settings.subscription_title }}</h3>
+            <p class="ai-subscription-purchase__subtitle-{{ ai_gen_id }}">{{ block.settings.subscription_subtitle }}</p>
+          </div>
+          <div class="ai-subscription-purchase__pricing-{{ ai_gen_id }}">
+            {% if block.settings.show_original_price %}
+              <span class="ai-subscription-purchase__original-price-{{ ai_gen_id }}">{{ block.settings.original_price }}</span>
+            {% endif %}
+            <span class="ai-subscription-purchase__price-{{ ai_gen_id }}">{{ block.settings.subscription_price }}</span>
+          </div>
+          <p class="ai-subscription-purchase__per-serving-{{ ai_gen_id }}">{{ block.settings.subscription_per_serving }}</p>
+          <ul class="ai-subscription-purchase__benefits-{{ ai_gen_id }}">
+            {% if block.settings.benefit_1 != blank %}
+              <li class="ai-subscription-purchase__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_1 }}</li>
+            {% endif %}
+            {% if block.settings.benefit_2 != blank %}
+              <li class="ai-subscription-purchase__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_2 }}</li>
+            {% endif %}
+            {% if block.settings.benefit_3 != blank %}
+              <li class="ai-subscription-purchase__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_3 }}</li>
+            {% endif %}
+            {% if block.settings.benefit_4 != blank %}
+              <li class="ai-subscription-purchase__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_4 }}</li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </label>
+
+    <label class="ai-subscription-purchase__option-{{ ai_gen_id }} ai-subscription-purchase__option-{{ ai_gen_id }}--onetime">
+      <input
+        type="radio"
+        name="purchase-option-{{ ai_gen_id }}"
+        value="onetime"
+        aria-label="One-time purchase option"
+      >
+      <div class="ai-subscription-purchase__card-{{ ai_gen_id }}">
+        <div class="ai-subscription-purchase__radio-{{ ai_gen_id }}">
+          <div class="ai-subscription-purchase__radio-inner-{{ ai_gen_id }}"></div>
+        </div>
+        <div class="ai-subscription-purchase__content-{{ ai_gen_id }}">
+          <div class="ai-subscription-purchase__header-{{ ai_gen_id }}">
+            <h3 class="ai-subscription-purchase__title-{{ ai_gen_id }}">{{ block.settings.onetime_title }}</h3>
+            <p class="ai-subscription-purchase__subtitle-{{ ai_gen_id }}">{{ block.settings.onetime_subtitle }}</p>
+          </div>
+          <div class="ai-subscription-purchase__pricing-{{ ai_gen_id }}">
+            <span class="ai-subscription-purchase__price-{{ ai_gen_id }}">{{ block.settings.onetime_price }}</span>
+          </div>
+          <p class="ai-subscription-purchase__per-serving-{{ ai_gen_id }}">{{ block.settings.onetime_per_serving }}</p>
+        </div>
+      </div>
+    </label>
+
+    {% if block.settings.show_summary %}
+      <div class="ai-subscription-purchase__summary-{{ ai_gen_id }}">
+        <p class="ai-subscription-purchase__summary-text-{{ ai_gen_id }}">{{ block.settings.summary_text }}</p>
+        <p class="ai-subscription-purchase__savings-{{ ai_gen_id }}">{{ block.settings.savings_text }}</p>
+      </div>
+    {% endif %}
+
+    <button
+      type="button"
+      class="ai-subscription-purchase__button-{{ ai_gen_id }}"
+      aria-label="Add to cart"
+    >
+      {{ block.settings.button_text }}
+    </button>
+
+    {% if block.settings.show_trust_badges %}
+      <div class="ai-subscription-purchase__trust-badges-{{ ai_gen_id }}">
+        <div class="ai-subscription-purchase__badge-{{ ai_gen_id }}">
+          <svg class="ai-subscription-purchase__badge-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          <span class="ai-subscription-purchase__badge-text-{{ ai_gen_id }}">{{ block.settings.badge_1_text }}</span>
+        </div>
+        <div class="ai-subscription-purchase__badge-{{ ai_gen_id }}">
+          <svg class="ai-subscription-purchase__badge-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span class="ai-subscription-purchase__badge-text-{{ ai_gen_id }}">{{ block.settings.badge_2_text }}</span>
+        </div>
+        <div class="ai-subscription-purchase__badge-{{ ai_gen_id }}">
+          <svg class="ai-subscription-purchase__badge-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span class="ai-subscription-purchase__badge-text-{{ ai_gen_id }}">{{ block.settings.badge_3_text }}</span>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</subscription-purchase-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SubscriptionPurchase{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.radioButtons = this.querySelectorAll('input[type="radio"]');
+        this.addToCartButton = this.querySelector('.ai-subscription-purchase__button-{{ ai_gen_id }}');
+        this.summaryElement = this.querySelector('.ai-subscription-purchase__summary-{{ ai_gen_id }}');
+        
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.radioButtons.forEach(radio => {
+          radio.addEventListener('change', () => this.handleOptionChange());
+        });
+
+        if (this.addToCartButton) {
+          this.addToCartButton.addEventListener('click', () => this.handleAddToCart());
+        }
+      }
+
+      handleOptionChange() {
+        const selectedOption = this.querySelector('input[type="radio"]:checked').value;
+        
+        if (this.summaryElement) {
+          if (selectedOption === 'subscription') {
+            this.summaryElement.style.display = 'block';
+          } else {
+            this.summaryElement.style.display = 'none';
+          }
+        }
+      }
+
+      handleAddToCart() {
+        const selectedOption = this.querySelector('input[type="radio"]:checked').value;
+        console.log('Adding to cart with option:', selectedOption);
+      }
+    }
+
+    customElements.define('subscription-purchase-{{ ai_gen_id }}', SubscriptionPurchase{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Subscription purchase",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Subscription option"
+    },
+    {
+      "type": "text",
+      "id": "subscription_title",
+      "label": "Title",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "subscription_subtitle",
+      "label": "Subtitle",
+      "default": "15 servings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_original_price",
+      "label": "Show original price",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "original_price",
+      "label": "Original price",
+      "default": "$45.00"
+    },
+    {
+      "type": "text",
+      "id": "subscription_price",
+      "label": "Subscription price",
+      "default": "$38.25"
+    },
+    {
+      "type": "text",
+      "id": "subscription_per_serving",
+      "label": "Per serving text",
+      "default": "$2.55 per serving"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Benefit 1",
+      "default": "Save $6.75/bag"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Easily change quantities"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Cancel anytime"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4",
+      "label": "Benefit 4",
+      "default": "Pre-shipment reminders"
+    },
+    {
+      "type": "header",
+      "content": "One-time purchase option"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "Title",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "onetime_subtitle",
+      "label": "Subtitle",
+      "default": "15 servings"
+    },
+    {
+      "type": "text",
+      "id": "onetime_price",
+      "label": "Price",
+      "default": "$45.00"
+    },
+    {
+      "type": "text",
+      "id": "onetime_per_serving",
+      "label": "Per serving text",
+      "default": "$3.00 per serving"
+    },
+    {
+      "type": "header",
+      "content": "Summary"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show summary",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "summary_text",
+      "label": "Summary text",
+      "default": "Total savings with subscription:"
+    },
+    {
+      "type": "text",
+      "id": "savings_text",
+      "label": "Savings text",
+      "default": "Save $6.75 per bag"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Badge 1 text",
+      "default": "Money-Back Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Badge 2 text",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "text",
+      "id": "badge_3_text",
+      "label": "Badge 3 text",
+      "default": "Fast Shipping"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "summary_padding",
+      "label": "Summary padding",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "selected_border_width",
+      "label": "Selected border width",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "subscription_bg_color",
+      "label": "Subscription background",
+      "default": "#FCF3EC"
+    },
+    {
+      "type": "color",
+      "id": "subscription_border_color",
+      "label": "Subscription border",
+      "default": "#FAEADE"
+    },
+    {
+      "type": "color",
+      "id": "subscription_selected_border",
+      "label": "Subscription selected border",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "subscription_price_color",
+      "label": "Subscription price color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "onetime_bg_color",
+      "label": "One-time background",
+      "default": "#FFFCF8"
+    },
+    {
+      "type": "color",
+      "id": "onetime_border_color",
+      "label": "One-time border",
+      "default": "#FAEADE"
+    },
+    {
+      "type": "color",
+      "id": "onetime_selected_border",
+      "label": "One-time selected border",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2A2A2A"
+    },
+    {
+      "type": "color",
+      "id": "summary_bg_color",
+      "label": "Summary background",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#3A5510"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "radio_border_color",
+      "label": "Radio border color",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "color",
+      "id": "radio_selected_color",
+      "label": "Radio selected color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "label": "Price size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "per_serving_font_size",
+      "label": "Per serving size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "benefit_font_size",
+      "label": "Benefit size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "summary_font_size",
+      "label": "Summary size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "savings_font_size",
+      "label": "Savings size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Button size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "badge_font_size",
+      "label": "Badge size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Interactive elements"
+    },
+    {
+      "type": "range",
+      "id": "radio_size",
+      "label": "Radio button size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "unselected_opacity",
+      "label": "Unselected opacity",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "label": "Button padding",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "badge_icon_size",
+      "label": "Badge icon size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "presets": [
+    {
+      "name": "Subscription purchase"
+    }
+  ]
+}
 {% endschema %}
