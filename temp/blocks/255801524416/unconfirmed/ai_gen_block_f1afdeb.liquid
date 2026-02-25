@@ -1,6 +1,1072 @@
+{% doc %}
+  @prompt
+    I need a product purchase option component for my Shopify store using Shopify Subscriptions. The design should follow this aesthetic and structure:
+    Layout Requirements:
+    Two radio button cards stacked vertically
+    Subscription card (top):
+    Green border highlight (#4A6B1A) when selected
+    Light beige/cream background (#FCF3EC)
+    'Subscribe & Save' label in bold
+    '15 servings' subtitle
+    Strikethrough original price + discounted subscription price in green
+    Per-serving cost below
+    Bullet list of benefits (Save $X/bag, easily change quantities, cancel anytime, pre-shipment reminders)
+    One-time purchase card (bottom):
+    Neutral border (#FAEADE) with lighter background (#FFFCF8)
+    'One-time purchase' label
+    '15 servings' subtitle
+    Regular price display
+    Per-serving cost
+    Reduced opacity (60%) when not selected
+    Interactive Elements:
+    Custom radio buttons with green fill when selected
+    Smooth transition between states
+    Price summary showing total savings
+    Dynamic 'Add to Cart' button
+    Trust badges below (Money-Back Guarantee, Secure Checkout, Fast Shipping)
+    Technical specs:
+    Must work with Shopify Subscriptions app
+    Responsive grid layout
+    Accessible (ARIA labels, keyboard navigation)
+    Clean, modern typography with bold headings
+    Mobile-first approach with proper spacing
+    Reference the Ka'Chava product page style for visual hierarchy and color scheme., Update this subscription purchase component to work dynamically with Shopify products and Shopify Subscriptions app. Current issues to fix:
+    Product Integration:
+    Replace static text fields with dynamic product data from product object
+    Auto-detect selling plan groups (subscriptions) using product.selling_plan_groups
+    Display real variant prices from variant.price and variant.compare_at_price
+    Calculate per-serving cost based on product metafields or variant weight/volume
+    Support multiple variants (flavors) with individual quantity selectors like the Ka'Chava example
+    Subscription Logic:
+    Check if product has active selling plans: {% if product.selling_plan_groups.size > 0 %}
+    Use selling_plan object for subscription pricing and savings calculation
+    Display correct subscription price from selling_plan.price_adjustments
+    Show 'Subscribe & Save' only when subscription plans exist
+    Fallback to one-time purchase only if no subscription available
+    Cart Integration:
+    Replace fake button with functional form using routes.cart_add_url
+    Include selling_plan ID when subscription selected
+    Support sections parameter for cart drawer updates
+    Add loading states and error handling
+    Data Structure:
+    Access product title: product.title
+    Variant options: variant.option1, variant.option2
+    Subscription frequency: selling_plan.name (e.g., 'Delivery every 30 days')
+    Savings amount: Calculate from compare_at_price minus subscription price
+    Reference Logic:
+    plain
+    Copy
+    {% for variant in product.variants %}
+      {% assign subscription_price = variant.selling_plan_allocations.first.price %}
+      {% assign savings = variant.compare_at_price | minus: subscription_price %}
+    {% endfor %}
+    Make it a section file (.liquid) that accepts product as context, not a static block., Fix the Liquid form error in the subscription purchase component. The generated code incorrectly uses a dynamic ID as the form type.
+    Required changes:
+    Replace invalid form type:
+    Change: {% form 'ai_gen_block_...' %}
+    To: {% form 'product', product %}
+    Proper form structure for Shopify Subscriptions:
+    liquid
+    Copy
+    {% form 'product', product %}
+      <input type="hidden" name="id" value="{{ variant.id }}">
+      
+      {% if selected_selling_plan %}
+        <input type="hidden" name="selling_plan" value="{{ selected_selling_plan.id }}">
+      {% endif %}
+      
+      <input type="hidden" name="quantity" value="1">
+    {% endform %}
+    Remove any dynamic form types - must be one of: product, cart, contact, customer_login, etc.
+    Ensure the form submits to cart, not to a custom endpoint.
+    Add the form inside the custom element but outside the shadow DOM if used.
+    The form type must be a valid Shopify string literal, not a generated ID.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign has_subscription = false %}
+{% if product.selling_plan_groups.size > 0 %}
+  {% assign has_subscription = true %}
+  {% assign selling_plan_group = product.selling_plan_groups.first %}
+  {% assign selling_plan = selling_plan_group.selling_plans.first %}
+{% endif %}
+
+{% style %}
+  .ai-subscription-selector-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-subscription-selector__container-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-subscription-selector__option-{{ ai_gen_id }} {
+    position: relative;
+    border-radius: {{ block.settings.border_radius }}px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .ai-subscription-selector__option-{{ ai_gen_id }} input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .ai-subscription-selector__card-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    padding: {{ block.settings.card_padding }}px;
+    border: {{ block.settings.border_width }}px solid;
+    border-radius: {{ block.settings.border_radius }}px;
+    transition: all 0.3s ease;
+  }
+
+  .ai-subscription-selector__option--subscribe-{{ ai_gen_id }} .ai-subscription-selector__card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.subscribe_bg_color }};
+    border-color: {{ block.settings.subscribe_border_color }};
+  }
+
+  .ai-subscription-selector__option--subscribe-{{ ai_gen_id }} input:checked ~ .ai-subscription-selector__card-{{ ai_gen_id }} {
+    border-color: {{ block.settings.subscribe_selected_border }};
+    border-width: {{ block.settings.selected_border_width }}px;
+  }
+
+  .ai-subscription-selector__option--onetime-{{ ai_gen_id }} .ai-subscription-selector__card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.onetime_bg_color }};
+    border-color: {{ block.settings.onetime_border_color }};
+  }
+
+  .ai-subscription-selector__option--onetime-{{ ai_gen_id }} input:checked ~ .ai-subscription-selector__card-{{ ai_gen_id }} {
+    border-color: {{ block.settings.onetime_selected_border }};
+    border-width: {{ block.settings.selected_border_width }}px;
+  }
+
+  .ai-subscription-selector__option--onetime-{{ ai_gen_id }} .ai-subscription-selector__card-{{ ai_gen_id }} {
+    opacity: 0.6;
+  }
+
+  .ai-subscription-selector__option--onetime-{{ ai_gen_id }} input:checked ~ .ai-subscription-selector__card-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-subscription-selector__radio-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.radio_size }}px;
+    height: {{ block.settings.radio_size }}px;
+    border: 2px solid {{ block.settings.radio_border_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-top: 4px;
+  }
+
+  .ai-subscription-selector__option--subscribe-{{ ai_gen_id }} input:checked ~ .ai-subscription-selector__card-{{ ai_gen_id }} .ai-subscription-selector__radio-{{ ai_gen_id }} {
+    border-color: {{ block.settings.subscribe_selected_border }};
+    background-color: {{ block.settings.subscribe_selected_border }};
+  }
+
+  .ai-subscription-selector__option--onetime-{{ ai_gen_id }} input:checked ~ .ai-subscription-selector__card-{{ ai_gen_id }} .ai-subscription-selector__radio-{{ ai_gen_id }} {
+    border-color: {{ block.settings.onetime_selected_border }};
+    background-color: {{ block.settings.onetime_selected_border }};
+  }
+
+  .ai-subscription-selector__radio-inner-{{ ai_gen_id }} {
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-subscription-selector__option-{{ ai_gen_id }} input:checked ~ .ai-subscription-selector__card-{{ ai_gen_id }} .ai-subscription-selector__radio-inner-{{ ai_gen_id }} {
+    opacity: 1;
+  }
+
+  .ai-subscription-selector__content-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-subscription-selector__header-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .ai-subscription-selector__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0;
+  }
+
+  .ai-subscription-selector__subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 4px 0 12px;
+  }
+
+  .ai-subscription-selector__pricing-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .ai-subscription-selector__price-original-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    color: {{ block.settings.text_color }};
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .ai-subscription-selector__price-discounted-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.subscribe_price_color }};
+  }
+
+  .ai-subscription-selector__price-regular-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-subscription-selector__per-serving-{{ ai_gen_id }} {
+    font-size: {{ block.settings.per_serving_size }}px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+  }
+
+  .ai-subscription-selector__benefits-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+  }
+
+  .ai-subscription-selector__benefit-{{ ai_gen_id }} {
+    font-size: {{ block.settings.benefit_size }}px;
+    color: {{ block.settings.text_color }};
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 6px;
+  }
+
+  .ai-subscription-selector__benefit-{{ ai_gen_id }}::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+  }
+
+  .ai-subscription-selector__summary-{{ ai_gen_id }} {
+    margin-top: 20px;
+    padding: {{ block.settings.summary_padding }}px;
+    background-color: {{ block.settings.summary_bg_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-subscription-selector__savings-{{ ai_gen_id }} {
+    font-size: {{ block.settings.savings_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.subscribe_price_color }};
+    margin-bottom: 12px;
+  }
+
+  .ai-subscription-selector__button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.button_padding }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-subscription-selector__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg }};
+    transform: translateY(-2px);
+  }
+
+  .ai-subscription-selector__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-subscription-selector__trust-badges-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .ai-subscription-selector__badge-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: {{ block.settings.badge_size }}px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-subscription-selector__badge-icon-{{ ai_gen_id }} {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .ai-subscription-selector__error-{{ ai_gen_id }} {
+    color: #D82C0D;
+    font-size: 14px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .ai-subscription-selector__error-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-subscription-selector-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-subscription-selector__card-{{ ai_gen_id }} {
+      padding: 16px;
+    }
+
+    .ai-subscription-selector__trust-badges-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+{% endstyle %}
+
+<subscription-selector-{{ ai_gen_id }}
+  class="ai-subscription-selector-{{ ai_gen_id }}"
+  data-product-id="{{ product.id }}"
+  data-variant-id="{{ current_variant.id }}"
+  {{ block.shopify_attributes }}
+>
+  {% form 'product', product, id: 'product-form-' | append: ai_gen_id %}
+    <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id-input>
+    <input type="hidden" name="selling_plan" value="" data-selling-plan-input>
+    <input type="hidden" name="quantity" value="1">
+
+    <div class="ai-subscription-selector__container-{{ ai_gen_id }}">
+      {% if has_subscription %}
+        {% assign subscription_allocation = current_variant.selling_plan_allocations | where: 'selling_plan_group_id', selling_plan_group.id | first %}
+        {% if subscription_allocation %}
+          {% assign subscription_price = subscription_allocation.per_delivery_price %}
+          {% assign savings = current_variant.price | minus: subscription_price %}
+          {% assign servings = block.settings.servings_count %}
+          {% if servings > 0 %}
+            {% assign per_serving_sub = subscription_price | divided_by: servings %}
+            {% assign per_serving_regular = current_variant.price | divided_by: servings %}
+          {% endif %}
+
+          <label class="ai-subscription-selector__option-{{ ai_gen_id }} ai-subscription-selector__option--subscribe-{{ ai_gen_id }}">
+            <input
+              type="radio"
+              name="purchase-option-{{ ai_gen_id }}"
+              value="subscription"
+              checked
+              data-option-type="subscription"
+              data-selling-plan-id="{{ selling_plan.id }}"
+            >
+            <div class="ai-subscription-selector__card-{{ ai_gen_id }}">
+              <div class="ai-subscription-selector__radio-{{ ai_gen_id }}">
+                <div class="ai-subscription-selector__radio-inner-{{ ai_gen_id }}"></div>
+              </div>
+              <div class="ai-subscription-selector__content-{{ ai_gen_id }}">
+                <div class="ai-subscription-selector__header-{{ ai_gen_id }}">
+                  <div>
+                    <h3 class="ai-subscription-selector__title-{{ ai_gen_id }}">{{ block.settings.subscribe_title }}</h3>
+                    {% if selling_plan.name != blank %}
+                      <p class="ai-subscription-selector__subtitle-{{ ai_gen_id }}">{{ selling_plan.name }}</p>
+                    {% elsif block.settings.servings_count > 0 %}
+                      <p class="ai-subscription-selector__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_count }} servings</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="ai-subscription-selector__pricing-{{ ai_gen_id }}">
+                  {% if current_variant.compare_at_price > current_variant.price %}
+                    <span class="ai-subscription-selector__price-original-{{ ai_gen_id }}">{{ current_variant.price | money }}</span>
+                  {% endif %}
+                  <span class="ai-subscription-selector__price-discounted-{{ ai_gen_id }}" data-subscription-price>{{ subscription_price | money }}</span>
+                </div>
+                {% if servings > 0 %}
+                  <p class="ai-subscription-selector__per-serving-{{ ai_gen_id }}" data-per-serving-sub>{{ per_serving_sub | money }} per serving</p>
+                {% endif %}
+                {% if block.settings.show_benefits %}
+                  <ul class="ai-subscription-selector__benefits-{{ ai_gen_id }}">
+                    {% if savings > 0 %}
+                      <li class="ai-subscription-selector__benefit-{{ ai_gen_id }}" data-savings-benefit>Save {{ savings | money }} per {{ product.type | default: 'order' }}</li>
+                    {% endif %}
+                    {% if block.settings.benefit_2 != blank %}
+                      <li class="ai-subscription-selector__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_2 }}</li>
+                    {% endif %}
+                    {% if block.settings.benefit_3 != blank %}
+                      <li class="ai-subscription-selector__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_3 }}</li>
+                    {% endif %}
+                    {% if block.settings.benefit_4 != blank %}
+                      <li class="ai-subscription-selector__benefit-{{ ai_gen_id }}">{{ block.settings.benefit_4 }}</li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+          </label>
+        {% endif %}
+      {% endif %}
+
+      <label class="ai-subscription-selector__option-{{ ai_gen_id }} ai-subscription-selector__option--onetime-{{ ai_gen_id }}">
+        <input
+          type="radio"
+          name="purchase-option-{{ ai_gen_id }}"
+          value="onetime"
+          {% unless has_subscription %}checked{% endunless %}
+          data-option-type="onetime"
+        >
+        <div class="ai-subscription-selector__card-{{ ai_gen_id }}">
+          <div class="ai-subscription-selector__radio-{{ ai_gen_id }}">
+            <div class="ai-subscription-selector__radio-inner-{{ ai_gen_id }}"></div>
+          </div>
+          <div class="ai-subscription-selector__content-{{ ai_gen_id }}">
+            <div class="ai-subscription-selector__header-{{ ai_gen_id }}">
+              <div>
+                <h3 class="ai-subscription-selector__title-{{ ai_gen_id }}">{{ block.settings.onetime_title }}</h3>
+                {% if block.settings.servings_count > 0 %}
+                  <p class="ai-subscription-selector__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_count }} servings</p>
+                {% endif %}
+              </div>
+            </div>
+            <div class="ai-subscription-selector__pricing-{{ ai_gen_id }}">
+              {% if current_variant.compare_at_price > current_variant.price %}
+                <span class="ai-subscription-selector__price-original-{{ ai_gen_id }}">{{ current_variant.compare_at_price | money }}</span>
+              {% endif %}
+              <span class="ai-subscription-selector__price-regular-{{ ai_gen_id }}" data-onetime-price>{{ current_variant.price | money }}</span>
+            </div>
+            {% if servings > 0 %}
+              <p class="ai-subscription-selector__per-serving-{{ ai_gen_id }}" data-per-serving-onetime>{{ per_serving_regular | money }} per serving</p>
+            {% endif %}
+          </div>
+        </div>
+      </label>
+
+      {% if block.settings.show_summary %}
+        <div class="ai-subscription-selector__summary-{{ ai_gen_id }}">
+          {% if has_subscription and savings > 0 %}
+            <p class="ai-subscription-selector__savings-{{ ai_gen_id }}" data-savings-text>{{ block.settings.savings_prefix }} {{ savings | money }}{{ block.settings.savings_suffix }}</p>
+          {% endif %}
+          <button
+            type="submit"
+            name="add"
+            class="ai-subscription-selector__button-{{ ai_gen_id }}"
+            {% unless current_variant.available %}disabled{% endunless %}
+            data-add-to-cart-button
+          >
+            {% if current_variant.available %}
+              {{ block.settings.button_text }}
+            {% else %}
+              {{ block.settings.sold_out_text }}
+            {% endif %}
+          </button>
+          <div class="ai-subscription-selector__error-{{ ai_gen_id }}" data-error-message></div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.show_trust_badges %}
+        <div class="ai-subscription-selector__trust-badges-{{ ai_gen_id }}">
+          <div class="ai-subscription-selector__badge-{{ ai_gen_id }}">
+            <svg class="ai-subscription-selector__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            <span>{{ block.settings.badge_1_text }}</span>
+          </div>
+          <div class="ai-subscription-selector__badge-{{ ai_gen_id }}">
+            <svg class="ai-subscription-selector__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            <span>{{ block.settings.badge_2_text }}</span>
+          </div>
+          <div class="ai-subscription-selector__badge-{{ ai_gen_id }}">
+            <svg class="ai-subscription-selector__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>{{ block.settings.badge_3_text }}</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endform %}
+</subscription-selector-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SubscriptionSelector{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.form = this.querySelector('form');
+        this.radioButtons = this.querySelectorAll('input[type="radio"]');
+        this.sellingPlanInput = this.querySelector('[data-selling-plan-input]');
+        this.variantIdInput = this.querySelector('[data-variant-id-input]');
+        this.savingsText = this.querySelector('[data-savings-text]');
+        this.addToCartButton = this.querySelector('[data-add-to-cart-button]');
+        this.errorMessage = this.querySelector('[data-error-message]');
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+        this.updateSelection();
+      }
+
+      setupEventListeners() {
+        this.radioButtons.forEach((radio) => {
+          radio.addEventListener('change', () => {
+            this.updateSelection();
+          });
+        });
+
+        if (this.form) {
+          this.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleAddToCart();
+          });
+        }
+
+        document.addEventListener('variant:change', (event) => {
+          if (event.detail && event.detail.variant) {
+            this.updateVariant(event.detail.variant);
+          }
+        });
+      }
+
+      updateSelection() {
+        const selectedOption = this.querySelector('input[type="radio"]:checked');
+        if (selectedOption) {
+          const optionType = selectedOption.getAttribute('data-option-type');
+          const sellingPlanId = selectedOption.getAttribute('data-selling-plan-id');
+
+          if (optionType === 'subscription' && sellingPlanId) {
+            this.sellingPlanInput.value = sellingPlanId;
+            if (this.savingsText) {
+              this.savingsText.style.display = 'block';
+            }
+          } else {
+            this.sellingPlanInput.value = '';
+            if (this.savingsText) {
+              this.savingsText.style.display = 'none';
+            }
+          }
+        }
+      }
+
+      updateVariant(variant) {
+        if (this.variantIdInput) {
+          this.variantIdInput.value = variant.id;
+        }
+
+        if (this.addToCartButton) {
+          if (variant.available) {
+            this.addToCartButton.disabled = false;
+            this.addToCartButton.textContent = '{{ block.settings.button_text }}';
+          } else {
+            this.addToCartButton.disabled = true;
+            this.addToCartButton.textContent = '{{ block.settings.sold_out_text }}';
+          }
+        }
+      }
+
+      handleAddToCart() {
+        if (this.addToCartButton) {
+          this.addToCartButton.disabled = true;
+          this.addToCartButton.textContent = '{{ block.settings.adding_text }}';
+        }
+
+        const formData = new FormData(this.form);
+        const config = {
+          method: 'POST',
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          },
+          body: formData
+        };
+
+        fetch('{{ routes.cart_add_url }}', config)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.status === 422 || data.status === 'error') {
+              this.showError(data.description || data.message || '{{ block.settings.error_text }}');
+            } else {
+              this.handleSuccess();
+            }
+          })
+          .catch((error) => {
+            this.showError('{{ block.settings.error_text }}');
+          })
+          .finally(() => {
+            if (this.addToCartButton) {
+              this.addToCartButton.disabled = false;
+              this.addToCartButton.textContent = '{{ block.settings.button_text }}';
+            }
+          });
+      }
+
+      handleSuccess() {
+        if (this.errorMessage) {
+          this.errorMessage.classList.remove('active');
+        }
+
+        document.dispatchEvent(new CustomEvent('cart:refresh'));
+        
+        const cartDrawer = document.querySelector('cart-drawer');
+        if (cartDrawer) {
+          if (typeof cartDrawer.open === 'function') {
+            cartDrawer.open();
+          }
+        }
+      }
+
+      showError(message) {
+        if (this.errorMessage) {
+          this.errorMessage.textContent = message;
+          this.errorMessage.classList.add('active');
+        }
+      }
+    }
+
+    customElements.define('subscription-selector-{{ ai_gen_id }}', SubscriptionSelector{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Subscribe & save",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product settings"
+    },
+    {
+      "type": "range",
+      "id": "servings_count",
+      "label": "Servings per unit",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 15,
+      "info": "Set to 0 to hide per-serving pricing"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "selected_border_width",
+      "label": "Selected border width",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Subscription option"
+    },
+    {
+      "type": "text",
+      "id": "subscribe_title",
+      "label": "Title",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "color",
+      "id": "subscribe_bg_color",
+      "label": "Background",
+      "default": "#FCF3EC"
+    },
+    {
+      "type": "color",
+      "id": "subscribe_border_color",
+      "label": "Border",
+      "default": "#FAEADE"
+    },
+    {
+      "type": "color",
+      "id": "subscribe_selected_border",
+      "label": "Selected border",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "subscribe_price_color",
+      "label": "Price",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "header",
+      "content": "Subscription benefits"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Show benefits",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Easily change quantities"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Cancel anytime"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4",
+      "label": "Benefit 4",
+      "default": "Pre-shipment reminders"
+    },
+    {
+      "type": "header",
+      "content": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "Title",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "color",
+      "id": "onetime_bg_color",
+      "label": "Background",
+      "default": "#FFFCF8"
+    },
+    {
+      "type": "color",
+      "id": "onetime_border_color",
+      "label": "Border",
+      "default": "#FAEADE"
+    },
+    {
+      "type": "color",
+      "id": "onetime_selected_border",
+      "label": "Selected border",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "header",
+      "content": "Radio buttons"
+    },
+    {
+      "type": "range",
+      "id": "radio_size",
+      "label": "Size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "radio_border_color",
+      "label": "Border",
+      "default": "#CCCCCC"
+    },
+    {
+      "type": "header",
+      "content": "Summary section"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_summary",
+      "label": "Show summary",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "savings_prefix",
+      "label": "Savings prefix",
+      "default": "You're saving"
+    },
+    {
+      "type": "text",
+      "id": "savings_suffix",
+      "label": "Savings suffix",
+      "default": "with this subscription!"
+    },
+    {
+      "type": "range",
+      "id": "summary_padding",
+      "label": "Padding",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "summary_bg_color",
+      "label": "Background",
+      "default": "#F9F9F9"
+    },
+    {
+      "type": "header",
+      "content": "Add to cart button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "text",
+      "id": "adding_text",
+      "label": "Adding text",
+      "default": "Adding..."
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Sold out text",
+      "default": "Sold Out"
+    },
+    {
+      "type": "text",
+      "id": "error_text",
+      "label": "Error text",
+      "default": "Unable to add to cart"
+    },
+    {
+      "type": "range",
+      "id": "button_padding",
+      "label": "Padding",
+      "min": 12,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Hover background",
+      "default": "#3A5510"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Badge 1 text",
+      "default": "Money-Back Guarantee"
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Badge 2 text",
+      "default": "Secure Checkout"
+    },
+    {
+      "type": "text",
+      "id": "badge_3_text",
+      "label": "Badge 3 text",
+      "default": "Fast Shipping"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Subtitle size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Price size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "per_serving_size",
+      "label": "Per serving size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "benefit_size",
+      "label": "Benefit size",
+      "min": 12,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "savings_size",
+      "label": "Savings size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "label": "Button size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "badge_size",
+      "label": "Badge size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#333333"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Subscribe & save"
+    }
+  ]
+}
 {% endschema %}
