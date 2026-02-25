@@ -918,7 +918,7 @@
               "type": "icon",
               "settings": {
                 "icon": "heart",
-                "image_upload": "shopify://shop_images/Recurso_50_3x_6769b243-b378-4577-af85-67b46e731dba.png",
+                "image_upload": "shopify://shop_images/Recurso_55_3x_2c0618bb-efb3-4982-80d3-55fc1ddd2bce.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -967,7 +967,7 @@
                 "text_UiQWQW": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Made with care</h2>",
+                    "text": "<p><strong>Nourishment with Purpose</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -992,7 +992,7 @@
                 "text_nppV4f": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We believe in building better by choosing nutrient-dense Chocho over pea protein.</p>",
+                    "text": "<p>Our foods are designed to deliver real benefits through functional, whole-food nutrition using an ancestral crop that has nourished Andean communities for centuries.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1044,7 +1044,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-51d242b0-56a6-49a9-a4c8-fa8920560d98",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -1069,7 +1069,7 @@
               "type": "icon",
               "settings": {
                 "icon": "silhouette",
-                "image_upload": "shopify://shop_images/Recurso_53_3x_870a52ff-08c5-4652-b8e7-77e133d1cd16.png",
+                "image_upload": "shopify://shop_images/Recurso_58_3x_ec46942e-8237-4524-b206-d612c811a475.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -1118,7 +1118,7 @@
                 "text_EDqDgj": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>A team with a goal</h2>",
+                    "text": "<p><strong>Transparency</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1143,7 +1143,7 @@
                 "text_kGVrTA": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Real people committed to the natural integrity of non-GMO ancient foods.</p>",
+                    "text": "<p>We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust<br/></p><p><br/></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1195,7 +1195,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-51d242b0-56a6-49a9-a4c8-fa8920560d98",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -1220,7 +1220,7 @@
               "type": "icon",
               "settings": {
                 "icon": "silhouette",
-                "image_upload": "shopify://shop_images/Recurso_52_3x_bb7e566f-9402-44d4-86c1-dda61241aa9a.png",
+                "image_upload": "shopify://shop_images/Recurso_57_3x_791231d8-ace6-4b57-ab19-1aadf953845b.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -1269,7 +1269,7 @@
                 "text_3VDCiV": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>A team with a goal</h2>",
+                    "text": "<p><strong>Community & Reciprocity</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1294,7 +1294,7 @@
                 "text_iWTGAV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Great products made simple by excluding soy and artificial additives.</p>",
+                    "text": "<p>Well-being is shared. We uplift Andean farmers through fair partnerships, honoring the hands and hearts that cultivate our crops and ensuring that prosperity flows back to the communities who make our food possible.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
