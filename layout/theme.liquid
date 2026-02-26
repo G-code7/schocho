@@ -31,7 +31,7 @@
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
-
+    {{ 'subscription-widget.css' | asset_url | stylesheet_tag }}
     {{ content_for_header }}
   </head>
 
