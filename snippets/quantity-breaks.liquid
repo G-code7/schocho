@@ -1,0 +1,189 @@
+{% comment %}
+  Snippet: quantity-breaks.liquid
+  Muestra descuentos por volumen tipo Ka'Chava
+{% endcomment %}
+
+{%- assign breaks = product.metafields.custom.quantity_breaks.value -%}
+
+{%- if breaks -%}
+<div class="quantity-breaks" data-quantity-breaks>
+  <p class="quantity-breaks__title">{{ block.settings.title | default: "Buy more, save more" }}</p>
+  
+  <div class="quantity-breaks__grid">
+    {%- for break in breaks -%}
+      {%- assign parts = break | split: ":" -%}
+      {%- assign qty = parts[0] | plus: 0 -%}
+      {%- assign discount = parts[1] | plus: 0 -%}
+      {%- assign is_popular = forloop.index == 2 -%} {%- comment %} Marcar el segundo como popular {%- endcomment %}
+      
+      <label 
+        class="quantity-breaks__option{% if is_popular %} popular{% endif %}"
+        data-qty="{{ qty }}"
+        data-discount="{{ discount }}"
+      >
+        {%- if is_popular -%}
+          <span class="quantity-breaks__badge">Most Popular</span>
+        {%- endif -%}
+        
+        <input 
+          type="radio" 
+          name="quantity_break" 
+          value="{{ qty }}"
+          class="visually-hidden"
+        >
+        
+        <span class="quantity-breaks__qty">{{ qty }} bags</span>
+        <span class="quantity-breaks__save">Save {{ discount }}%</span>
+        
+        {%- assign discounted_price = product.selected_or_first_available_variant.price | times: qty | times: discount | divided_by: 100 -%}
+        {%- assign final_price = product.selected_or_first_available_variant.price | times: qty | minus: discounted_price -%}
+        
+        <span class="quantity-breaks__price">
+          {{ final_price | money }}
+          <s>{{ product.selected_or_first_available_variant.price | times: qty | money }}</s>
+        </span>
+        
+        <span class="quantity-breaks__per">
+          {{ final_price | divided_by: qty | money }} each
+        </span>
+      </label>
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+  .quantity-breaks {
+    margin: 24px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+  }
+  
+  .quantity-breaks__title {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .quantity-breaks__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+  
+  .quantity-breaks__option {
+    position: relative;
+    padding: 16px 12px;
+    border: 2px solid #e6e6e6;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fff;
+  }
+  
+  .quantity-breaks__option:hover {
+    border-color: #4A6B1A;
+  }
+  
+  .quantity-breaks__option.selected {
+    border-color: #4A6B1A;
+    background: #FCF3EC;
+  }
+  
+  .quantity-breaks__option.popular {
+    border-color: #4A6B1A;
+  }
+  
+  .quantity-breaks__badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4A6B1A;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+  
+  .quantity-breaks__qty {
+    display: block;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  
+  .quantity-breaks__save {
+    display: block;
+    color: #4A6B1A;
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .quantity-breaks__price {
+    display: block;
+    font-weight: 700;
+    font-size: 18px;
+    color: #1a1a1a;
+  }
+  
+  .quantity-breaks__price s {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    font-weight: 400;
+  }
+  
+  .quantity-breaks__per {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+  }
+</style>
+
+<script>
+(function() {
+  const container = document.querySelector('[data-quantity-breaks]');
+  if (!container) return;
+  
+  const options = container.querySelectorAll('.quantity-breaks__option');
+  const qtyInput = document.querySelector('input[name="quantity"]');
+  
+  options.forEach(opt => {
+    opt.addEventListener('click', function() {
+      // Actualizar selección visual
+      options.forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+      
+      // Actualizar cantidad
+      const qty = this.dataset.qty;
+      if (qtyInput) {
+        qtyInput.value = qty;
+        qtyInput.dispatchEvent(new Event('change'));
+      }
+      
+      // Disparar evento para actualizar precios
+      document.dispatchEvent(new CustomEvent('quantity-break:selected', {
+        detail: {
+          quantity: parseInt(qty),
+          discount: parseInt(this.dataset.discount)
+        }
+      }));
+    });
+  });
+  
+  // Seleccionar el primero por defecto si es "Most Popular"
+  const popular = container.querySelector('.quantity-breaks__option.popular');
+  if (popular) {
+    popular.click();
+  }
+})();
+</script>
+
+{%- endif -%}
