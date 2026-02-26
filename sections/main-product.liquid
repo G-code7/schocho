@@ -45,38 +45,6 @@
       
       {% comment %} Formulario de compra {% endcomment %}
       {% render 'product-form-complete', product: product %}
-        
-        {% comment %} Selector de sabores tipo pills {% endcomment %}
-        {% render 'variant-picker-pills', product: product %}
-        
-        {% comment %} Descuentos por volumen {% endcomment %}
-        {% render 'quantity-breaks', product: product %}
-        
-        {% comment %} Aquí Shopify Subscriptions inyecta su widget automáticamente {% endcomment %}
-        {% comment %} O puedes usar el bloque de app: {% endcomment %}
-        {% for block in section.blocks %}
-          {% case block.type %}
-            {% when '@app' %}
-              {% render block %}
-          {% endcase %}
-        {% endfor %}
-        
-        {% comment %} Cantidad (oculta si usas quantity breaks) {% endcomment %}
-        <input type="number" name="quantity" value="1" min="1" class="visually-hidden" data-quantity-input>
-        
-        {% comment %} Botón de agregar al carrito {% endcomment %}
-        <button 
-          type="submit" 
-          class="product-kachava__add-btn"
-          data-add-to-cart
-        >
-          Add to Cart - {{ product.selected_or_first_available_variant.price | money }}
-        </button>
-        
-        {% comment %} Shop Pay (aparece automáticamente) {% endcomment %}
-        {{ form | payment_button }}
-        
-      </form>
       
       {% comment %} Beneficios del producto {% endcomment %}
       <div class="product-kachava__benefits">
