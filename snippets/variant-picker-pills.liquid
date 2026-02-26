@@ -164,6 +164,46 @@
     });
   });
 })();
+
+// Función para agregar al carrito con suscripción
+async function addToCartWithSubscription(variantId, quantity, sellingPlanId = null) {
+  const body = {
+    items: [{
+      id: variantId,
+      quantity: quantity
+    }]
+  };
+  
+  if (sellingPlanId) {
+    body.items[0].selling_plan = sellingPlanId;
+  }
+  
+  try {
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    if (response.ok) {
+      const cart = await response.json();
+      
+      // DISPARAR EVENTO PARA ABRIR CART DRAWER (importante!)
+      document.dispatchEvent(new CustomEvent('cart:add', {
+        detail: { cart: cart }
+      }));
+      
+      // O si tu tema usa otro evento, intenta estos:
+      // document.dispatchEvent(new Event('cart:updated'));
+      // document.dispatchEvent(new Event('cart:refresh'));
+      
+      return true;
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    return false;
+  }
+}
 </script>
 
 {%- endunless -%}
