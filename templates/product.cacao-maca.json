@@ -263,7 +263,7 @@
               },
               "blocks": {
                 "subscription_purchase_v2_rMqwyK": {
-                  "type": "subscription-purchase-V2",
+                  "type": "subscription-purchase-v2",
                   "name": "Ka'Chava Subscription",
                   "settings": {
                     "title": "Superblend Shake",
@@ -286,7 +286,7 @@
                     "badge_1_text": "Money-Back Guarantee",
                     "badge_2_text": "Secure Checkout",
                     "badge_3_text": "Fast Shipping",
-                    "text_color": "#2A2A2A"
+                    "text_color": "#2a2a2a"
                   },
                   "blocks": {}
                 },
