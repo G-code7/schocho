@@ -262,34 +262,6 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "subscription_purchase_v2_rMqwyK": {
-                  "type": "subscription-purchase-v2",
-                  "name": "Ka'Chava Subscription",
-                  "settings": {
-                    "title": "Superblend Shake",
-                    "products_title": "Choose your favorite flavors:",
-                    "product_1": "product-1",
-                    "product_2": "product-2",
-                    "product_3": "product-3",
-                    "product_4": "",
-                    "product_5": "",
-                    "product_6": "",
-                    "show_best_seller_badge": true,
-                    "show_benefits": true,
-                    "show_trust_badges": true,
-                    "subscribe_title": "Subscribe & Save",
-                    "servings_text": "16 servings per bag",
-                    "per_serving_sub": "$3.99 per serving",
-                    "onetime_title": "One-time purchase",
-                    "per_serving_onetime": "$4.66 per serving",
-                    "button_text": "Add to Cart",
-                    "badge_1_text": "Money-Back Guarantee",
-                    "badge_2_text": "Secure Checkout",
-                    "badge_3_text": "Fast Shipping",
-                    "text_color": "#2a2a2a"
-                  },
-                  "blocks": {}
-                },
                 "ai_gen_block_84359c7_RQVtkf": {
                   "type": "ai_gen_block_84359c7",
                   "disabled": true,
@@ -360,19 +332,6 @@
                   },
                   "blocks": {}
                 },
-                "variant_picker_jgEFC3": {
-                  "type": "variant-picker",
-                  "settings": {
-                    "variant_style": "buttons",
-                    "show_swatches": true,
-                    "alignment": "center",
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
                 "buy_buttons_AqCnic": {
                   "type": "buy-buttons",
                   "settings": {
@@ -410,11 +369,9 @@
                 }
               },
               "block_order": [
-                "subscription_purchase_v2_rMqwyK",
                 "ai_gen_block_84359c7_RQVtkf",
                 "subscriptions_app_block_8awJjj",
                 "price_fbReaa",
-                "variant_picker_jgEFC3",
                 "buy_buttons_AqCnic"
               ]
             },
