@@ -31,7 +31,9 @@
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
-    {{ 'subscription-widget.css' | asset_url | stylesheet_tag }}
+    {% if template == 'product' %}
+      {{ 'subscription-widget.css' | asset_url | stylesheet_tag }}
+    {% endif %}
     {{ content_for_header }}
   </head>
 
