@@ -726,11 +726,15 @@
           const qty = quantities[p.dataset.variantId];
           if (qty > 0) {
             const item = {
-              id: p.dataset.variantId,
+              id: parseInt(p.dataset.variantId),
               quantity: qty
             };
-            if (currentOption === 'subscription' && sellingPlanId) {
-              item.selling_plan = sellingPlanId;
+            if (currentOption === 'subscription' && sellingPlanId && sellingPlanId !== '') {
+              item.selling_plan = parseInt(sellingPlanId);
+              item.properties = {
+                '_subscription': 'true',
+                '_purchase_type': 'subscription'
+              };
             }
             items.push(item);
           }
@@ -745,33 +749,48 @@
           const response = await fetch('/cart/add.js', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              items: [{
-                id: variantId,
-                quantity: quantity,
-                selling_plan: sellingPlanId // para suscripciones
-              }]
-            })
-          })
-          .then(response => response.json())
-          .then(data => {
-            // ✅ Esto actualiza el carrito sin recargar
-            document.dispatchEvent(new CustomEvent('cart:change'));
+            body: JSON.stringify({ items })
           });
 
           if (response.ok) {
-            // Abrir cart drawer o redirigir
+            const cartData = await response.json();
+
+            // ✅ Eventos para actualizar el carrito en la UI
+            document.dispatchEvent(new CustomEvent('cart:change'));
+            document.dispatchEvent(new CustomEvent('cart:updated', { detail: cartData }));
+            document.dispatchEvent(new Event('cart:refresh'));
+
+            // Abrir cart drawer
             const cartDrawer = document.querySelector('cart-drawer-component');
-            if (cartDrawer && typeof cartDrawer.open === 'function') {
-              cartDrawer.open();
+            if (cartDrawer) {
+              if (typeof cartDrawer.open === 'function') {
+                cartDrawer.open();
+              } else if (cartDrawer.showDialog) {
+                cartDrawer.showDialog();
+              }
             } else {
+              // Fallback: redirigir si no hay drawer
               window.location.href = '/cart';
             }
+          }
+          // ✅ Actualizar contador del carrito (bubble)
+          fetch('/cart.js')
+            .then(r => r.json())
+            .then(cart => {
+              // Actualizar bubble si existe
+              const bubbles = document.querySelectorAll('.cart-bubble, [data-cart-count], .cart-count');
+              bubbles.forEach(bubble => {
+                bubble.textContent = cart.item_count;
+                bubble.setAttribute('aria-label', cart.item_count + ' items');
+            });
+          });
           } else {
             throw new Error('Error adding to cart');
           }
         } catch (err) {
-          alert('Error: ' + err.message);
+          console.error('Cart error:', err);
+          alert('Error adding to cart. Please try again.');
+        } finally {
           submitBtn.classList.remove('loading');
           submitBtn.disabled = false;
         }
