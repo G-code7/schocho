@@ -1,0 +1,169 @@
+{% comment %}
+  Snippet: variant-picker-pills.liquid
+  Selector de variantes estilo "pills" tipo Ka'Chava
+{% endcomment %}
+
+{%- unless product.has_only_default_variant -%}
+
+<div class="variant-picker-pills" data-variant-picker>
+  <p class="variant-picker__label">{{ block.settings.picker_label | default: "Choose your flavor" }}</p>
+  
+  <div class="variant-picker__options">
+    {%- for variant in product.variants -%}
+      <label 
+        class="variant-picker__pill{% if variant == product.selected_or_first_available_variant %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}"
+        data-variant-id="{{ variant.id }}"
+        data-variant-price="{{ variant.price }}"
+        data-variant-compare="{{ variant.compare_at_price | default: variant.price }}"
+        data-variant-image="{{ variant.image | default: product.featured_image | image_url: width: 400 }}"
+      >
+        <input 
+          type="radio" 
+          name="id" 
+          value="{{ variant.id }}"
+          {% if variant == product.selected_or_first_available_variant %}checked{% endif %}
+          {% unless variant.available %}disabled{% endunless %}
+          class="visually-hidden"
+        >
+        
+        {%- if variant.image -%}
+          <span class="variant-picker__swatch">
+            <img 
+              src="{{ variant.image | image_url: width: 100, height: 100, crop: 'center' }}" 
+              alt="{{ variant.title }}"
+              loading="lazy"
+              width="50"
+              height="50"
+            >
+          </span>
+        {%- endif -%}
+        
+        <span class="variant-picker__name">{{ variant.title }}</span>
+        
+        {%- unless variant.available -%}
+          <span class="variant-picker__sold-out">Sold out</span>
+        {%- endunless -%}
+      </label>
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+  .variant-picker-pills {
+    margin: 20px 0;
+  }
+  
+  .variant-picker__label {
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    color: #1a1a1a;
+  }
+  
+  .variant-picker__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .variant-picker__pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 2px solid #e6e6e6;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fff;
+    position: relative;
+  }
+  
+  .variant-picker__pill:hover:not(.disabled) {
+    border-color: #4A6B1A;
+  }
+  
+  .variant-picker__pill.selected {
+    border-color: #4A6B1A;
+    background: #FCF3EC;
+  }
+  
+  .variant-picker__pill.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .variant-picker__swatch img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .variant-picker__name {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .variant-picker__sold-out {
+    font-size: 11px;
+    color: #999;
+    margin-left: 4px;
+  }
+  
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+</style>
+
+<script>
+(function() {
+  const picker = document.querySelector('[data-variant-picker]');
+  if (!picker) return;
+  
+  const pills = picker.querySelectorAll('.variant-picker__pill');
+  const productForm = picker.closest('form[action="/cart/add"]');
+  
+  pills.forEach(pill => {
+    pill.addEventListener('click', function() {
+      if (this.classList.contains('disabled')) return;
+      
+      // Actualizar selección visual
+      pills.forEach(p => p.classList.remove('selected'));
+      this.classList.add('selected');
+      
+      // Actualizar radio input
+      const radio = this.querySelector('input[type="radio"]');
+      radio.checked = true;
+      
+      // Disparar evento para actualizar precio e imagen
+      const event = new CustomEvent('variant:change', {
+        detail: {
+          variantId: this.dataset.variantId,
+          price: this.dataset.variantPrice,
+          comparePrice: this.dataset.variantCompare,
+          image: this.dataset.variantImage
+        }
+      });
+      document.dispatchEvent(event);
+      
+      // Actualizar imagen principal (si existe)
+      const mainImage = document.querySelector('[data-main-image]');
+      if (mainImage && this.dataset.variantImage) {
+        mainImage.src = this.dataset.variantImage;
+      }
+    });
+  });
+})();
+</script>
+
+{%- endunless -%}
