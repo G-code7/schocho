@@ -1,0 +1,255 @@
+{% comment %}
+  sections/product-kachava.liquid
+  Product page estilo Ka'Chava
+{% endcomment %}
+
+<div class="product-kachava page-width">
+  <div class="product-kachava__grid">
+    
+    {% comment %} Galería de imágenes {% endcomment %}
+    <div class="product-kachava__media">
+      <img 
+        src="{{ product.featured_image | image_url: width: 800 }}" 
+        alt="{{ product.featured_image.alt | escape }}"
+        class="product-kachava__main-image"
+        data-main-image
+        width="600"
+        height="600"
+      >
+    </div>
+    
+    {% comment %} Información del producto {% endcomment %}
+    <div class="product-kachava__info">
+      
+      {% comment %} Badge de confianza {% endcomment %}
+      <div class="product-kachava__trust-badges">
+        <span>✓ 30-Day Money Back</span>
+        <span>✓ Free Shipping</span>
+      </div>
+      
+      <h1 class="product-kachava__title">{{ product.title }}</h1>
+      
+      <div class="product-kachava__rating">
+        ⭐⭐⭐⭐⭐ (4.8/5 from 2,000+ reviews)
+      </div>
+      
+      {% comment %} Precio dinámico {% endcomment %}
+      <div class="product-kachava__price" data-price-container>
+        <span class="product-kachava__compare" data-compare-price>
+          {{ product.selected_or_first_available_variant.compare_at_price | money }}
+        </span>
+        <span class="product-kachava__current" data-current-price>
+          {{ product.selected_or_first_available_variant.price | money }}
+        </span>
+      </div>
+      
+      {% comment %} Formulario de compra {% endcomment %}
+      <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-kachava__form">
+        
+        {% comment %} Selector de sabores tipo pills {% endcomment %}
+        {% render 'variant-picker-pills', product: product %}
+        
+        {% comment %} Descuentos por volumen {% endcomment %}
+        {% render 'quantity-breaks', product: product %}
+        
+        {% comment %} Aquí Shopify Subscriptions inyecta su widget automáticamente {% endcomment %}
+        {% comment %} O puedes usar el bloque de app: {% endcomment %}
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when '@app' %}
+              {% render block %}
+          {% endcase %}
+        {% endfor %}
+        
+        {% comment %} Cantidad (oculta si usas quantity breaks) {% endcomment %}
+        <input type="number" name="quantity" value="1" min="1" class="visually-hidden" data-quantity-input>
+        
+        {% comment %} Botón de agregar al carrito {% endcomment %}
+        <button 
+          type="submit" 
+          class="product-kachava__add-btn"
+          data-add-to-cart
+        >
+          Add to Cart - {{ product.selected_or_first_available_variant.price | money }}
+        </button>
+        
+        {% comment %} Shop Pay (aparece automáticamente) {% endcomment %}
+        {{ form | payment_button }}
+        
+      </form>
+      
+      {% comment %} Beneficios del producto {% endcomment %}
+      <div class="product-kachava__benefits">
+        <h3>Why Choose {{ product.title }}?</h3>
+        <ul>
+          <li>✓ 85+ Superfoods & Nutrients</li>
+          <li>✓ Plant-Based Protein</li>
+          <li>✓ No Artificial Sweeteners</li>
+          <li>✓ Gluten-Free & Soy-Free</li>
+        </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<style>
+  .product-kachava {
+    padding: 40px 20px;
+  }
+  
+  .product-kachava__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .product-kachava__media {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+  }
+  
+  .product-kachava__main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+  
+  .product-kachava__trust-badges {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #4A6B1A;
+    font-weight: 600;
+  }
+  
+  .product-kachava__title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  
+  .product-kachava__rating {
+    color: #f5a623;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+  
+  .product-kachava__price {
+    margin-bottom: 24px;
+  }
+  
+  .product-kachava__compare {
+    font-size: 20px;
+    color: #999;
+    text-decoration: line-through;
+    margin-right: 12px;
+  }
+  
+  .product-kachava__current {
+    font-size: 28px;
+    font-weight: 700;
+    color: #4A6B1A;
+  }
+  
+  .product-kachava__add-btn {
+    width: 100%;
+    padding: 18px 32px;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+  }
+  
+  .product-kachava__add-btn:hover {
+    background: #333;
+    transform: translateY(-2px);
+  }
+  
+  .product-kachava__benefits {
+    margin-top: 32px;
+    padding-top: 32px;
+    border-top: 1px solid #e6e6e6;
+  }
+  
+  .product-kachava__benefits h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+  
+  .product-kachava__benefits ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .product-kachava__benefits li {
+    padding: 8px 0;
+    color: #555;
+  }
+  
+  @media (max-width: 768px) {
+    .product-kachava__grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    
+    .product-kachava__media {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+// Actualizar precio cuando cambia la variante
+document.addEventListener('variant:change', function(e) {
+  const currentPrice = document.querySelector('[data-current-price]');
+  const comparePrice = document.querySelector('[data-compare-price]');
+  const addBtn = document.querySelector('[data-add-to-cart]');
+  
+  if (currentPrice) {
+    currentPrice.textContent = formatMoney(e.detail.price);
+  }
+  if (comparePrice && e.detail.comparePrice !== e.detail.price) {
+    comparePrice.textContent = formatMoney(e.detail.comparePrice);
+  }
+  if (addBtn) {
+    addBtn.textContent = 'Add to Cart - ' + formatMoney(e.detail.price);
+  }
+});
+
+function formatMoney(cents) {
+  return new Intl.NumberFormat('{{ shop.locale }}', {
+    style: 'currency',
+    currency: '{{ shop.currency }}'
+  }).format(cents / 100);
+}
+</script>
+
+{% schema %}
+{
+  "name": "Product Ka'Chava Style",
+  "tag": "section",
+  "class": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Ka'Chava Style"
+    }
+  ]
+}
+{% endschema %}
