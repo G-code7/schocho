@@ -231,10 +231,10 @@
                 "horizontal_alignment": "flex-start",
                 "vertical_alignment": "center",
                 "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "center",
+                "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 15,
-                "width": "fit-content",
+                "width": "fill",
                 "custom_width": 80,
                 "width_mobile": "fill",
                 "custom_width_mobile": 100,
@@ -300,11 +300,11 @@
                 "subscriptions_app_block_8awJjj": {
                   "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
                   "settings": {
-                    "color_text_body": "#6d7175",
-                    "dividers_color": "#8f8d8d",
-                    "bacgkround_color": "#ffffff",
+                    "color_text_body": "#6d2514",
+                    "dividers_color": "#e7c9c3",
+                    "bacgkround_color": "#f6f3ed",
                     "border_thickness": 1,
-                    "border_radius": 0,
+                    "border_radius": 12,
                     "subscription_policy_url": "shopify://policies/privacy-policy",
                     "product": "{{ closest.product }}"
                   }
