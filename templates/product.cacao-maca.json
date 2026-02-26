@@ -292,6 +292,7 @@
                 },
                 "ai_gen_block_84359c7_RQVtkf": {
                   "type": "ai_gen_block_84359c7",
+                  "disabled": true,
                   "settings": {
                     "title": "Selecciona tus productos",
                     "button_text": "Agregar al carrito",
