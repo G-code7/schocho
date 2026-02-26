@@ -7,7 +7,9 @@
   endif
 -%}
 
-{% render 'variant-picker-pills', block: block, product: product %}
+{% if product_resource %}
+  {% render 'variant-picker-pills', block: block, product: product_resource %}
+{% endif %}
 
 {% schema %}
 {
