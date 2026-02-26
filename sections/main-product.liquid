@@ -1,4 +1,7 @@
-{% render 'product-form-complete', product: product, section: section %}
+{% comment %}
+  sections/product-kachava.liquid
+  Product page estilo Ka'Chava
+{% endcomment %}
 
 <div class="product-kachava page-width">
   <div class="product-kachava__grid">
@@ -41,7 +44,7 @@
       </div>
       
       {% comment %} Formulario de compra {% endcomment %}
-      <form action="/cart/add" method="post" enctype="multipart/form-data" class="product-kachava__form">
+      {% render 'product-form-complete', product: product %}
         
         {% comment %} Selector de sabores tipo pills {% endcomment %}
         {% render 'variant-picker-pills', product: product %}
