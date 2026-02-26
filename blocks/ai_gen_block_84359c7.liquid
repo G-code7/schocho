@@ -586,219 +586,189 @@
 </div>
 
 <script>
-    (function() {
-      const container = document.querySelector('[data-kachava-selector]');
-      if (!container) return;
+  (function() {
+    const container = document.querySelector('[data-kachava-selector]');
+    if (!container) return;
 
-      const blockId = '{{ block_id }}';
+    const blockId = '{{ block_id }}';
 
-      // Datos de configuración
-      const discountPercent = {{ block.settings.subscription_discount | default: 15 }};
-      const servingsPerUnit = {{ block.settings.servings_per_unit | default: 15 }};
+    // Datos de configuración
+    const discountPercent = {{ block.settings.subscription_discount | default: 15 }};
+    const servingsPerUnit = {{ block.settings.servings_per_unit | default: 15 }};
 
-      // Elementos
-      const options = container.querySelectorAll('[data-option]');
-      const products = container.querySelectorAll('[data-product-id]');
-      const savingsEl = container.querySelector('[data-savings]');
-      const totalCompareEl = container.querySelector('[data-total-compare]');
-      const totalPriceEl = container.querySelector('[data-total-price]');
-      const subPriceEl = container.querySelector('[data-subscription-price]');
-      const comparePriceEl = container.querySelector('[data-compare-price]');
-      const pricePerEl = container.querySelector('[data-price-per]');
-      const onetimePriceEl = container.querySelector('[data-onetime-price]');
-      const onetimePerEl = container.querySelector('[data-onetime-per]');
-      const submitBtn = container.querySelector('[data-add-to-cart]');
+    // Elementos
+    const options = container.querySelectorAll('[data-option]');
+    const products = container.querySelectorAll('[data-product-id]');
+    const savingsEl = container.querySelector('[data-savings]');
+    const totalCompareEl = container.querySelector('[data-total-compare]');
+    const totalPriceEl = container.querySelector('[data-total-price]');
+    const subPriceEl = container.querySelector('[data-subscription-price]');
+    const comparePriceEl = container.querySelector('[data-compare-price]');
+    const pricePerEl = container.querySelector('[data-price-per]');
+    const onetimePriceEl = container.querySelector('[data-onetime-price]');
+    const onetimePerEl = container.querySelector('[data-onetime-per]');
+    const submitBtn = container.querySelector('[data-add-to-cart]');
 
-      // Estado
-      let currentOption = 'subscription';
-      let quantities = {};
+    // Estado
+    let currentOption = 'subscription';
+    let quantities = {};
 
-      // Inicializar cantidades
-      products.forEach(p => quantities[p.dataset.variantId] = 0);
+    // Inicializar cantidades
+    products.forEach(p => quantities[p.dataset.variantId] = 0);
 
-      // Primer producto como referencia de precio
-      const firstProduct = products[0];
-      const basePrice = firstProduct ? parseInt(firstProduct.dataset.price) : 0;
-      const baseCompare = firstProduct ? parseInt(firstProduct.dataset.compare) : basePrice;
+    // Primer producto como referencia de precio
+    const firstProduct = products[0];
+    const basePrice = firstProduct ? parseInt(firstProduct.dataset.price) : 0;
+    const baseCompare = firstProduct ? parseInt(firstProduct.dataset.compare) : basePrice;
 
-      function formatMoney(cents) {
-        return '$' + (cents / 100).toFixed(2);
-      }
+    function formatMoney(cents) {
+      return '$' + (cents / 100).toFixed(2);
+    }
 
-      function calculatePrices() {
-        const subUnitPrice = Math.round(basePrice * (1 - discountPercent / 100));
+    function calculatePrices() {
+      const subUnitPrice = Math.round(basePrice * (1 - discountPercent / 100));
 
-        let totalQty = 0;
-        let totalRegular = 0;
-        let totalDiscounted = 0;
+      let totalQty = 0;
+      let totalRegular = 0;
+      let totalDiscounted = 0;
 
-        products.forEach(p => {
-          const qty = quantities[p.dataset.variantId] || 0;
-          const price = parseInt(p.dataset.price);
-          totalQty += qty;
-          totalRegular += price * qty;
-          totalDiscounted += (currentOption === 'subscription' ? Math.round(price * (1 - discountPercent / 100)) : price) * qty;
-        });
-
-        return {
-          subUnit: subUnitPrice,
-          onetimeUnit: basePrice,
-          subPerServing: subUnitPrice / servingsPerUnit,
-          onetimePerServing: basePrice / servingsPerUnit,
-          totalQty: totalQty,
-          totalRegular: totalRegular,
-          totalDiscounted: totalDiscounted,
-          savings: totalRegular - totalDiscounted
-        };
-      }
-
-      function updateDisplay() {
-        const prices = calculatePrices();
-
-        // Precios de opciones
-        if (subPriceEl) subPriceEl.textContent = formatMoney(prices.subUnit);
-        if (comparePriceEl) comparePriceEl.textContent = formatMoney(baseCompare);
-        if (pricePerEl) pricePerEl.textContent = formatMoney(prices.subPerServing);
-        if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
-        if (onetimePerEl) onetimePerEl.textContent = formatMoney(prices.onetimePerServing);
-
-        // Totales
-        if (savingsEl) savingsEl.textContent = formatMoney(prices.savings);
-        if (totalCompareEl) totalCompareEl.textContent = formatMoney(prices.totalRegular);
-        if (totalPriceEl) totalPriceEl.textContent = formatMoney(prices.totalDiscounted);
-
-        // Botón
-        const hasItems = prices.totalQty > 0;
-        submitBtn.disabled = !hasItems;
-        submitBtn.textContent = hasItems
-          ? '{{ block.settings.button_text | default: "Add to Cart" }} - ' + formatMoney(prices.totalDiscounted)
-          : '{{ block.settings.button_text | default: "Add to Cart" }}';
-      }
-
-      // Event listeners
-
-      // Cambio de opción (subscription vs onetime)
-      options.forEach(opt => {
-        opt.addEventListener('click', function() {
-          currentOption = this.dataset.option;
-
-          options.forEach(o => {
-            o.classList.toggle('active', o === this);
-            o.querySelector('input').checked = (o === this);
-          });
-
-          updateDisplay();
-        });
+      products.forEach(p => {
+        const qty = quantities[p.dataset.variantId] || 0;
+        const price = parseInt(p.dataset.price);
+        totalQty += qty;
+        totalRegular += price * qty;
+        totalDiscounted += (currentOption === 'subscription' ? Math.round(price * (1 - discountPercent / 100)) : price) * qty;
       });
 
-      // Cantidades
-      products.forEach(product => {
-        const variantId = product.dataset.variantId;
-        const minusBtn = product.querySelector('[data-qty="minus"]');
-        const plusBtn = product.querySelector('[data-qty="plus"]');
-        const display = product.querySelector('[data-quantity]');
+      return {
+        subUnit: subUnitPrice,
+        onetimeUnit: basePrice,
+        subPerServing: subUnitPrice / servingsPerUnit,
+        onetimePerServing: basePrice / servingsPerUnit,
+        totalQty: totalQty,
+        totalRegular: totalRegular,
+        totalDiscounted: totalDiscounted,
+        savings: totalRegular - totalDiscounted
+      };
+    }
 
-        minusBtn.addEventListener('click', () => {
-          const current = quantities[variantId] || 0;
-          if (current > 0) {
-            quantities[variantId] = current - 1;
-            display.textContent = quantities[variantId];
-            minusBtn.disabled = quantities[variantId] === 0;
-            updateDisplay();
-          }
+    function updateDisplay() {
+      const prices = calculatePrices();
+
+      // Precios de opciones
+      if (subPriceEl) subPriceEl.textContent = formatMoney(prices.subUnit);
+      if (comparePriceEl) comparePriceEl.textContent = formatMoney(baseCompare);
+      if (pricePerEl) pricePerEl.textContent = formatMoney(prices.subPerServing);
+      if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
+      if (onetimePerEl) onetimePerEl.textContent = formatMoney(prices.onetimePerServing);
+
+      // Totales
+      if (savingsEl) savingsEl.textContent = formatMoney(prices.savings);
+      if (totalCompareEl) totalCompareEl.textContent = formatMoney(prices.totalRegular);
+      if (totalPriceEl) totalPriceEl.textContent = formatMoney(prices.totalDiscounted);
+
+      // Botón
+      const hasItems = prices.totalQty > 0;
+      submitBtn.disabled = !hasItems;
+      submitBtn.textContent = hasItems
+        ? '{{ block.settings.button_text | default: "Add to Cart" }} - ' + formatMoney(prices.totalDiscounted)
+        : '{{ block.settings.button_text | default: "Add to Cart" }}';
+    }
+
+    // Event listeners
+
+    // Cambio de opción (subscription vs onetime)
+    options.forEach(opt => {
+      opt.addEventListener('click', function() {
+        currentOption = this.dataset.option;
+
+        options.forEach(o => {
+          o.classList.toggle('active', o === this);
+          o.querySelector('input').checked = (o === this);
         });
 
-        plusBtn.addEventListener('click', () => {
-          const current = quantities[variantId] || 0;
-          quantities[variantId] = current + 1;
+        updateDisplay();
+      });
+    });
+
+    // Cantidades
+    products.forEach(product => {
+      const variantId = product.dataset.variantId;
+      const minusBtn = product.querySelector('[data-qty="minus"]');
+      const plusBtn = product.querySelector('[data-qty="plus"]');
+      const display = product.querySelector('[data-quantity]');
+
+      minusBtn.addEventListener('click', () => {
+        const current = quantities[variantId] || 0;
+        if (current > 0) {
+          quantities[variantId] = current - 1;
           display.textContent = quantities[variantId];
-          minusBtn.disabled = false;
+          minusBtn.disabled = quantities[variantId] === 0;
           updateDisplay();
-        });
-      });
-
-      // Add to cart
-      submitBtn.addEventListener('click', async () => {
-        const items = [];
-        const sellingPlanId = '{{ block.settings.selling_plan_id }}';
-
-        products.forEach(p => {
-          const qty = quantities[p.dataset.variantId];
-          if (qty > 0) {
-            const item = {
-              id: parseInt(p.dataset.variantId),
-              quantity: qty
-            };
-            if (currentOption === 'subscription' && sellingPlanId && sellingPlanId !== '') {
-              item.selling_plan = parseInt(sellingPlanId);
-              item.properties = {
-                '_subscription': 'true',
-                '_purchase_type': 'subscription'
-              };
-            }
-            items.push(item);
-          }
-        });
-
-        if (items.length === 0) return;
-
-        submitBtn.classList.add('loading');
-        submitBtn.disabled = true;
-
-        try {
-          const response = await fetch('/cart/add.js', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items })
-          });
-
-          if (response.ok) {
-            const cartData = await response.json();
-
-            // ✅ Eventos para actualizar el carrito en la UI
-            document.dispatchEvent(new CustomEvent('cart:change'));
-            document.dispatchEvent(new CustomEvent('cart:updated', { detail: cartData }));
-            document.dispatchEvent(new Event('cart:refresh'));
-
-            // Abrir cart drawer
-            const cartDrawer = document.querySelector('cart-drawer-component');
-            if (cartDrawer) {
-              if (typeof cartDrawer.open === 'function') {
-                cartDrawer.open();
-              } else if (cartDrawer.showDialog) {
-                cartDrawer.showDialog();
-              }
-            } else {
-              // Fallback: redirigir si no hay drawer
-              window.location.href = '/cart';
-            }
-          }
-          // ✅ Actualizar contador del carrito (bubble)
-          fetch('/cart.js')
-            .then(r => r.json())
-            .then(cart => {
-              // Actualizar bubble si existe
-              const bubbles = document.querySelectorAll('.cart-bubble, [data-cart-count], .cart-count');
-              bubbles.forEach(bubble => {
-                bubble.textContent = cart.item_count;
-                bubble.setAttribute('aria-label', cart.item_count + ' items');
-            });
-          });
-          } else {
-            throw new Error('Error adding to cart');
-          }
-        } catch (err) {
-          console.error('Cart error:', err);
-          alert('Error adding to cart. Please try again.');
-        } finally {
-          submitBtn.classList.remove('loading');
-          submitBtn.disabled = false;
         }
       });
 
-      // Inicializar
-      updateDisplay();
-    })();
+      plusBtn.addEventListener('click', () => {
+        const current = quantities[variantId] || 0;
+        quantities[variantId] = current + 1;
+        display.textContent = quantities[variantId];
+        minusBtn.disabled = false;
+        updateDisplay();
+      });
+    });
+
+    // Add to cart
+    submitBtn.addEventListener('click', async () => {
+      const items = [];
+      const sellingPlanId = '{{ block.settings.selling_plan_id }}';
+
+      products.forEach(p => {
+        const qty = quantities[p.dataset.variantId];
+        if (qty > 0) {
+          const item = {
+            id: p.dataset.variantId,
+            quantity: qty
+          };
+          if (currentOption === 'subscription' && sellingPlanId) {
+            item.selling_plan = sellingPlanId;
+          }
+          items.push(item);
+        }
+      });
+
+      if (items.length === 0) return;
+
+      submitBtn.classList.add('loading');
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items })
+        });
+
+        if (response.ok) {
+          // Abrir cart drawer o redirigir
+          const cartDrawer = document.querySelector('cart-drawer-component');
+          if (cartDrawer && typeof cartDrawer.open === 'function') {
+            cartDrawer.open();
+          } else {
+            window.location.href = '/cart';
+          }
+        } else {
+          throw new Error('Error adding to cart');
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Inicializar
+    updateDisplay();
+  })();
 </script>
 
 {% schema %}
