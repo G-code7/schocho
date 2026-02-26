@@ -1,0 +1,43 @@
+/* assets/subscription-widget.css */
+
+/* Esconder el título por defecto si quieres */
+shopify-subscriptions-buy-box h3 {
+  display: none;
+}
+
+/* Contenedor principal */
+shopify-subscriptions-buy-box {
+  margin: 24px 0 !important;
+  font-family: inherit !important;
+}
+
+/* Opciones de suscripción */
+[data-testid="subscription-option"] {
+  border: 2px solid #e6e6e6 !important;
+  border-radius: 8px !important;
+  padding: 16px !important;
+  margin-bottom: 12px !important;
+  background: #fff !important;
+}
+
+/* Opción seleccionada */
+[data-testid="subscription-option"][aria-checked="true"] {
+  border-color: #4A6B1A !important;
+  background: #FCF3EC !important;
+}
+
+/* Precio con descuento */
+[data-testid="subscription-price"] {
+  color: #4A6B1A !important;
+  font-weight: 700 !important;
+}
+
+/* Badge de suscripción */
+[data-testid="selling-plan-group-badge"] {
+  background: #4A6B1A !important;
+  color: white !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+}
