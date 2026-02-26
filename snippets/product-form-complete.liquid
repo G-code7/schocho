@@ -1,0 +1,251 @@
+{% comment %}
+  Formulario completo: variantes pills + suscripción + cart drawer
+{% endcomment %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+{% comment %} BUSCAR SELLING PLAN MENSUAL {% endcomment %}
+{%- assign selling_plan_id = '' -%}
+{%- assign selling_plan_discount = 0 -%}
+
+{%- for group in product.selling_plan_groups -%}
+  {%- for plan in group.selling_plans -%}
+    {%- assign plan_name = plan.name | downcase -%}
+    {%- if plan_name contains 'month' or plan_name contains 'mes' or selling_plan_id == '' -%}
+      {%- assign selling_plan_id = plan.id -%}
+      {%- if plan.price_adjustments[0].value -%}
+        {%- assign selling_plan_discount = plan.price_adjustments[0].value -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+<form 
+  action="/cart/add" 
+  method="post" 
+  enctype="multipart/form-data" 
+  class="product-form"
+  id="product-form-{{ section.id }}"
+>
+  {% comment %} VARIANT ID {% endcomment %}
+  <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+  {% comment %} SELLING PLAN - Se activa/desactiva con JS {% endcomment %}
+  <input 
+    type="hidden" 
+    name="selling_plan" 
+    value="{{ selling_plan_id }}" 
+    data-selling-plan-input
+    {% if selling_plan_id == '' %}disabled{% endif %}
+  >
+
+  {% comment %} CANTIDAD {% endcomment %}
+  <input type="hidden" name="quantity" value="1" data-quantity-input>
+
+  {% comment %} ===== SELECTOR DE VARIANTES TIPO PILLS ===== {% endcomment %}
+  {%- unless product.has_only_default_variant -%}
+    <div class="variant-pills">
+      <p class="variant-pills__label">Choose your flavor</p>
+      <div class="variant-pills__grid">
+        {%- for variant in product.variants -%}
+          <label 
+            class="variant-pills__option{% if variant == current_variant %} selected{% endif %}{% unless variant.available %} soldout{% endunless %}"
+            data-variant-id="{{ variant.id }}"
+            data-variant-price="{{ variant.price }}"
+            data-variant-compare="{{ variant.compare_at_price | default: variant.price }}"
+          >
+            <input 
+              type="radio" 
+              name="variant_id" 
+              value="{{ variant.id }}"
+              {% if variant == current_variant %}checked{% endif %}
+              {% unless variant.available %}disabled{% endunless %}
+              class="visually-hidden"
+            >
+            
+            {%- if variant.image -%}
+              <img src="{{ variant.image | image_url: width: 100, height: 100, crop: 'center' }}" alt="" class="variant-pills__image">
+            {%- endif -%}
+            
+            <span class="variant-pills__name">{{ variant.title }}</span>
+            <span class="variant-pills__price">{{ variant.price | money }}</span>
+          </label>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endunless -%}
+
+  {% comment %} ===== OPCIONES DE COMPRA: SUSCRIPCIÓN VS UNA VEZ ===== {% endcomment %}
+  {%- if selling_plan_id != '' -%}
+    <div class="purchase-options">
+      
+      {% comment %} Badge Most Popular {% endcomment %}
+      <div class="purchase-options__badge">Most Popular</div>
+      
+      {% comment %} Opción Suscripción {% endcomment %}
+      <label class="purchase-options__box purchase-options__box--active" data-option="subscription">
+        <input 
+          type="radio" 
+          name="purchase_type" 
+          value="subscription" 
+          checked 
+          class="visually-hidden"
+          data-purchase-type="subscription"
+        >
+        <span class="purchase-options__radio"></span>
+        <div class="purchase-options__content">
+          <div class="purchase-options__header">
+            <div>
+              <strong class="purchase-options__title">Subscribe & Save</strong>
+              <span class="purchase-options__subtitle">Delivered monthly</span>
+            </div>
+            <div class="purchase-options__price-wrap">
+              <span class="purchase-options__price" data-subscription-price></span>
+              <span class="purchase-options__compare" data-compare-price>{{ current_variant.price | money }}</span>
+            </div>
+          </div>
+          <ul class="purchase-options__benefits">
+            <li>Save {{ selling_plan_discount }}% every order</li>
+            <li>Free shipping</li>
+            <li>Cancel anytime</li>
+            <li>Skip or pause anytime</li>
+          </ul>
+        </div>
+      </label>
+      
+      {% comment %} Opción Una Vez {% endcomment %}
+      <label class="purchase-options__box" data-option="onetime">
+        <input 
+          type="radio" 
+          name="purchase_type" 
+          value="onetime" 
+          class="visually-hidden"
+          data-purchase-type="onetime"
+        >
+        <span class="purchase-options__radio"></span>
+        <div class="purchase-options__content">
+          <div class="purchase-options__header">
+            <div>
+              <strong class="purchase-options__title">One-time purchase</strong>
+              <span class="purchase-options__subtitle">No commitment</span>
+            </div>
+            <div class="purchase-options__price-wrap">
+              <span class="purchase-options__price">{{ current_variant.price | money }}</span>
+            </div>
+          </div>
+        </div>
+      </label>
+      
+      {% comment %} Barra de ahorro {% endcomment %}
+      <div class="purchase-options__savings">
+        <span>You're saving <strong data-savings-amount></strong></span>
+        <span data-total-price></span>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {% comment %} ===== BOTÓN AGREGAR AL CARRITO ===== {% endcomment %}
+  <button 
+    type="submit" 
+    class="add-to-cart-btn"
+    data-add-to-cart
+    {% unless current_variant.available %}disabled{% endunless %}
+  >
+    {%- if current_variant.available -%}
+      <span data-btn-text>Add to Cart - {{ current_variant.price | money }}</span>
+    {%- else -%}
+      Sold Out
+    {%- endif -%}
+    <span data-btn-loader style="display: none;">Adding...</span>
+  </button>
+
+  {% comment %} Shop Pay (aparece automático) {% endcomment %}
+  {{ form | payment_button }}
+
+</form>
+
+<style>
+  /* ===== VARIANT PILLS ===== */
+  .variant-pills { margin: 20px 0; }
+  .variant-pills__label { 
+    font-weight: 600; 
+    font-size: 14px; 
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .variant-pills__grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .variant-pills__option {
+    border: 2px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .variant-pills__option:hover:not(.soldout) { border-color: #4A6B1A; }
+  .variant-pills__option.selected { 
+    border-color: #4A6B1A; 
+    background: #FCF3EC;
+  }
+  .variant-pills__option.soldout { 
+    opacity: 0.5; 
+    cursor: not-allowed;
+  }
+  .variant-pills__image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+  }
+  .variant-pills__name {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .variant-pills__price {
+    font-size: 12px;
+    color: #4A6B1A;
+    font-weight: 700;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+  }
+
+  /* ===== PURCHASE OPTIONS ===== */
+  .purchase-options { margin: 24px 0; }
+  .purchase-options__badge {
+    display: inline-block;
+    background: #4A6B1A;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .purchase-options__box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid #e6e6e6;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
