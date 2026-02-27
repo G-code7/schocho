@@ -25,7 +25,7 @@
 {% else %}
 
 {% style %}
-  .kachava-subscription-{{ ai_gen_id }} {
+  .chocho-subscription-{{ ai_gen_id }} {
     display: block;
     width: 100%;
     max-width: 100%;
@@ -33,7 +33,7 @@
   }
 
   /* Título de sección */
-  .kachava-subscription__title-{{ ai_gen_id }} {
+  .chocho-subscription__title-{{ ai_gen_id }} {
     font-size: 22px;
     font-weight: 800;
     color: {{ block.settings.text_color }};
@@ -42,18 +42,18 @@
   }
 
   /* Grid de Productos - Estilo Ka'Chava */
-  .kachava-subscription__products-{{ ai_gen_id }} {
+  .chocho-subscription__products-{{ ai_gen_id }} {
     margin-bottom: 24px;
   }
 
-  .kachava-subscription__products-title-{{ ai_gen_id }} {
+  .chocho-subscription__products-title-{{ ai_gen_id }} {
     font-size: 18px;
     font-weight: 700;
     color: {{ block.settings.text_color }};
     margin: 0 0 16px;
   }
 
-  .kachava-subscription__products-grid-{{ ai_gen_id }} {
+  .chocho-subscription__products-grid-{{ ai_gen_id }} {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 12px;
@@ -62,7 +62,7 @@
     margin: 0;
   }
 
-  .kachava-subscription__product-{{ ai_gen_id }} {
+  .chocho-subscription__product-{{ ai_gen_id }} {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -76,12 +76,12 @@
     cursor: pointer;
   }
 
-  .kachava-subscription__product-{{ ai_gen_id }}.has-quantity {
+  .chocho-subscription__product-{{ ai_gen_id }}.has-quantity {
     border-color: #4A6B1A;
     background: #FCF3EC;
   }
 
-  .kachava-subscription__product-badge-{{ ai_gen_id }} {
+  .chocho-subscription__product-badge-{{ ai_gen_id }} {
     position: absolute;
     top: -8px;
     left: -8px;
@@ -103,7 +103,7 @@
     transform: rotate(-10deg);
   }
 
-  .kachava-subscription__product-image-{{ ai_gen_id }} {
+  .chocho-subscription__product-image-{{ ai_gen_id }} {
     width: 64px;
     height: 64px;
     object-fit: cover;
@@ -112,7 +112,7 @@
     border: 2px solid #e0e0e0;
   }
 
-  .kachava-subscription__product-name-{{ ai_gen_id }} {
+  .chocho-subscription__product-name-{{ ai_gen_id }} {
     font-size: 12px;
     font-weight: 600;
     text-align: center;
@@ -123,12 +123,12 @@
     align-items: center;
   }
 
-  .kachava-subscription__quantity-wrapper-{{ ai_gen_id }} {
+  .chocho-subscription__quantity-wrapper-{{ ai_gen_id }} {
     width: 100%;
     position: relative;
   }
 
-  .kachava-subscription__quantity-select-{{ ai_gen_id }} {
+  .chocho-subscription__quantity-select-{{ ai_gen_id }} {
     width: 100%;
     padding: 8px 28px 8px 12px;
     border: 1px solid #CCCCCC;
@@ -142,7 +142,7 @@
     color: {{ block.settings.text_color }};
   }
 
-  .kachava-subscription__quantity-arrow-{{ ai_gen_id }} {
+  .chocho-subscription__quantity-arrow-{{ ai_gen_id }} {
     position: absolute;
     right: 10px;
     top: 50%;
@@ -154,28 +154,28 @@
   }
 
   /* Opciones de Compra - Estilo Ka'Chava */
-  .kachava-subscription__options-{{ ai_gen_id }} {
+  .chocho-subscription__options-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-bottom: 20px;
   }
 
-  .kachava-subscription__option-{{ ai_gen_id }} {
+  .chocho-subscription__option-{{ ai_gen_id }} {
     position: relative;
     display: block;
     cursor: pointer;
     margin: 0;
   }
 
-  .kachava-subscription__option-input-{{ ai_gen_id }} {
+  .chocho-subscription__option-input-{{ ai_gen_id }} {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
   }
 
-  .kachava-subscription__card-{{ ai_gen_id }} {
+  .chocho-subscription__card-{{ ai_gen_id }} {
     display: flex;
     gap: 16px;
     padding: 20px;
@@ -186,32 +186,32 @@
   }
 
   /* Suscripción - Colores Ka'Chava */
-  .kachava-subscription__option--subscribe-{{ ai_gen_id }} .kachava-subscription__card-{{ ai_gen_id }} {
+  .chocho-subscription__option--subscribe-{{ ai_gen_id }} .chocho-subscription__card-{{ ai_gen_id }} {
     background-color: #FCF3EC;
     border-color: #FAEADE;
   }
 
-  .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} {
+  .chocho-subscription__option-input-{{ ai_gen_id }}:checked ~ .chocho-subscription__card-{{ ai_gen_id }} {
     border-color: #4A6B1A;
     border-width: 3px;
     box-shadow: 0 2px 8px rgba(74, 107, 26, 0.15);
   }
 
   /* One-time */
-  .kachava-subscription__option--onetime-{{ ai_gen_id }} .kachava-subscription__card-{{ ai_gen_id }} {
+  .chocho-subscription__option--onetime-{{ ai_gen_id }} .chocho-subscription__card-{{ ai_gen_id }} {
     background-color: #FFFCF8;
     border-color: #FAEADE;
     opacity: 0.6;
   }
 
-  .kachava-subscription__option--onetime-{{ ai_gen_id }} .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} {
+  .chocho-subscription__option--onetime-{{ ai_gen_id }} .chocho-subscription__option-input-{{ ai_gen_id }}:checked ~ .chocho-subscription__card-{{ ai_gen_id }} {
     opacity: 1;
     border-color: #4A6B1A;
     border-width: 3px;
   }
 
   /* Radio Button Custom */
-  .kachava-subscription__radio-{{ ai_gen_id }} {
+  .chocho-subscription__radio-{{ ai_gen_id }} {
     flex-shrink: 0;
     width: 22px;
     height: 22px;
@@ -225,12 +225,12 @@
     background: white;
   }
 
-  .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} .kachava-subscription__radio-{{ ai_gen_id }} {
+  .chocho-subscription__option-input-{{ ai_gen_id }}:checked ~ .chocho-subscription__card-{{ ai_gen_id }} .chocho-subscription__radio-{{ ai_gen_id }} {
     border-color: #4A6B1A;
     background-color: #4A6B1A;
   }
 
-  .kachava-subscription__radio-inner-{{ ai_gen_id }} {
+  .chocho-subscription__radio-inner-{{ ai_gen_id }} {
     width: 8px;
     height: 8px;
     background-color: white;
@@ -239,16 +239,16 @@
     transition: opacity 0.2s ease;
   }
 
-  .kachava-subscription__option-input-{{ ai_gen_id }}:checked ~ .kachava-subscription__card-{{ ai_gen_id }} .kachava-subscription__radio-inner-{{ ai_gen_id }} {
+  .chocho-subscription__option-input-{{ ai_gen_id }}:checked ~ .chocho-subscription__card-{{ ai_gen_id }} .chocho-subscription__radio-inner-{{ ai_gen_id }} {
     opacity: 1;
   }
 
   /* Contenido de tarjeta */
-  .kachava-subscription__content-{{ ai_gen_id }} {
+  .chocho-subscription__content-{{ ai_gen_id }} {
     flex-grow: 1;
   }
 
-  .kachava-subscription__header-{{ ai_gen_id }} {
+  .chocho-subscription__header-{{ ai_gen_id }} {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -257,21 +257,21 @@
     gap: 8px;
   }
 
-  .kachava-subscription__title-{{ ai_gen_id }} {
+  .chocho-subscription__title-{{ ai_gen_id }} {
     font-size: 18px;
     font-weight: 800;
     color: {{ block.settings.text_color }};
     margin: 0;
   }
 
-  .kachava-subscription__subtitle-{{ ai_gen_id }} {
+  .chocho-subscription__subtitle-{{ ai_gen_id }} {
     font-size: 14px;
     color: {{ block.settings.text_color }};
     margin: 4px 0 12px;
     opacity: 0.8;
   }
 
-  .kachava-subscription__pricing-{{ ai_gen_id }} {
+  .chocho-subscription__pricing-{{ ai_gen_id }} {
     display: flex;
     align-items: baseline;
     gap: 8px;
@@ -279,40 +279,40 @@
     flex-wrap: wrap;
   }
 
-  .kachava-subscription__price-original-{{ ai_gen_id }} {
+  .chocho-subscription__price-original-{{ ai_gen_id }} {
     font-size: 18px;
     color: {{ block.settings.text_color }};
     text-decoration: line-through;
     opacity: 0.6;
   }
 
-  .kachava-subscription__price-{{ ai_gen_id }} {
+  .chocho-subscription__price-{{ ai_gen_id }} {
     font-size: 20px;
     font-weight: 700;
   }
 
-  .kachava-subscription__option--subscribe-{{ ai_gen_id }} .kachava-subscription__price-{{ ai_gen_id }} {
+  .chocho-subscription__option--subscribe-{{ ai_gen_id }} .chocho-subscription__price-{{ ai_gen_id }} {
     color: #4A6B1A;
   }
 
-  .kachava-subscription__option--onetime-{{ ai_gen_id }} .kachava-subscription__price-{{ ai_gen_id }} {
+  .chocho-subscription__option--onetime-{{ ai_gen_id }} .chocho-subscription__price-{{ ai_gen_id }} {
     color: {{ block.settings.text_color }};
   }
 
-  .kachava-subscription__per-serving-{{ ai_gen_id }} {
+  .chocho-subscription__per-serving-{{ ai_gen_id }} {
     font-size: 13px;
     color: {{ block.settings.text_color }};
     opacity: 0.7;
     margin-bottom: 12px;
   }
 
-  .kachava-subscription__benefits-{{ ai_gen_id }} {
+  .chocho-subscription__benefits-{{ ai_gen_id }} {
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
-  .kachava-subscription__benefit-{{ ai_gen_id }} {
+  .chocho-subscription__benefit-{{ ai_gen_id }} {
     font-size: 13px;
     color: {{ block.settings.text_color }};
     padding-left: 18px;
@@ -321,7 +321,7 @@
     line-height: 1.4;
   }
 
-  .kachava-subscription__benefit-{{ ai_gen_id }}::before {
+  .chocho-subscription__benefit-{{ ai_gen_id }}::before {
     content: "✓";
     position: absolute;
     left: 0;
@@ -330,7 +330,7 @@
   }
 
   /* Summary y Botón */
-  .kachava-subscription__summary-{{ ai_gen_id }} {
+  .chocho-subscription__summary-{{ ai_gen_id }} {
     margin-top: 20px;
     padding: 20px;
     background-color: #F5F5F5;
@@ -338,14 +338,14 @@
     text-align: center;
   }
 
-  .kachava-subscription__savings-{{ ai_gen_id }} {
+  .chocho-subscription__savings-{{ ai_gen_id }} {
     font-size: 16px;
     font-weight: 700;
     color: #4A6B1A;
     margin: 0 0 16px;
   }
 
-  .kachava-subscription__button-{{ ai_gen_id }} {
+  .chocho-subscription__button-{{ ai_gen_id }} {
     width: 100%;
     padding: 16px;
     background-color: #4A6B1A;
@@ -360,19 +360,19 @@
     letter-spacing: 0.5px;
   }
 
-  .kachava-subscription__button-{{ ai_gen_id }}:hover:not(:disabled) {
+  .chocho-subscription__button-{{ ai_gen_id }}:hover:not(:disabled) {
     background-color: #3A5510;
     transform: translateY(-2px);
   }
 
-  .kachava-subscription__button-{{ ai_gen_id }}:disabled {
+  .chocho-subscription__button-{{ ai_gen_id }}:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
 
   /* Trust Badges */
-  .kachava-subscription__trust-badges-{{ ai_gen_id }} {
+  .chocho-subscription__trust-badges-{{ ai_gen_id }} {
     display: flex;
     justify-content: center;
     gap: 32px;
@@ -380,7 +380,7 @@
     flex-wrap: wrap;
   }
 
-  .kachava-subscription__badge-{{ ai_gen_id }} {
+  .chocho-subscription__badge-{{ ai_gen_id }} {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -389,14 +389,14 @@
     font-weight: 600;
   }
 
-  .kachava-subscription__badge-icon-{{ ai_gen_id }} {
+  .chocho-subscription__badge-icon-{{ ai_gen_id }} {
     width: 24px;
     height: 24px;
     flex-shrink: 0;
     color: #4A6B1A;
   }
 
-  .kachava-subscription__error-{{ ai_gen_id }} {
+  .chocho-subscription__error-{{ ai_gen_id }} {
     color: #D82C0D;
     font-size: 14px;
     margin-top: 12px;
@@ -404,24 +404,24 @@
     display: none;
   }
 
-  .kachava-subscription__error-{{ ai_gen_id }}.active {
+  .chocho-subscription__error-{{ ai_gen_id }}.active {
     display: block;
   }
 
   @media screen and (max-width: 749px) {
-    .kachava-subscription__products-grid-{{ ai_gen_id }} {
+    .chocho-subscription__products-grid-{{ ai_gen_id }} {
       grid-template-columns: repeat(3, 1fr);
     }
 
-    .kachava-subscription__card-{{ ai_gen_id }} {
+    .chocho-subscription__card-{{ ai_gen_id }} {
       padding: 16px;
     }
 
-    .kachava-subscription__title-{{ ai_gen_id }} {
+    .chocho-subscription__title-{{ ai_gen_id }} {
       font-size: 16px;
     }
 
-    .kachava-subscription__trust-badges-{{ ai_gen_id }} {
+    .chocho-subscription__trust-badges-{{ ai_gen_id }} {
       flex-direction: column;
       gap: 16px;
       align-items: center;
@@ -429,9 +429,9 @@
   }
 {% endstyle %}
 
-<div class="kachava-subscription-{{ ai_gen_id }}" data-block-id="{{ block.id }}">
+<div class="chocho-subscription-{{ ai_gen_id }}" data-block-id="{{ block.id }}">
   {% if block.settings.title != blank %}
-    <h3 class="kachava-subscription__title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
+    <h3 class="chocho-subscription__title-{{ ai_gen_id }}">{{ block.settings.title }}</h3>
   {% endif %}
 
   <form 
@@ -439,16 +439,16 @@
     action="{{ routes.cart_add_url }}" 
     accept-charset="UTF-8" 
     enctype="multipart/form-data"
-    id="kachava-form-{{ ai_gen_id }}"
+    id="chocho-form-{{ ai_gen_id }}"
   >
     <input type="hidden" name="form_type" value="product">
     <input type="hidden" name="utf8" value="✓">
 
     {% comment %} PRODUCTOS CON QUANTITY SELECTORS {% endcomment %}
-    <div class="kachava-subscription__products-{{ ai_gen_id }}">
-      <h4 class="kachava-subscription__products-title-{{ ai_gen_id }}">{{ block.settings.products_title | default: "Choose your favorite flavors:" }}</h4>
+    <div class="chocho-subscription__products-{{ ai_gen_id }}">
+      <h4 class="chocho-subscription__products-title-{{ ai_gen_id }}">{{ block.settings.products_title | default: "Choose your favorite flavors:" }}</h4>
       
-      <ul class="kachava-subscription__products-grid-{{ ai_gen_id }}">
+      <ul class="chocho-subscription__products-grid-{{ ai_gen_id }}">
         {% for prod in selected_products %}
           {% assign first_variant = prod.selected_or_first_available_variant %}
           {% assign has_sub = false %}
@@ -465,7 +465,7 @@
           {% endif %}
           
           <li 
-            class="kachava-subscription__product-{{ ai_gen_id }}"
+            class="chocho-subscription__product-{{ ai_gen_id }}"
             data-product-id="{{ prod.id }}"
             data-variant-id="{{ first_variant.id }}"
             data-has-subscription="{{ has_sub }}"
@@ -474,27 +474,27 @@
             {% if has_sub and sub_plan %}data-selling-plan-id="{{ sub_plan.id }}"{% endif %}
           >
             {% if forloop.first and block.settings.show_best_seller_badge %}
-              <span class="kachava-subscription__product-badge-{{ ai_gen_id }}">Best Seller</span>
+              <span class="chocho-subscription__product-badge-{{ ai_gen_id }}">Best Seller</span>
             {% endif %}
             
             {% if prod.featured_image %}
               <img 
                 src="{{ prod.featured_image | img_url: 'compact' }}" 
                 alt="{{ prod.title }}"
-                class="kachava-subscription__product-image-{{ ai_gen_id }}"
+                class="chocho-subscription__product-image-{{ ai_gen_id }}"
                 loading="lazy"
               >
             {% else %}
-              <div class="kachava-subscription__product-image-{{ ai_gen_id }}" style="background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">
+              <div class="chocho-subscription__product-image-{{ ai_gen_id }}" style="background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #666;">
                 {{ prod.title | slice: 0, 2 | upcase }}
               </div>
             {% endif %}
             
-            <span class="kachava-subscription__product-name-{{ ai_gen_id }}">{{ prod.title | truncatewords: 2 }}</span>
+            <span class="chocho-subscription__product-name-{{ ai_gen_id }}">{{ prod.title | truncatewords: 2 }}</span>
             
-            <div class="kachava-subscription__quantity-wrapper-{{ ai_gen_id }}">
+            <div class="chocho-subscription__quantity-wrapper-{{ ai_gen_id }}">
               <select 
-                class="kachava-subscription__quantity-select-{{ ai_gen_id }}"
+                class="chocho-subscription__quantity-select-{{ ai_gen_id }}"
                 name="updates[{{ first_variant.id }}]"
                 data-quantity-select
                 data-variant-id="{{ first_variant.id }}"
@@ -504,7 +504,7 @@
                   <option value="{{ i }}"{% if i == 0 %} selected{% endif %}>{{ i }}</option>
                 {% endfor %}
               </select>
-              <svg class="kachava-subscription__quantity-arrow-{{ ai_gen_id }}" viewBox="0 0 7.41 12" fill="currentColor">
+              <svg class="chocho-subscription__quantity-arrow-{{ ai_gen_id }}" viewBox="0 0 7.41 12" fill="currentColor">
                 <path d="M1.41 0 0 1.41 4.58 6 0 10.59 1.41 12l6-6Z"/>
               </svg>
             </div>
@@ -514,7 +514,7 @@
     </div>
 
     {% comment %} OPCIONES DE COMPRA {% endcomment %}
-    <div class="kachava-subscription__options-{{ ai_gen_id }}">
+    <div class="chocho-subscription__options-{{ ai_gen_id }}">
       
       {% comment %} Verificar si algún producto tiene suscripción {% endcomment %}
       {% assign any_has_subscription = false %}
@@ -526,39 +526,39 @@
       {% endfor %}
 
       {% if any_has_subscription %}
-        <label class="kachava-subscription__option-{{ ai_gen_id }} kachava-subscription__option--subscribe-{{ ai_gen_id }}">
+        <label class="chocho-subscription__option-{{ ai_gen_id }} chocho-subscription__option--subscribe-{{ ai_gen_id }}">
           <input 
             type="radio" 
             name="purchase_type" 
             value="subscription" 
-            class="kachava-subscription__option-input-{{ ai_gen_id }}"
+            class="chocho-subscription__option-input-{{ ai_gen_id }}"
             checked
             data-purchase-type="subscription"
           >
-          <div class="kachava-subscription__card-{{ ai_gen_id }}">
-            <div class="kachava-subscription__radio-{{ ai_gen_id }}">
-              <div class="kachava-subscription__radio-inner-{{ ai_gen_id }}"></div>
+          <div class="chocho-subscription__card-{{ ai_gen_id }}">
+            <div class="chocho-subscription__radio-{{ ai_gen_id }}">
+              <div class="chocho-subscription__radio-inner-{{ ai_gen_id }}"></div>
             </div>
-            <div class="kachava-subscription__content-{{ ai_gen_id }}">
-              <div class="kachava-subscription__header-{{ ai_gen_id }}">
+            <div class="chocho-subscription__content-{{ ai_gen_id }}">
+              <div class="chocho-subscription__header-{{ ai_gen_id }}">
                 <div>
-                  <h3 class="kachava-subscription__title-{{ ai_gen_id }}">{{ block.settings.subscribe_title | default: "Subscribe & Save" }}</h3>
-                  <p class="kachava-subscription__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_text | default: "15 servings per bag" }}</p>
+                  <h3 class="chocho-subscription__title-{{ ai_gen_id }}">{{ block.settings.subscribe_title | default: "Subscribe & Save" }}</h3>
+                  <p class="chocho-subscription__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_text | default: "15 servings per bag" }}</p>
                 </div>
               </div>
-              <div class="kachava-subscription__pricing-{{ ai_gen_id }}">
-                <span class="kachava-subscription__price-original-{{ ai_gen_id }}" data-total-original>--</span>
-                <span class="kachava-subscription__price-{{ ai_gen_id }}" data-total-subscription>--</span>
+              <div class="chocho-subscription__pricing-{{ ai_gen_id }}">
+                <span class="chocho-subscription__price-original-{{ ai_gen_id }}" data-total-original>--</span>
+                <span class="chocho-subscription__price-{{ ai_gen_id }}" data-total-subscription>--</span>
                 <span style="font-size: 13px; color: #666; font-weight: 500;">/ bag</span>
               </div>
-              <p class="kachava-subscription__per-serving-{{ ai_gen_id }}">{{ block.settings.per_serving_sub | default: "$3.99 per serving" }}</p>
+              <p class="chocho-subscription__per-serving-{{ ai_gen_id }}">{{ block.settings.per_serving_sub | default: "$3.99 per serving" }}</p>
               
               {% if block.settings.show_benefits %}
-                <ul class="kachava-subscription__benefits-{{ ai_gen_id }}">
-                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Save on every subscription order</li>
-                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Easily change your quantities</li>
-                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Cancel any time</li>
-                  <li class="kachava-subscription__benefit-{{ ai_gen_id }}">Pre-shipment reminders (no surprise charges)</li>
+                <ul class="chocho-subscription__benefits-{{ ai_gen_id }}">
+                  <li class="chocho-subscription__benefit-{{ ai_gen_id }}">Save on every subscription order</li>
+                  <li class="chocho-subscription__benefit-{{ ai_gen_id }}">Easily change your quantities</li>
+                  <li class="chocho-subscription__benefit-{{ ai_gen_id }}">Cancel any time</li>
+                  <li class="chocho-subscription__benefit-{{ ai_gen_id }}">Pre-shipment reminders (no surprise charges)</li>
                 </ul>
               {% endif %}
             </div>
@@ -566,72 +566,72 @@
         </label>
       {% endif %}
 
-      <label class="kachava-subscription__option-{{ ai_gen_id }} kachava-subscription__option--onetime-{{ ai_gen_id }}">
+      <label class="chocho-subscription__option-{{ ai_gen_id }} chocho-subscription__option--onetime-{{ ai_gen_id }}">
         <input 
           type="radio" 
           name="purchase_type" 
           value="onetime" 
-          class="kachava-subscription__option-input-{{ ai_gen_id }}"
+          class="chocho-subscription__option-input-{{ ai_gen_id }}"
           data-purchase-type="onetime"
           {% unless any_has_subscription %}checked{% endunless %}
         >
-        <div class="kachava-subscription__card-{{ ai_gen_id }}">
-          <div class="kachava-subscription__radio-{{ ai_gen_id }}">
-            <div class="kachava-subscription__radio-inner-{{ ai_gen_id }}"></div>
+        <div class="chocho-subscription__card-{{ ai_gen_id }}">
+          <div class="chocho-subscription__radio-{{ ai_gen_id }}">
+            <div class="chocho-subscription__radio-inner-{{ ai_gen_id }}"></div>
           </div>
-          <div class="kachava-subscription__content-{{ ai_gen_id }}">
-            <div class="kachava-subscription__header-{{ ai_gen_id }}">
+          <div class="chocho-subscription__content-{{ ai_gen_id }}">
+            <div class="chocho-subscription__header-{{ ai_gen_id }}">
               <div>
-                <h3 class="kachava-subscription__title-{{ ai_gen_id }}">{{ block.settings.onetime_title | default: "One-time purchase" }}</h3>
-                <p class="kachava-subscription__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_text | default: "15 servings per bag" }}</p>
+                <h3 class="chocho-subscription__title-{{ ai_gen_id }}">{{ block.settings.onetime_title | default: "One-time purchase" }}</h3>
+                <p class="chocho-subscription__subtitle-{{ ai_gen_id }}">{{ block.settings.servings_text | default: "15 servings per bag" }}</p>
               </div>
             </div>
-            <div class="kachava-subscription__pricing-{{ ai_gen_id }}">
-              <span class="kachava-subscription__price-{{ ai_gen_id }}" data-total-onetime>--</span>
+            <div class="chocho-subscription__pricing-{{ ai_gen_id }}">
+              <span class="chocho-subscription__price-{{ ai_gen_id }}" data-total-onetime>--</span>
               <span style="font-size: 13px; color: #666; font-weight: 500;">/ bag</span>
             </div>
-            <p class="kachava-subscription__per-serving-{{ ai_gen_id }}">{{ block.settings.per_serving_onetime | default: "$4.66 per serving" }}</p>
+            <p class="chocho-subscription__per-serving-{{ ai_gen_id }}">{{ block.settings.per_serving_onetime | default: "$4.66 per serving" }}</p>
           </div>
         </div>
       </label>
     </div>
 
     {% comment %} SUMMARY Y BOTÓN {% endcomment %}
-    <div class="kachava-subscription__summary-{{ ai_gen_id }}">
-      <p class="kachava-subscription__savings-{{ ai_gen_id }}" data-savings-text style="display: none;">
+    <div class="chocho-subscription__summary-{{ ai_gen_id }}">
+      <p class="chocho-subscription__savings-{{ ai_gen_id }}" data-savings-text style="display: none;">
         You're saving <span data-savings-amount>$0.00</span> with subscription!
       </p>
       
       <button 
         type="submit" 
-        class="kachava-subscription__button-{{ ai_gen_id }}"
+        class="chocho-subscription__button-{{ ai_gen_id }}"
         id="add-to-cart-{{ ai_gen_id }}"
         disabled
       >
         {{ block.settings.button_text | default: "Add to Cart" }}
       </button>
       
-      <div class="kachava-subscription__error-{{ ai_gen_id }}" data-error-message></div>
+      <div class="chocho-subscription__error-{{ ai_gen_id }}" data-error-message></div>
     </div>
 
     {% comment %} TRUST BADGES {% endcomment %}
     {% if block.settings.show_trust_badges %}
-      <div class="kachava-subscription__trust-badges-{{ ai_gen_id }}">
-        <div class="kachava-subscription__badge-{{ ai_gen_id }}">
-          <svg class="kachava-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="chocho-subscription__trust-badges-{{ ai_gen_id }}">
+        <div class="chocho-subscription__badge-{{ ai_gen_id }}">
+          <svg class="chocho-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
           </svg>
           <span>{{ block.settings.badge_1_text | default: "Money-Back Guarantee" }}</span>
         </div>
-        <div class="kachava-subscription__badge-{{ ai_gen_id }}">
-          <svg class="kachava-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="chocho-subscription__badge-{{ ai_gen_id }}">
+          <svg class="chocho-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0110 0v4"/>
           </svg>
           <span>{{ block.settings.badge_2_text | default: "Secure Checkout" }}</span>
         </div>
-        <div class="kachava-subscription__badge-{{ ai_gen_id }}">
-          <svg class="kachava-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="chocho-subscription__badge-{{ ai_gen_id }}">
+          <svg class="chocho-subscription__badge-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12 6 12 12 16 14"/>
           </svg>
@@ -645,7 +645,7 @@
 <script>
   (function() {
     const blockId = '{{ ai_gen_id }}';
-    const form = document.getElementById('kachava-form-' + blockId);
+    const form = document.getElementById('chocho-form-' + blockId);
     const quantitySelects = form.querySelectorAll('[data-quantity-select]');
     const purchaseTypeRadios = form.querySelectorAll('[data-purchase-type]');
     const savingsText = form.querySelector('[data-savings-text]');
@@ -732,7 +732,7 @@
     quantitySelects.forEach(select => {
       select.addEventListener('change', function() {
         // Actualizar clase visual
-        const productItem = this.closest('.kachava-subscription__product-' + blockId);
+        const productItem = this.closest('.chocho-subscription__product-' + blockId);
         if (this.value > 0) {
           productItem.classList.add('has-quantity');
         } else {

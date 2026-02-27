@@ -1,17 +1,17 @@
 {% comment %}
-  sections/product-kachava.liquid
+  sections/product-chocho.liquid
   Product page estilo Ka'Chava
 {% endcomment %}
 
-<div class="product-kachava page-width">
-  <div class="product-kachava__grid">
+<div class="product-chocho page-width">
+  <div class="product-chocho__grid">
     
     {% comment %} Galería de imágenes {% endcomment %}
-    <div class="product-kachava__media">
+    <div class="product-chocho__media">
       <img 
         src="{{ product.featured_image | image_url: width: 800 }}" 
         alt="{{ product.featured_image.alt | escape }}"
-        class="product-kachava__main-image"
+        class="product-chocho__main-image"
         data-main-image
         width="600"
         height="600"
@@ -19,26 +19,26 @@
     </div>
     
     {% comment %} Información del producto {% endcomment %}
-    <div class="product-kachava__info">
+    <div class="product-chocho__info">
       
       {% comment %} Badge de confianza {% endcomment %}
-      <div class="product-kachava__trust-badges">
+      <div class="product-chocho__trust-badges">
         <span>✓ 30-Day Money Back</span>
         <span>✓ Free Shipping</span>
       </div>
       
-      <h1 class="product-kachava__title">{{ product.title }}</h1>
+      <h1 class="product-chocho__title">{{ product.title }}</h1>
       
-      <div class="product-kachava__rating">
+      <div class="product-chocho__rating">
         ⭐⭐⭐⭐⭐ (4.8/5 from 2,000+ reviews)
       </div>
       
       {% comment %} Precio dinámico {% endcomment %}
-      <div class="product-kachava__price" data-price-container>
-        <span class="product-kachava__compare" data-compare-price>
+      <div class="product-chocho__price" data-price-container>
+        <span class="product-chocho__compare" data-compare-price>
           {{ product.selected_or_first_available_variant.compare_at_price | money }}
         </span>
-        <span class="product-kachava__current" data-current-price>
+        <span class="product-chocho__current" data-current-price>
           {{ product.selected_or_first_available_variant.price | money }}
         </span>
       </div>
@@ -47,7 +47,7 @@
       {% render 'product-form-complete', product: product %}
       
       {% comment %} Beneficios del producto {% endcomment %}
-      <div class="product-kachava__benefits">
+      <div class="product-chocho__benefits">
         <h3>Why Choose {{ product.title }}?</h3>
         <ul>
           <li>✓ 85+ Superfoods & Nutrients</li>
@@ -62,11 +62,11 @@
 </div>
 
 <style>
-  .product-kachava {
+  .product-chocho {
     padding: 40px 20px;
   }
   
-  .product-kachava__grid {
+  .product-chocho__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 60px;
@@ -74,19 +74,19 @@
     margin: 0 auto;
   }
   
-  .product-kachava__media {
+  .product-chocho__media {
     position: sticky;
     top: 20px;
     height: fit-content;
   }
   
-  .product-kachava__main-image {
+  .product-chocho__main-image {
     width: 100%;
     height: auto;
     border-radius: 12px;
   }
   
-  .product-kachava__trust-badges {
+  .product-chocho__trust-badges {
     display: flex;
     gap: 16px;
     margin-bottom: 16px;
@@ -95,37 +95,37 @@
     font-weight: 600;
   }
   
-  .product-kachava__title {
+  .product-chocho__title {
     font-size: 32px;
     font-weight: 800;
     margin-bottom: 12px;
     line-height: 1.2;
   }
   
-  .product-kachava__rating {
+  .product-chocho__rating {
     color: #f5a623;
     font-size: 14px;
     margin-bottom: 16px;
   }
   
-  .product-kachava__price {
+  .product-chocho__price {
     margin-bottom: 24px;
   }
   
-  .product-kachava__compare {
+  .product-chocho__compare {
     font-size: 20px;
     color: #999;
     text-decoration: line-through;
     margin-right: 12px;
   }
   
-  .product-kachava__current {
+  .product-chocho__current {
     font-size: 28px;
     font-weight: 700;
     color: #4A6B1A;
   }
   
-  .product-kachava__add-btn {
+  .product-chocho__add-btn {
     width: 100%;
     padding: 18px 32px;
     background: #1a1a1a;
@@ -140,39 +140,39 @@
     transition: all 0.2s;
   }
   
-  .product-kachava__add-btn:hover {
+  .product-chocho__add-btn:hover {
     background: #333;
     transform: translateY(-2px);
   }
   
-  .product-kachava__benefits {
+  .product-chocho__benefits {
     margin-top: 32px;
     padding-top: 32px;
     border-top: 1px solid #e6e6e6;
   }
   
-  .product-kachava__benefits h3 {
+  .product-chocho__benefits h3 {
     font-size: 18px;
     margin-bottom: 16px;
   }
   
-  .product-kachava__benefits ul {
+  .product-chocho__benefits ul {
     list-style: none;
     padding: 0;
   }
   
-  .product-kachava__benefits li {
+  .product-chocho__benefits li {
     padding: 8px 0;
     color: #555;
   }
   
   @media (max-width: 768px) {
-    .product-kachava__grid {
+    .product-chocho__grid {
       grid-template-columns: 1fr;
       gap: 32px;
     }
     
-    .product-kachava__media {
+    .product-chocho__media {
       position: static;
     }
   }
