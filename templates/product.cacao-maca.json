@@ -265,6 +265,7 @@
                 "subscription_purchase_v3_JeL63D": {
                   "type": "subscription-purchase-v3",
                   "name": "Pronto-Chocho Selector v3",
+                  "disabled": true,
                   "settings": {
                     "sub_title": "Subscribe & Save",
                     "sub_subtitle": "16 servings per bag",
