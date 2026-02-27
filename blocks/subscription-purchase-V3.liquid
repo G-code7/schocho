@@ -368,9 +368,7 @@
 
 {% comment %} ===== HTML ===== {% endcomment %}
 <div class="chocho-selector-{{ block_id }}" data-chocho-selector="{{ block_id }}">
-
   <div class="chocho-selector__purchase-options-{{ block_id }}">
-
     {% comment %} Suscripción {% endcomment %}
     <div class="chocho-selector__option-{{ block_id }} active" data-option="subscription">
       <label class="chocho-selector__option-inner-{{ block_id }}">
@@ -441,7 +439,10 @@
   {% assign has_products = false %}
   {% for i in (1..5) %}
     {% capture product_key %}product_{{ i }}{% endcapture %}
-    {% if block.settings[product_key] != blank %}{% assign has_products = true %}{% break %}{% endif %}
+    {% if block.settings[product_key] != blank -%}
+      {%- assign has_products = true -%}
+      {%- break -%}
+    {%- endif %}
   {% endfor %}
 
   {% if has_products %}
@@ -482,9 +483,23 @@
                 </span>
               </div>
               <div class="chocho-selector__quantity-{{ block_id }}">
-                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="minus" aria-label="Decrease">−</button>
+                <button
+                  type="button"
+                  class="chocho-selector__qty-btn-{{ block_id }}"
+                  data-qty="minus"
+                  aria-label="Decrease"
+                >
+                  −
+                </button>
                 <span class="chocho-selector__qty-display-{{ block_id }}" data-quantity>0</span>
-                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="plus" aria-label="Increase">+</button>
+                <button
+                  type="button"
+                  class="chocho-selector__qty-btn-{{ block_id }}"
+                  data-qty="plus"
+                  aria-label="Increase"
+                >
+                  +
+                </button>
               </div>
             </div>
           {% endif %}
@@ -508,9 +523,7 @@
     </button>
 
   {% else %}
-    <p style="text-align:center;color:#666;padding:40px;">
-      Selecciona productos en la configuración del bloque
-    </p>
+    <p style="text-align:center;color:#666;padding:40px;">Selecciona productos en la configuración del bloque</p>
   {% endif %}
 </div>
 
@@ -732,12 +745,15 @@
   function syncSellingPlanInputs(planId) {
     const value = planId !== null ? String(planId) : '';
 
-    // 1. Actualizar nuestro input propio
+    // Actualizar nuestro input propio
     if (ownSellingPlanInput) {
       ownSellingPlanInput.value = value;
     }
 
-    // 2. Sincronizar en los forms del tema (los que tienen action /cart/add)
+    // Sincronizar en los forms del tema (los que tienen action /cart/add)
+    // NOTA: esta función se mantiene disponible pero NO se llama en el flujo
+    // normal para evitar que el plugin de suscripciones dispare su propio submit.
+    // Solo llamarla manualmente si se necesita integración explícita con el form nativo.
     const themeForms = document.querySelectorAll('form[action*="/cart/add"]');
     themeForms.forEach(form => {
       let themeInput = form.querySelector('.selected-selling-plan-id');
@@ -750,11 +766,8 @@
       }
       themeInput.value = value;
     });
-
-    // 3. Disparar evento 'change' para que el plugin reaccione (TAREA 3)
-    themeForms.forEach(form => {
-      form.dispatchEvent(new Event('change', { bubbles: true }));
-    });
+    // ← NO disparamos 'change' aquí: ese evento triggerea listenToAddToCartForms()
+    //   del plugin ShopifySubscriptionsWidget, causando un submit duplicado.
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -809,10 +822,6 @@
         if (input) input.checked = isActive;
       });
 
-      // TAREA 1: sincronizar el plan al cambiar de opción
-      const planToSync = currentOption === 'subscription' ? getActivePlanId() : null;
-      syncSellingPlanInputs(planToSync);
-
       updateDisplay();
     });
   });
@@ -864,39 +873,48 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
-   * ADD TO CART
+   * ADD TO CART → CHECKOUT DIRECTO
    * ───────────────────────────────────────────────────────────────────────── */
-  submitBtn.addEventListener('click', async () => {
+  submitBtn.addEventListener('click', async (e) => {
+    // ── FIX DUPLICACIÓN 1 ─────────────────────────────────────────────────
+    // Evitar que el evento burbujee hacia el form del tema o el plugin de
+    // suscripciones, que tienen sus propios listeners y dispararían un
+    // segundo request a /cart/add independiente del nuestro.
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
     if (isProcessing) return;
 
     const isSubscription = currentOption === 'subscription';
+    const planId         = isSubscription ? getActivePlanId() : null;
 
-    // TAREA 5 – selling_plan como número entero (nunca string, nunca undefined)
-    const planId = isSubscription ? getActivePlanId() : null;
-
-    // Advertencia visible en consola si se eligió suscripción pero no hay plan
     if (isSubscription && planId === null) {
       console.warn(
-        'Pronto-Chocho v3: currentOption="subscription" pero no se encontró un ' +
-        'selling_plan_id válido. El ítem se añadirá como compra única. ' +
-        'Verifica la configuración del bloque o que el plugin esté activo.'
+        'Pronto-Chocho v3: currentOption="subscription" pero no se encontró ' +
+        'selling_plan_id válido. Se añadirá como compra única.'
       );
     }
 
-    // Construir items
+    // ── FIX DUPLICACIÓN 2 ─────────────────────────────────────────────────
+    // Tomar una instantánea limpia de las cantidades actuales.
+    // Iteramos products (NodeList, orden DOM) y construimos el array de una
+    // sola pasada. Cada variante aparece exactamente UNA vez en items[].
+    // No llamamos a syncSellingPlanInputs() aquí — eso inyectaba un
+    // selling_plan en el form del tema y el plugin lo procesaba por separado.
     const items = [];
     products.forEach(p => {
-      const qty = quantities[p.dataset.variantId] || 0;
+      const variantId = p.dataset.variantId;
+      const qty       = quantities[variantId] || 0;  // ← leer del estado, no del DOM
       if (qty <= 0) return;
 
       const item = {
-        id      : parseInt(p.dataset.variantId, 10),  // número
+        id      : parseInt(variantId, 10),
         quantity: qty,
       };
 
-      // TAREA 5: selling_plan como número entero, nunca string
+      // selling_plan solo si suscripción y plan válido — como número entero
       if (isSubscription && planId !== null) {
-        item.selling_plan = planId;  // ← ya es Number.isFinite gracias a getActivePlanId()
+        item.selling_plan = planId;
         item.properties   = {
           _subscription : 'true',
           _purchase_type: 'subscription',
@@ -908,9 +926,6 @@
     });
 
     if (items.length === 0) return;
-
-    // TAREA 1: sincronizar input antes de hacer el fetch
-    syncSellingPlanInputs(planId);
 
     isProcessing       = true;
     submitBtn.disabled = true;
@@ -925,10 +940,8 @@
         body   : JSON.stringify({ items }),
       });
 
-      /* ── Manejo de errores detallado ─────────────────────────────────── */
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-
         let errorMessage = errorData.description || errorData.message || 'Error al agregar al carrito';
 
         if (
@@ -940,13 +953,13 @@
         ) {
           errorMessage =
             `Plan de suscripción inválido (ID: ${planId ?? 'no configurado'}). ` +
-            'Verifica en "Selling Plan" del bloque o que el plugin esté activo.';
+            'Verifica el Selling Plan ID en la configuración del bloque.';
         }
 
         if (Array.isArray(errorData.items)) {
           errorData.items.forEach(itemErr => {
             if (itemErr.error) {
-              console.error(`Pronto-Chocho v3 – Error en variante ${itemErr.id}:`, itemErr.error);
+              console.error(`Pronto-Chocho v3 – Error variante ${itemErr.id}:`, itemErr.error);
             }
           });
         }
@@ -954,34 +967,13 @@
         throw new Error(errorMessage);
       }
 
-      /* ── Éxito ───────────────────────────────────────────────────────── */
-      const cartData = await response.json();
-      console.log('Pronto-Chocho v3: Items agregados ✓', cartData);
+      // ── ÉXITO: ir directo al checkout ─────────────────────────────────
+      // No mostramos notificación ni abrimos drawer — la navegación es inmediata.
+      console.log('Pronto-Chocho v3: Items agregados ✓ → redirigiendo a checkout');
+      window.location.href = '/checkout';
 
-      // TAREA 3 – Disparar evento 'change' en los forms del tema para
-      // que ShopifySubscriptionsWidget reconozca el estado actualizado
-      document.querySelectorAll('form[action*="/cart/add"]').forEach(form => {
-        form.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-
-      // Disparar CartAddEvent nativo del tema (product-form.js lo escucha)
-      // Su firma es: new CartAddEvent(cartData, id, details)
-      // Como es un CustomEvent estándar bajo el capó, disparamos en el documento
-      const firstItemId = items[0]?.id?.toString() ?? '';
-      document.dispatchEvent(new CustomEvent('cart-add', {
-        bubbles: true,
-        detail : { cartData, id: firstItemId, source: 'pronto-chocho-v3' },
-      }));
-
-      // TAREA 4 – Abrir carrito (moderno) o recargar (legacy)
-      const drawerMode = openCartDrawer();
-
-      if (drawerMode === 'modern') {
-        showNotification('{{ block.settings.notification_text | default: "¡Productos agregados al carrito!" }}');
-      }
-      // En modo legacy el reload ocurre automáticamente — no hace falta mostrar nada
-
-      // Resetear cantidades
+      // (La ejecución se detiene aquí en la práctica por la redirección,
+      //  pero reseteamos estado por si el navegador mantiene la página en caché)
       products.forEach(p => {
         quantities[p.dataset.variantId] = 0;
         const display  = p.querySelector('[data-quantity]');
@@ -989,12 +981,6 @@
         if (display)  display.textContent = '0';
         if (minusBtn) minusBtn.disabled    = true;
       });
-
-      // Limpiar el selling_plan del form del tema para no interferir
-      // con el formulario nativo del producto
-      syncSellingPlanInputs(null);
-
-      updateDisplay();
 
     } catch (err) {
       console.error('Pronto-Chocho v3 – Error:', err);
@@ -1009,8 +995,9 @@
   /* ─────────────────────────────────────────────────────────────────────────
    * INIT
    * ───────────────────────────────────────────────────────────────────────── */
-  // Sincronizar el plan al cargar (modo suscripción es el default)
-  syncSellingPlanInputs(getActivePlanId());
+  // No llamamos syncSellingPlanInputs() al init: inyectar selling_plan en los
+  // forms del tema en el arranque haría que el plugin procesara el plan de
+  // forma independiente al hacer cualquier submit nativo del producto.
   updateDisplay();
 
   // Re-leer el plan si el plugin lo inicializa de forma asíncrona
@@ -1019,9 +1006,6 @@
     const pluginData = readPluginPlan();
     if (pluginData) {
       console.log('Pronto-Chocho v3: Plugin detectado post-carga, actualizando precios.');
-      if (currentOption === 'subscription') {
-        syncSellingPlanInputs(pluginData.planId);
-      }
       updateDisplay();
       pluginBootObserver.disconnect();
     }
