@@ -1,6 +1,6 @@
 {% comment %}
-  Ka'Chava Style Multi-Product Subscription
-  Combina funcionalidad de selector de productos con estética Ka'Chava
+  Chocho Style Multi-Product Subscription
+  Combina funcionalidad de selector de productos con estética Chocho
 {% endcomment %}
 
 {% assign ai_gen_id = block.id | replace: '_', '' | slice: 0, 8 %}
@@ -41,7 +41,7 @@
     text-align: left;
   }
 
-  /* Grid de Productos - Estilo Ka'Chava */
+  /* Grid de Productos - Estilo Chocho */
   .chocho-subscription__products-{{ ai_gen_id }} {
     margin-bottom: 24px;
   }
@@ -153,7 +153,7 @@
     color: {{ block.settings.text_color }};
   }
 
-  /* Opciones de Compra - Estilo Ka'Chava */
+  /* Opciones de Compra - Estilo Chocho */
   .chocho-subscription__options-{{ ai_gen_id }} {
     display: flex;
     flex-direction: column;
@@ -185,7 +185,7 @@
     background: white;
   }
 
-  /* Suscripción - Colores Ka'Chava */
+  /* Suscripción - Colores Chocho */
   .chocho-subscription__option--subscribe-{{ ai_gen_id }} .chocho-subscription__card-{{ ai_gen_id }} {
     background-color: #FCF3EC;
     border-color: #FAEADE;
@@ -836,7 +836,7 @@
 
 {% schema %}
 {
-  "name": "Ka'Chava Subscription",
+  "name": "Chocho Subscription",
   "settings": [
     {
       "type": "text",
@@ -990,7 +990,7 @@
   ],
   "presets": [
     {
-      "name": "Ka'Chava Subscription"
+      "name": "Chocho Subscription"
     }
   ]
 }
