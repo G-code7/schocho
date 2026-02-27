@@ -497,6 +497,14 @@
     "two_columns_acordion_slider_v2_phmmCR": {
       "type": "two-columns-acordion-slider-v2",
       "blocks": {
+        "accordion_item_fnmnaH": {
+          "type": "accordion_item",
+          "settings": {
+            "image": "shopify://shop_images/5givesback.png",
+            "accordion_title": "Título del paso",
+            "accordion_content": "<p>Descripción detallada de este paso o sección.</p>"
+          }
+        },
         "accordion_item_M6VQET": {
           "type": "accordion_item",
           "settings": {
@@ -535,6 +543,7 @@
         }
       },
       "block_order": [
+        "accordion_item_fnmnaH",
         "accordion_item_M6VQET",
         "accordion_item_3TFRYD",
         "accordion_item_NMFNVf",
