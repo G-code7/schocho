@@ -362,10 +362,10 @@
     border: 2px solid white;
     border-radius: 50%;
     border-top-color: transparent;
-    animation: spin 0.8s linear infinite;
+    animation: chocho-spin 0.8s linear infinite;
   }
 
-  @keyframes spin {
+  @keyframes chocho-spin {
     to { transform: rotate(360deg); }
   }
 
@@ -613,509 +613,330 @@
 <script>
   (function() {
     'use strict';
-    
+
     const blockId = '{{ block_id }}';
     const container = document.querySelector(`[data-chocho-selector="${blockId}"]`);
     if (!container) return;
 
-    // Datos de configuración
-    const discountPercent = {{ block.settings.subscription_discount | default: 15 }};
-    const servingsPerUnit = {{ block.settings.servings_per_unit | default: 15 }};
+    // ─── Configuración ────────────────────────────────────────────────────────
+    const discountPercent  = {{ block.settings.subscription_discount | default: 15 }};
+    const servingsPerUnit  = {{ block.settings.servings_per_unit | default: 15 }};
 
-    // Elementos
-    const options = container.querySelectorAll('[data-option]');
-    const products = container.querySelectorAll('[data-product-id]');
-    const savingsEl = container.querySelector('[data-savings]');
+    /*
+     * selling_plan_id: se lee como string desde Liquid.
+     * Lo convertimos a número entero; si está vacío o no es un número
+     * válido lo dejamos como null para no enviarlo a la API.
+     */
+    const rawSellingPlanId = '{{ block.settings.selling_plan_id | strip }}';
+    const sellingPlanId    = rawSellingPlanId !== '' && !isNaN(rawSellingPlanId)
+                               ? parseInt(rawSellingPlanId, 10)
+                               : null;
+
+    // ─── Elementos del DOM ────────────────────────────────────────────────────
+    const options        = container.querySelectorAll('[data-option]');
+    const products       = container.querySelectorAll('[data-product-id]');
+    const savingsEl      = container.querySelector('[data-savings]');
     const totalCompareEl = container.querySelector('[data-total-compare]');
-    const totalPriceEl = container.querySelector('[data-total-price]');
-    const subPriceEl = container.querySelector('[data-subscription-price]');
+    const totalPriceEl   = container.querySelector('[data-total-price]');
+    const subPriceEl     = container.querySelector('[data-subscription-price]');
     const comparePriceEl = container.querySelector('[data-compare-price]');
-    const pricePerEl = container.querySelector('[data-price-per]');
+    const pricePerEl     = container.querySelector('[data-price-per]');
     const onetimePriceEl = container.querySelector('[data-onetime-price]');
-    const onetimePerEl = container.querySelector('[data-onetime-per]');
-    const submitBtn = container.querySelector('[data-add-to-cart]');
-    const notification = document.querySelector(`[data-chocho-notification]`);
+    const onetimePerEl   = container.querySelector('[data-onetime-per]');
+    const submitBtn      = container.querySelector('[data-add-to-cart]');
+    const notification   = document.querySelector(`[data-chocho-notification]`);
 
-    // Estado
+    // ─── Estado ───────────────────────────────────────────────────────────────
     let currentOption = 'subscription';
-    let quantities = {};
-    let isProcessing = false;
+    let quantities    = {};
+    let isProcessing  = false;
 
-    // Inicializar cantidades
-    products.forEach(p => quantities[p.dataset.variantId] = 0);
+    // Inicializar cantidades en 0
+    products.forEach(p => { quantities[p.dataset.variantId] = 0; });
 
-    // Primer producto como referencia de precio
-    const firstProduct = products[0];
-    const basePrice = firstProduct ? parseInt(firstProduct.dataset.price) : 0;
-    const baseCompare = firstProduct ? parseInt(firstProduct.dataset.compare) : basePrice;
+    // Referencia al PRIMER producto para mostrar el precio unitario en el
+    // encabezado de la opción suscripción (precio representativo).
+    const firstProduct  = products[0];
+    const basePrice     = firstProduct ? parseInt(firstProduct.dataset.price,   10) : 0;
+    const baseCompare   = firstProduct ? parseInt(firstProduct.dataset.compare, 10) : basePrice;
 
+    // ─── Helpers ──────────────────────────────────────────────────────────────
     function formatMoney(cents) {
       return '$' + (cents / 100).toFixed(2);
     }
 
+    // ─── FIX #2 – calculatePrices usa el precio individual de cada producto ──
     function calculatePrices() {
-      const subUnitPrice = Math.round(basePrice * (1 - discountPercent / 100));
+      // Precio unitario representativo (primer producto) para la cabecera
+      const subUnitPrice     = Math.round(basePrice * (1 - discountPercent / 100));
+      const subPerServing    = subUnitPrice / servingsPerUnit;
+      const onetimePerServing = basePrice  / servingsPerUnit;
 
-      let totalQty = 0;
-      let totalRegular = 0;
-      let totalDiscounted = 0;
+      let totalQty        = 0;
+      let totalRegular    = 0;   // suma de precios originales × cantidades
+      let totalDiscounted = 0;   // suma de precios con descuento (o sin él) × cantidades
 
       products.forEach(p => {
-        const qty = quantities[p.dataset.variantId] || 0;
-        const price = parseInt(p.dataset.price);
-        totalQty += qty;
-        totalRegular += price * qty;
-        totalDiscounted += (currentOption === 'subscription' ? Math.round(price * (1 - discountPercent / 100)) : price) * qty;
+        const qty     = quantities[p.dataset.variantId] || 0;
+        // ↓ Se usa el precio de CADA producto, no el global basePrice
+        const price   = parseInt(p.dataset.price,   10);
+        const compare = parseInt(p.dataset.compare, 10);
+
+        totalQty     += qty;
+        totalRegular += compare * qty;   // precio original (tachado) de cada producto
+
+        if (currentOption === 'subscription') {
+          totalDiscounted += Math.round(price * (1 - discountPercent / 100)) * qty;
+        } else {
+          totalDiscounted += price * qty;
+        }
       });
 
       return {
-        subUnit: subUnitPrice,
-        onetimeUnit: basePrice,
-        subPerServing: subUnitPrice / servingsPerUnit,
-        onetimePerServing: basePrice / servingsPerUnit,
-        totalQty: totalQty,
-        totalRegular: totalRegular,
-        totalDiscounted: totalDiscounted,
-        savings: totalRegular - totalDiscounted
+        subUnit        : subUnitPrice,
+        onetimeUnit    : basePrice,
+        subPerServing,
+        onetimePerServing,
+        totalQty,
+        totalRegular,
+        totalDiscounted,
+        savings        : totalRegular - totalDiscounted
       };
     }
 
+    // ─── Actualizar UI ────────────────────────────────────────────────────────
     function updateDisplay() {
       const prices = calculatePrices();
 
-      // Precios de opciones
-      if (subPriceEl) subPriceEl.textContent = formatMoney(prices.subUnit);
+      if (subPriceEl)     subPriceEl.textContent     = formatMoney(prices.subUnit);
       if (comparePriceEl) comparePriceEl.textContent = formatMoney(baseCompare);
-      if (pricePerEl) pricePerEl.textContent = formatMoney(prices.subPerServing);
+      if (pricePerEl)     pricePerEl.textContent     = formatMoney(prices.subPerServing);
       if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
-      if (onetimePerEl) onetimePerEl.textContent = formatMoney(prices.onetimePerServing);
+      if (onetimePerEl)   onetimePerEl.textContent   = formatMoney(prices.onetimePerServing);
 
-      // Totales
-      if (savingsEl) savingsEl.textContent = formatMoney(prices.savings);
+      if (savingsEl)      savingsEl.textContent      = formatMoney(prices.savings);
       if (totalCompareEl) totalCompareEl.textContent = formatMoney(prices.totalRegular);
-      if (totalPriceEl) totalPriceEl.textContent = formatMoney(prices.totalDiscounted);
+      if (totalPriceEl)   totalPriceEl.textContent   = formatMoney(prices.totalDiscounted);
 
-      // Botón
-      const hasItems = prices.totalQty > 0;
-      submitBtn.disabled = !hasItems || isProcessing;
+      const hasItems       = prices.totalQty > 0;
+      submitBtn.disabled   = !hasItems || isProcessing;
       submitBtn.textContent = hasItems
-        ? '{{ block.settings.button_text | default: "Add to Cart" }} - ' + formatMoney(prices.totalDiscounted)
+        ? `{{ block.settings.button_text | default: "Add to Cart" }} — ${formatMoney(prices.totalDiscounted)}`
         : '{{ block.settings.button_text | default: "Add to Cart" }}';
     }
 
-    // Mostrar notificación flotante
-    function showNotification(message) {
+    // ─── Notificación flotante ────────────────────────────────────────────────
+    function showNotification(message, isError = false) {
       if (!notification) return;
-      notification.textContent = message || '{{ block.settings.notification_text | default: "¡Productos agregados al carrito!" }}';
+      notification.textContent = message;
+      notification.style.background = isError
+        ? '#c0392b'
+        : '{{ block.settings.notification_bg | default: "#4A6B1A" }}';
       notification.classList.add('show');
-      setTimeout(() => {
-        notification.classList.remove('show');
-      }, 3000);
+      setTimeout(() => notification.classList.remove('show'), isError ? 5000 : 3000);
     }
 
-    // Actualizar contador del carrito (bubble)
-    function updateCartCounter(cart) {
-      // Selectores comunes de contadores de carrito en Shopify
-      const selectors = [
-        '.cart-count',
-        '.cart-bubble', 
-        '[data-cart-count]',
-        '.header__icon--cart .badge',
-        '.cart-icon__bubble',
-        '#CartCount',
-        '.js-cart-count',
-        '.minicart-count',
-        '.header-cart__count',
-        '.cart-badge',
-        '.cart-quantity',
-        '.cart-counter',
-        '.cart-item-count',
-        '.header__cart-count',
-        '.cart-link__count',
-        '.site-header__cart-count',
-        '.header-cart-count',
-        '[data-cart-item-count]',
-        '.cart-count-bubble'
-      ];
-      
-      const bubbles = document.querySelectorAll(selectors.join(', '));
-      
-      bubbles.forEach(bubble => {
-        bubble.textContent = cart.item_count;
-        if (bubble.hasAttribute('aria-label')) {
-          bubble.setAttribute('aria-label', cart.item_count + ' items');
-        }
-        // Forzar visibilidad
-        bubble.style.display = 'inline-flex';
-        bubble.style.visibility = 'visible';
-        bubble.style.opacity = '1';
-      });
-
-      // También actualizar data attributes en el body para temas que usan JS para contar
-      document.body.setAttribute('data-cart-count', cart.item_count);
-      document.body.dispatchEvent(new CustomEvent('cart:count:updated', { 
-        detail: { count: cart.item_count } 
-      }));
-    }
-
-    // Abrir cart drawer con múltiples métodos de respaldo
+    // ─── FIX #4 – openCartDrawer limpiado para este tema ─────────────────────
+    // El tema usa <cart-drawer-component> con el método open() definido
+    // en cart-drawer.js (extiende DialogComponent → showDialog).
     function openCartDrawer() {
-      console.log('Pronto-Chocho: Intentando abrir cart drawer...');
-      
-      // Método 1: cart-drawer-component (Web Components - Dawn 2.0+)
-      const cartDrawer = document.querySelector('cart-drawer');
-      if (cartDrawer) {
-        console.log('Encontrado: cart-drawer');
-        if (typeof cartDrawer.open === 'function') {
-          cartDrawer.open();
-          return true;
-        }
-        if (cartDrawer.showModal) {
-          cartDrawer.showModal();
-          return true;
-        }
-        // Intentar click en el trigger si existe
-        const trigger = cartDrawer.querySelector('[data-drawer-trigger]') || 
-                       document.querySelector('[data-cart-drawer-trigger]') ||
-                       document.querySelector('a[href="/cart"]');
-        if (trigger) {
-          trigger.click();
-          return true;
-        }
+      const cartDrawerEl = document.querySelector('cart-drawer-component');
+      if (cartDrawerEl && typeof cartDrawerEl.open === 'function') {
+        cartDrawerEl.open();
+        return true;
       }
-
-      // Método 2: cart-drawer-component (nombre alternativo)
-      const cartDrawerComponent = document.querySelector('cart-drawer-component');
-      if (cartDrawerComponent) {
-        console.log('Encontrado: cart-drawer-component');
-        if (typeof cartDrawerComponent.open === 'function') {
-          cartDrawerComponent.open();
-          return true;
-        }
-        if (cartDrawerComponent.showDialog) {
-          cartDrawerComponent.showDialog();
-          return true;
-        }
-      }
-
-      // Método 3: Clases comunes de drawers
-      const drawerSelectors = [
-        '.drawer--cart',
-        '.cart-drawer',
-        '.mini-cart',
-        '.minicart',
-        '.slide-cart',
-        '.side-cart',
-        '.ajax-cart',
-        '.modal--cart',
-        '#CartDrawer',
-        '#cart-drawer',
-        '#MiniCart',
-        '#minicart',
-        '[data-cart-drawer]',
-        '[data-drawer="cart"]',
-        '[data-minicart]'
-      ];
-      
-      for (const selector of drawerSelectors) {
-        const drawer = document.querySelector(selector);
-        if (drawer) {
-          console.log('Encontrado drawer con selector:', selector);
-          
-          // Añadir clase active/open
-          drawer.classList.add('is-open', 'active', 'open', 'drawer--visible');
-          drawer.setAttribute('open', '');
-          drawer.setAttribute('data-open', 'true');
-          
-          // Intentar métodos comunes
-          if (typeof drawer.open === 'function') drawer.open();
-          if (typeof drawer.show === 'function') drawer.show();
-          if (drawer.showModal) drawer.showModal();
-          
-          // Disparar eventos
-          drawer.dispatchEvent(new CustomEvent('drawer:open'));
-          drawer.dispatchEvent(new CustomEvent('cart:open'));
-          
-          // Si tiene overlay, mostrarlo
-          const overlay = document.querySelector('.drawer-overlay, .cart-overlay, .modal-overlay, [data-overlay]');
-          if (overlay) {
-            overlay.classList.add('is-visible', 'active');
-            overlay.style.display = 'block';
-          }
-          
-          return true;
-        }
-      }
-
-      // Método 4: Buscar botones de carrito y hacer click
-      const cartButtons = [
-        'a[href="/cart"]',
-        'a[href="/cart/"]',
-        '[data-cart-trigger]',
-        '[data-cart-toggle]',
-        '[data-open-cart]',
-        '.header__icon--cart',
-        '.header-cart-btn',
-        '.cart-toggle',
-        '.cart-trigger',
-        '.minicart-trigger',
-        'button[aria-label*="cart" i]',
-        'button[aria-label*="carrito" i]'
-      ];
-      
-      for (const selector of cartButtons) {
-        const btn = document.querySelector(selector);
-        if (btn) {
-          console.log('Click en botón de carrito:', selector);
-          btn.click();
-          return true;
-        }
-      }
-
-      // Método 5: Disparar eventos globales que los temas escuchan
-      console.log('Disparando eventos globales...');
-      document.dispatchEvent(new CustomEvent('cart:toggle', { bubbles: true }));
-      document.dispatchEvent(new CustomEvent('cart:open', { bubbles: true }));
-      document.dispatchEvent(new CustomEvent('minicart:open', { bubbles: true }));
-      document.dispatchEvent(new CustomEvent('ajaxCart:open', { bubbles: true }));
-      
-      // Método 6: Shopify Cart API (para temas que usan la API de Shopify)
-      if (window.Shopify && window.Shopify.theme && window.Shopify.theme.settings) {
-        // Forzar actualización del carrito en temas Shopify
-        document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { 
-          bubbles: true,
-          detail: { source: 'pronto-chocho' }
-        }));
-      }
-
-      console.log('No se encontró cart drawer específico, redirigiendo...');
       return false;
     }
 
-    // Refrescar contenido del cart drawer
-    function refreshCartDrawer() {
-      // Intentar encontrar el contenedor del cart y recargar su contenido
-      const cartSelectors = [
-        'cart-drawer',
-        'cart-drawer-component', 
-        '.drawer--cart',
-        '.cart-drawer',
-        '.mini-cart',
-        '#CartDrawer',
-        '[data-cart-drawer]',
-        '.ajax-cart__content',
-        '.minicart-content',
-        '.cart-drawer__content',
-        '[data-cart-content]'
-      ];
-
-      // Disparar eventos de actualización que los temas escuchan
-      const refreshEvents = [
-        'cart:refresh',
-        'cart:updated',
-        'cart:change',
-        'cart:build',
-        'cart:reload',
-        'ajaxCart:updated',
-        'minicart:updated'
-      ];
-
-      refreshEvents.forEach(eventName => {
-        document.dispatchEvent(new CustomEvent(eventName, { 
-          bubbles: true,
-          detail: { source: 'pronto-chocho', blockId: blockId }
-        }));
-      });
-
-      // Intentar actualizar secciones de Shopify si está disponible
-      if (window.Shopify && window.Shopify.designMode) {
-        // En editor de Shopify, recargar secciones
-        document.dispatchEvent(new CustomEvent('shopify:section:load'));
-      }
-    }
-
-    // Event listeners
-
-    // Cambio de opción (subscription vs onetime)
+    // ─── Event listeners: cambio de opción ───────────────────────────────────
     options.forEach(opt => {
       opt.addEventListener('click', function(e) {
-        // Prevenir que el click en el input dispare dos veces
         if (e.target.tagName === 'INPUT') return;
-        
-        currentOption = this.dataset.option;
 
+        currentOption = this.dataset.option;
         options.forEach(o => {
           const isActive = o === this;
           o.classList.toggle('active', isActive);
           const input = o.querySelector('input');
           if (input) input.checked = isActive;
         });
-
         updateDisplay();
       });
     });
 
-    // Cantidades
+    // ─── Event listeners: cantidades ─────────────────────────────────────────
     products.forEach(product => {
       const variantId = product.dataset.variantId;
-      const minusBtn = product.querySelector('[data-qty="minus"]');
-      const plusBtn = product.querySelector('[data-qty="plus"]');
-      const display = product.querySelector('[data-quantity]');
+      const minusBtn  = product.querySelector('[data-qty="minus"]');
+      const plusBtn   = product.querySelector('[data-qty="plus"]');
+      const display   = product.querySelector('[data-quantity]');
 
-      if (minusBtn) {
-        minusBtn.addEventListener('click', () => {
-          const current = quantities[variantId] || 0;
-          if (current > 0) {
-            quantities[variantId] = current - 1;
-            display.textContent = quantities[variantId];
-            minusBtn.disabled = quantities[variantId] === 0;
-            updateDisplay();
-          }
-        });
-      }
-
-      if (plusBtn) {
-        plusBtn.addEventListener('click', () => {
-          const current = quantities[variantId] || 0;
-          quantities[variantId] = current + 1;
-          display.textContent = quantities[variantId];
-          if (minusBtn) minusBtn.disabled = false;
+      minusBtn?.addEventListener('click', () => {
+        const current = quantities[variantId] || 0;
+        if (current > 0) {
+          quantities[variantId] = current - 1;
+          display.textContent   = quantities[variantId];
+          minusBtn.disabled     = quantities[variantId] === 0;
           updateDisplay();
-        });
-      }
+        }
+      });
+
+      plusBtn?.addEventListener('click', () => {
+        quantities[variantId] = (quantities[variantId] || 0) + 1;
+        display.textContent   = quantities[variantId];
+        if (minusBtn) minusBtn.disabled = false;
+        updateDisplay();
+      });
     });
 
-    // Add to cart
+    // ─── Add to cart ─────────────────────────────────────────────────────────
     submitBtn.addEventListener('click', async () => {
       if (isProcessing) return;
-      
-      const items = [];
-      const sellingPlanId = '{{ block.settings.selling_plan_id }}';
 
+      // ── FIX #1 – Construir items con selling_plan validado ──────────────────
+      const isSubscription = currentOption === 'subscription';
+
+      // Advertir en consola si el usuario eligió suscripción pero no hay plan
+      if (isSubscription && !sellingPlanId) {
+        console.warn(
+          'Pronto-Chocho: currentOption es "subscription" pero selling_plan_id ' +
+          'está vacío o no es válido en la configuración del bloque. ' +
+          'Se añadirá como compra única.'
+        );
+      }
+
+      const items = [];
       products.forEach(p => {
-        const qty = quantities[p.dataset.variantId];
-        if (qty > 0) {
-          const item = {
-            id: parseInt(p.dataset.variantId),
-            quantity: qty
+        const qty = quantities[p.dataset.variantId] || 0;
+        if (qty <= 0) return;
+
+        const item = {
+          id      : parseInt(p.dataset.variantId, 10),
+          quantity: qty
+        };
+
+        // Solo añadir selling_plan si:
+        //   a) el usuario eligió suscripción
+        //   b) sellingPlanId es un número entero válido (no null)
+        if (isSubscription && sellingPlanId !== null) {
+          item.selling_plan = sellingPlanId;
+          item.properties   = {
+            _subscription : 'true',
+            _purchase_type: 'subscription',
+            _added_by     : 'pronto-chocho-v2'
           };
-          if (currentOption === 'subscription' && sellingPlanId && sellingPlanId !== '') {
-            item.selling_plan = parseInt(sellingPlanId);
-            item.properties = {
-              '_subscription': 'true',
-              '_purchase_type': 'subscription',
-              '_added_by': 'pronto-chocho-v2'
-            };
-          }
-          items.push(item);
         }
+
+        items.push(item);
       });
 
       if (items.length === 0) return;
 
-      isProcessing = true;
+      isProcessing         = true;
+      submitBtn.disabled   = true;
       submitBtn.classList.add('loading');
-      submitBtn.disabled = true;
 
       try {
-        console.log('Pronto-Chocho v2: Agregando items al carrito...', items);
-        
         const response = await fetch('/cart/add.js', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({ items })
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body   : JSON.stringify({ items })
         });
 
+        // ── FIX #3 – Manejo de errores detallado ────────────────────────────
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.description || 'Error adding to cart');
+          const errorData = await response.json().catch(() => ({}));
+
+          /*
+           * Shopify devuelve errores de selling_plan con status 422.
+           * La respuesta incluye `description` con el mensaje legible
+           * y a veces `items` con errores por ítem específico.
+           *
+           * Ejemplo de respuesta de error:
+           * {
+           *   "status": 422,
+           *   "message": "Cart Error",
+           *   "description": "The selling plan is not valid for product variant ...",
+           *   "items": [{ "id": 123, "selling_plan": 456, "error": "..." }]
+           * }
+           */
+          let errorMessage = errorData.description || errorData.message || 'Error al agregar al carrito';
+
+          // Detectar error específico de selling_plan para dar instrucciones claras
+          if (
+            response.status === 422 &&
+            (
+              errorMessage.toLowerCase().includes('selling plan') ||
+              errorMessage.toLowerCase().includes('subscription')
+            )
+          ) {
+            errorMessage =
+              `Plan de suscripción inválido (ID: ${sellingPlanId}). ` +
+              'Verifica que el Selling Plan ID sea correcto en la configuración del bloque ' +
+              'y que el producto lo soporte.';
+          }
+
+          // Si hay errores por ítem, mostrarlos en consola para debugging
+          if (Array.isArray(errorData.items)) {
+            errorData.items.forEach(itemError => {
+              if (itemError.error) {
+                console.error(
+                  `Pronto-Chocho – Error en variante ${itemError.id}:`,
+                  itemError.error
+                );
+              }
+            });
+          }
+
+          throw new Error(errorMessage);
         }
 
+        // ── Éxito ────────────────────────────────────────────────────────────
         const cartData = await response.json();
-        console.log('Pronto-Chocho v2: Items agregados correctamente', cartData);
+        console.log('Pronto-Chocho v2: Items agregados', cartData);
 
-        // ✅ SECUENCIA DE ACTUALIZACIÓN DEL CARRITO
-        
-        // 1. Actualizar contador inmediatamente
-        try {
-          const cartResponse = await fetch('/cart.js');
-          const cart = await cartResponse.json();
-          updateCartCounter(cart);
-        } catch (e) {
-          console.warn('No se pudo actualizar contador:', e);
-        }
+        // Disparar el evento nativo de CartAddEvent que escucha cart-drawer-component
+        // Esto es suficiente para que el tema refresque y abra el drawer.
+        document.dispatchEvent(new CustomEvent('cart-add', { bubbles: true, detail: cartData }));
 
-        // 2. Disparar TODOS los eventos que los temas pueden escuchar
-        const events = [
-          { name: 'cart:change', detail: cartData },
-          { name: 'cart:updated', detail: cartData },
-          { name: 'cart:refresh', detail: { source: 'pronto-chocho' } },
-          { name: 'cart:build', detail: cartData },
-          { name: 'cart:add', detail: cartData },
-          { name: 'ajaxCart:updated', detail: cartData },
-          { name: 'minicart:updated', detail: cartData }
-        ];
-
-        events.forEach(event => {
-          document.dispatchEvent(new CustomEvent(event.name, { 
-            bubbles: true, 
-            detail: event.detail 
-          }));
-          // También en el container por si acaso
-          container.dispatchEvent(new CustomEvent(event.name, { 
-            bubbles: true, 
-            detail: event.detail 
-          }));
-        });
-
-        // 3. Refrescar el drawer
-        refreshCartDrawer();
-
-        // 4. Pequeña pausa para que el tema procese los eventos
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // 5. Intentar abrir el drawer
+        // Abrir el cart drawer
         const drawerOpened = openCartDrawer();
 
-        // 6. Si no se pudo abrir el drawer, mostrar notificación
         if (!drawerOpened) {
           showNotification('¡Productos agregados! Redirigiendo al carrito...');
-          setTimeout(() => {
-            window.location.href = '/cart';
-          }, 1500);
+          setTimeout(() => { window.location.href = '/cart'; }, 1500);
         } else {
-          showNotification('¡Productos agregados al carrito!');
+          showNotification('{{ block.settings.notification_text | default: "¡Productos agregados al carrito!" }}');
         }
 
-        // 7. Resetear cantidades después de agregar
+        // Resetear cantidades
         products.forEach(p => {
           quantities[p.dataset.variantId] = 0;
-          const display = p.querySelector('[data-quantity]');
+          const display  = p.querySelector('[data-quantity]');
           const minusBtn = p.querySelector('[data-qty="minus"]');
-          if (display) display.textContent = '0';
-          if (minusBtn) minusBtn.disabled = true;
+          if (display)  display.textContent = '0';
+          if (minusBtn) minusBtn.disabled    = true;
         });
         updateDisplay();
 
       } catch (err) {
-        console.error('Pronto-Chocho v2 - Error:', err);
-        showNotification('Error: ' + (err.message || 'No se pudieron agregar los productos'));
+        console.error('Pronto-Chocho v2 – Error:', err);
+        showNotification(err.message || 'No se pudieron agregar los productos', true);
       } finally {
         isProcessing = false;
         submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
-        updateDisplay();
+        updateDisplay(); // re-evalúa disabled según cantidades actuales
       }
     });
 
-    // Inicializar
+    // ─── Init ─────────────────────────────────────────────────────────────────
     updateDisplay();
-    
-    // Debug: Log de versión
-    console.log('Pronto-Chocho v2 inicializado - Block ID:', blockId);
+    console.log(
+      `Pronto-Chocho v2 – Block: ${blockId} | ` +
+      `Selling Plan ID: ${sellingPlanId ?? 'NO CONFIGURADO'} | ` +
+      `Descuento: ${discountPercent}%`
+    );
+
   })();
 </script>
 
@@ -1257,7 +1078,7 @@
       "type": "text",
       "id": "selling_plan_id",
       "label": "Selling Plan ID",
-      "info": "ID del plan de suscripción de Shopify"
+      "info": "ID numérico del plan de suscripción de Shopify. Déjalo vacío para deshabilitar suscripciones."
     },
     {
       "type": "header",
