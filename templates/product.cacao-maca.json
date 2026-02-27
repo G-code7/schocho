@@ -263,7 +263,7 @@
               },
               "blocks": {
                 "subscription_purchase_v3_JeL63D": {
-                  "type": "subscription-purchase-V3",
+                  "type": "subscription-purchase-v3",
                   "name": "Pronto-Chocho Selector v3",
                   "settings": {
                     "sub_title": "Subscribe & Save",
@@ -289,128 +289,21 @@
                     "savings_label": "You're saving",
                     "button_text": "Add to Cart",
                     "notification_text": "¡Productos agregados al carrito!",
-                    "notification_bg": "#4A6B1A",
-                    "badge_bg": "#4A6B1A",
+                    "notification_bg": "#4a6b1a",
+                    "badge_bg": "#4a6b1a",
                     "badge_text": "#ffffff",
-                    "active_border": "#4A6B1A",
-                    "active_bg": "#FCF3EC",
-                    "price_color": "#4A6B1A",
+                    "active_border": "#4a6b1a",
+                    "active_bg": "#fcf3ec",
+                    "price_color": "#4a6b1a",
                     "button_bg": "#1a1a1a",
                     "button_text_color": "#ffffff",
                     "button_hover": "#333333"
                   },
                   "blocks": {}
-                },
-                "ai_gen_block_84359c7_RQVtkf": {
-                  "type": "ai_gen_block_84359c7",
-                  "name": "Chocho Style Selector",
-                  "settings": {
-                    "sub_title": "Subscribe & Save",
-                    "sub_subtitle": "15 servings per bag",
-                    "subscription_discount": 15,
-                    "show_benefits": true,
-                    "benefit_1": "Save $10/bag on every order",
-                    "benefit_2": "Easily change your quantities",
-                    "benefit_3": "Cancel any time",
-                    "benefit_4": "Pre-shipment reminders",
-                    "onetime_title": "One-time purchase",
-                    "onetime_subtitle": "15 servings per bag",
-                    "flavors_label": "Choose your flavors",
-                    "product_1": "chocho-pure-ingredient",
-                    "product_2": "chocho-cacao-spirulina-maca",
-                    "product_3": "chocho-ginger-turmeric-black-pepper-powder-blend",
-                    "product_4": "",
-                    "product_5": "",
-                    "servings_text": "15 servings",
-                    "per_text": "serving",
-                    "servings_per_unit": 15,
-                    "selling_plan_id": "",
-                    "savings_label": "You're saving",
-                    "button_text": "Agregar al carrito",
-                    "badge_bg": "#3e2563",
-                    "active_border": "#3e2563",
-                    "active_bg": "#fcf3ec",
-                    "price_color": "#3e2563",
-                    "button_bg": "#ffffff"
-                  },
-                  "blocks": {}
-                },
-                "subscriptions_app_block_8awJjj": {
-                  "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
-                  "settings": {
-                    "color_text_body": "#6d2514",
-                    "dividers_color": "#e7c9c3",
-                    "bacgkround_color": "#f6f3ed",
-                    "border_thickness": 1,
-                    "border_radius": 12,
-                    "subscription_policy_url": "shopify://policies/privacy-policy",
-                    "product": "{{ closest.product }}"
-                  }
-                },
-                "price_fbReaa": {
-                  "type": "price",
-                  "settings": {
-                    "show_sale_price_first": true,
-                    "show_installments": true,
-                    "show_tax_info": true,
-                    "type_preset": "custom",
-                    "width": "100%",
-                    "alignment": "left",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1.25rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "color": "var(--color-foreground)",
-                    "padding-block-start": 0,
-                    "padding-block-end": 10,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "buy_buttons_AqCnic": {
-                  "type": "buy-buttons",
-                  "settings": {
-                    "stacking": false,
-                    "show_pickup_availability": false,
-                    "gift_card_form": true,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {
-                    "quantity": {
-                      "type": "quantity",
-                      "static": true,
-                      "settings": {},
-                      "blocks": {}
-                    },
-                    "add-to-cart": {
-                      "type": "add-to-cart",
-                      "static": true,
-                      "settings": {
-                        "style_class": "button-secondary"
-                      },
-                      "blocks": {}
-                    },
-                    "accelerated-checkout": {
-                      "type": "accelerated-checkout",
-                      "static": true,
-                      "settings": {},
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": []
                 }
               },
               "block_order": [
-                "subscription_purchase_v3_JeL63D",
-                "ai_gen_block_84359c7_RQVtkf",
-                "subscriptions_app_block_8awJjj",
-                "price_fbReaa",
-                "buy_buttons_AqCnic"
+                "subscription_purchase_v3_JeL63D"
               ]
             },
             "group_8ePU6U": {
