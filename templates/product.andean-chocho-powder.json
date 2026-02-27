@@ -265,9 +265,9 @@
                 "subscriptions_app_block_XEr8Nw": {
                   "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
                   "settings": {
-                    "color_text_body": "#6D7175",
-                    "dividers_color": "#8F8D8D",
-                    "bacgkround_color": "#FFFFFF",
+                    "color_text_body": "#6d7175",
+                    "dividers_color": "#8f8d8d",
+                    "bacgkround_color": "#ffffff",
                     "border_thickness": 1,
                     "border_radius": 0,
                     "subscription_policy_url": "",
@@ -1411,86 +1411,6 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "section_Kc4ing": {
-      "type": "_blocks",
-      "blocks": {
-        "accordion_thaTc8": {
-          "type": "accordion",
-          "name": "t:names.accordion",
-          "settings": {
-            "max_width": 800,
-            "container_padding": 20,
-            "section_padding_y": 40,
-            "section_padding_y_mobile": 30,
-            "section_gap": 30,
-            "section_title": "Frequently Asked Questions",
-            "section_title_size": 28,
-            "section_title_weight": "600",
-            "section_title_uppercase": false,
-            "header_align": "left",
-            "background_color": "#f2efea",
-            "title_color": "#371e54",
-            "text_color": "#2b1344",
-            "border_color": "#dfd8e6",
-            "icon_color": "#371e54",
-            "title_size": 16,
-            "title_weight": "500",
-            "content_size": 15,
-            "item_padding_y": 18,
-            "border_width": 1,
-            "show_top_border": false,
-            "icon_size": 20,
-            "icon_thickness": 2,
-            "single_open": true,
-            "first_open": false,
-            "faq_1_question": "What makes Andean Chocho different from other plant proteins?",
-            "faq_1_answer": "<p>Unlike isolates or blends, Pronto Chocho is a single-ingredient, whole-food protein that naturally contains fiber, healthy fats, and 9/9 essential amino acids.</p>",
-            "faq_2_question": "Is Pronto Chocho easy to digest?",
-            "faq_2_answer": "<p>Yes; we use traditional Andean methods to reduce naturally occurring lectins, making it a \"gut-smart\" protein that supports digestive comfort without the bloating often caused by pea or soy.</p>",
-            "faq_3_question": "Are there any sweeteners, fillers, or gums added?",
-            "faq_3_answer": "<p>None at all—our philosophy is \"Nothing added, nothing removed,\" ensuring you get clean, minimally processed nourishment without additives or ultra-processing.</p>",
-            "faq_4_question": "Is this product safe for common food sensitivities?",
-            "faq_4_answer": "<p>Absolutely; all our products are naturally gluten-free, soy-free, dairy-free, pea-free, and non-GMO.</p>",
-            "faq_5_question": "How should I use Pronto Chocho in my daily routine?",
-            "faq_5_answer": "<p>Due to its clean and versatile nature, it blends seamlessly into smoothies, coffee, morning bowls, or even baking recipes without altering the texture.</p>",
-            "faq_6_question": "",
-            "faq_6_answer": ""
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "accordion_thaTc8"
-      ],
-      "name": "t:names.faq_section",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 50,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "scheme-1",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
         "padding-block-start": 80,
         "padding-block-end": 80
       }
@@ -1501,7 +1421,6 @@
     "marquee_GX3Xqm",
     "blocks_wy8CWj",
     "hero_8wt9xX",
-    "section_BhP8Fy",
-    "section_Kc4ing"
+    "section_BhP8Fy"
   ]
 }
