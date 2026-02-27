@@ -337,7 +337,6 @@
                 },
                 "subscriptions_app_block_8awJjj": {
                   "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
-                  "disabled": true,
                   "settings": {
                     "color_text_body": "#6d2514",
                     "dividers_color": "#e7c9c3",
@@ -350,7 +349,6 @@
                 },
                 "price_fbReaa": {
                   "type": "price",
-                  "disabled": true,
                   "settings": {
                     "show_sale_price_first": true,
                     "show_installments": true,
@@ -373,7 +371,6 @@
                 },
                 "buy_buttons_AqCnic": {
                   "type": "buy-buttons",
-                  "disabled": true,
                   "settings": {
                     "stacking": false,
                     "show_pickup_availability": false,
