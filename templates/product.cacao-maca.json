@@ -234,9 +234,9 @@
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 15,
-                "width": "fill",
+                "width": "fit-content",
                 "custom_width": 80,
-                "width_mobile": "fill",
+                "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fit",
                 "custom_height": 100,
@@ -264,6 +264,7 @@
               "blocks": {
                 "ai_gen_block_84359c7_RQVtkf": {
                   "type": "ai_gen_block_84359c7",
+                  "name": "Chocho Style Selector",
                   "settings": {
                     "sub_title": "Subscribe & Save",
                     "sub_subtitle": "15 servings per bag",
