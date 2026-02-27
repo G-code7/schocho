@@ -262,12 +262,12 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "subscription_purchase_v2_jEbMhC": {
-                  "type": "subscription-purchase-V2",
-                  "name": "Pronto-Chocho Selector v2",
+                "subscription_purchase_v3_JeL63D": {
+                  "type": "subscription-purchase-V3",
+                  "name": "Pronto-Chocho Selector v3",
                   "settings": {
                     "sub_title": "Subscribe & Save",
-                    "sub_subtitle": "15 servings per bag",
+                    "sub_subtitle": "16 servings per bag",
                     "subscription_discount": 15,
                     "show_benefits": true,
                     "benefit_1": "Save money on every order",
@@ -275,7 +275,7 @@
                     "benefit_3": "Cancel any time",
                     "benefit_4": "Pre-shipment reminders",
                     "onetime_title": "One-time purchase",
-                    "onetime_subtitle": "16 servings per bag",
+                    "onetime_subtitle": "15 servings per bag",
                     "flavors_label": "Choose your flavors",
                     "product_1": "chocho-ginger-turmeric-black-pepper-powder-blend",
                     "product_2": "chocho-pure-ingredient",
@@ -284,8 +284,8 @@
                     "product_5": "",
                     "servings_text": "16 servings",
                     "per_text": "serving",
-                    "servings_per_unit": 16,
-                    "selling_plan_id": "",
+                    "servings_per_unit": 15,
+                    "selling_plan_id": "1575059648",
                     "savings_label": "You're saving",
                     "button_text": "Add to Cart",
                     "notification_text": "¡Productos agregados al carrito!",
@@ -406,7 +406,7 @@
                 }
               },
               "block_order": [
-                "subscription_purchase_v2_jEbMhC",
+                "subscription_purchase_v3_JeL63D",
                 "ai_gen_block_84359c7_RQVtkf",
                 "subscriptions_app_block_8awJjj",
                 "price_fbReaa",
