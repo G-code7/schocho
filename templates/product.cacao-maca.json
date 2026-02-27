@@ -262,6 +262,34 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "subscription_purchase_v2_TDBgRL": {
+                  "type": "subscription-purchase-V2",
+                  "name": "Chocho Subscription",
+                  "settings": {
+                    "title": "Superblend Shake",
+                    "products_title": "Choose your favorite flavors:",
+                    "product_1": "",
+                    "product_2": "",
+                    "product_3": "",
+                    "product_4": "",
+                    "product_5": "",
+                    "product_6": "",
+                    "show_best_seller_badge": true,
+                    "show_benefits": true,
+                    "show_trust_badges": true,
+                    "subscribe_title": "Subscribe & Save",
+                    "servings_text": "15 servings per bag",
+                    "per_serving_sub": "$3.99 per serving",
+                    "onetime_title": "One-time purchase",
+                    "per_serving_onetime": "$4.66 per serving",
+                    "button_text": "Add to Cart",
+                    "badge_1_text": "Money-Back Guarantee",
+                    "badge_2_text": "Secure Checkout",
+                    "badge_3_text": "Fast Shipping",
+                    "text_color": "#2A2A2A"
+                  },
+                  "blocks": {}
+                },
                 "ai_gen_block_84359c7_RQVtkf": {
                   "type": "ai_gen_block_84359c7",
                   "name": "Chocho Style Selector",
@@ -368,6 +396,7 @@
                 }
               },
               "block_order": [
+                "subscription_purchase_v2_TDBgRL",
                 "ai_gen_block_84359c7_RQVtkf",
                 "subscriptions_app_block_8awJjj",
                 "price_fbReaa",
