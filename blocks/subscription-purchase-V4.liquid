@@ -1,7 +1,6 @@
 {% doc %}
-  Pronto-Chocho Multi-Product Selector v3 - INTEGRACIÓN WEB COMPONENTS
-  Integración nativa con cart-drawer-component y ThemeEvents
-  Compatible con @theme/events y sistema de eventos del tema
+  Pronto-Chocho Multi-Product Selector v3 - FINAL INTEGRADO
+  Integración nativa con Section Rendering y ThemeEvents
 {% enddoc %}
 {% assign block_id = block.id | replace: '_', '' | downcase %}
 
@@ -572,18 +571,15 @@
 
   /* ─────────────────────────────────────────────────────────────────────────
    * THEME EVENTS INTEGRATION
-   * Detectar si el tema usa ThemeEvents o eventos nativos
    * ───────────────────────────────────────────────────────────────────────── */
   const ThemeEvents = window.ThemeEvents || (window.theme && window.theme.events) || null;
   
   function dispatchThemeEvent(eventName, detail) {
-    // Intentar ThemeEvents primero (si existe)
     if (ThemeEvents && typeof ThemeEvents.publish === 'function') {
       ThemeEvents.publish(eventName, detail);
       return;
     }
     
-    // Fallback a CustomEvent estándar
     document.dispatchEvent(new CustomEvent(eventName, {
       bubbles: true,
       detail: detail
@@ -741,36 +737,91 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
-   * CART DRAWER INTEGRATION
-   * Múltiples estrategias para compatibilidad con diferentes temas
+   * SECCIONES PARA RENDERING
+   * CRÍTICO: Obtener todos los section IDs de cart-items-component
    * ───────────────────────────────────────────────────────────────────────── */
-  function refreshCartDrawer() {
-    // Estrategia 1: Evento cart:refresh (tema moderno)
-    document.dispatchEvent(new CustomEvent('cart:refresh', { 
-      bubbles: true,
-      detail: { source: 'pronto-chocho-v3' }
-    }));
+  function getCartSectionIds() {
+    const sectionIds = new Set();
     
-    // Estrategia 2: Evento theme:cart:updated (algunos temas)
-    document.dispatchEvent(new CustomEvent('theme:cart:updated', { 
-      bubbles: true,
-      detail: { source: 'pronto-chocho-v3' }
-    }));
-    
-    // Estrategia 3: Llamar a método refresh del web component si existe
-    const cartDrawer = document.querySelector('cart-drawer-component');
-    if (cartDrawer) {
-      // Intentar múltiples métodos posibles
-      if (typeof cartDrawer.refresh === 'function') {
-        cartDrawer.refresh();
-      } else if (typeof cartDrawer.updateCart === 'function') {
-        cartDrawer.updateCart();
-      } else if (typeof cartDrawer.render === 'function') {
-        cartDrawer.render();
+    // Buscar todos los cart-items-component y obtener sus section IDs
+    document.querySelectorAll('cart-items-component').forEach(component => {
+      if (component.dataset.sectionId) {
+        sectionIds.add(component.dataset.sectionId);
+      }
+    });
+
+    // Si no hay componentes visibles, usar el section ID del contexto actual
+    if (sectionIds.size === 0) {
+      // Intentar obtener del section padre más cercano
+      const parentSection = container.closest('.shopify-section');
+      if (parentSection && parentSection.id) {
+        // Extraer el ID numérico del section (formato: shopify-section-template--XXXXX__...)
+        const sectionMatch = parentSection.id.match(/template--(\d+)/);
+        if (sectionMatch) {
+          sectionIds.add(`template--${sectionMatch[1]}__cart-items`);
+        }
       }
     }
+
+    return Array.from(sectionIds);
   }
 
+  /* ─────────────────────────────────────────────────────────────────────────
+   * ACTUALIZAR CART DRAWER
+   * Usa el mismo patrón que product-form.js: sectionRenderer + morphSection
+   * ───────────────────────────────────────────────────────────────────────── */
+  function refreshCartSections(sections) {
+    if (!sections) return;
+
+    // Intentar usar sectionRenderer del tema si está disponible
+    const sectionRenderer = window.theme?.sectionRenderer || window.sectionRenderer;
+    
+    if (sectionRenderer && typeof sectionRenderer.renderSection === 'function') {
+      Object.keys(sections).forEach(sectionId => {
+        sectionRenderer.renderSection(sectionId, { cache: false });
+      });
+      return;
+    }
+
+    // Fallback: usar morphSection si está disponible
+    const morphSection = window.theme?.morphSection || window.morphSection;
+    
+    if (morphSection && typeof morphSection === 'function') {
+      Object.keys(sections).forEach(sectionId => {
+        morphSection(sectionId, sections[sectionId]);
+      });
+      return;
+    }
+
+    // Último fallback: actualizar manualmente el DOM
+    Object.keys(sections).forEach(sectionId => {
+      const html = sections[sectionId];
+      if (!html) return;
+
+      // Parsear el HTML nuevo
+      const parser = new DOMParser();
+      const newDoc = parser.parseFromString(html, 'text/html');
+      const newContent = newDoc.body.firstElementChild;
+
+      // Buscar el elemento existente por data-section-id
+      const existingElements = document.querySelectorAll(`[data-section-id="${sectionId}"]`);
+      
+      existingElements.forEach(el => {
+        if (el && newContent) {
+          // Usar morph si está disponible, o reemplazo simple
+          if (window.theme?.morph && typeof window.theme.morph === 'function') {
+            window.theme.morph(el, newContent);
+          } else {
+            el.innerHTML = newContent.innerHTML;
+          }
+        }
+      });
+    });
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * ABRIR CART DRAWER
+   * ───────────────────────────────────────────────────────────────────────── */
   function openCartDrawer() {
     if (!autoOpenDrawer) return 'disabled';
     
@@ -781,31 +832,30 @@
       return 'not-found';
     }
 
-    // Estrategia 1: Método open() nativo del web component
+    // Llamar al método open() que dispara showDialog()
     if (typeof cartDrawer.open === 'function') {
       cartDrawer.open();
       return 'method-open';
     }
     
-    // Estrategia 2: Método show() alternativo
+    // Fallbacks
+    if (typeof cartDrawer.showDialog === 'function') {
+      cartDrawer.showDialog();
+      return 'method-showDialog';
+    }
+    
     if (typeof cartDrawer.show === 'function') {
       cartDrawer.show();
       return 'method-show';
     }
     
-    // Estrategia 3: Cambiar atributo open (algunos web components)
-    if (cartDrawer.hasAttribute('open') === false) {
+    // Atributo open
+    if (!cartDrawer.hasAttribute('open')) {
       cartDrawer.setAttribute('open', '');
       return 'attr-open';
     }
     
-    // Estrategia 4: Disparar evento específico del componente
-    cartDrawer.dispatchEvent(new CustomEvent('cart-drawer:open', {
-      bubbles: true,
-      detail: { source: 'pronto-chocho-v3' }
-    }));
-    
-    return 'event-dispatched';
+    return 'no-method-found';
   }
 
   function getActivePlanId() {
@@ -823,7 +873,7 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
-   * ADD TO CART - INTEGRACIÓN WEB COMPONENTS
+   * ADD TO CART - INTEGRACIÓN COMPLETA CON SECTION RENDERING
    * ───────────────────────────────────────────────────────────────────────── */
   submitBtn.addEventListener('click', async function handleAddToCart(e) {
     // CRÍTICO: Prevenir duplicados y conflicto con handlers del tema
@@ -880,6 +930,10 @@
       return;
     }
 
+    // CRÍTICO: Obtener section IDs para el rendering
+    const sectionIds = getCartSectionIds();
+    console.log('Pronto-Chocho v3: Section IDs para actualizar →', sectionIds);
+
     // Sincronizar inputs antes del fetch
     syncSellingPlanInputs(planId);
 
@@ -888,7 +942,14 @@
     submitBtn.classList.add('loading');
 
     try {
-      console.log('Pronto-Chocho v3: Enviando items →', JSON.stringify(items, null, 2));
+      // CRÍTICO: Construir body con sections para que Shopify devuelva HTML renderizado
+      const requestBody = {
+        items: items,
+        sections: sectionIds.join(','),
+        sections_url: window.location.pathname
+      };
+
+      console.log('Pronto-Chocho v3: Enviando →', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch('/cart/add.js', {
         method : 'POST',
@@ -896,7 +957,7 @@
           'Content-Type': 'application/json', 
           'Accept': 'application/json' 
         },
-        body   : JSON.stringify({ items }),
+        body   : JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
@@ -914,49 +975,73 @@
         throw new Error(errorMessage);
       }
 
-      const cartData = await response.json();
-      console.log('Pronto-Chocho v3: Éxito →', cartData);
+      /* ── ÉXITO: Procesar respuesta con sections ───────────────────────── */
+      const responseData = await response.json();
+      console.log('Pronto-Chocho v3: Respuesta →', responseData);
 
-      /* ── INTEGRACIÓN CON SISTEMA DE EVENTOS DEL TEMA ───────────────────── */
+      // CRÍTICO: Actualizar las secciones del carrito con el HTML devuelto
+      if (responseData.sections) {
+        refreshCartSections(responseData.sections);
+      }
+
+      /* ── DISPARAR EVENTOS DEL TEMA ───────────────────────────────────── */
       
-      // 1. Disparar CartAddEvent si existe (clase global del tema)
+      // 1. CartAddEvent con sections (igual que product-form.js)
       if (window.CartAddEvent) {
         try {
-          const cartAddEvent = new CartAddEvent(cartData);
+          // Calcular itemCount total
+          const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+          
+          const cartAddEvent = new CartAddEvent(
+            responseData, 
+            blockId, 
+            {
+              source: 'pronto-chocho-v3',
+              itemCount: totalItemCount,
+              sections: responseData.sections,
+              didError: false
+            }
+          );
           document.dispatchEvent(cartAddEvent);
-          console.log('Pronto-Chocho v3: CartAddEvent disparado');
+          console.log('Pronto-Chocho v3: CartAddEvent disparado con sections');
         } catch (err) {
           console.warn('Pronto-Chocho v3: Error al crear CartAddEvent:', err);
         }
       }
-      
-      // 2. Disparar evento cart:add (nomenclatura alternativa)
+
+      // 2. Eventos adicionales para compatibilidad
       dispatchThemeEvent('cart:add', {
-        cart: cartData,
+        cart: responseData,
         items: items,
-        source: 'pronto-chocho-v3'
-      });
-      
-      // 3. Evento theme:cart:add (otra variante común)
-      dispatchThemeEvent('theme:cart:add', {
-        cart: cartData,
-        items: items,
-        source: 'pronto-chocho-v3'
+        source: 'pronto-chocho-v3',
+        sections: responseData.sections
       });
 
-      // 4. Refrescar el drawer (actualizar contenido sin recargar)
-      refreshCartDrawer();
+      dispatchThemeEvent('cart:update', {
+        cart: responseData,
+        source: 'pronto-chocho-v3',
+        sections: responseData.sections
+      });
 
-      // 5. Abrir el drawer si está configurado
+      // 3. Evento nativo para otros listeners
+      document.dispatchEvent(new CustomEvent('cart:refresh', { 
+        bubbles: true,
+        detail: { 
+          source: 'pronto-chocho-v3',
+          sections: responseData.sections 
+        }
+      }));
+
+      /* ── ABRIR DRAWER ─────────────────────────────────────────────────── */
       const drawerResult = openCartDrawer();
       console.log('Pronto-Chocho v3: Drawer result →', drawerResult);
 
-      // Notificación de éxito (solo si no se abrió el drawer o como backup)
+      // Notificación solo si no se abrió el drawer
       if (drawerResult === 'not-found' || drawerResult === 'disabled') {
         showNotification('{{ block.settings.notification_text | default: "¡Productos agregados!" }}');
       }
 
-      // Resetear cantidades después del éxito
+      /* ── RESET Y LIMPIEZA ───────────────────────────────────────────── */
       products.forEach(p => {
         quantities[p.dataset.variantId] = 0;
         const display  = p.querySelector('[data-quantity]');
@@ -965,11 +1050,23 @@
         if (minusBtn) minusBtn.disabled   = true;
       });
 
+      // Limpiar selling_plan del form del tema para no interferir
+      syncSellingPlanInputs(null);
       updateDisplay();
 
     } catch (err) {
       console.error('Pronto-Chocho v3 – Error:', err);
       showNotification(err.message || 'Error al agregar productos', true);
+      
+      // Disparar evento de error si existe
+      if (window.CartErrorEvent) {
+        document.dispatchEvent(new CartErrorEvent(
+          blockId,
+          err.message,
+          err.description || '',
+          err
+        ));
+      }
     } finally {
       isProcessing = false;
       submitBtn.classList.remove('loading');
@@ -1046,9 +1143,10 @@
   setTimeout(() => pluginBootObserver.disconnect(), 10000);
 
   console.log(
-    `%cPronto-Chocho v3 (Web Components)%c | Block: ${blockId} | ` +
-    `Auto-open drawer: ${autoOpenDrawer} | ` +
-    `ThemeEvents: ${ThemeEvents ? '✓' : '✗'}`,
+    `%cPronto-Chocho v3 (FINAL INTEGRADO)%c | Block: ${blockId} | ` +
+    `ThemeEvents: ${ThemeEvents ? '✓' : '✗'} | ` +
+    `CartAddEvent: ${window.CartAddEvent ? '✓' : '✗'} | ` +
+    `Section Renderer: ${window.theme?.sectionRenderer ? '✓' : '✗'}`,
     'font-weight:bold;color:#4A6B1A',
     'color:inherit'
   );
