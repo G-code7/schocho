@@ -330,15 +330,15 @@
                     "savings_label": "You're saving",
                     "button_text": "Add to Cart",
                     "notification_text": "¡Productos agregados al carrito!",
-                    "notification_bg": "#4a6b1a",
-                    "badge_bg": "#4a6b1a",
+                    "notification_bg": "#3e2563",
+                    "badge_bg": "#3e2563",
                     "badge_text": "#ffffff",
-                    "active_border": "#4a6b1a",
+                    "active_border": "#371e54",
                     "active_bg": "#fcf3ec",
-                    "price_color": "#4a6b1a",
-                    "button_bg": "#1a1a1a",
+                    "price_color": "#371e54",
+                    "button_bg": "#371e54",
                     "button_text_color": "#ffffff",
-                    "button_hover": "#333333"
+                    "button_hover": "#3e2563"
                   },
                   "blocks": {}
                 }
