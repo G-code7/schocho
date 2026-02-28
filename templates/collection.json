@@ -466,43 +466,6 @@
     },
     "17722383868c1baea3": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_1b14dab_xTk9NP": {
-          "type": "ai_gen_block_1b14dab",
-          "settings": {
-            "heading": "Productos destacados",
-            "products": [
-              "chocho-pure-ingredient",
-              "chocho-cacao-spirulina-maca",
-              "chocho-ginger-turmeric-black-pepper-powder-blend"
-            ],
-            "button_text": "Agregar al carrito",
-            "desktop_width_percent": 100,
-            "columns_desktop": 3,
-            "columns_mobile": "2",
-            "grid_gap": 20,
-            "section_padding": 40,
-            "heading_alignment": "center",
-            "card_background": "#ffffff",
-            "card_padding": 15,
-            "card_border_radius": 8,
-            "image_border_radius": 4,
-            "product_title_size": 16,
-            "product_price_size": 16,
-            "heading_color": "#3e2563",
-            "text_color": "#3e2563",
-            "price_color": "#3e2563",
-            "button_background": "#371e54",
-            "button_hover_background": "#756c9e",
-            "button_text_color": "#ffffff",
-            "button_border_radius": 24
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_1b14dab_xTk9NP"
-      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
