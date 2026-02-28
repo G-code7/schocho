@@ -1,0 +1,1304 @@
+{% doc %}
+  Pronto-Chocho Multi-Product Selector v3 - INTEGRACIÓN WEB COMPONENTS
+  Integración nativa con cart-drawer-component y ThemeEvents
+  Compatible con @theme/events y sistema de eventos del tema
+{% enddoc %}
+{% assign block_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .chocho-selector-{{ block_id }} {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    font-family: var(--font-body-family), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .chocho-selector__purchase-options-{{ block_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .chocho-selector__option-{{ block_id }} {
+    position: relative;
+    border: 2px solid {{ block.settings.border_color | default: '#E8E4DF' }};
+    border-radius: 12px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: {{ block.settings.option_bg | default: '#FFFCF8' }};
+  }
+
+  .chocho-selector__option-{{ block_id }}:hover {
+    border-color: {{ block.settings.border_hover | default: '#4A6B1A' }};
+  }
+
+  .chocho-selector__option-{{ block_id }}.active {
+    border-color: {{ block.settings.active_border | default: '#4A6B1A' }};
+    background: {{ block.settings.active_bg | default: '#FCF3EC' }};
+  }
+
+  .chocho-selector__option-{{ block_id }}.active::before {
+    content: 'Most Popular';
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: {{ block.settings.badge_bg | default: '#4A6B1A' }};
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .chocho-selector__option-inner-{{ block_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .chocho-selector__radio-{{ block_id }} {
+    width: 20px;
+    height: 20px;
+    border: 2px solid {{ block.settings.radio_border | default: '#CCCCCC' }};
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    background: white;
+    transition: all 0.2s;
+  }
+
+  .chocho-selector__option-{{ block_id }}.active .chocho-selector__radio-{{ block_id }} {
+    border-color: {{ block.settings.active_radio | default: '#4A6B1A' }};
+  }
+
+  .chocho-selector__option-{{ block_id }}.active .chocho-selector__radio-{{ block_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: {{ block.settings.active_radio | default: '#4A6B1A' }};
+    border-radius: 50%;
+  }
+
+  .chocho-selector__option-content-{{ block_id }} { flex: 1; min-width: 0; }
+
+  .chocho-selector__option-header-{{ block_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .chocho-selector__option-title-{{ block_id }} {
+    font-size: 16px;
+    font-weight: 800;
+    color: {{ block.settings.title_color | default: '#1a1a1a' }};
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .chocho-selector__option-subtitle-{{ block_id }} {
+    font-size: 13px;
+    color: {{ block.settings.subtitle_color | default: '#666666' }};
+    margin: 2px 0 0;
+  }
+
+  .chocho-selector__option-price-{{ block_id }} { text-align: right; }
+
+  .chocho-selector__price-main-{{ block_id }} {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    color: {{ block.settings.price_color | default: '#4A6B1A' }};
+    line-height: 1.2;
+  }
+
+  .chocho-selector__price-main-{{ block_id }} s {
+    color: {{ block.settings.compare_color | default: '#999999' }};
+    font-weight: 400;
+    font-size: 14px;
+    margin-right: 6px;
+    text-decoration: line-through;
+  }
+
+  .chocho-selector__price-per-{{ block_id }} {
+    font-size: 12px;
+    color: {{ block.settings.per_color | default: '#666666' }};
+    font-weight: 400;
+  }
+
+  .chocho-selector__benefits-{{ block_id }} { margin: 12px 0 0; padding: 0; list-style: none; }
+
+  .chocho-selector__benefits-{{ block_id }} li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 13px;
+    color: {{ block.settings.benefit_color | default: '#555555' }};
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .chocho-selector__benefits-{{ block_id }} li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: {{ block.settings.check_color | default: '#4A6B1A' }};
+    font-weight: 700;
+  }
+
+  .chocho-selector__products-{{ block_id }} { margin-bottom: 20px; }
+
+  .chocho-selector__products-label-{{ block_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ block.settings.label_color | default: '#1a1a1a' }};
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .chocho-selector__product-list-{{ block_id }} { display: flex; flex-direction: column; gap: 10px; }
+
+  .chocho-selector__product-{{ block_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border: 1px solid {{ block.settings.product_border | default: '#E8E4DF' }};
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+
+  .chocho-selector__product-{{ block_id }}:hover {
+    border-color: {{ block.settings.border_hover | default: '#4A6B1A' }};
+  }
+
+  .chocho-selector__product-image-{{ block_id }} {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: {{ block.settings.image_bg | default: '#f5f5f5' }};
+  }
+
+  .chocho-selector__product-image-{{ block_id }} img { width: 100%; height: 100%; object-fit: cover; }
+
+  .chocho-selector__product-info-{{ block_id }} { flex: 1; min-width: 0; }
+
+  .chocho-selector__product-name-{{ block_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ block.settings.product_name_color | default: '#1a1a1a' }};
+    margin: 0 0 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chocho-selector__product-servings-{{ block_id }} {
+    font-size: 12px;
+    color: {{ block.settings.servings_color | default: '#888888' }};
+  }
+
+  .chocho-selector__quantity-{{ block_id }} { display: flex; align-items: center; gap: 8px; }
+
+  .chocho-selector__qty-btn-{{ block_id }} {
+    width: 32px;
+    height: 32px;
+    border: 1px solid {{ block.settings.qty_border | default: '#DDDDDD' }};
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: {{ block.settings.qty_color | default: '#1a1a1a' }};
+    transition: all 0.15s;
+  }
+
+  .chocho-selector__qty-btn-{{ block_id }}:hover:not(:disabled) {
+    background: {{ block.settings.qty_hover_bg | default: '#f5f5f5' }};
+    border-color: {{ block.settings.border_hover | default: '#4A6B1A' }};
+  }
+
+  .chocho-selector__qty-btn-{{ block_id }}:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .chocho-selector__qty-display-{{ block_id }} {
+    min-width: 28px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: {{ block.settings.qty_color | default: '#1a1a1a' }};
+  }
+
+  .chocho-selector__savings-{{ block_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: {{ block.settings.savings_bg | default: '#F5F5F5' }};
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .chocho-selector__savings-text-{{ block_id }} { color: {{ block.settings.savings_text_color | default: '#666666' }}; }
+
+  .chocho-selector__savings-amount-{{ block_id }} {
+    color: {{ block.settings.savings_amount_color | default: '#4A6B1A' }};
+    font-weight: 700;
+  }
+
+  .chocho-selector__savings-price-{{ block_id }} {
+    font-weight: 700;
+    color: {{ block.settings.title_color | default: '#1a1a1a' }};
+  }
+
+  .chocho-selector__savings-price-{{ block_id }} s {
+    color: {{ block.settings.compare_color | default: '#999999' }};
+    font-weight: 400;
+    margin-right: 6px;
+  }
+
+  .chocho-selector__plan-badge-{{ block_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: {{ block.settings.savings_amount_color | default: '#4A6B1A' }};
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .chocho-selector__plan-badge-{{ block_id }}[data-source="manual"] {
+    color: #888;
+  }
+
+  .chocho-selector__submit-{{ block_id }} {
+    width: 100%;
+    padding: 18px 24px;
+    background: {{ block.settings.button_bg | default: '#1a1a1a' }};
+    color: {{ block.settings.button_text_color | default: '#ffffff' }};
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .chocho-selector__submit-{{ block_id }}:hover:not(:disabled) {
+    background: {{ block.settings.button_hover | default: '#333333' }};
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .chocho-selector__submit-{{ block_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .chocho-selector__submit-{{ block_id }}.loading { color: transparent; }
+
+  .chocho-selector__submit-{{ block_id }}.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin: -10px 0 0 -10px;
+    border: 2px solid white;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: chocho-spin-{{ block_id }} 0.8s linear infinite;
+  }
+
+  @keyframes chocho-spin-{{ block_id }} { to { transform: rotate(360deg); } }
+
+  .chocho-notification-{{ block_id }} {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: {{ block.settings.notification_bg | default: '#4A6B1A' }};
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    transform: translateX(150%);
+    transition: transform 0.3s ease;
+    font-weight: 600;
+    max-width: 300px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .chocho-notification-{{ block_id }}.show { transform: translateX(0); }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @media (max-width: 749px) {
+    .chocho-selector-{{ block_id }} { padding: 0 16px; }
+    .chocho-selector__option-{{ block_id }} { padding: 16px 12px; }
+    .chocho-selector__price-main-{{ block_id }} { font-size: 16px; }
+  }
+{% endstyle %}
+
+{% comment %} ===== HTML ===== {% endcomment %}
+<div class="chocho-selector-{{ block_id }}" data-chocho-selector="{{ block_id }}">
+
+  <div class="chocho-selector__purchase-options-{{ block_id }}">
+
+    {% comment %} Suscripción {% endcomment %}
+    <div class="chocho-selector__option-{{ block_id }} active" data-option="subscription">
+      <label class="chocho-selector__option-inner-{{ block_id }}">
+        <input type="radio" name="purchase_type_{{ block_id }}" value="subscription" checked class="visually-hidden">
+        <span class="chocho-selector__radio-{{ block_id }}"></span>
+        <div class="chocho-selector__option-content-{{ block_id }}">
+          <div class="chocho-selector__option-header-{{ block_id }}">
+            <div>
+              <h3 class="chocho-selector__option-title-{{ block_id }}">
+                {{ block.settings.sub_title | default: 'Subscribe & Save' }}
+              </h3>
+              <p class="chocho-selector__option-subtitle-{{ block_id }}">
+                {{ block.settings.sub_subtitle | default: '15 servings per bag' }}
+              </p>
+            </div>
+            <div class="chocho-selector__option-price-{{ block_id }}">
+              <span class="chocho-selector__price-main-{{ block_id }}">
+                <s data-compare-price>—</s>
+                <span data-subscription-price>—</span>
+              </span>
+              <span class="chocho-selector__price-per-{{ block_id }}">
+                <span data-price-per>—</span> / {{ block.settings.per_text | default: 'serving' }}
+              </span>
+            </div>
+          </div>
+          {% if block.settings.show_benefits %}
+            <ul class="chocho-selector__benefits-{{ block_id }}">
+              {% for i in (1..4) %}
+                {% assign benefit_key = 'benefit_' | append: i %}
+                {% if block.settings[benefit_key] != blank %}
+                  <li>{{ block.settings[benefit_key] }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </label>
+    </div>
+
+    {% comment %} One-time {% endcomment %}
+    <div class="chocho-selector__option-{{ block_id }}" data-option="onetime">
+      <label class="chocho-selector__option-inner-{{ block_id }}">
+        <input type="radio" name="purchase_type_{{ block_id }}" value="onetime" class="visually-hidden">
+        <span class="chocho-selector__radio-{{ block_id }}"></span>
+        <div class="chocho-selector__option-content-{{ block_id }}">
+          <div class="chocho-selector__option-header-{{ block_id }}">
+            <div>
+              <h3 class="chocho-selector__option-title-{{ block_id }}">
+                {{ block.settings.onetime_title | default: 'One-time purchase' }}
+              </h3>
+              <p class="chocho-selector__option-subtitle-{{ block_id }}">
+                {{ block.settings.onetime_subtitle | default: '15 servings per bag' }}
+              </p>
+            </div>
+            <div class="chocho-selector__option-price-{{ block_id }}">
+              <span class="chocho-selector__price-main-{{ block_id }}" data-onetime-price>—</span>
+              <span class="chocho-selector__price-per-{{ block_id }}">
+                <span data-onetime-per>—</span> / {{ block.settings.per_text | default: 'serving' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  {% comment %} ===== PRODUCTOS ===== {% endcomment %}
+  {% assign has_products = false %}
+  {% for i in (1..5) %}
+    {% capture product_key %}product_{{ i }}{% endcapture %}
+    {% if block.settings[product_key] != blank %}{% assign has_products = true %}{% break %}{% endif %}
+  {% endfor %}
+
+  {% if has_products %}
+    <div class="chocho-selector__products-{{ block_id }}">
+      <p class="chocho-selector__products-label-{{ block_id }}">
+        {{ block.settings.flavors_label | default: 'Choose your flavors' }}
+      </p>
+      <div class="chocho-selector__product-list-{{ block_id }}">
+        {% for i in (1..5) %}
+          {% assign product_key = 'product_' | append: i %}
+          {% assign product = block.settings[product_key] %}
+          {% if product != blank %}
+            {% assign variant = product.selected_or_first_available_variant %}
+            <div
+              class="chocho-selector__product-{{ block_id }}"
+              data-product-id="{{ product.id }}"
+              data-variant-id="{{ variant.id }}"
+              data-price="{{ variant.price }}"
+              data-compare="{{ variant.compare_at_price | default: variant.price }}"
+            >
+              <div class="chocho-selector__product-image-{{ block_id }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 120, height: 120, crop: 'center' }}"
+                    alt="{{ product.title | escape }}"
+                    loading="lazy"
+                    width="56"
+                    height="56"
+                  >
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag }}
+                {% endif %}
+              </div>
+              <div class="chocho-selector__product-info-{{ block_id }}">
+                <h4 class="chocho-selector__product-name-{{ block_id }}">{{ product.title }}</h4>
+                <span class="chocho-selector__product-servings-{{ block_id }}">
+                  {{- block.settings.servings_text | default: '15 servings' -}}
+                </span>
+              </div>
+              <div class="chocho-selector__quantity-{{ block_id }}">
+                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="minus" aria-label="Decrease">−</button>
+                <span class="chocho-selector__qty-display-{{ block_id }}" data-quantity>0</span>
+                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="plus" aria-label="Increase">+</button>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="chocho-selector__savings-{{ block_id }}">
+      <span class="chocho-selector__savings-text-{{ block_id }}">
+        {{ block.settings.savings_label | default: "You're saving" }}
+        <span class="chocho-selector__savings-amount-{{ block_id }}" data-savings>$0.00</span>
+      </span>
+      <span class="chocho-selector__savings-price-{{ block_id }}">
+        <s data-total-compare>$0.00</s>
+        <span data-total-price>$0.00</span>
+      </span>
+    </div>
+
+    <button type="button" class="chocho-selector__submit-{{ block_id }}" data-add-to-cart disabled>
+      {{ block.settings.button_text | default: 'Add to Cart' }}
+    </button>
+
+  {% else %}
+    <p style="text-align:center;color:#666;padding:40px;">
+      Selecciona productos en la configuración del bloque
+    </p>
+  {% endif %}
+</div>
+
+<div class="chocho-notification-{{ block_id }}" data-chocho-notification></div>
+
+<input
+  type="hidden"
+  name="selling_plan"
+  class="selected-selling-plan-id chocho-selling-plan-{{ block_id }}"
+  value=""
+  aria-hidden="true"
+>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * CONFIGURACIÓN
+   * ───────────────────────────────────────────────────────────────────────── */
+  const blockId        = '{{ block_id }}';
+  const fallbackPlanId = (function () {
+    const raw = '{{ block.settings.selling_plan_id | strip }}';
+    const n   = parseInt(raw, 10);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  })();
+  const discountPercent  = {{ block.settings.subscription_discount | default: 15 }};
+  const servingsPerUnit  = {{ block.settings.servings_per_unit | default: 15 }};
+  const autoOpenDrawer   = {{ block.settings.auto_open_cart_drawer | default: true }};
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * ELEMENTOS
+   * ───────────────────────────────────────────────────────────────────────── */
+  const container      = document.querySelector(`[data-chocho-selector="${blockId}"]`);
+  if (!container) return;
+
+  const options        = container.querySelectorAll('[data-option]');
+  const products       = container.querySelectorAll('[data-product-id]');
+  const savingsEl      = container.querySelector('[data-savings]');
+  const totalCompareEl = container.querySelector('[data-total-compare]');
+  const totalPriceEl   = container.querySelector('[data-total-price]');
+  const subPriceEl     = container.querySelector('[data-subscription-price]');
+  const comparePriceEl = container.querySelector('[data-compare-price]');
+  const pricePerEl     = container.querySelector('[data-price-per]');
+  const onetimePriceEl = container.querySelector('[data-onetime-price]');
+  const onetimePerEl   = container.querySelector('[data-onetime-per]');
+  const submitBtn      = container.querySelector('[data-add-to-cart]');
+  const notification   = document.querySelector(`.chocho-notification-${blockId}`);
+  const ownSellingPlanInput = document.querySelector(`.chocho-selling-plan-${blockId}`);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * ESTADO
+   * ───────────────────────────────────────────────────────────────────────── */
+  let currentOption = 'subscription';
+  let quantities    = {};
+  let isProcessing  = false;
+
+  // Inicializar cantidades a cero explícitamente
+  products.forEach(p => { quantities[p.dataset.variantId] = 0; });
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * THEME EVENTS INTEGRATION
+   * Detectar si el tema usa ThemeEvents o eventos nativos
+   * ───────────────────────────────────────────────────────────────────────── */
+  const ThemeEvents = window.ThemeEvents || (window.theme && window.theme.events) || null;
+  
+  function dispatchThemeEvent(eventName, detail) {
+    // Intentar ThemeEvents primero (si existe)
+    if (ThemeEvents && typeof ThemeEvents.publish === 'function') {
+      ThemeEvents.publish(eventName, detail);
+      return;
+    }
+    
+    // Fallback a CustomEvent estándar
+    document.dispatchEvent(new CustomEvent(eventName, {
+      bubbles: true,
+      detail: detail
+    }));
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * PLUGIN DETECTION
+   * ───────────────────────────────────────────────────────────────────────── */
+  function readPluginPlan() {
+    const checkedRadio = document.querySelector(
+      'input[type="radio"][data-selling-plan-id]:checked'
+    );
+    if (checkedRadio) return extractPlanData(checkedRadio);
+
+    const firstRadio = document.querySelector(
+      'input[type="radio"][data-selling-plan-id]'
+    );
+    if (firstRadio) return extractPlanData(firstRadio);
+
+    return null;
+  }
+
+  function extractPlanData(radio) {
+    const planId = parseInt(radio.dataset.sellingPlanId, 10);
+    const price  = parseInt(radio.dataset.variantPrice, 10);
+    const cmp    = parseInt(radio.dataset.variantCompareAtPrice, 10);
+
+    if (!Number.isFinite(planId) || planId <= 0) return null;
+
+    return {
+      planId,
+      price          : Number.isFinite(price) ? price : 0,
+      compareAtPrice : Number.isFinite(cmp)   ? cmp   : price,
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * HELPERS
+   * ───────────────────────────────────────────────────────────────────────── */
+  function formatMoney(cents) {
+    return '$' + (cents / 100).toFixed(2);
+  }
+
+  function showNotification(message, isError = false) {
+    if (!notification) return;
+    notification.textContent = message;
+    notification.style.background = isError
+      ? '#c0392b'
+      : '{{ block.settings.notification_bg | default: "#4A6B1A" }}';
+    notification.classList.add('show');
+    setTimeout(() => notification.classList.remove('show'), isError ? 6000 : 3000);
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * CÁLCULO DE PRECIOS
+   * ───────────────────────────────────────────────────────────────────────── */
+  function calculatePrices() {
+    const pluginData   = readPluginPlan();
+    const isSubscription = currentOption === 'subscription';
+
+    const firstProduct = products[0];
+    const baseOnetimePrice = firstProduct ? parseInt(firstProduct.dataset.price, 10) : 0;
+    const baseComparePrice = firstProduct ? parseInt(firstProduct.dataset.compare, 10) : baseOnetimePrice;
+
+    let subUnitPrice;
+    if (isSubscription && pluginData && pluginData.price > 0) {
+      subUnitPrice = pluginData.price;
+    } else {
+      subUnitPrice = Math.round(baseOnetimePrice * (1 - discountPercent / 100));
+    }
+
+    const refComparePrice = (isSubscription && pluginData)
+      ? pluginData.compareAtPrice
+      : baseComparePrice;
+
+    let totalQty        = 0;
+    let totalRegular    = 0;
+    let totalDiscounted = 0;
+
+    products.forEach(p => {
+      const qty     = quantities[p.dataset.variantId] || 0;
+      const price   = parseInt(p.dataset.price,   10);
+      const compare = parseInt(p.dataset.compare, 10);
+
+      totalQty     += qty;
+      totalRegular += compare * qty;
+
+      if (isSubscription && pluginData && pluginData.price > 0) {
+        const ratio = baseOnetimePrice > 0 ? price / baseOnetimePrice : 1;
+        totalDiscounted += Math.round(pluginData.price * ratio) * qty;
+      } else if (isSubscription) {
+        totalDiscounted += Math.round(price * (1 - discountPercent / 100)) * qty;
+      } else {
+        totalDiscounted += price * qty;
+      }
+    });
+
+    return {
+      subUnit          : subUnitPrice,
+      onetimeUnit      : baseOnetimePrice,
+      subPerServing    : subUnitPrice / servingsPerUnit,
+      onetimePerServing: baseOnetimePrice / servingsPerUnit,
+      refComparePrice,
+      totalQty,
+      totalRegular,
+      totalDiscounted,
+      savings          : totalRegular - totalDiscounted,
+      pluginData,
+    };
+  }
+
+  function updateDisplay() {
+    const prices = calculatePrices();
+
+    if (subPriceEl)     subPriceEl.textContent     = formatMoney(prices.subUnit);
+    if (comparePriceEl) comparePriceEl.textContent = formatMoney(prices.refComparePrice);
+    if (pricePerEl)     pricePerEl.textContent     = formatMoney(prices.subPerServing);
+    if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
+    if (onetimePerEl)   onetimePerEl.textContent   = formatMoney(prices.onetimePerServing);
+    if (savingsEl)      savingsEl.textContent      = formatMoney(prices.savings);
+    if (totalCompareEl) totalCompareEl.textContent = formatMoney(prices.totalRegular);
+    if (totalPriceEl)   totalPriceEl.textContent   = formatMoney(prices.totalDiscounted);
+
+    const hasItems = prices.totalQty > 0;
+    submitBtn.disabled = !hasItems || isProcessing;
+    submitBtn.textContent = hasItems
+      ? `{{ block.settings.button_text | default: "Add to Cart" }} — ${formatMoney(prices.totalDiscounted)}`
+      : '{{ block.settings.button_text | default: "Add to Cart" }}';
+  }
+
+  function syncSellingPlanInputs(planId) {
+    const value = planId !== null ? String(planId) : '';
+
+    if (ownSellingPlanInput) {
+      ownSellingPlanInput.value = value;
+    }
+
+    const themeForms = document.querySelectorAll('form[action*="/cart/add"]');
+    themeForms.forEach(form => {
+      let themeInput = form.querySelector('.selected-selling-plan-id');
+      if (!themeInput) {
+        themeInput = document.createElement('input');
+        themeInput.type  = 'hidden';
+        themeInput.name  = 'selling_plan';
+        themeInput.classList.add('selected-selling-plan-id');
+        form.appendChild(themeInput);
+      }
+      themeInput.value = value;
+    });
+
+    themeForms.forEach(form => {
+      form.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * CART DRAWER INTEGRATION
+   * Múltiples estrategias para compatibilidad con diferentes temas
+   * ───────────────────────────────────────────────────────────────────────── */
+  function refreshCartDrawer() {
+    // Estrategia 1: Evento cart:refresh (tema moderno)
+    document.dispatchEvent(new CustomEvent('cart:refresh', { 
+      bubbles: true,
+      detail: { source: 'pronto-chocho-v3' }
+    }));
+    
+    // Estrategia 2: Evento theme:cart:updated (algunos temas)
+    document.dispatchEvent(new CustomEvent('theme:cart:updated', { 
+      bubbles: true,
+      detail: { source: 'pronto-chocho-v3' }
+    }));
+    
+    // Estrategia 3: Llamar a método refresh del web component si existe
+    const cartDrawer = document.querySelector('cart-drawer-component');
+    if (cartDrawer) {
+      // Intentar múltiples métodos posibles
+      if (typeof cartDrawer.refresh === 'function') {
+        cartDrawer.refresh();
+      } else if (typeof cartDrawer.updateCart === 'function') {
+        cartDrawer.updateCart();
+      } else if (typeof cartDrawer.render === 'function') {
+        cartDrawer.render();
+      }
+    }
+  }
+
+  function openCartDrawer() {
+    if (!autoOpenDrawer) return 'disabled';
+    
+    const cartDrawer = document.querySelector('cart-drawer-component');
+    
+    if (!cartDrawer) {
+      console.warn('Pronto-Chocho v3: No se encontró cart-drawer-component');
+      return 'not-found';
+    }
+
+    // Estrategia 1: Método open() nativo del web component
+    if (typeof cartDrawer.open === 'function') {
+      cartDrawer.open();
+      return 'method-open';
+    }
+    
+    // Estrategia 2: Método show() alternativo
+    if (typeof cartDrawer.show === 'function') {
+      cartDrawer.show();
+      return 'method-show';
+    }
+    
+    // Estrategia 3: Cambiar atributo open (algunos web components)
+    if (cartDrawer.hasAttribute('open') === false) {
+      cartDrawer.setAttribute('open', '');
+      return 'attr-open';
+    }
+    
+    // Estrategia 4: Disparar evento específico del componente
+    cartDrawer.dispatchEvent(new CustomEvent('cart-drawer:open', {
+      bubbles: true,
+      detail: { source: 'pronto-chocho-v3' }
+    }));
+    
+    return 'event-dispatched';
+  }
+
+  function getActivePlanId() {
+    const pluginData = readPluginPlan();
+    if (pluginData) {
+      console.log(`Pronto-Chocho v3: Plan leído del plugin → ${pluginData.planId}`);
+      return pluginData.planId;
+    }
+    if (fallbackPlanId) {
+      console.log(`Pronto-Chocho v3: Plan manual (fallback) → ${fallbackPlanId}`);
+      return fallbackPlanId;
+    }
+    console.warn('Pronto-Chocho v3: No se encontró un selling_plan_id válido.');
+    return null;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * ADD TO CART - INTEGRACIÓN WEB COMPONENTS
+   * ───────────────────────────────────────────────────────────────────────── */
+  submitBtn.addEventListener('click', async function handleAddToCart(e) {
+    // CRÍTICO: Prevenir duplicados y conflicto con handlers del tema
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    if (isProcessing) return;
+
+    const isSubscription = currentOption === 'subscription';
+    const planId = isSubscription ? getActivePlanId() : null;
+
+    // Validación: Si es suscripción pero no hay planId, advertir pero continuar como one-time
+    if (isSubscription && planId === null) {
+      console.warn(
+        'Pronto-Chocho v3: Suscripción seleccionada pero sin plan ID válido. ' +
+        'Se agregará como compra única.'
+      );
+    }
+
+    // Construir array de items desde cero (sin duplicados)
+    const items = [];
+    
+    products.forEach(p => {
+      const qty = parseInt(quantities[p.dataset.variantId], 10) || 0;
+      if (qty <= 0) return;
+
+      const item = {
+        id       : parseInt(p.dataset.variantId, 10),
+        quantity : qty,
+      };
+
+      // selling_plan como campo de primer nivel (solo si es suscripción válida)
+      if (isSubscription && planId !== null && Number.isFinite(planId)) {
+        item.selling_plan = planId;
+        item.properties = {
+          _subscription : 'true',
+          _purchase_type: 'subscription',
+          _added_by     : 'pronto-chocho-v3',
+          _plan_id      : String(planId)
+        };
+      } else {
+        item.properties = {
+          _purchase_type: 'onetime',
+          _added_by     : 'pronto-chocho-v3'
+        };
+      }
+
+      items.push(item);
+    });
+
+    if (items.length === 0) {
+      showNotification('Selecciona al menos un producto', true);
+      return;
+    }
+
+    // Sincronizar inputs antes del fetch
+    syncSellingPlanInputs(planId);
+
+    isProcessing       = true;
+    submitBtn.disabled = true;
+    submitBtn.classList.add('loading');
+
+    try {
+      console.log('Pronto-Chocho v3: Enviando items →', JSON.stringify(items, null, 2));
+
+      const response = await fetch('/cart/add.js', {
+        method : 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Accept': 'application/json' 
+        },
+        body   : JSON.stringify({ items }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        let errorMessage = errorData.description || errorData.message || 'Error al agregar al carrito';
+
+        // Error específico de selling plan
+        if (response.status === 422) {
+          const errorStr = JSON.stringify(errorData).toLowerCase();
+          if (errorStr.includes('selling plan') || errorStr.includes('subscription')) {
+            errorMessage = `Plan de suscripción inválido (ID: ${planId}). Verifica la configuración.`;
+          }
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      const cartData = await response.json();
+      console.log('Pronto-Chocho v3: Éxito →', cartData);
+
+      /* ── INTEGRACIÓN CON SISTEMA DE EVENTOS DEL TEMA ───────────────────── */
+      
+      // 1. Disparar CartAddEvent si existe (clase global del tema)
+      if (window.CartAddEvent) {
+        try {
+          const cartAddEvent = new CartAddEvent(cartData);
+          document.dispatchEvent(cartAddEvent);
+          console.log('Pronto-Chocho v3: CartAddEvent disparado');
+        } catch (err) {
+          console.warn('Pronto-Chocho v3: Error al crear CartAddEvent:', err);
+        }
+      }
+      
+      // 2. Disparar evento cart:add (nomenclatura alternativa)
+      dispatchThemeEvent('cart:add', {
+        cart: cartData,
+        items: items,
+        source: 'pronto-chocho-v3'
+      });
+      
+      // 3. Evento theme:cart:add (otra variante común)
+      dispatchThemeEvent('theme:cart:add', {
+        cart: cartData,
+        items: items,
+        source: 'pronto-chocho-v3'
+      });
+
+      // 4. Refrescar el drawer (actualizar contenido sin recargar)
+      refreshCartDrawer();
+
+      // 5. Abrir el drawer si está configurado
+      const drawerResult = openCartDrawer();
+      console.log('Pronto-Chocho v3: Drawer result →', drawerResult);
+
+      // Notificación de éxito (solo si no se abrió el drawer o como backup)
+      if (drawerResult === 'not-found' || drawerResult === 'disabled') {
+        showNotification('{{ block.settings.notification_text | default: "¡Productos agregados!" }}');
+      }
+
+      // Resetear cantidades después del éxito
+      products.forEach(p => {
+        quantities[p.dataset.variantId] = 0;
+        const display  = p.querySelector('[data-quantity]');
+        const minusBtn = p.querySelector('[data-qty="minus"]');
+        if (display)  display.textContent = '0';
+        if (minusBtn) minusBtn.disabled   = true;
+      });
+
+      updateDisplay();
+
+    } catch (err) {
+      console.error('Pronto-Chocho v3 – Error:', err);
+      showNotification(err.message || 'Error al agregar productos', true);
+    } finally {
+      isProcessing = false;
+      submitBtn.classList.remove('loading');
+      updateDisplay();
+    }
+  });
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * LISTENERS
+   * ───────────────────────────────────────────────────────────────────────── */
+  options.forEach(opt => {
+    opt.addEventListener('click', function (e) {
+      if (e.target.tagName === 'INPUT') return;
+
+      currentOption = this.dataset.option;
+      options.forEach(o => {
+        const isActive = o === this;
+        o.classList.toggle('active', isActive);
+        const input = o.querySelector('input');
+        if (input) input.checked = isActive;
+      });
+
+      const planToSync = currentOption === 'subscription' ? getActivePlanId() : null;
+      syncSellingPlanInputs(planToSync);
+
+      updateDisplay();
+    });
+  });
+
+  products.forEach(product => {
+    const variantId = product.dataset.variantId;
+    const minusBtn  = product.querySelector('[data-qty="minus"]');
+    const plusBtn   = product.querySelector('[data-qty="plus"]');
+    const display   = product.querySelector('[data-quantity]');
+
+    minusBtn?.addEventListener('click', () => {
+      const current = quantities[variantId] || 0;
+      if (current > 0) {
+        quantities[variantId] = current - 1;
+        display.textContent   = quantities[variantId];
+        minusBtn.disabled     = quantities[variantId] === 0;
+        updateDisplay();
+      }
+    });
+
+    plusBtn?.addEventListener('click', () => {
+      quantities[variantId] = (quantities[variantId] || 0) + 1;
+      display.textContent   = quantities[variantId];
+      if (minusBtn) minusBtn.disabled = false;
+      updateDisplay();
+    });
+  });
+
+  /* ─────────────────────────────────────────────────────────────────────────
+   * INIT
+   * ───────────────────────────────────────────────────────────────────────── */
+  syncSellingPlanInputs(getActivePlanId());
+  updateDisplay();
+
+  // Observer para detectar carga asíncrona del plugin
+  const pluginBootObserver = new MutationObserver(() => {
+    const pluginData = readPluginPlan();
+    if (pluginData) {
+      console.log('Pronto-Chocho v3: Plugin detectado post-carga');
+      if (currentOption === 'subscription') {
+        syncSellingPlanInputs(pluginData.planId);
+      }
+      updateDisplay();
+      pluginBootObserver.disconnect();
+    }
+  });
+
+  pluginBootObserver.observe(document.body, { childList: true, subtree: true });
+  setTimeout(() => pluginBootObserver.disconnect(), 10000);
+
+  console.log(
+    `%cPronto-Chocho v3 (Web Components)%c | Block: ${blockId} | ` +
+    `Auto-open drawer: ${autoOpenDrawer} | ` +
+    `ThemeEvents: ${ThemeEvents ? '✓' : '✗'}`,
+    'font-weight:bold;color:#4A6B1A',
+    'color:inherit'
+  );
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Pronto-Chocho Selector v4",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Subscription Option"
+    },
+    {
+      "type": "text",
+      "id": "sub_title",
+      "label": "Title",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "sub_subtitle",
+      "label": "Subtitle",
+      "default": "15 servings per bag"
+    },
+    {
+      "type": "range",
+      "id": "subscription_discount",
+      "label": "Discount % (fallback)",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "checkbox",
+      "id": "show_benefits",
+      "label": "Show benefits",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "benefit_1",
+      "label": "Benefit 1",
+      "default": "Save money on every order"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2",
+      "label": "Benefit 2",
+      "default": "Easily change your quantities"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3",
+      "label": "Benefit 3",
+      "default": "Cancel any time"
+    },
+    {
+      "type": "text",
+      "id": "benefit_4",
+      "label": "Benefit 4",
+      "default": "Pre-shipment reminders"
+    },
+    {
+      "type": "header",
+      "content": "One-time Option"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "Title",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "onetime_subtitle",
+      "label": "Subtitle",
+      "default": "15 servings per bag"
+    },
+    {
+      "type": "header",
+      "content": "Products"
+    },
+    {
+      "type": "text",
+      "id": "flavors_label",
+      "label": "Flavors label",
+      "default": "Choose your flavors"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product 1"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product 2"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product 3"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product 4"
+    },
+    {
+      "type": "product",
+      "id": "product_5",
+      "label": "Product 5"
+    },
+    {
+      "type": "text",
+      "id": "servings_text",
+      "label": "Servings text",
+      "default": "15 servings"
+    },
+    {
+      "type": "text",
+      "id": "per_text",
+      "label": "Per unit text",
+      "default": "serving"
+    },
+    {
+      "type": "number",
+      "id": "servings_per_unit",
+      "label": "Servings per unit",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Selling Plan (fallback)"
+    },
+    {
+      "type": "text",
+      "id": "selling_plan_id",
+      "label": "Selling Plan ID",
+      "info": "ID numérico del plan. Ejemplo: 3233841344"
+    },
+    {
+      "type": "header",
+      "content": "Cart Drawer Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_open_cart_drawer",
+      "label": "Auto-open cart drawer after add",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Savings Bar"
+    },
+    {
+      "type": "text",
+      "id": "savings_label",
+      "label": "Savings label",
+      "default": "You're saving"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "header",
+      "content": "Notification"
+    },
+    {
+      "type": "text",
+      "id": "notification_text",
+      "label": "Notification text",
+      "default": "¡Productos agregados al carrito!"
+    },
+    {
+      "type": "color",
+      "id": "notification_bg",
+      "label": "Notification background",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge background",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "badge_text",
+      "label": "Badge text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "active_border",
+      "label": "Active border",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "active_bg",
+      "label": "Active background",
+      "default": "#FCF3EC"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#4A6B1A"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover",
+      "label": "Button hover",
+      "default": "#333333"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pronto-Chocho Selector v4"
+    }
+  ]
+}
+{% endschema %}
