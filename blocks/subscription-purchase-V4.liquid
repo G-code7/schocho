@@ -1,6 +1,6 @@
 {% doc %}
-  Pronto-Chocho Multi-Product Selector v3 - FINAL INTEGRADO
-  Integración nativa con Section Rendering y ThemeEvents
+  Pronto-Chocho Multi-Product Selector v3 - FINAL FIX
+  Integración perfecta con component-cart-items.js y section rendering
 {% enddoc %}
 {% assign block_id = block.id | replace: '_', '' | downcase %}
 
@@ -737,85 +737,110 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
-   * SECCIONES PARA RENDERING
-   * CRÍTICO: Obtener todos los section IDs de cart-items-component
+   * SECCIONES PARA RENDERING - FIX CRÍTICO
+   * El cart-items-component está en el header section
    * ───────────────────────────────────────────────────────────────────────── */
   function getCartSectionIds() {
     const sectionIds = new Set();
     
-    // Buscar todos los cart-items-component y obtener sus section IDs
+    // Buscar TODOS los cart-items-component (incluido el del header)
     document.querySelectorAll('cart-items-component').forEach(component => {
       if (component.dataset.sectionId) {
         sectionIds.add(component.dataset.sectionId);
       }
     });
 
-    // Si no hay componentes visibles, usar el section ID del contexto actual
+    // Si no encontramos ninguno, usar el ID del header section como fallback
     if (sectionIds.size === 0) {
-      // Intentar obtener del section padre más cercano
-      const parentSection = container.closest('.shopify-section');
-      if (parentSection && parentSection.id) {
-        // Extraer el ID numérico del section (formato: shopify-section-template--XXXXX__...)
-        const sectionMatch = parentSection.id.match(/template--(\d+)/);
-        if (sectionMatch) {
-          sectionIds.add(`template--${sectionMatch[1]}__cart-items`);
-        }
-      }
+      // El header section ID basado en tu consola
+      sectionIds.add('sections--19974426230976__header_section');
     }
 
     return Array.from(sectionIds);
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
-   * ACTUALIZAR CART DRAWER
-   * Usa el mismo patrón que product-form.js: sectionRenderer + morphSection
+   * ACTUALIZAR CART SECTIONS - FIX CRÍTICO PARA SHADOW DOM
    * ───────────────────────────────────────────────────────────────────────── */
   function refreshCartSections(sections) {
-    if (!sections) return;
+    if (!sections) {
+      console.warn('Pronto-Chocho v3: No sections en respuesta');
+      return;
+    }
 
-    // Intentar usar sectionRenderer del tema si está disponible
+    console.log('Pronto-Chocho v3: Actualizando sections →', Object.keys(sections));
+
+    // Estrategia 1: Usar sectionRenderer del tema (preferido)
     const sectionRenderer = window.theme?.sectionRenderer || window.sectionRenderer;
     
     if (sectionRenderer && typeof sectionRenderer.renderSection === 'function') {
       Object.keys(sections).forEach(sectionId => {
-        sectionRenderer.renderSection(sectionId, { cache: false });
+        try {
+          sectionRenderer.renderSection(sectionId, { cache: false });
+          console.log('Pronto-Chocho v3: Section renderizada →', sectionId);
+        } catch (err) {
+          console.error('Pronto-Chocho v3: Error renderizando section →', sectionId, err);
+        }
       });
       return;
     }
 
-    // Fallback: usar morphSection si está disponible
+    // Estrategia 2: Usar morphSection si está disponible
     const morphSection = window.theme?.morphSection || window.morphSection;
     
     if (morphSection && typeof morphSection === 'function') {
       Object.keys(sections).forEach(sectionId => {
-        morphSection(sectionId, sections[sectionId]);
+        try {
+          morphSection(sectionId, sections[sectionId]);
+        } catch (err) {
+          console.error('Pronto-Chocho v3: Error en morphSection →', sectionId, err);
+        }
       });
       return;
     }
 
-    // Último fallback: actualizar manualmente el DOM
+    // Estrategia 3: Actualización manual con manejo de Shadow DOM
     Object.keys(sections).forEach(sectionId => {
       const html = sections[sectionId];
       if (!html) return;
 
-      // Parsear el HTML nuevo
-      const parser = new DOMParser();
-      const newDoc = parser.parseFromString(html, 'text/html');
-      const newContent = newDoc.body.firstElementChild;
+      try {
+        // Encontrar el componente por section ID
+        const targetComponent = document.querySelector(`[data-section-id="${sectionId}"]`);
+        
+        if (!targetComponent) {
+          console.warn('Pronto-Chocho v3: No se encontró componente para →', sectionId);
+          return;
+        }
 
-      // Buscar el elemento existente por data-section-id
-      const existingElements = document.querySelectorAll(`[data-section-id="${sectionId}"]`);
-      
-      existingElements.forEach(el => {
-        if (el && newContent) {
-          // Usar morph si está disponible, o reemplazo simple
-          if (window.theme?.morph && typeof window.theme.morph === 'function') {
-            window.theme.morph(el, newContent);
-          } else {
-            el.innerHTML = newContent.innerHTML;
+        // Para cart-items-component, necesitamos actualizar el innerHTML
+        // pero preservando el Shadow DOM si existe
+        if (targetComponent.tagName.toLowerCase() === 'cart-items-component') {
+          // Crear un div temporal para parsear el HTML
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+          
+          // Obtener el nuevo contenido
+          const newContent = tempDiv.querySelector('cart-items-component') || tempDiv.firstElementChild;
+          
+          if (newContent) {
+            // Actualizar el HTML interno
+            targetComponent.innerHTML = newContent.innerHTML;
+            console.log('Pronto-Chocho v3: cart-items-component actualizado manualmente');
+          }
+        } else {
+          // Para otros elementos, reemplazo simple
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+          const newElement = tempDiv.firstElementChild;
+          
+          if (newElement && targetComponent.parentNode) {
+            targetComponent.parentNode.replaceChild(newElement, targetComponent);
           }
         }
-      });
+      } catch (err) {
+        console.error('Pronto-Chocho v3: Error en actualización manual →', sectionId, err);
+      }
     });
   }
 
@@ -873,7 +898,7 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
-   * ADD TO CART - INTEGRACIÓN COMPLETA CON SECTION RENDERING
+   * ADD TO CART - INTEGRACIÓN COMPLETA CON EVENTOS CORREGIDOS
    * ───────────────────────────────────────────────────────────────────────── */
   submitBtn.addEventListener('click', async function handleAddToCart(e) {
     // CRÍTICO: Prevenir duplicados y conflicto con handlers del tema
@@ -932,7 +957,7 @@
 
     // CRÍTICO: Obtener section IDs para el rendering
     const sectionIds = getCartSectionIds();
-    console.log('Pronto-Chocho v3: Section IDs para actualizar →', sectionIds);
+    console.log('Pronto-Chocho v3: Section IDs →', sectionIds);
 
     // Sincronizar inputs antes del fetch
     syncSellingPlanInputs(planId);
@@ -984,51 +1009,69 @@
         refreshCartSections(responseData.sections);
       }
 
-      /* ── DISPARAR EVENTOS DEL TEMA ───────────────────────────────────── */
+      /* ── DISPARAR EVENTOS DEL TEMA - ESTRUCTURA CORREGIDA ───────────── */
       
-      // 1. CartAddEvent con sections (igual que product-form.js)
+      // Calcular itemCount total
+      const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+
+      // 1. CartAddEvent con ESTRUCTURA EXACTA que espera component-cart-items.js
+      // El tema espera: event.detail.data.sections
       if (window.CartAddEvent) {
         try {
-          // Calcular itemCount total
-          const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
-          
           const cartAddEvent = new CartAddEvent(
-            responseData, 
-            blockId, 
-            {
+            responseData,           // resource (cart data)
+            blockId,                // sourceId
+            {                       // data (tercer parámetro)
               source: 'pronto-chocho-v3',
               itemCount: totalItemCount,
-              sections: responseData.sections,
+              sections: responseData.sections,  // ← AQUÍ está la clave
               didError: false
             }
           );
+          
+          // Asegurar que la estructura sea correcta
+          console.log('Pronto-Chocho v3: Disparando CartAddEvent →', {
+            resource: cartAddEvent.detail.resource ? 'present' : 'missing',
+            sourceId: cartAddEvent.detail.sourceId,
+            data: cartAddEvent.detail.data
+          });
+          
           document.dispatchEvent(cartAddEvent);
-          console.log('Pronto-Chocho v3: CartAddEvent disparado con sections');
         } catch (err) {
           console.warn('Pronto-Chocho v3: Error al crear CartAddEvent:', err);
         }
       }
 
-      // 2. Eventos adicionales para compatibilidad
+      // 2. Evento cart:add (nomenclatura alternativa) - ESTRUCTURA PLANA
       dispatchThemeEvent('cart:add', {
         cart: responseData,
         items: items,
         source: 'pronto-chocho-v3',
-        sections: responseData.sections
+        sections: responseData.sections,
+        itemCount: totalItemCount
       });
 
-      dispatchThemeEvent('cart:update', {
-        cart: responseData,
-        source: 'pronto-chocho-v3',
-        sections: responseData.sections
+      // 3. Evento cart:update - ESTRUCTURA QUE ESPERA EL TEMA
+      // Algunos temas esperan event.detail.data.sections
+      const cartUpdateEvent = new CustomEvent('cart:update', {
+        bubbles: true,
+        detail: {
+          data: {                          // ← data wrapper CRÍTICO
+            sections: responseData.sections  // ← sections dentro de data
+          },
+          source: 'pronto-chocho-v3',
+          itemCount: totalItemCount
+        }
       });
+      document.dispatchEvent(cartUpdateEvent);
 
-      // 3. Evento nativo para otros listeners
+      // 4. Evento nativo para otros listeners
       document.dispatchEvent(new CustomEvent('cart:refresh', { 
         bubbles: true,
         detail: { 
           source: 'pronto-chocho-v3',
-          sections: responseData.sections 
+          sections: responseData.sections,
+          cart: responseData
         }
       }));
 
@@ -1143,7 +1186,7 @@
   setTimeout(() => pluginBootObserver.disconnect(), 10000);
 
   console.log(
-    `%cPronto-Chocho v3 (FINAL INTEGRADO)%c | Block: ${blockId} | ` +
+    `%cPronto-Chocho v3 (FINAL FIX)%c | Block: ${blockId} | ` +
     `ThemeEvents: ${ThemeEvents ? '✓' : '✗'} | ` +
     `CartAddEvent: ${window.CartAddEvent ? '✓' : '✗'} | ` +
     `Section Renderer: ${window.theme?.sectionRenderer ? '✓' : '✗'}`,
