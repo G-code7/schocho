@@ -265,7 +265,6 @@
                 "subscription_purchase_v4_EmDACR": {
                   "type": "subscription-purchase-v4",
                   "name": "Pronto-Chocho Selector v4",
-                  "disabled": true,
                   "settings": {
                     "sub_title": "Subscribe & Save",
                     "sub_subtitle": "15 servings per bag",
@@ -344,8 +343,9 @@
                   "blocks": {}
                 },
                 "subscription_purchase_v2_ka9Pnw": {
-                  "type": "subscription-purchase-V2",
+                  "type": "subscription-purchase-v2",
                   "name": "Pronto-Chocho Selector v2",
+                  "disabled": true,
                   "settings": {
                     "sub_title": "Subscribe & Save",
                     "sub_subtitle": "15 servings per bag",
@@ -370,12 +370,12 @@
                     "savings_label": "You're saving",
                     "button_text": "Add to Cart",
                     "notification_text": "¡Productos agregados al carrito!",
-                    "notification_bg": "#4A6B1A",
-                    "badge_bg": "#4A6B1A",
+                    "notification_bg": "#4a6b1a",
+                    "badge_bg": "#4a6b1a",
                     "badge_text": "#ffffff",
-                    "active_border": "#4A6B1A",
-                    "active_bg": "#FCF3EC",
-                    "price_color": "#4A6B1A",
+                    "active_border": "#4a6b1a",
+                    "active_bg": "#fcf3ec",
+                    "price_color": "#4a6b1a",
                     "button_bg": "#1a1a1a",
                     "button_text_color": "#ffffff",
                     "button_hover": "#333333"
