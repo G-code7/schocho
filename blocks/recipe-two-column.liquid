@@ -382,6 +382,36 @@
     }
     {% endif %}
   }
+
+    /* ===== ADD TO CART BUTTON STATES ===== */
+  .ai-recipe-add-btn-{{ ai_gen_id }}:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  .ai-recipe-btn-spinner-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+  }
+
+  .ai-recipe-spinner-svg-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    animation: ai-recipe-spin-{{ ai_gen_id }} 1s linear infinite;
+  }
+
+  @keyframes ai-recipe-spin-{{ ai_gen_id }} {
+    to { transform: rotate(360deg); }
+  }
+
+  .ai-recipe-btn-success-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: bold;
+  }
 {% endstyle %}
 
 <div class="ai-recipe-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
@@ -594,6 +624,243 @@
       {% endif %}
     </div>
   </div>
+
+  <script>
+  (function() {
+    'use strict';
+    
+    const blockId = '{{ ai_gen_id }}';
+    const container = document.querySelector(`[data-recipe-products-container]`);
+    if (!container) return;
+    
+    // ===== THEME EVENTS INTEGRATION =====
+    const ThemeEvents = window.ThemeEvents || (window.theme && window.theme.events) || null;
+    
+    function dispatchThemeEvent(eventName, detail) {
+      if (ThemeEvents && typeof ThemeEvents.publish === 'function') {
+        ThemeEvents.publish(eventName, detail);
+        return;
+      }
+      document.dispatchEvent(new CustomEvent(eventName, { bubbles: true, detail }));
+    }
+    
+    // ===== SECCIONES PARA RENDERING =====
+    function getCartSectionIds() {
+      const sectionIds = new Set();
+      document.querySelectorAll('cart-items-component').forEach(component => {
+        if (component.dataset.sectionId) sectionIds.add(component.dataset.sectionId);
+      });
+      if (sectionIds.size === 0) sectionIds.add('sections--19974426230976__header_section');
+      return Array.from(sectionIds);
+    }
+    
+    // ===== ACTUALIZAR CART SECTIONS =====
+    function refreshCartSections(sections) {
+      if (!sections) return;
+      console.log('Recipe Two Column: Actualizando sections →', Object.keys(sections));
+      
+      const sectionRenderer = window.theme?.sectionRenderer || window.sectionRenderer;
+      if (sectionRenderer && typeof sectionRenderer.renderSection === 'function') {
+        Object.keys(sections).forEach(id => {
+          try { sectionRenderer.renderSection(id, { cache: false }); } 
+          catch (e) { console.error('Error renderizando:', id, e); }
+        });
+        return;
+      }
+      
+      const morphSection = window.theme?.morphSection || window.morphSection;
+      if (morphSection && typeof morphSection === 'function') {
+        Object.keys(sections).forEach(id => {
+          try { morphSection(id, sections[id]); } 
+          catch (e) { console.error('Error morphSection:', id, e); }
+        });
+        return;
+      }
+      
+      // Fallback manual
+      Object.keys(sections).forEach(id => {
+        const html = sections[id];
+        if (!html) return;
+        const target = document.querySelector(`[data-section-id="${id}"]`);
+        if (!target) return;
+        
+        if (target.tagName.toLowerCase() === 'cart-items-component') {
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+          const newContent = temp.querySelector('cart-items-component') || temp.firstElementChild;
+          if (newContent) target.innerHTML = newContent.innerHTML;
+        }
+      });
+    }
+    
+    // ===== ABRIR CART DRAWER =====
+    function openCartDrawer() {
+      const drawer = document.querySelector('cart-drawer-component');
+      if (!drawer) {
+        console.warn('Recipe Two Column: No cart-drawer-component encontrado');
+        return 'not-found';
+      }
+      if (typeof drawer.open === 'function') {
+        drawer.open();
+        return 'method-open';
+      }
+      if (typeof drawer.showDialog === 'function') {
+        drawer.showDialog();
+        return 'method-showDialog';
+      }
+      if (!drawer.hasAttribute('open')) {
+        drawer.setAttribute('open', '');
+        return 'attr-open';
+      }
+      return 'already-open';
+    }
+    
+    // ===== ADD TO CART =====
+    async function addToCart(variantId, button) {
+      if (button.disabled) return;
+      
+      // UI Loading State
+      button.disabled = true;
+      const icon = button.querySelector(`.ai-recipe-btn-icon-${blockId}`);
+      const text = button.querySelector(`.ai-recipe-btn-text-${blockId}`);
+      const spinner = button.querySelector(`.ai-recipe-btn-spinner-${blockId}`);
+      const success = button.querySelector(`.ai-recipe-btn-success-${blockId}`);
+      
+      if (icon) icon.style.display = 'none';
+      if (text) text.style.display = 'none';
+      if (spinner) spinner.style.display = 'inline-flex';
+      
+      try {
+        const sectionIds = getCartSectionIds();
+        
+        const requestBody = {
+          items: [{ id: parseInt(variantId, 10), quantity: 1 }],
+          sections: sectionIds.join(','),
+          sections_url: window.location.pathname
+        };
+        
+        console.log('Recipe Two Column: Enviando →', requestBody);
+        
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(requestBody)
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.description || data.message || 'Error adding to cart');
+        }
+        
+        console.log('Recipe Two Column: Respuesta →', data);
+        
+        // Actualizar sections
+        if (data.sections) refreshCartSections(data.sections);
+        
+        // Calcular itemCount
+        const itemCount = data.items?.reduce((sum, item) => sum + item.quantity, 0) || 1;
+        
+        // DISPARAR EVENTOS CON ESTRUCTURA CORRECTA
+        // 1. CartAddEvent
+        if (window.CartAddEvent) {
+          const cartAddEvent = new CartAddEvent(
+            data,
+            'recipe-two-column-' + blockId,
+            {
+              source: 'recipe-two-column',
+              itemCount: itemCount,
+              sections: data.sections,
+              didError: false
+            }
+          );
+          document.dispatchEvent(cartAddEvent);
+        }
+        
+        // 2. Evento cart:add
+        dispatchThemeEvent('cart:add', {
+          cart: data,
+          items: data.items,
+          source: 'recipe-two-column',
+          sections: data.sections,
+          itemCount: itemCount
+        });
+        
+        // 3. Evento cart:update con wrapper data (CRÍTICO)
+        const cartUpdateEvent = new CustomEvent('cart:update', {
+          bubbles: true,
+          detail: {
+            data: { sections: data.sections },
+            source: 'recipe-two-column',
+            itemCount: itemCount
+          }
+        });
+        document.dispatchEvent(cartUpdateEvent);
+        
+        // 4. Evento genérico
+        document.dispatchEvent(new CustomEvent('cart:refresh', {
+          bubbles: true,
+          detail: { source: 'recipe-two-column', sections: data.sections }
+        }));
+        
+        // Abrir drawer
+        const drawerResult = openCartDrawer();
+        console.log('Recipe Two Column: Drawer result →', drawerResult);
+        
+        // UI Success State
+        if (spinner) spinner.style.display = 'none';
+        if (success) success.style.display = 'inline-flex';
+        
+        setTimeout(() => {
+          if (success) success.style.display = 'none';
+          if (icon) icon.style.display = '';
+          if (text) text.style.display = '';
+          button.disabled = false;
+        }, 2000);
+        
+      } catch (error) {
+        console.error('Recipe Two Column - Error:', error);
+        
+        // UI Error State
+        if (spinner) spinner.style.display = 'none';
+        if (icon) icon.style.display = '';
+        if (text) text.style.display = '';
+        
+        // Mostrar error temporal en el botón
+        const originalText = text?.textContent;
+        if (text) text.textContent = 'Error';
+        setTimeout(() => {
+          if (text && originalText) text.textContent = originalText;
+          button.disabled = false;
+        }, 2000);
+        
+        alert(error.message || 'Error adding to cart. Please try again.');
+      }
+    }
+    
+    // ===== EVENT LISTENERS =====
+    container.querySelectorAll('[data-recipe-add-btn]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        // CRÍTICO: Prevenir duplicados
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        const variantId = this.getAttribute('data-variant-id');
+        if (variantId) addToCart(variantId, this);
+      });
+    });
+    
+    console.log(
+      '%cRecipe Two Column%c | Block: ' + blockId + ' | CartAddEvent: ' + (window.CartAddEvent ? '✓' : '✗'),
+      'font-weight:bold;color:#761e0b',
+      'color:inherit'
+    );
+  })();
+  </script>
 </div>
 
 {% schema %}
