@@ -568,6 +568,7 @@
           "blocks": {
             "text_k6tert": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Pure. Ancient Food. </p>",
                 "width": "fit-content",
@@ -593,6 +594,7 @@
             },
             "text_VrDdEN": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Minimally processed. </p>",
                 "width": "fit-content",
@@ -618,6 +620,7 @@
             },
             "text_qYgach": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Nutrient-dense. Whole-food nourishment, redefined.</p>",
                 "width": "fit-content",
@@ -708,7 +711,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -733,7 +736,7 @@
               "type": "icon",
               "settings": {
                 "icon": "eye",
-                "image_upload": "shopify://shop_images/Recurso_54_3x_91ebdbda-2193-47aa-82c2-910fe7f130fc.png",
+                "image_upload": "shopify://shop_images/Recurso_64_3x_5622a315-d6c2-4a3d-9ec3-8ce5f3387db1.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -782,7 +785,7 @@
                 "text_wJyNmR": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Intentional design</h2>",
+                    "text": "<h2><strong>Regenerative Stewardship</strong></h2>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -807,7 +810,7 @@
                 "text_yXtfhT": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Everything starts with why: pure, gluten-free nutrition without compromise.</p>",
+                    "text": "<p>We protect and restore the land that feeds us by supporting soil health, preserving biodiversity, and farming practices that give more than they take, ensuring the Andes can nourish generations to come.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -859,7 +862,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -884,7 +887,7 @@
               "type": "icon",
               "settings": {
                 "icon": "heart",
-                "image_upload": "shopify://shop_images/Recurso_50_3x_6769b243-b378-4577-af85-67b46e731dba.png",
+                "image_upload": "shopify://shop_images/Recurso_60_3x_d99915b6-0550-4038-9724-9ce5c2ddd3c6.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -933,7 +936,7 @@
                 "text_UiQWQW": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Made with care</h2>",
+                    "text": "<h2><strong>Nourishment with Purpose</strong></h2>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -958,7 +961,7 @@
                 "text_nppV4f": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We believe in building better by choosing nutrient-dense Chocho over pea protein.</p>",
+                    "text": "<p>Our foods are designed to deliver real benefits through functional, whole-food nutrition using an ancestral crop that has nourished Andean communities for centuries.<br/><br/></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1010,7 +1013,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -1035,7 +1038,7 @@
               "type": "icon",
               "settings": {
                 "icon": "silhouette",
-                "image_upload": "shopify://shop_images/Recurso_53_3x_870a52ff-08c5-4652-b8e7-77e133d1cd16.png",
+                "image_upload": "shopify://shop_images/Recurso_63_3x_3ce8bbb9-b151-4b92-9261-78f1422af3aa.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -1084,7 +1087,7 @@
                 "text_EDqDgj": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>A team with a goal</h2>",
+                    "text": "<h2><strong>Transparency</strong></h2>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1109,7 +1112,7 @@
                 "text_kGVrTA": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Real people committed to the natural integrity of non-GMO ancient foods.</p>",
+                    "text": "<p>We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust.<br/><br/><br/><br/></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1161,7 +1164,7 @@
             "height": "fit",
             "custom_height": 100,
             "inherit_color_scheme": false,
-            "color_scheme": "scheme-1",
+            "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
             "background_media": "none",
             "video_position": "cover",
             "background_image_position": "cover",
@@ -1186,7 +1189,7 @@
               "type": "icon",
               "settings": {
                 "icon": "silhouette",
-                "image_upload": "shopify://shop_images/Recurso_52_3x_bb7e566f-9402-44d4-86c1-dda61241aa9a.png",
+                "image_upload": "shopify://shop_images/Recurso_62_3x_7fe86127-f040-4294-a418-4de9c61bc2b7.png",
                 "width": 70,
                 "link": "",
                 "open_in_new_tab": false
@@ -1235,7 +1238,7 @@
                 "text_3VDCiV": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>A team with a goal</h2>",
+                    "text": "<h2><strong>Community & Reciprocity</strong></h2>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1260,7 +1263,7 @@
                 "text_iWTGAV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Great products made simple by excluding soy and artificial additives.</p>",
+                    "text": "<p>Well-being is shared. We uplift Andean farmers through fair partnerships, honoring the hands and hearts that cultivate our crops and ensuring that prosperity flows back to the communities who make our food possible.<br/></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1314,7 +1317,7 @@
         "section_width": "page-width",
         "section_height": "",
         "section_height_custom": 50,
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
@@ -1326,87 +1329,7 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 48,
-        "padding-block-end": 48
-      }
-    },
-    "section_Kc4ing": {
-      "type": "_blocks",
-      "blocks": {
-        "accordion_thaTc8": {
-          "type": "accordion",
-          "name": "t:names.accordion",
-          "settings": {
-            "max_width": 800,
-            "container_padding": 20,
-            "section_padding_y": 40,
-            "section_padding_y_mobile": 30,
-            "section_gap": 30,
-            "section_title": "Frequently Asked Questions",
-            "section_title_size": 28,
-            "section_title_weight": "600",
-            "section_title_uppercase": false,
-            "header_align": "left",
-            "background_color": "#f2efea",
-            "title_color": "#371e54",
-            "text_color": "#2b1344",
-            "border_color": "#dfd8e6",
-            "icon_color": "#371e54",
-            "title_size": 16,
-            "title_weight": "500",
-            "content_size": 15,
-            "item_padding_y": 18,
-            "border_width": 1,
-            "show_top_border": false,
-            "icon_size": 20,
-            "icon_thickness": 2,
-            "single_open": true,
-            "first_open": false,
-            "faq_1_question": "What makes Andean Chocho different from other plant proteins?",
-            "faq_1_answer": "<p>Unlike isolates or blends, Pronto Chocho is a single-ingredient, whole-food protein that naturally contains fiber, healthy fats, and 9/9 essential amino acids.</p>",
-            "faq_2_question": "Is Pronto Chocho easy to digest?",
-            "faq_2_answer": "<p>Yes; we use traditional Andean methods to reduce naturally occurring lectins, making it a \"gut-smart\" protein that supports digestive comfort without the bloating often caused by pea or soy.</p>",
-            "faq_3_question": "Are there any sweeteners, fillers, or gums added?",
-            "faq_3_answer": "<p>None at all—our philosophy is \"Nothing added, nothing removed,\" ensuring you get clean, minimally processed nourishment without additives or ultra-processing.</p>",
-            "faq_4_question": "Is this product safe for common food sensitivities?",
-            "faq_4_answer": "<p>Absolutely; all our products are naturally gluten-free, soy-free, dairy-free, pea-free, and non-GMO.</p>",
-            "faq_5_question": "How should I use Pronto Chocho in my daily routine?",
-            "faq_5_answer": "<p>Due to its clean and versatile nature, it blends seamlessly into smoothies, coffee, morning bowls, or even baking recipes without altering the texture.</p>",
-            "faq_6_question": "",
-            "faq_6_answer": ""
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "accordion_thaTc8"
-      ],
-      "name": "t:names.faq_section",
-      "settings": {
-        "content_direction": "column",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 50,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "scheme-1",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 80,
+        "padding-block-start": 60,
         "padding-block-end": 80
       }
     },
@@ -1447,7 +1370,6 @@
     "blocks_wy8CWj",
     "hero_8wt9xX",
     "section_BhP8Fy",
-    "section_Kc4ing",
     "1770999633cf821450"
   ]
 }
