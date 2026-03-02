@@ -124,76 +124,10 @@
                     "wrap": "pretty",
                     "color": "var(--color-foreground)",
                     "background": false,
-                    "background_color": "rgba(0, 0, 0, 0.15)",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "review_pzw7fn": {
-                  "type": "review",
-                  "disabled": true,
-                  "settings": {
-                    "stars_style": "shaded",
-                    "show_number": true,
-                    "rating_color": "primary",
-                    "type_preset": "paragraph",
-                    "alignment": "left"
-                  },
-                  "blocks": {}
-                },
-                "text_DQhnJA": {
-                  "type": "text",
-                  "name": "Byline",
-                  "disabled": true,
-                  "settings": {
-                    "text": "<p>{{ closest.product.metafields.descriptors.subtitle.value }}</p>",
-                    "width": "100%",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "custom",
-                    "font": "var(--font-primary--family)",
-                    "font_size": "var(--font-size--heading-xs)",
-                    "line_height": "normal",
-                    "letter_spacing": "loose",
-                    "case": "uppercase",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
                     "background_color": "#00000026",
                     "corner_radius": 0,
                     "padding-block-start": 0,
                     "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "text_rmfzht": {
-                  "type": "text",
-                  "name": "t:names.title",
-                  "disabled": true,
-                  "settings": {
-                    "text": "<h1>{{ closest.product.title }}</h1>",
-                    "width": "fit-content",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "h1",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 10,
                     "padding-inline-start": 0,
                     "padding-inline-end": 0
                   },
@@ -201,10 +135,7 @@
                 }
               },
               "block_order": [
-                "textii_qmcH63",
-                "review_pzw7fn",
-                "text_DQhnJA",
-                "text_rmfzht"
+                "textii_qmcH63"
               ]
             },
             "ai_gen_block_3fb8129_RhWB7i": {
@@ -230,7 +161,7 @@
               "type": "text",
               "name": "Product description",
               "settings": {
-                "text": "{{ closest.product.description }}",
+                "text": "<p>{{ closest.product.description }}</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -252,47 +183,9 @@
               },
               "blocks": {}
             },
-            "ai_gen_block_057fc56_UL8UjR": {
-              "type": "ai_gen_block_057fc56",
-              "settings": {
-                "onetime_title": "Compra única",
-                "onetime_description": "Compra este producto una sola vez",
-                "subscription_title": "Suscripción",
-                "subscription_description": "Ahorra con entregas automáticas",
-                "show_discount_badge": true,
-                "discount_percentage": 15,
-                "discount_badge_text": "descuento",
-                "price_label": "Precio",
-                "subscription_price_label": "Precio con suscripción",
-                "quantity_label": "Cantidad",
-                "add_to_cart_text": "Agregar al carrito",
-                "show_accelerated_checkout": true,
-                "desktop_width_percent": 100,
-                "option_background": "#ffffff",
-                "active_background": "#f5f4ed",
-                "border_color": "#e6e6e6",
-                "border_hover_color": "#3e2563",
-                "active_border_color": "#3e2563",
-                "text_color": "#3e2563",
-                "badge_background": "#c4b1ca",
-                "badge_text_color": "#3e2563",
-                "button_background": "#371e54",
-                "button_hover_background": "#3e2563",
-                "button_text_color": "#ffffff",
-                "border_radius": 8,
-                "input_border_radius": 4,
-                "button_border_radius": 25,
-                "option_title_size": 16,
-                "description_size": 14,
-                "price_size": 18,
-                "button_text_size": 16
-              },
-              "blocks": {}
-            },
             "group_dTHcXb": {
               "type": "group",
               "name": "Product form",
-              "disabled": true,
               "settings": {
                 "content_direction": "column",
                 "vertical_on_mobile": true,
@@ -330,84 +223,49 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "price_tMxUbj": {
-                  "type": "price",
-                  "disabled": true,
+                "subscription_purchase_v4_CRCnN8": {
+                  "type": "subscription-purchase-V4",
+                  "name": "Pronto-Chocho Selector v4",
                   "settings": {
-                    "show_sale_price_first": true,
-                    "show_installments": true,
-                    "show_tax_info": true,
-                    "type_preset": "custom",
-                    "width": "100%",
-                    "alignment": "left",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1.25rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "color": "var(--color-foreground)",
-                    "padding-block-start": 0,
-                    "padding-block-end": 10,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "sub_title": "Subscribe & Save",
+                    "sub_subtitle": "15 servings per bag",
+                    "subscription_discount": 15,
+                    "show_benefits": true,
+                    "benefit_1": "Save money on every order",
+                    "benefit_2": "Easily change your quantities",
+                    "benefit_3": "Cancel any time",
+                    "benefit_4": "Pre-shipment reminders",
+                    "onetime_title": "One-time purchase",
+                    "onetime_subtitle": "15 servings per bag",
+                    "flavors_label": "Choose your flavors",
+                    "product_1": "chocho-cacao-spirulina-maca",
+                    "product_2": "chocho-pure-ingredient",
+                    "product_3": "chocho-ginger-turmeric-black-pepper-powder-blend",
+                    "product_4": "",
+                    "product_5": "",
+                    "servings_text": "15 servings",
+                    "per_text": "serving",
+                    "servings_per_unit": 15,
+                    "selling_plan_id": "",
+                    "auto_open_cart_drawer": true,
+                    "savings_label": "You're saving",
+                    "button_text": "Add to Cart",
+                    "notification_text": "¡Productos agregados al carrito!",
+                    "notification_bg": "#4A6B1A",
+                    "badge_bg": "#4A6B1A",
+                    "badge_text": "#ffffff",
+                    "active_border": "#4A6B1A",
+                    "active_bg": "#FCF3EC",
+                    "price_color": "#4A6B1A",
+                    "button_bg": "#1a1a1a",
+                    "button_text_color": "#ffffff",
+                    "button_hover": "#333333"
                   },
                   "blocks": {}
-                },
-                "variant_picker_KePPVa": {
-                  "type": "variant-picker",
-                  "disabled": true,
-                  "settings": {
-                    "variant_style": "buttons",
-                    "show_swatches": true,
-                    "alignment": "left",
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "buy_buttons_6p8c63": {
-                  "type": "buy-buttons",
-                  "disabled": true,
-                  "settings": {
-                    "stacking": false,
-                    "show_pickup_availability": false,
-                    "gift_card_form": true,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {
-                    "quantity": {
-                      "type": "quantity",
-                      "static": true,
-                      "settings": {},
-                      "blocks": {}
-                    },
-                    "add-to-cart": {
-                      "type": "add-to-cart",
-                      "static": true,
-                      "settings": {
-                        "style_class": "button-secondary"
-                      },
-                      "blocks": {}
-                    },
-                    "accelerated-checkout": {
-                      "type": "accelerated-checkout",
-                      "static": true,
-                      "settings": {},
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": []
                 }
               },
               "block_order": [
-                "price_tMxUbj",
-                "variant_picker_KePPVa",
-                "buy_buttons_6p8c63"
+                "subscription_purchase_v4_CRCnN8"
               ]
             },
             "group_8ePU6U": {
@@ -486,7 +344,6 @@
             "group_4we3XL",
             "ai_gen_block_3fb8129_RhWB7i",
             "text_LbbLqQ",
-            "ai_gen_block_057fc56_UL8UjR",
             "group_dTHcXb",
             "group_8ePU6U"
           ]
