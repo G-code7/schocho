@@ -292,95 +292,49 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "subscriptions_app_block_XEr8Nw": {
-                  "type": "shopify://apps/subscriptions/blocks/app-block/a3bfe9ec-96f8-4508-a003-df608a36d2ad",
+                "subscription_purchase_v4_Tgy4r6": {
+                  "type": "subscription-purchase-V4",
+                  "name": "Pronto-Chocho Selector v4",
                   "settings": {
-                    "color_text_body": "#6d7175",
-                    "dividers_color": "#8f8d8d",
-                    "bacgkround_color": "#ffffff",
-                    "border_thickness": 1,
-                    "border_radius": 0,
-                    "subscription_policy_url": "",
-                    "product": "{{product}}"
-                  }
-                },
-                "price_tMxUbj": {
-                  "type": "price",
-                  "disabled": true,
-                  "settings": {
-                    "show_sale_price_first": true,
-                    "show_installments": true,
-                    "show_tax_info": true,
-                    "type_preset": "custom",
-                    "width": "100%",
-                    "alignment": "left",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1.25rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "color": "var(--color-foreground)",
-                    "padding-block-start": 0,
-                    "padding-block-end": 10,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
+                    "sub_title": "Subscribe & Save",
+                    "sub_subtitle": "16 servings per bag",
+                    "subscription_discount": 15,
+                    "show_benefits": true,
+                    "benefit_1": "Save money on every order",
+                    "benefit_2": "Easily change your quantities",
+                    "benefit_3": "Cancel any time",
+                    "benefit_4": "Pre-shipment reminders",
+                    "onetime_title": "One-time purchase",
+                    "onetime_subtitle": "~ 16 servings per bag",
+                    "flavors_label": "Choose your flavors",
+                    "product_1": "chocho-pure-ingredient",
+                    "product_2": "chocho-cacao-spirulina-maca",
+                    "product_3": "chocho-ginger-turmeric-black-pepper-powder-blend",
+                    "product_4": "",
+                    "product_5": "",
+                    "servings_text": "16 servings",
+                    "per_text": "serving",
+                    "servings_per_unit": 16,
+                    "selling_plan_id": "3233841344",
+                    "auto_open_cart_drawer": true,
+                    "savings_label": "You're saving",
+                    "button_text": "Add to Cart",
+                    "notification_text": "Products added to cart!",
+                    "notification_bg": "#3e2563",
+                    "badge_bg": "#3e2563",
+                    "badge_text": "#ffffff",
+                    "active_border": "#3e2563",
+                    "active_bg": "#faf6f2",
+                    "price_color": "#3e2563",
+                    "button_bg": "#3e2563",
+                    "button_text_color": "#ffffff",
+                    "button_hover": "#3e2563"
                   },
                   "blocks": {}
-                },
-                "variant_picker_KePPVa": {
-                  "type": "variant-picker",
-                  "settings": {
-                    "variant_style": "buttons",
-                    "show_swatches": true,
-                    "alignment": "left",
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                },
-                "buy_buttons_6p8c63": {
-                  "type": "buy-buttons",
-                  "settings": {
-                    "stacking": false,
-                    "show_pickup_availability": false,
-                    "gift_card_form": true,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {
-                    "quantity": {
-                      "type": "quantity",
-                      "static": true,
-                      "settings": {},
-                      "blocks": {}
-                    },
-                    "add-to-cart": {
-                      "type": "add-to-cart",
-                      "static": true,
-                      "settings": {
-                        "style_class": "button-secondary"
-                      },
-                      "blocks": {}
-                    },
-                    "accelerated-checkout": {
-                      "type": "accelerated-checkout",
-                      "static": true,
-                      "settings": {},
-                      "blocks": {}
-                    }
-                  },
-                  "block_order": []
                 }
               },
               "block_order": [
-                "subscriptions_app_block_XEr8Nw",
-                "price_tMxUbj",
-                "variant_picker_KePPVa",
-                "buy_buttons_6p8c63"
+                "subscription_purchase_v4_Tgy4r6"
               ]
             },
             "group_8ePU6U": {
