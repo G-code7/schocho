@@ -144,9 +144,36 @@
                   },
                   "blocks": {}
                 },
+                "textii_hM7gN4": {
+                  "type": "textii",
+                  "name": "HTML Text",
+                  "settings": {
+                    "text": "<h1>Andean Chocho <span style=\"color:#b25a45; font-style: italic; font-weight: 600; font-size: 24px;\">with</span> <br>\n<span style=\"font-size: 28px;\">\nGinger + Turmeric + Black Pepper</span>\n</h1>",
+                    "width": "100%",
+                    "max_width": "narrow",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "rgba(0, 0, 0, 0.15)",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
                 "text_rmfzht": {
                   "type": "text",
                   "name": "t:names.title",
+                  "disabled": true,
                   "settings": {
                     "text": "<h1>{{ closest.product.title }}</h1>",
                     "width": "fit-content",
@@ -174,6 +201,7 @@
               "block_order": [
                 "review_pzw7fn",
                 "text_DQhnJA",
+                "textii_hM7gN4",
                 "text_rmfzht"
               ]
             },
@@ -296,9 +324,9 @@
                     "active_border": "#3e2563",
                     "active_bg": "#fcf3ec",
                     "price_color": "#3e2563",
-                    "button_bg": "#1a1a1a",
+                    "button_bg": "#371e54",
                     "button_text_color": "#ffffff",
-                    "button_hover": "#333333"
+                    "button_hover": "#371e54"
                   },
                   "blocks": {}
                 }
