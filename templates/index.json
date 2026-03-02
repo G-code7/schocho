@@ -497,14 +497,6 @@
     "two_columns_acordion_slider_v2_phmmCR": {
       "type": "two-columns-acordion-slider-v2",
       "blocks": {
-        "accordion_item_fnmnaH": {
-          "type": "accordion_item",
-          "settings": {
-            "image": "shopify://shop_images/5givesback.png",
-            "accordion_title": "Título del paso",
-            "accordion_content": "<p>Descripción detallada de este paso o sección.</p>"
-          }
-        },
         "accordion_item_M6VQET": {
           "type": "accordion_item",
           "settings": {
@@ -526,7 +518,7 @@
         "accordion_item_NMFNVf": {
           "type": "accordion_item",
           "settings": {
-            "image": "shopify://shop_images/unas_limpias.png",
+            "image": "shopify://shop_images/5givesback.png",
             "icon": "shopify://shop_images/freepik__background__68644.png",
             "accordion_title": "Rooted in Tradition",
             "accordion_content": "<p>Chocho is cultivated and harvested by hand through communal work that preserves cultural knowledge and supports local Andean communities. These time-honored practices honor the land, strengthen livelihoods, and keep traditional regenerative farming alive.</p><p><em><strong>Your food has a face, a place, and a story.</strong></em></p>"
@@ -543,7 +535,6 @@
         }
       },
       "block_order": [
-        "accordion_item_fnmnaH",
         "accordion_item_M6VQET",
         "accordion_item_3TFRYD",
         "accordion_item_NMFNVf",
@@ -903,7 +894,7 @@
         "enable_autoplay": false,
         "autoplay_duration": 300,
         "show_dots": true,
-        "product_1": "",
+        "product_1": "chocho-pure-ingredient",
         "custom_title_1": "<p>Andean Chocho Powder <br><em><strong>One</strong></em> pure ingredient</p>",
         "description_1": "A nutrient-dense, functional food <br>\nmade from one whole Andean ingredient.<br>\nClean, minimally processed plant protein for the whole-food seeker who wants simple, versatile, everyday\nnourishment.",
         "show_product_image_1": false,
