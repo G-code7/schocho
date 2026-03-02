@@ -637,6 +637,7 @@
           "blocks": {
             "text_k6tert": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Pure. Ancient Food. </p>",
                 "width": "fit-content",
@@ -662,6 +663,7 @@
             },
             "text_VrDdEN": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Minimally processed. </p>",
                 "width": "fit-content",
@@ -687,6 +689,7 @@
             },
             "text_qYgach": {
               "type": "text",
+              "disabled": true,
               "settings": {
                 "text": "<p>Nutrient-dense. Whole-food nourishment, redefined.</p>",
                 "width": "fit-content",
