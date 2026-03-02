@@ -232,7 +232,7 @@
               "settings": {
                 "text": "{{ closest.product.description }}",
                 "width": "fit-content",
-                "max_width": "none",
+                "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "custom",
                 "font": "var(--font-primary--family)",
