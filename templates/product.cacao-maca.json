@@ -109,6 +109,7 @@
               "blocks": {
                 "review_pzw7fn": {
                   "type": "review",
+                  "disabled": true,
                   "settings": {
                     "stars_style": "shaded",
                     "show_number": true,
@@ -121,6 +122,7 @@
                 "text_DQhnJA": {
                   "type": "text",
                   "name": "Byline",
+                  "disabled": true,
                   "settings": {
                     "text": "<p>{{ closest.product.metafields.descriptors.subtitle.value }}</p>",
                     "width": "100%",
@@ -298,10 +300,10 @@
                     "sub_subtitle": "15 servings per bag",
                     "subscription_discount": 15,
                     "show_benefits": true,
-                    "benefit_1": "Save money on every order",
-                    "benefit_2": "Easily change your quantities",
-                    "benefit_3": "Cancel any time",
-                    "benefit_4": "Pre-shipment reminders",
+                    "benefit_1": "Save 15%/bag on every subscription order",
+                    "benefit_2": "Free shipping with 2+ bags",
+                    "benefit_3": "Easily change your quantities",
+                    "benefit_4": "Cancel any time",
                     "onetime_title": "One-time purchase",
                     "onetime_subtitle": "15 servings per bag",
                     "flavors_label": "Choose your flavors",
