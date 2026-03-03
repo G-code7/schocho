@@ -405,83 +405,65 @@
         "mobile_content_padding": 24
       }
     },
-    "hero_CtRMrE": {
-      "type": "hero",
+    "section_Tz66bf": {
+      "type": "section",
       "blocks": {
-        "marquee_PbjzUE": {
-          "type": "_marquee",
+        "text_tjYmm7": {
+          "type": "text",
+          "name": "t:names.text",
           "settings": {
-            "movement_direction": "normal",
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "transparent_background": true,
-            "padding-block-start": 24,
-            "padding-block-end": 24,
-            "gap_between_elements": 24
+            "text": "<p>From nourishing people...  to nourishing the earth.</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-subheading--family)",
+            "font_size": "1.125rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "balance",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
-          "blocks": {
-            "text_hzk73Q": {
-              "type": "text",
-              "settings": {
-                "text": "<p>From nourishing people...  To nourishing the earth.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "paragraph",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "text_hzk73Q"
-          ]
+          "blocks": {}
         }
       },
       "block_order": [
-        "marquee_PbjzUE"
+        "text_tjYmm7"
       ],
-      "name": "t:names.hero_marquee",
+      "name": "t:names.custom_section",
       "settings": {
-        "media_type_1": "image",
-        "media_type_2": "image",
-        "stack_media_on_mobile": false,
-        "custom_mobile_media": false,
-        "media_type_1_mobile": "image",
-        "media_type_2_mobile": "image",
-        "link": "",
-        "open_in_new_tab": false,
         "content_direction": "column",
         "vertical_on_mobile": true,
-        "horizontal_alignment": "center",
+        "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
-        "gap": 32,
-        "section_width": "full-width",
-        "section_height": "auto",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
         "section_height_custom": 50,
         "color_scheme": "scheme-4",
-        "toggle_overlay": true,
-        "overlay_color": "#3e2563",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "blurred_reflection": false,
-        "reflection_opacity": 2,
         "padding-block-start": 10,
         "padding-block-end": 10
       }
@@ -766,7 +748,7 @@
     "two_column_accordion_slider_TWkqgy",
     "main",
     "slider_content_etcYKh",
-    "hero_CtRMrE",
+    "section_Tz66bf",
     "17713489911e830caa",
     "1771348801ad45dc51",
     "1771348461cf50d32e",
