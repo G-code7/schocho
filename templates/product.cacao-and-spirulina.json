@@ -237,6 +237,7 @@
                     "benefit_4": "Cancel any time",
                     "onetime_title": "One-time purchase",
                     "onetime_subtitle": "16 servings per bag",
+                    "show_per_serving": false,
                     "flavors_label": "Choose your flavors",
                     "product_1": "chocho-cacao-spirulina-maca",
                     "product_2": "chocho-pure-ingredient",
