@@ -351,7 +351,7 @@
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 30,
                 "width": "fit-content",
-                "custom_width": 100,
+                "custom_width": 80,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fill",
@@ -378,7 +378,21 @@
                 "padding-inline-end": 20
               },
               "blocks": {
-                "ai_gen_block_6adca81_EV4kQc": {
+                "spacer_q9CCMB": {
+                  "type": "spacer",
+                  "name": "t:names.spacer",
+                  "settings": {
+                    "size": "pixel",
+                    "percent_size": 100,
+                    "pixel_size": 0,
+                    "custom_mobile_size": true,
+                    "size_mobile": "pixel",
+                    "percent_size_mobile": 100,
+                    "pixel_size_mobile": 4
+                  },
+                  "blocks": {}
+                },
+                "ai_gen_block_6adca81_RfgdAY": {
                   "type": "ai_gen_block_6adca81",
                   "settings": {
                     "open_first": false,
@@ -406,7 +420,8 @@
                 }
               },
               "block_order": [
-                "ai_gen_block_6adca81_EV4kQc"
+                "spacer_q9CCMB",
+                "ai_gen_block_6adca81_RfgdAY"
               ]
             }
           },
