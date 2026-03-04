@@ -1385,7 +1385,7 @@
         "quantity_add_button_border_width": 0,
         "quantity_add_button_border_radius": 22,
         "quantity_add_button_bg_hover": "#4d3173",
-        "quantity_add_button_color_hover": "#ffffff",
+        "quantity_add_button_color_hover": "#efece5",
         "quantity_add_button_border_hover": "#333333",
         "quantity_add_button_padding_y": 12,
         "quantity_add_button_padding_x": 20,
