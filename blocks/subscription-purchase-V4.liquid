@@ -389,9 +389,11 @@
                 <s data-compare-price>—</s>
                 <span data-subscription-price>—</span>
               </span>
+              {% if block.settings.show_per_serving != false %}
               <span class="chocho-selector__price-per-{{ block_id }}">
                 <span data-price-per>—</span> / {{ block.settings.per_text | default: 'serving' }}
               </span>
+              {% endif %}
             </div>
           </div>
           {% if block.settings.show_benefits %}
@@ -425,9 +427,11 @@
             </div>
             <div class="chocho-selector__option-price-{{ block_id }}">
               <span class="chocho-selector__price-main-{{ block_id }}" data-onetime-price>—</span>
+              {% if block.settings.show_per_serving != false %}
               <span class="chocho-selector__price-per-{{ block_id }}">
                 <span data-onetime-per>—</span> / {{ block.settings.per_text | default: 'serving' }}
               </span>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -538,6 +542,7 @@
   const discountPercent  = {{ block.settings.subscription_discount | default: 15 }};
   const servingsPerUnit  = {{ block.settings.servings_per_unit | default: 15 }};
   const autoOpenDrawer   = {{ block.settings.auto_open_cart_drawer | default: true }};
+  const showPerServing   = {{ block.settings.show_per_serving | default: true }};
 
   /* ─────────────────────────────────────────────────────────────────────────
    * ELEMENTOS
@@ -697,9 +702,9 @@
 
     if (subPriceEl)     subPriceEl.textContent     = formatMoney(prices.subUnit);
     if (comparePriceEl) comparePriceEl.textContent = formatMoney(prices.refComparePrice);
-    if (pricePerEl)     pricePerEl.textContent     = formatMoney(prices.subPerServing);
+    if (pricePerEl && showPerServing)     pricePerEl.textContent     = formatMoney(prices.subPerServing);
     if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
-    if (onetimePerEl)   onetimePerEl.textContent   = formatMoney(prices.onetimePerServing);
+    if (onetimePerEl && showPerServing)   onetimePerEl.textContent   = formatMoney(prices.onetimePerServing);
     if (savingsEl)      savingsEl.textContent      = formatMoney(prices.savings);
     if (totalCompareEl) totalCompareEl.textContent = formatMoney(prices.totalRegular);
     if (totalPriceEl)   totalPriceEl.textContent   = formatMoney(prices.totalDiscounted);
@@ -1273,6 +1278,17 @@
       "id": "onetime_subtitle",
       "label": "Subtitle",
       "default": "15 servings per bag"
+    },
+    {
+      "type": "header",
+      "content": "Price Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_per_serving",
+      "label": "Show cost per serving",
+      "default": true,
+      "info": "Toggle to show/hide the per-serving price calculation"
     },
     {
       "type": "header",
