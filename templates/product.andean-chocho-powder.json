@@ -807,7 +807,7 @@
                 "text_wJyNmR": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Intentional design</h2>",
+                    "text": "<p><strong>Regenerative Stewardship</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -832,7 +832,7 @@
                 "text_yXtfhT": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Everything starts with why: pure, gluten-free nutrition without compromise.</p>",
+                    "text": "<p>We protect and restore the land that feeds us by supporting soil health, preserving biodiversity, and farming practices that give more than they take, ensuring the Andes can nourish generations to come.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -947,7 +947,7 @@
                 "text_UiQWQW": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>Made with care</h2>",
+                    "text": "<p><strong>Nourishment with Purpose</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -972,7 +972,7 @@
                 "text_nppV4f": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We believe in building better by choosing nutrient-dense Chocho over pea protein.</p>",
+                    "text": "<p>Our foods are designed to deliver real benefits through functional, whole-food nutrition using an ancestral crop that has nourished Andean communities for centuries.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1086,7 +1086,7 @@
                 "text_EDqDgj": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>A team with a goal</h2>",
+                    "text": "<p><strong>Transparency</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1111,7 +1111,7 @@
                 "text_kGVrTA": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Real people committed to the natural integrity of non-GMO ancient foods.</p>",
+                    "text": "<p>We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1225,7 +1225,7 @@
                 "text_3VDCiV": {
                   "type": "text",
                   "settings": {
-                    "text": "<h2>A team with a goal</h2>",
+                    "text": "<p><strong>Community & Reciprocity</strong></p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1250,7 +1250,7 @@
                 "text_iWTGAV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Great products made simple by excluding soy and artificial additives.</p>",
+                    "text": "<p>Well-being is shared. We uplift Andean farmers through fair partnerships, honoring the hands and hearts that cultivate our crops and ensuring that prosperity flows back to the communities who make our food possible.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1323,7 +1323,7 @@
       "type": "featured-products-grid-v3-1",
       "name": "Featured Products Grid V3",
       "settings": {
-        "heading": "",
+        "heading": "More about our products",
         "heading_icon_size": 40,
         "heading_icon_radius": 50,
         "subtitle": "",
