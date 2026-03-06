@@ -627,7 +627,6 @@
             },
             "text_qYgach": {
               "type": "text",
-              "disabled": true,
               "settings": {
                 "text": "<p>Nutrient-dense. Whole-food nourishment, redefined.</p>",
                 "width": "fit-content",
