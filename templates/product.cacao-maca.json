@@ -617,19 +617,6 @@
     "hero_8wt9xX": {
       "type": "hero",
       "blocks": {
-        "spacer_nVxxjN": {
-          "type": "spacer",
-          "settings": {
-            "size": "pixel",
-            "percent_size": 100,
-            "pixel_size": 24,
-            "custom_mobile_size": false,
-            "size_mobile": "percent",
-            "percent_size_mobile": 100,
-            "pixel_size_mobile": 120
-          },
-          "blocks": {}
-        },
         "marquee_tqEANB": {
           "type": "_marquee",
           "settings": {
@@ -642,10 +629,10 @@
             "gap_between_elements": 24
           },
           "blocks": {
-            "text_k6tert": {
+            "text_eLWMVX": {
               "type": "text",
               "settings": {
-                "text": "<p>Pure. Ancient Food. </p>",
+                "text": "<p>Thoughtfully sourced. Traditionally prepared.</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -669,12 +656,11 @@
             }
           },
           "block_order": [
-            "text_k6tert"
+            "text_eLWMVX"
           ]
         }
       },
       "block_order": [
-        "spacer_nVxxjN",
         "marquee_tqEANB"
       ],
       "name": "t:names.hero_marquee",
