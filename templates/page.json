@@ -890,7 +890,7 @@
         "border_opacity": 100,
         "border_radius": 0,
         "toggle_overlay": true,
-        "overlay_color": "#25143954",
+        "overlay_color": "#2514396b",
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "padding-block-start": 0,
