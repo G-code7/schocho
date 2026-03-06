@@ -223,7 +223,7 @@
       ],
       "settings": {
         "content_direction": "column",
-        "gap": 32,
+        "gap": 30,
         "color_scheme": "",
         "padding-block-start": 60,
         "padding-block-end": 80
