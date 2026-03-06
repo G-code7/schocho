@@ -19,7 +19,7 @@
             "excerpt": "",
             "show_date": false,
             "date": "",
-            "image": "shopify://shop_images/freepik__warm-organic-lifestyle-photography-real-candid-bre__91494.webp",
+            "image": "{{ closest.article.image }}",
             "left_width": 45,
             "columns_gap": 24,
             "columns_vertical_align": "stretch",
