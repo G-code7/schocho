@@ -822,7 +822,7 @@
                 "text_wJyNmR": {
                   "type": "text",
                   "settings": {
-                    "text": "<p><strong>Regenerative Stewardship</strong></p>",
+                    "text": "<h3>Regenerative Stewardship</h3>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -847,7 +847,7 @@
                 "text_yXtfhT": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We protect and restore the land that feeds us by supporting soil health, preserving biodiversity, and farming practices that give more than they take, ensuring the Andes can nourish generations to come.</p>",
+                    "text": "<p>We restore the land by supporting soil health and biodiversity through farming practices that ensure the Andes nourish generations to come.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -962,7 +962,7 @@
                 "text_UiQWQW": {
                   "type": "text",
                   "settings": {
-                    "text": "<p><strong>Nourishment with Purpose</strong></p>",
+                    "text": "<p>Nourishment Purpose</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -987,7 +987,7 @@
                 "text_nppV4f": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Our foods are designed to deliver real benefits through functional, whole-food nutrition using an ancestral crop that has nourished Andean communities for centuries.</p>",
+                    "text": "<p>Our foods deliver real benefits through functional, whole-food nutrition using an ancestral crop that has nourished Andean communities for centuries.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1101,7 +1101,7 @@
                 "text_EDqDgj": {
                   "type": "text",
                   "settings": {
-                    "text": "<p><strong>Transparency</strong></p>",
+                    "text": "<h3>Radical Transparency</h3>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1126,7 +1126,7 @@
                 "text_kGVrTA": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We share openly how our food is grown, sourced, and prepared, because knowing what you eat, and where it comes from, is essential to real nourishment and trust.</p>",
+                    "text": "<p>We share openly how our food is grown and prepared, because knowing where your nourishment comes from builds essential trust.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1240,7 +1240,7 @@
                 "text_3VDCiV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p><strong>Community & Reciprocity</strong></p>",
+                    "text": "<p>Community Reciprocity</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1265,7 +1265,7 @@
                 "text_iWTGAV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Well-being is shared. We uplift Andean farmers through fair partnerships, honoring the hands and hearts that cultivate our crops and ensuring that prosperity flows back to the communities who make our food possible.</p>",
+                    "text": "<p>We uplift Andean farmers through fair partnerships, honoring the hands that cultivate our crops and ensuring prosperity flows back home.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
