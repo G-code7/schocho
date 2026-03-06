@@ -1,0 +1,63 @@
+{% comment %}
+  Blog Card Snippet
+  Usage: {% render 'blog-card', article: article, cleaned_id: cleaned_id, section: section %}
+{% endcomment %}
+
+<article class="blog-section__card-{{ cleaned_id }}">
+  <div class="blog-section__image-wrapper-{{ cleaned_id }}">
+    {% if article.image %}
+      <img
+        src="{{ article.image | image_url: width: 600 }}"
+        alt="{{ article.image.alt | default: article.title | escape }}"
+        class="blog-section__image-{{ cleaned_id }}"
+        loading="lazy"
+        width="600"
+        height="400"
+      >
+    {% else %}
+      <div class="blog-section__image-placeholder-{{ cleaned_id }}">
+        {{ 'image' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="blog-section__content-{{ cleaned_id }}">
+    {% if section.settings.show_date %}
+      <div class="blog-section__date-{{ cleaned_id }}">
+        {{ article.published_at | date: section.settings.date_format }}
+      </div>
+    {% endif %}
+
+    <h3 class="blog-section__title-{{ cleaned_id }}">
+      <a href="{{ article.url }}" class="blog-section__title-link-{{ cleaned_id }}">
+        {{ article.title }}
+      </a>
+    </h3>
+
+    {% if section.settings.show_excerpt and article.excerpt_or_content != blank %}
+      <div class="blog-section__excerpt-{{ cleaned_id }}">
+        {{ article.excerpt_or_content | strip_html | truncate: section.settings.excerpt_length }}
+      </div>
+    {% endif %}
+
+    {% if section.settings.show_button %}
+      <a href="{{ article.url }}" class="blog-section__button-{{ cleaned_id }}">
+        <span>{{ section.settings.button_text }}</span>
+        {% if section.settings.show_button_arrow %}
+          <svg
+            class="blog-section__button-icon-{{ cleaned_id }}"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        {% endif %}
+      </a>
+    {% endif %}
+  </div>
+</article>
