@@ -437,7 +437,7 @@
       "type": "two-columns-acordion-slider-v3",
       "name": "section 3 ",
       "settings": {
-        "main_image": "shopify://shop_images/IMG_8718.heic",
+        "main_image": "shopify://shop_images/Mesa.jpg",
         "image_max_height": 400,
         "image_height": 0,
         "image_object_fit": "cover",
@@ -890,7 +890,7 @@
         "border_opacity": 100,
         "border_radius": 0,
         "toggle_overlay": true,
-        "overlay_color": "#000000af",
+        "overlay_color": "#000000b0",
         "overlay_style": "solid",
         "gradient_direction": "to top",
         "padding-block-start": 0,
