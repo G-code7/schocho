@@ -665,7 +665,7 @@
       "name": "t:names.hero_marquee",
       "settings": {
         "media_type_1": "image",
-        "image_1": "shopify://shop_images/freepik__recrea-la-misma-imagen-pero-siguiendo-las-caracter__72241.png",
+        "image_1": "shopify://shop_images/freepik__recrea-la-misma-imagen-pero-siguiendo-las-caracter__37658.webp",
         "video_1": "shopify://files/videos/freepik_use-uploaded-reference-image-as-exact-composition-_runway-std_720p_16-9_24fps_257.mp4",
         "media_type_2": "image",
         "stack_media_on_mobile": false,
@@ -683,7 +683,7 @@
         "vertical_alignment_flex_direction_column": "center",
         "gap": 32,
         "section_width": "page-width",
-        "section_height": "large",
+        "section_height": "medium",
         "section_height_custom": 50,
         "color_scheme": "scheme-5",
         "toggle_overlay": true,
