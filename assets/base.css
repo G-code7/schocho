@@ -4296,3 +4296,7 @@ text-component {
     font-size: max(1rem, 100%);
   }
 }
+
+.shopify_subscriptions_app_block_container {
+  display: none;
+}
