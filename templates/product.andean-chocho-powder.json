@@ -808,7 +808,7 @@
                 "text_wJyNmR": {
                   "type": "text",
                   "settings": {
-                    "text": "<h3>Regenerative Stewardship</h3>",
+                    "text": "<p>Transparency</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -833,7 +833,7 @@
                 "text_yXtfhT": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We restore the land by supporting soil health and biodiversity through farming practices that ensure the Andes nourish generations to come.</p>",
+                    "text": "<p>We openly share how our food is grown, sourced, and prepared. Because knowing what<br/>you eat—and where it comes from—builds real trust.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -948,7 +948,7 @@
                 "text_UiQWQW": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Nourishment Purpose</p>",
+                    "text": "<p>Regenerative Stewardship</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -973,7 +973,7 @@
                 "text_nppV4f": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Our foods deliver real benefits through functional, whole-food nutrition using an ancestral crop that has nourished Andean communities for centuries.</p>",
+                    "text": "<p>We support farming practices that restore the land and strengthen soil health. Protecting biodiversity so the Andes can nourish generations to come.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1087,7 +1087,7 @@
                 "text_EDqDgj": {
                   "type": "text",
                   "settings": {
-                    "text": "<h3>Radical Transparency</h3>",
+                    "text": "<p>Nourishment with Purpose</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1112,7 +1112,7 @@
                 "text_kGVrTA": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We share openly how our food is grown and prepared, because knowing where your nourishment comes from builds essential trust.</p>",
+                    "text": "<p>Functional and <br/>whole-food nutrition <br/>designed to truly nourish<br/> the body. Complete plant<br/>protein, natural fiber, and <br/>steady energy from an <br/>ancestral Andean crop.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1226,7 +1226,7 @@
                 "text_3VDCiV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Community Reciprocity</p>",
+                    "text": "<p>Community & Reciprocity</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1251,7 +1251,7 @@
                 "text_iWTGAV": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We uplift Andean farmers through fair partnerships, honoring the hands that cultivate our crops and ensuring prosperity flows back home.</p>",
+                    "text": "<p>Well-being is shared with the people who grow our food. We work in fair partnership<br/>with Andean farmers, so prosperity returns to their communities.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
