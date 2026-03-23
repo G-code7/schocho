@@ -648,7 +648,9 @@
 
     const firstProduct = products[0];
     const baseOnetimePrice = firstProduct ? parseInt(firstProduct.dataset.price, 10) : 0;
-    const baseComparePrice = firstProduct ? parseInt(firstProduct.dataset.compare, 10) : baseOnetimePrice;
+    const baseComparePrice = firstProduct
+      ? (parseInt(firstProduct.dataset.compare, 10) || baseOnetimePrice)
+      : baseOnetimePrice;
 
     let subUnitPrice;
     if (isSubscription && pluginData && pluginData.price > 0) {
