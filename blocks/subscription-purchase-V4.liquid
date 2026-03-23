@@ -657,9 +657,7 @@
       subUnitPrice = Math.round(baseOnetimePrice * (1 - discountPercent / 100));
     }
 
-    const refComparePrice = (isSubscription && pluginData)
-      ? pluginData.compareAtPrice
-      : baseComparePrice;
+    const refComparePrice = baseComparePrice;
 
     let totalQty        = 0;
     let totalRegular    = 0;
