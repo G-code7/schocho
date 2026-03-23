@@ -618,13 +618,7 @@
     return {
       planId,
       price          : Number.isFinite(price) ? price : 0,
-      const domCompare = products[0]
-        ? parseInt(products[0].dataset.compare, 10)
-        : 0;
-
-      compareAtPrice : Number.isFinite(cmp) && cmp > 0
-        ? cmp
-        : (Number.isFinite(domCompare) && domCompare > 0 ? domCompare : price),
+      compareAtPrice : Number.isFinite(cmp)   ? cmp   : price,
     };
   }
 
