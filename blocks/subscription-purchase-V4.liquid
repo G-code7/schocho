@@ -618,7 +618,7 @@
     return {
       planId,
       price          : Number.isFinite(price) ? price : 0,
-      compareAtPrice : Number.isFinite(cmp)   ? cmp   : price,
+      compareAtPrice : Number.isFinite(cmp) && cmp > 0 ? cmp : baseOnetimePrice,
     };
   }
 
