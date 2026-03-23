@@ -618,7 +618,7 @@
     return {
       planId,
       price          : Number.isFinite(price) ? price : 0,
-      compareAtPrice : Number.isFinite(cmp) && cmp > 0 ? cmp : baseOnetimePrice,
+      compareAtPrice : Number.isFinite(cmp)   ? cmp   : price,
     };
   }
 
@@ -657,7 +657,7 @@
       subUnitPrice = Math.round(baseOnetimePrice * (1 - discountPercent / 100));
     }
 
-    const refComparePrice = (isSubscription && pluginData && Number.isFinite(pluginData.compareAtPrice) && pluginData.compareAtPrice > pluginData.price)
+    const refComparePrice = (isSubscription && pluginData)
       ? pluginData.compareAtPrice
       : baseComparePrice;
 
