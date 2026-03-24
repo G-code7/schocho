@@ -1068,6 +1068,20 @@
         "gap_between_elements": 60
       }
     },
+    "divider_U4hkR8": {
+      "type": "divider",
+      "name": "t:names.divider_section",
+      "settings": {
+        "color_scheme": "",
+        "section_width": "full-width",
+        "thickness": 1,
+        "corner_radius": "square",
+        "width_percent": 100,
+        "alignment_horizontal": "center",
+        "padding-block-start": 16,
+        "padding-block-end": 16
+      }
+    },
     "comparison_table_v3_fqnVag": {
       "type": "comparison-table-v3",
       "name": "Comparison Table v3",
@@ -2159,6 +2173,7 @@
     "1765587213b1a71267",
     "marquee_yYUgWk",
     "dual_product_showcase_v2_wf3chC",
+    "divider_U4hkR8",
     "marquee_RgGzyN",
     "comparison_table_v3_fqnVag",
     "17659250859c18afff",
