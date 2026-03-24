@@ -509,7 +509,7 @@
         "accordion_item_3TFRYD": {
           "type": "accordion_item",
           "settings": {
-            "image": "shopify://shop_images/1givesback.heic",
+            "image": "shopify://shop_images/1givesback.jpg",
             "icon": "shopify://shop_images/freepik__background__68644_1.png",
             "accordion_title": "Naturally Resilient",
             "accordion_content": "<p>Adapted over centuries to the harsh conditions of the Andes, chocho is naturally resilient and grows without the need for pesticides. It protects itself from pests and disease, allowing Andean farmers to cultivate it responsibly while supporting biodiversity and surrounding ecosystems.</p><p><em><strong>Better for the land. Better for farmers. <br/>Better for your food.</strong></em></p>"
@@ -920,7 +920,7 @@
         "cta_hover_text_1": "#ffffff",
         "right_bg_1": "#e8e4df",
         "product_2": "chocho-cacao-spirulina-maca",
-        "custom_title_2": "<p>ANDEAN CHOCHO <i>with</i><br><span style=\"font-size: 22px;\">CACAO + SPIRULINA + MACA</span> <br> POWDER BLEND</p>",
+        "custom_title_2": "<p>ANDEAN CHOCHO <i>with</i><br><span style=\"font-size: 16px;\">CACAO + SPIRULINA + MACA</span> <br> POWDER BLEND</p>",
         "description_2": "A functional food designed for energy and vitality. Nutrient-dense whole-food protein blended with ancestral superfoods to fuel focus, movement, and\nintentional living.",
         "show_product_image_2": false,
         "show_icons_2": true,
@@ -945,7 +945,7 @@
         "cta_hover_text_2": "#ffffff",
         "right_bg_2": "#d4c4a8",
         "product_3": "chocho-ginger-turmeric-black-pepper-powder-blend",
-        "custom_title_3": "<p>ANDEAN CHOCHO <em>with </em><br> \n<span style=\"font-size: 22px;\">GINGER + TURMERIC + BLACK PEPPER </span> <br>POWDER BLEND</p>",
+        "custom_title_3": "<p>ANDEAN CHOCHO <em>with </em><br> \n<span style=\"font-size: 14px;\">GINGER + TURMERIC + BLACK PEPPER </span> <br>POWDER BLEND</p>",
         "description_3": "A functional, whole-food protein grounded <br>in ancient botanicals. Nutrient-dense nourishment crafted for digestive comfort, balance, and renewing, savory daily routines.",
         "show_product_image_3": false,
         "show_icons_3": true,
