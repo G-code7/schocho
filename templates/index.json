@@ -1511,6 +1511,9 @@
     },
     "featured_products_grid_v3_1_j9CWAV": {
       "type": "featured-products-grid-v3-1",
+      "custom_css": [
+        "div.featured-products__info-template--19974678085824__featured_products_grid_v3_1_j9CWAV > div.featured-products__price-template--19974678085824__featured_products_grid_v3_1_j9CWAV {display: none;}"
+      ],
       "name": "Featured Products Grid V3",
       "settings": {
         "heading": "Three real-food varieties  <br>\n<p style=\" font-size: 16px; font-weight: 500;\">Crafted from functional,<br> nutrient-dense whole ingredients.</p>",
