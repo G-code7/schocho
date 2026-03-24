@@ -828,7 +828,7 @@
       "settings": {
         "image_position": "left",
         "section_height": 80,
-        "min_height": 550,
+        "min_height": 650,
         "max_height": 850,
         "product_image_size": 260,
         "enable_float_animation": true,
@@ -842,11 +842,11 @@
         "title_font_weight": "700",
         "title_line_height": 1.2,
         "title_letter_spacing": 0,
-        "title_margin_bottom": 14,
+        "title_margin_bottom": 24,
         "description_font_size": 16,
         "description_font_weight": "400",
         "description_line_height": 1.3,
-        "description_margin_bottom": 24,
+        "description_margin_bottom": 16,
         "button_font_size": 13,
         "button_font_weight": "600",
         "button_uppercase": true,
@@ -881,7 +881,7 @@
         "mobile_button_padding_x": 26,
         "mobile_button_size": 12,
         "small_mobile_content_min_height": 360,
-        "small_mobile_padding_y": 20,
+        "small_mobile_padding_y": 15,
         "small_mobile_padding_x": 40,
         "small_mobile_image_size": 60,
         "small_mobile_icon_size": 40,
@@ -895,7 +895,7 @@
         "autoplay_duration": 300,
         "show_dots": true,
         "product_1": "chocho-pure-ingredient",
-        "custom_title_1": "<p>Andean Chocho Powder <br><em><strong>One</strong></em> pure ingredient</p>",
+        "custom_title_1": "<p>ANDEAN CHOCHO POWDER <br><em><strong>One</strong></em> pure ingredient</p>",
         "description_1": "A nutrient-dense, functional food <br>\nmade from one whole Andean ingredient.<br>\nClean, minimally processed plant protein for the whole-food seeker who wants simple, versatile, everyday\nnourishment.",
         "show_product_image_1": false,
         "show_icons_1": true,
@@ -1066,20 +1066,6 @@
         "padding-block-start": 20,
         "padding-block-end": 20,
         "gap_between_elements": 60
-      }
-    },
-    "divider_U4hkR8": {
-      "type": "divider",
-      "name": "t:names.divider_section",
-      "settings": {
-        "color_scheme": "",
-        "section_width": "full-width",
-        "thickness": 1,
-        "corner_radius": "square",
-        "width_percent": 100,
-        "alignment_horizontal": "center",
-        "padding-block-start": 16,
-        "padding-block-end": 16
       }
     },
     "comparison_table_v3_fqnVag": {
@@ -2173,7 +2159,6 @@
     "1765587213b1a71267",
     "marquee_yYUgWk",
     "dual_product_showcase_v2_wf3chC",
-    "divider_U4hkR8",
     "marquee_RgGzyN",
     "comparison_table_v3_fqnVag",
     "17659250859c18afff",
