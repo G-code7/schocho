@@ -480,12 +480,12 @@
             "card_text_color": "#efebe5",
             "card_border_color": "#3e2563",
             "text_alignment": "left",
-            "card_padding_vertical": 60,
-            "card_padding_horizontal": 70,
-            "card_margin_vertical": 20,
-            "card_margin_horizontal": 20,
-            "title_font_size": 40,
-            "description_font_size": 16,
+            "card_padding_vertical": 50,
+            "card_padding_horizontal": 40,
+            "card_margin_vertical": 0,
+            "card_margin_horizontal": 0,
+            "title_font_size": 36,
+            "description_font_size": 14,
             "desktop_width_percent": 100
           },
           "blocks": {}
