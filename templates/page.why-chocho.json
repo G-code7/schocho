@@ -522,8 +522,8 @@
             "card_padding_horizontal": 60,
             "card_margin_vertical": 0,
             "card_margin_horizontal": 20,
-            "title_font_size": 40,
-            "description_font_size": 16,
+            "title_font_size": 36,
+            "description_font_size": 14,
             "desktop_width_percent": 100
           },
           "blocks": {}
