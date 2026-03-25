@@ -424,7 +424,7 @@
         "desktop_media_position": "left",
         "equal_columns": true,
         "limit_details_width": false,
-        "gap": 12,
+        "gap": 36,
         "color_scheme": "scheme-ce1cf34d-c0e9-4001-bc76-baf77296f703",
         "padding-block-start": 0,
         "padding-block-end": 0
