@@ -643,10 +643,10 @@
       "type": "two-columns-acordion-slider-v3",
       "name": "Imagen + Acordeón Fijo",
       "settings": {
-        "main_image": "shopify://shop_images/Recurso_1_4x_f0c0fa3b-496a-4e27-b916-aad5e48e90c8.png",
+        "main_image": "shopify://shop_images/prontochochopowder_1.webp",
         "image_max_height": 400,
         "image_height": 0,
-        "image_object_fit": "contain",
+        "image_object_fit": "cover",
         "section_max_width": 1100,
         "section_background_color": "#f5f4ed",
         "section_padding_top": 40,
