@@ -1,0 +1,455 @@
+{% doc %}
+  @prompt
+    Sección Shopify de tarjetas apiladas con scroll sticky, animación de entrada suave,
+    sin sombra, con controles de altura máxima y tamaños de fuente independientes para mobile.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ─── Wrapper sticky ─── */
+  .ai-sc-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    max-height: {{ block.settings.card_max_height }}px;
+    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+
+  /* ─── Tarjeta ─── */
+  .ai-sc-inner-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    color: {{ block.settings.card_text_color }};
+    border: 1px solid {{ block.settings.card_border_color }};
+    border-radius: 15px;
+    padding: {{ block.settings.card_padding_vertical }}px {{ block.settings.card_padding_horizontal }}px;
+    margin: {{ block.settings.card_margin_vertical }}px {{ block.settings.card_margin_horizontal }}px;
+    width: calc(100% - {{ block.settings.card_margin_horizontal | times: 2 }}px);
+    max-width: 1200px;
+    min-height: {{ block.settings.card_min_height }}px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: {{ block.settings.text_alignment }};
+
+    /* Animación de entrada */
+    opacity: 0;
+    transform: translateY({{ block.settings.animation_offset }}px) scale(0.97);
+    transition:
+      opacity  {{ block.settings.animation_duration }}ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform {{ block.settings.animation_duration }}ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: {{ block.settings.animation_delay }}ms;
+  }
+
+  .ai-sc-inner-{{ ai_gen_id }}.ai-sc-visible-{{ ai_gen_id }} {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* ─── Título ─── */
+  .ai-sc-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+  }
+
+  /* ─── Descripción ─── */
+  .ai-sc-desc-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_font_size }}px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ─── Mobile ─── */
+  @media screen and (max-width: 749px) {
+    .ai-sc-{{ ai_gen_id }} {
+      height: auto;
+      min-height: 100svh;
+      max-height: none;
+    }
+
+    .ai-sc-inner-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_min_height }}px;
+      padding: {{ block.settings.mobile_padding_vertical }}px {{ block.settings.mobile_padding_horizontal }}px;
+      margin: {{ block.settings.mobile_margin_vertical }}px {{ block.settings.mobile_margin_horizontal }}px;
+      width: calc(100% - {{ block.settings.mobile_margin_horizontal | times: 2 }}px);
+    }
+
+    .ai-sc-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_title_font_size }}px;
+    }
+
+    .ai-sc-desc-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_description_font_size }}px;
+    }
+  }
+{% endstyle %}
+
+<stacked-card-{{ ai_gen_id }}
+  class="ai-sc-{{ ai_gen_id }}"
+  data-id="{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}>
+  <div class="ai-sc-inner-{{ ai_gen_id }}">
+    {% if block.settings.card_title != blank %}
+      <h2 class="ai-sc-title-{{ ai_gen_id }}">{{ block.settings.card_title }}</h2>
+    {% endif %}
+    {% if block.settings.card_description != blank %}
+      <div class="ai-sc-desc-{{ ai_gen_id }}">{{ block.settings.card_description }}</div>
+    {% endif %}
+  </div>
+</stacked-card-{{ ai_gen_id }}>
+
+<script>
+(function () {
+  const ID = '{{ ai_gen_id }}';
+
+  if (customElements.get('stacked-card-' + ID)) return;
+
+  class StackedCard extends HTMLElement {
+    connectedCallback() {
+      this._inner   = this.querySelector('.ai-sc-inner-' + ID);
+      this._visible = false;
+      this._ticking = false;
+
+      /* Intersection Observer → animación de entrada */
+      this._io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting && !this._visible) {
+              this._inner.classList.add('ai-sc-visible-' + ID);
+              this._visible = true;
+            }
+          });
+        },
+        { threshold: 0.08 }
+      );
+      this._io.observe(this);
+
+      /* Scroll → efecto de apilado (escala, sin sombra) */
+      this._onScroll = () => {
+        if (!this._ticking) {
+          requestAnimationFrame(() => {
+            this._updateStack();
+            this._ticking = false;
+          });
+          this._ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', this._onScroll, { passive: true });
+      this._updateStack();
+    }
+
+    _updateStack() {
+      const top = this.getBoundingClientRect().top;
+
+      if (top <= 0) {
+        /* Cuánto ha scrolleado más allá del top (0 → 1 sobre la altura de ventana) */
+        const progress = Math.min(1, Math.abs(top) / window.innerHeight);
+        /* Escala: de 1 baja hasta 0.88 como máximo */
+        const scale = 1 - progress * 0.12;
+        /* Opacity: baja ligeramente de 1 a 0.6 */
+        const opacity = 1 - progress * 0.4;
+
+        this.style.transform = `scale(${scale.toFixed(4)})`;
+        this.style.opacity   = opacity.toFixed(4);
+      } else {
+        this.style.transform = 'scale(1)';
+        this.style.opacity   = '1';
+      }
+    }
+
+    disconnectedCallback() {
+      if (this._io)       this._io.disconnect();
+      if (this._onScroll) window.removeEventListener('scroll', this._onScroll);
+    }
+  }
+
+  customElements.define('stacked-card-' + ID, StackedCard);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Tarjeta apilada",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "text",
+      "id": "card_title",
+      "label": "Título",
+      "default": "Título de tarjeta"
+    },
+    {
+      "type": "textarea",
+      "id": "card_description",
+      "label": "Descripción",
+      "default": "Esta es una descripción extensa para la tarjeta apilada. Puedes agregar todo el contenido que necesites aquí."
+    },
+
+    {
+      "type": "header",
+      "content": "Estilo"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Color de fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Color de borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación de texto",
+      "options": [
+        { "value": "left",    "label": "Izquierda" },
+        { "value": "center",  "label": "Centro"    },
+        { "value": "right",   "label": "Derecha"   },
+        { "value": "justify", "label": "Justificado" }
+      ],
+      "default": "center"
+    },
+
+    {
+      "type": "header",
+      "content": "Tamaño de tarjeta — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Altura mínima",
+      "min": 200,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "card_max_height",
+      "label": "Altura máxima de la tarjeta (100vh si es mayor)",
+      "min": 400,
+      "max": 1200,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    },
+
+    {
+      "type": "header",
+      "content": "Espaciado — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "card_padding_vertical",
+      "label": "Padding vertical",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "card_padding_horizontal",
+      "label": "Padding horizontal",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_margin_vertical",
+      "label": "Margen vertical",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_margin_horizontal",
+      "label": "Margen horizontal",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+
+    {
+      "type": "header",
+      "content": "Tipografía — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "label": "Tamaño título",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "label": "Tamaño descripción",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+
+    {
+      "type": "header",
+      "content": "Tamaño de tarjeta — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_min_height",
+      "label": "Altura mínima mobile",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 300
+    },
+
+    {
+      "type": "header",
+      "content": "Espaciado — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_vertical",
+      "label": "Padding vertical mobile",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "mobile_padding_horizontal",
+      "label": "Padding horizontal mobile",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_margin_vertical",
+      "label": "Margen vertical mobile",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "mobile_margin_horizontal",
+      "label": "Margen horizontal mobile",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+
+    {
+      "type": "header",
+      "content": "Tipografía — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_font_size",
+      "label": "Tamaño título mobile",
+      "min": 16,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "mobile_description_font_size",
+      "label": "Tamaño descripción mobile",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+
+    {
+      "type": "header",
+      "content": "Animación de entrada"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Duración (ms)",
+      "min": 200,
+      "max": 1200,
+      "step": 50,
+      "unit": "ms",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "animation_delay",
+      "label": "Retardo (ms)",
+      "min": 0,
+      "max": 600,
+      "step": 50,
+      "unit": "ms",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "animation_offset",
+      "label": "Desplazamiento inicial (Y)",
+      "min": 10,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tarjeta apilada"
+    }
+  ]
+}
+{% endschema %}
