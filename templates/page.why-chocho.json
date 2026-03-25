@@ -315,7 +315,7 @@
         "slide_n4hcN8": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/IMG_4578.heic"
+            "image": "shopify://shop_images/pronto-chocho-frineds_1.jpg"
           }
         }
       },
@@ -513,14 +513,14 @@
           "type": "ai_gen_block_82957e3",
           "settings": {
             "card_title": "Thoughtful Sourcing & Preparation",
-            "card_description": "We partner directly with Andean farmers who cultivate chocho through sustainable, regenerative practices rooted in tradition, preserving both agricultural knowledge and community well-being. Preparation follows ancestral methods. Chocho is carefully debittered and cooked through a slow, multi-day process practiced by Indigenous communities for generations - a craft requiring patience, precision, and respect for the seed. It is then gently dried and milled into a pure powder close to its natural whole-food form. No fillers. No additives. No shortcuts. Just minimally processed nourishment. Never isolated or bleached. Delivered pronto to your life with its full nutritional integrity intact.",
+            "card_description": "We partner directly with Andean farmers who cultivate chocho through sustainable, regenerative practices rooted in tradition, preserving both agricultural knowledge and community well-being. Preparation follows ancestral methods. Chocho is carefully debittered and cooked through a slow, multi-day process practiced by Indigenous communities for generations - a craft requiring patience, precision, and respect for the seed. It is then gently dried and milled into a pure powder close to its natural whole-food form. No fillers. No additives. No shortcuts. Just minimally processed nourishment. Never isolated or bleached. Delivered <i>pronto</i> to your life with its full nutritional integrity intact.",
             "card_background": "#c85b42",
             "card_text_color": "#ffffff",
             "card_border_color": "#c85b42",
             "text_alignment": "left",
-            "card_padding_vertical": 60,
-            "card_padding_horizontal": 70,
-            "card_margin_vertical": 20,
+            "card_padding_vertical": 50,
+            "card_padding_horizontal": 60,
+            "card_margin_vertical": 0,
             "card_margin_horizontal": 20,
             "title_font_size": 40,
             "description_font_size": 16,
