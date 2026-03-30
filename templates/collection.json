@@ -18,7 +18,7 @@
           "settings": {
             "horizontal_alignment_flex_direction_column": "flex-start",
             "vertical_alignment_flex_direction_column": "center",
-            "gap": 24
+            "gap": 0
           },
           "blocks": {
             "text_QRRAJL": {
@@ -57,7 +57,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "center",
                 "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
+                "gap": 0,
                 "width": "fill",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -90,7 +90,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p><strong>Crafted with pure whole-food ingredients to fuel your daily performance. </strong></p>",
+                    "text": "<p><strong>Crafted with pure whole-food ingredients to fuel your daily performance.</strong></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
