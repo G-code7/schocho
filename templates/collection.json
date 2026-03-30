@@ -90,14 +90,14 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p>Our Products </p>",
+                    "text": "<p><strong>Crafted with pure whole-food ingredients to fuel your daily performance. </strong></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h1",
+                    "type_preset": "custom",
                     "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
+                    "font_size": "2rem",
+                    "line_height": "tight",
                     "letter_spacing": "normal",
                     "case": "none",
                     "wrap": "pretty",
@@ -115,7 +115,7 @@
                 "text_TffAkh": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Crafted with intention and pure Andean ingredients to fuel your daily performance.</p>",
+                    "text": "<p><br/>Three naturally unsweetened, nutrient-dense, functional blends. <br/>Each with a distinct real-food flavor.</p>",
                     "width": "fit-content",
                     "max_width": "narrow",
                     "alignment": "left",
