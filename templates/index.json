@@ -945,7 +945,7 @@
         "cta_hover_text_2": "#ffffff",
         "right_bg_2": "#d4c4a8",
         "product_3": "chocho-ginger-turmeric-black-pepper-powder-blend",
-        "custom_title_3": "<p>ANDEAN CHOCHO <em>with </em><br> <span style=\"font-size: 0.9rem;\">\nGINGER+ TURMERIC+ BLACK PEPPER </span> <br>POWDER BLEND</p>",
+        "custom_title_3": "<p>ANDEAN CHOCHO <span style=\"font-size: 1rem; line-height:10px;\"><em>with </em><br> \nGINGER+ TURMERIC+ BLACK PEPPER </span> <br>POWDER BLEND</p>",
         "description_3": "A functional, whole-food protein grounded <br>in ancient botanicals. Nutrient-dense nourishment crafted for digestive comfort, balance, and renewing, savory daily routines.",
         "show_product_image_3": false,
         "show_icons_3": true,
