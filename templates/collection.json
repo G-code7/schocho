@@ -115,7 +115,7 @@
                 "text_TffAkh": {
                   "type": "text",
                   "settings": {
-                    "text": "<p><br/>Three naturally unsweetened, nutrient-dense, functional blends. <br/>Each with a distinct real-food flavor.</p>",
+                    "text": "<p><br/>Three naturally unsweetened, <br/>nutrient-dense, functional blends. <br/>Each with a distinct real-food flavor.</p>",
                     "width": "fit-content",
                     "max_width": "narrow",
                     "alignment": "left",
