@@ -90,7 +90,7 @@
                   "type": "text",
                   "name": "t:names.heading",
                   "settings": {
-                    "text": "<p><strong>Crafted with pure <br/>whole-food ingredients to fuel your daily performance.</strong></p>",
+                    "text": "<p><strong>Crafted with pure <br/>whole-food ingredients <br/>to fuel your daily performance.</strong></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
