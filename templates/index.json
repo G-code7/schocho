@@ -404,7 +404,7 @@
           "type": "ai_gen_block_fb2d752",
           "settings": {
             "title": "<p>A longevity food <br/>rooted in the Andes<br/><br/></p>",
-            "paragraph": "<p>Known for its exceptional balance of protein, fiber, healthy fats, and micronutrients, chocho has nourished Andean communities for generations, and now it is available to you, <strong>PRONTO!</strong><br/><br/><strong>Real-food nourishment. <br/>Minimally processed. Traditional. </strong><br/><br/><br/></p>",
+            "paragraph": "<p>Known for its exceptional balance of protein, fiber, healthy fats, and micronutrients, chocho or Andean pearl lupin has nourished Andean communities for generations, and now it is available to you, <strong>PRONTO!</strong><br/><br/><strong>Real-food nourishment. <br/>Minimally processed. Traditional. </strong><br/><br/><br/></p>",
             "title_size": 32,
             "title_size_mobile": 22,
             "title_weight": "700",
@@ -413,7 +413,7 @@
             "title_color": "#371e54",
             "title_margin_bottom": 0,
             "title_margin_bottom_mobile": 0,
-            "paragraph_size": 16,
+            "paragraph_size": 15,
             "paragraph_size_mobile": 14,
             "paragraph_weight": "400",
             "paragraph_line_height": "1.6",
