@@ -697,10 +697,10 @@
         "padding-block-end": 40
       }
     },
-    "blocks_6nemKF": {
+    "blocks_UGxCVg": {
       "type": "_blocks",
       "blocks": {
-        "group_7ywURD": {
+        "group_barN4M": {
           "type": "group",
           "settings": {
             "content_direction": "column",
@@ -739,7 +739,7 @@
             "padding-inline-end": 16
           },
           "blocks": {
-            "icon_wPQjgP": {
+            "icon_GxhgHC": {
               "type": "icon",
               "disabled": true,
               "settings": {
@@ -751,7 +751,7 @@
               },
               "blocks": {}
             },
-            "group_qjAxMV": {
+            "group_KkxP7T": {
               "type": "group",
               "settings": {
                 "content_direction": "column",
@@ -790,7 +790,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_dzpRtJ": {
+                "text_8D8yQa": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Transparency</p>",
@@ -815,10 +815,10 @@
                   },
                   "blocks": {}
                 },
-                "text_JV4G8a": {
+                "text_LFFKnQ": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>We openly share how our food is grown, sourced, and prepared. Because knowing what<br/>you eat—and where it comes from—builds real trust.</p>",
+                    "text": "<p>We openly share how our food is grown, sourced, and prepared. Because knowing what  you eat and where it comes from builds real trust.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -842,17 +842,17 @@
                 }
               },
               "block_order": [
-                "text_dzpRtJ",
-                "text_JV4G8a"
+                "text_8D8yQa",
+                "text_LFFKnQ"
               ]
             }
           },
           "block_order": [
-            "icon_wPQjgP",
-            "group_qjAxMV"
+            "icon_GxhgHC",
+            "group_KkxP7T"
           ]
         },
-        "group_JwDCb9": {
+        "group_i4BnHD": {
           "type": "group",
           "settings": {
             "content_direction": "column",
@@ -891,7 +891,7 @@
             "padding-inline-end": 16
           },
           "blocks": {
-            "group_CFUADy": {
+            "group_RHRLpw": {
               "type": "group",
               "settings": {
                 "content_direction": "column",
@@ -930,7 +930,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_yQq3ct": {
+                "text_GjXHae": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Regenerative Stewardship</p>",
@@ -955,7 +955,7 @@
                   },
                   "blocks": {}
                 },
-                "text_9PhJ7X": {
+                "text_CAMkLM": {
                   "type": "text",
                   "settings": {
                     "text": "<p>We support farming practices that restore the land and strengthen soil health. Protecting biodiversity so the Andes can nourish generations to come.</p>",
@@ -982,16 +982,16 @@
                 }
               },
               "block_order": [
-                "text_yQq3ct",
-                "text_9PhJ7X"
+                "text_GjXHae",
+                "text_CAMkLM"
               ]
             }
           },
           "block_order": [
-            "group_CFUADy"
+            "group_RHRLpw"
           ]
         },
-        "group_9HNFez": {
+        "group_ecWfW3": {
           "type": "group",
           "settings": {
             "content_direction": "column",
@@ -1030,7 +1030,7 @@
             "padding-inline-end": 16
           },
           "blocks": {
-            "group_PbjPeH": {
+            "group_cd8EjM": {
               "type": "group",
               "settings": {
                 "content_direction": "column",
@@ -1069,7 +1069,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_PVUAGa": {
+                "text_QkMQJn": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Nourishment with Purpose</p>",
@@ -1094,10 +1094,10 @@
                   },
                   "blocks": {}
                 },
-                "text_qWUkHF": {
+                "text_7gUJaC": {
                   "type": "text",
                   "settings": {
-                    "text": "<p>Functional and <br/>whole-food nutrition <br/>designed to truly nourish<br/> the body. Complete plant<br/>protein, natural fiber, and <br/>steady energy from an <br/>ancestral Andean crop.</p>",
+                    "text": "<p>Functional and  whole-food nutrition to truly nourish  the body. Complete plant protein, natural fiber, and <br/>steady energy from an  ancestral Andean crop.</p>",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "center",
@@ -1121,16 +1121,16 @@
                 }
               },
               "block_order": [
-                "text_PVUAGa",
-                "text_qWUkHF"
+                "text_QkMQJn",
+                "text_7gUJaC"
               ]
             }
           },
           "block_order": [
-            "group_PbjPeH"
+            "group_cd8EjM"
           ]
         },
-        "group_UmEXhM": {
+        "group_Xh8JD6": {
           "type": "group",
           "settings": {
             "content_direction": "column",
@@ -1169,7 +1169,7 @@
             "padding-inline-end": 16
           },
           "blocks": {
-            "group_FBJVzM": {
+            "group_rKCtrn": {
               "type": "group",
               "settings": {
                 "content_direction": "column",
@@ -1208,7 +1208,7 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "text_EB9z7H": {
+                "text_4KphYe": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Community & Reciprocity</p>",
@@ -1233,7 +1233,7 @@
                   },
                   "blocks": {}
                 },
-                "text_Vm7PEE": {
+                "text_EMj7MB": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Well-being is shared with the people who grow our food. We work in fair partnership<br/>with Andean farmers, so prosperity returns to their communities.</p>",
@@ -1260,21 +1260,21 @@
                 }
               },
               "block_order": [
-                "text_EB9z7H",
-                "text_Vm7PEE"
+                "text_4KphYe",
+                "text_EMj7MB"
               ]
             }
           },
           "block_order": [
-            "group_FBJVzM"
+            "group_rKCtrn"
           ]
         }
       },
       "block_order": [
-        "group_7ywURD",
-        "group_JwDCb9",
-        "group_9HNFez",
-        "group_UmEXhM"
+        "group_barN4M",
+        "group_i4BnHD",
+        "group_ecWfW3",
+        "group_Xh8JD6"
       ],
       "name": "t:names.icons_with_text",
       "settings": {
@@ -1419,7 +1419,7 @@
     "section_GtCNAA",
     "blocks_wy8CWj",
     "hero_8wt9xX",
-    "blocks_6nemKF",
+    "blocks_UGxCVg",
     "featured_products_grid_v3_1_iPTiMM"
   ]
 }
