@@ -1,6 +1,390 @@
+{% doc %}
+  @prompt
+    quiero un formulario  con 160 caracteres para  un texto,  un email  la confirmación de que se le enviará  correos  y el botón de send 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-contact-form-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: 40px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-contact-form__content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-contact-form__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .ai-contact-form__field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-contact-form__label-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .ai-contact-form__textarea-{{ ai_gen_id }},
+  .ai-contact-form__input-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    font-size: 16px;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ai-contact-form__textarea-{{ ai_gen_id }} {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .ai-contact-form__checkbox-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ai-contact-form__checkbox-{{ ai_gen_id }} {
+    margin-top: 4px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .ai-contact-form__checkbox-label-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .ai-contact-form__button-{{ ai_gen_id }} {
+    padding: 14px 32px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-contact-form__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+  }
+
+  .ai-contact-form__success-{{ ai_gen_id }} {
+    color: {{ block.settings.success_color }};
+    font-size: 14px;
+    padding: 12px;
+    background-color: {{ block.settings.success_color }}1a;
+    border-radius: 4px;
+  }
+
+  .ai-contact-form__error-{{ ai_gen_id }} {
+    color: {{ block.settings.error_color }};
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-contact-form-{{ ai_gen_id }} {
+      padding: 24px;
+    }
+  }
+{% endstyle %}
+
+<div
+  class="ai-contact-form-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- form 'contact' -%}
+    <div class="ai-contact-form__content-{{ ai_gen_id }}">
+      {%- if block.settings.heading != blank -%}
+        <h2 class="ai-contact-form__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+
+      <div class="ai-contact-form__field-{{ ai_gen_id }}">
+        <label
+          for="ai-contact-message-{{ ai_gen_id }}"
+          class="ai-contact-form__label-{{ ai_gen_id }}"
+        >
+          {{ block.settings.message_label }}
+        </label>
+        <textarea
+          id="ai-contact-message-{{ ai_gen_id }}"
+          name="contact[body]"
+          class="ai-contact-form__textarea-{{ ai_gen_id }}"
+          maxlength="160"
+          placeholder="{{ block.settings.message_placeholder }}"
+          required
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="ai-contact-form-error-{{ ai_gen_id }}"
+          {% endif %}
+          {% if form.posted_successfully? %}
+            aria-describedby="ai-contact-form-success-{{ ai_gen_id }}"
+          {% endif %}
+        >{{ form.body }}</textarea>
+      </div>
+
+      <div class="ai-contact-form__field-{{ ai_gen_id }}">
+        <label
+          for="ai-contact-email-{{ ai_gen_id }}"
+          class="ai-contact-form__label-{{ ai_gen_id }}"
+        >
+          {{ block.settings.email_label }}
+        </label>
+        <input
+          type="email"
+          id="ai-contact-email-{{ ai_gen_id }}"
+          name="contact[email]"
+          class="ai-contact-form__input-{{ ai_gen_id }}"
+          value="{{ form.email }}"
+          autocorrect="off"
+          autocapitalize="off"
+          autocomplete="email"
+          placeholder="{{ block.settings.email_placeholder }}"
+          required
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="ai-contact-form-error-{{ ai_gen_id }}"
+          {% endif %}
+          {% if form.posted_successfully? %}
+            aria-describedby="ai-contact-form-success-{{ ai_gen_id }}"
+          {% endif %}
+        >
+      </div>
+
+      <div class="ai-contact-form__checkbox-wrapper-{{ ai_gen_id }}">
+        <input
+          type="checkbox"
+          id="ai-contact-consent-{{ ai_gen_id }}"
+          name="contact[consent]"
+          class="ai-contact-form__checkbox-{{ ai_gen_id }}"
+          required
+        >
+        <label
+          for="ai-contact-consent-{{ ai_gen_id }}"
+          class="ai-contact-form__checkbox-label-{{ ai_gen_id }}"
+        >
+          {{ block.settings.consent_text }}
+        </label>
+      </div>
+
+      {%- if form.errors -%}
+        <div
+          id="ai-contact-form-error-{{ ai_gen_id }}"
+          class="ai-contact-form__error-{{ ai_gen_id }}"
+        >
+          {%- if form.errors.email -%}
+            <span>{{ form.errors.messages.email }}</span>
+          {%- else -%}
+            <span>{{ block.settings.error_message }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if form.posted_successfully? -%}
+        <div
+          id="ai-contact-form-success-{{ ai_gen_id }}"
+          class="ai-contact-form__success-{{ ai_gen_id }}"
+        >
+          <span>{{ block.settings.success_message }}</span>
+        </div>
+      {%- endif -%}
+
+      <button
+        type="submit"
+        class="ai-contact-form__button-{{ ai_gen_id }}"
+      >
+        {{ block.settings.button_label }}
+      </button>
+    </div>
+  {%- endform -%}
+</div>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Formulario de contacto",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Contáctanos"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_label",
+      "label": "Etiqueta del mensaje",
+      "default": "Tu mensaje"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_placeholder",
+      "label": "Placeholder del mensaje",
+      "default": "Escribe tu mensaje aquí (máximo 160 caracteres)"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "email_label",
+      "label": "Etiqueta del email",
+      "default": "Email"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "email_placeholder",
+      "label": "Placeholder del email",
+      "default": "tu@email.com"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "consent_text",
+      "label": "Texto de consentimiento",
+      "default": "Acepto recibir correos electrónicos de esta empresa"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Enviar"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "success_message",
+      "label": "Mensaje de éxito",
+      "default": "¡Gracias! Tu mensaje ha sido enviado correctamente."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "error_message",
+      "label": "Mensaje de error",
+      "default": "Por favor, completa todos los campos requeridos."
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Radio del borde del formulario",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Radio del borde de inputs",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Radio del borde del botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo",
+      "default": "#f5f4ed"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto",
+      "default": "#3e1d65"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Borde de inputs",
+      "default": "#c3aa9e"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Botón",
+      "default": "#372352"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Botón hover",
+      "default": "#756c9e"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Mensaje de éxito",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Mensaje de error",
+      "default": "#D82C0D"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Formulario de contacto"
+    }
+  ]
+}
 {% endschema %}
