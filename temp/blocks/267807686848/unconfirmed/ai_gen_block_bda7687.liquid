@@ -1,6 +1,423 @@
+{% doc %}
+  @prompt
+    necesito un form anonimo con un maximo de 160 caracteres, que contenga un honeypot o un rechapcha y un botón de enviar
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-anonymous-form-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: 30px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-anonymous-form__content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ai-anonymous-form__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .ai-anonymous-form__description-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .ai-anonymous-form__field-wrapper-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-anonymous-form__textarea-{{ ai_gen_id }} {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px 16px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: {{ block.settings.input_border_radius }}px;
+    font-family: inherit;
+    font-size: 16px;
+    color: {{ block.settings.input_text_color }};
+    background-color: {{ block.settings.input_background_color }};
+    resize: vertical;
+    box-sizing: border-box;
+  }
+
+  .ai-anonymous-form__textarea-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.button_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-anonymous-form__char-count-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .ai-anonymous-form__char-count-{{ ai_gen_id }}.over-limit {
+    color: {{ block.settings.error_color }};
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  .ai-anonymous-form__honeypot-{{ ai_gen_id }} {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ai-anonymous-form__button-{{ ai_gen_id }} {
+    padding: 14px 28px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+  }
+
+  .ai-anonymous-form__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+  }
+
+  .ai-anonymous-form__button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-anonymous-form__success-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    background-color: {{ block.settings.success_color }};
+    color: #ffffff;
+    border-radius: {{ block.settings.input_border_radius }}px;
+    text-align: center;
+  }
+
+  .ai-anonymous-form__error-{{ ai_gen_id }} {
+    padding: 12px 16px;
+    background-color: {{ block.settings.error_color }};
+    color: #ffffff;
+    border-radius: {{ block.settings.input_border_radius }}px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-anonymous-form-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<anonymous-form-{{ ai_gen_id }}
+  class="ai-anonymous-form-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- form 'contact' -%}
+    <input
+      type="hidden"
+      name="contact[form_type]"
+      value="anonymous_submission"
+    >
+    <div class="ai-anonymous-form__content-{{ ai_gen_id }}">
+      {%- if block.settings.heading != blank -%}
+        <h2 class="ai-anonymous-form__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if block.settings.description != blank -%}
+        <p class="ai-anonymous-form__description-{{ ai_gen_id }}">{{ block.settings.description }}</p>
+      {%- endif -%}
+
+      <div class="ai-anonymous-form__field-wrapper-{{ ai_gen_id }}">
+        <textarea
+          name="contact[message]"
+          class="ai-anonymous-form__textarea-{{ ai_gen_id }}"
+          maxlength="160"
+          aria-required="true"
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="ai-anonymous-form-error-{{ ai_gen_id }}"
+          {% endif %}
+          {% if form.posted_successfully? %}
+            aria-describedby="ai-anonymous-form-success-{{ ai_gen_id }}"
+          {% endif %}
+          placeholder="{{ block.settings.placeholder }}"
+          required
+          data-char-counter
+        >{{ form.message }}</textarea>
+        <span class="ai-anonymous-form__char-count-{{ ai_gen_id }}" data-char-display>0/160</span>
+      </div>
+
+      <input
+        type="text"
+        name="contact[honeypot]"
+        class="ai-anonymous-form__honeypot-{{ ai_gen_id }}"
+        tabindex="-1"
+        autocomplete="off"
+      >
+
+      {%- if form.errors -%}
+        <div
+          id="ai-anonymous-form-error-{{ ai_gen_id }}"
+          class="ai-anonymous-form__error-{{ ai_gen_id }}"
+        >
+          <span>{{ form.errors.messages.message | default: 'Por favor completa el formulario correctamente.' }}</span>
+        </div>
+      {%- endif -%}
+
+      {%- if form.posted_successfully? -%}
+        <div
+          id="ai-anonymous-form-success-{{ ai_gen_id }}"
+          class="ai-anonymous-form__success-{{ ai_gen_id }}"
+        >
+          <span>{{ block.settings.success_message }}</span>
+        </div>
+      {%- endif -%}
+
+      <button
+        type="submit"
+        class="ai-anonymous-form__button-{{ ai_gen_id }}"
+        data-submit-button
+      >
+        {{ block.settings.button_label }}
+      </button>
+    </div>
+  {%- endform -%}
+</anonymous-form-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnonymousForm{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.textarea = this.querySelector('[data-char-counter]');
+        this.charDisplay = this.querySelector('[data-char-display]');
+        this.submitButton = this.querySelector('[data-submit-button]');
+        this.form = this.querySelector('form');
+        this.honeypot = this.querySelector('.ai-anonymous-form__honeypot-{{ ai_gen_id }}');
+
+        if (this.textarea && this.charDisplay) {
+          this.updateCharCount();
+          this.textarea.addEventListener('input', () => this.updateCharCount());
+        }
+
+        if (this.form && this.honeypot) {
+          this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        }
+      }
+
+      updateCharCount() {
+        const currentLength = this.textarea.value.length;
+        const maxLength = 160;
+        this.charDisplay.textContent = `${currentLength}/${maxLength}`;
+
+        if (currentLength > maxLength) {
+          this.charDisplay.classList.add('over-limit');
+          this.submitButton.disabled = true;
+        } else {
+          this.charDisplay.classList.remove('over-limit');
+          this.submitButton.disabled = false;
+        }
+      }
+
+      handleSubmit(e) {
+        if (this.honeypot.value !== '') {
+          e.preventDefault();
+          return false;
+        }
+
+        if (this.textarea.value.length > 160) {
+          e.preventDefault();
+          return false;
+        }
+      }
+    }
+
+    customElements.define('anonymous-form-{{ ai_gen_id }}', AnonymousForm{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Formulario anónimo",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "Comparte tu opinión"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "Tu mensaje es completamente anónimo. Máximo 160 caracteres."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "placeholder",
+      "label": "Texto del campo",
+      "default": "Escribe tu mensaje aquí..."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_label",
+      "label": "Texto del botón",
+      "default": "Enviar"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "success_message",
+      "label": "Mensaje de éxito",
+      "default": "¡Gracias! Tu mensaje ha sido enviado."
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#efebe5"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio del borde",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Campo de texto"
+    },
+    {
+      "type": "color",
+      "id": "input_background_color",
+      "label": "Fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Texto",
+      "default": "#3e2563"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Borde",
+      "default": "#3e2563"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio del borde",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Botón"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Color de fondo",
+      "default": "#371e54"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color de texto",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Color de fondo al pasar",
+      "default": "#7428dc"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Radio del borde",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Mensajes"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Color de éxito",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Color de error",
+      "default": "#D82C0D"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Formulario anónimo"
+    }
+  ]
+}
 {% endschema %}
