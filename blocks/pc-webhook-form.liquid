@@ -1,0 +1,763 @@
+{% doc %}
+  @name        PC Webhook Form
+  @description Formulario editorial que envía datos al webhook de Make.com.
+               Sin redirección nativa de Shopify — usa fetch() directo al webhook.
+               Estilo limpio Pronto Chocho®: inputs con border-bottom, caps, botón sólido.
+  @usage       Agregar como bloque en cualquier sección de una landing page.
+{% enddoc %}
+
+{% assign pc_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  /* ── Wrapper ── */
+  .pc-form-{{ pc_id }} {
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: {{ block.settings.padding_v }}px {{ block.settings.padding_h }}px;
+    background-color: {{ block.settings.bg_color }};
+    box-sizing: border-box;
+  }
+
+  /* ── Heading ── */
+  .pc-form__heading-{{ pc_id }} {
+    font-family: {{ block.settings.heading_font }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-style: {{ block.settings.heading_italic | iif: 'italic', 'normal' }};
+    font-weight: {{ block.settings.heading_weight }};
+    color: {{ block.settings.text_color }};
+    margin: 0 0 {{ block.settings.gap }}px;
+    line-height: 1.2;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Subtitle ── */
+  .pc-form__subtitle-{{ pc_id }} {
+    font-family: {{ block.settings.body_font }};
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.6;
+    margin: 0 0 {{ block.settings.gap }}px;
+    line-height: 1.6;
+  }
+
+  /* ── Fields ── */
+  .pc-form__fields-{{ pc_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.gap }}px;
+  }
+
+  .pc-form__label-{{ pc_id }} {
+    display: block;
+    font-family: {{ block.settings.body_font }};
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    letter-spacing: {{ block.settings.label_tracking }}em;
+    text-transform: uppercase;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 10px;
+  }
+
+  .pc-form__textarea-{{ pc_id }},
+  .pc-form__input-{{ pc_id }} {
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    border-bottom: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }};
+    border-radius: 0;
+    font-family: {{ block.settings.body_font }};
+    font-size: {{ block.settings.input_font_size }}px;
+    color: {{ block.settings.text_color }};
+    padding: 12px 0;
+    transition: border-color 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .pc-form__textarea-{{ pc_id }}::placeholder,
+  .pc-form__input-{{ pc_id }}::placeholder {
+    color: {{ block.settings.text_color }};
+    opacity: 0.35;
+    font-style: {{ block.settings.placeholder_italic | iif: 'italic', 'normal' }};
+  }
+
+  .pc-form__textarea-{{ pc_id }}:focus,
+  .pc-form__input-{{ pc_id }}:focus {
+    outline: none;
+    border-color: {{ block.settings.input_border_focus_color }};
+  }
+
+  .pc-form__textarea-{{ pc_id }} {
+    resize: none;
+    height: {{ block.settings.textarea_height }}px;
+    line-height: 1.6;
+  }
+
+  /* ── Char counter ── */
+  .pc-form__counter-{{ pc_id }} {
+    font-family: {{ block.settings.body_font }};
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ block.settings.text_color }};
+    opacity: 0.35;
+    text-align: right;
+    margin-top: 6px;
+    transition: color 0.2s;
+  }
+
+  .pc-form__counter-{{ pc_id }}.is-over {
+    color: {{ block.settings.error_color }};
+    opacity: 1;
+  }
+
+  /* ── Checkbox ── */
+  .pc-form__check-wrapper-{{ pc_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .pc-form__checkbox-{{ pc_id }} {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    accent-color: {{ block.settings.btn_bg }};
+    cursor: pointer;
+  }
+
+  .pc-form__check-label-{{ pc_id }} {
+    font-family: {{ block.settings.body_font }};
+    font-size: {{ block.settings.label_size }}px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  /* ── Button ── */
+  .pc-form__btn-{{ pc_id }} {
+    width: 100%;
+    padding: {{ block.settings.btn_padding_v }}px {{ block.settings.btn_padding_h }}px;
+    background-color: {{ block.settings.btn_bg }};
+    color: {{ block.settings.btn_text }};
+    border: {{ block.settings.btn_border_width }}px solid {{ block.settings.btn_border_color }};
+    border-radius: {{ block.settings.btn_radius }}px;
+    font-family: {{ block.settings.body_font }};
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    letter-spacing: {{ block.settings.label_tracking }}em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, opacity 0.25s ease;
+    margin-top: {{ block.settings.gap }}px;
+  }
+
+  .pc-form__btn-{{ pc_id }}:hover:not(:disabled) {
+    background-color: {{ block.settings.btn_hover_bg }};
+    color: {{ block.settings.btn_hover_text }};
+  }
+
+  .pc-form__btn-{{ pc_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ── Feedback ── */
+  .pc-form__feedback-{{ pc_id }} {
+    font-family: {{ block.settings.body_font }};
+    font-size: {{ block.settings.label_size }}px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 0;
+    border-top: 1px solid currentColor;
+    margin-top: {{ block.settings.gap }}px;
+    display: none;
+  }
+
+  .pc-form__feedback-{{ pc_id }}.is-success {
+    color: {{ block.settings.success_color }};
+    display: block;
+  }
+
+  .pc-form__feedback-{{ pc_id }}.is-error {
+    color: {{ block.settings.error_color }};
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .pc-form-{{ pc_id }} {
+      padding: {{ block.settings.padding_v | divided_by: 1.5 | round }}px {{ block.settings.padding_h | divided_by: 1.5 | round }}px;
+    }
+    .pc-form__heading-{{ pc_id }} {
+      font-size: {{ block.settings.heading_size | times: 0.75 | round }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="pc-form-{{ pc_id }}" {{ block.shopify_attributes }}>
+
+  {%- if block.settings.heading != blank -%}
+    <h2 class="pc-form__heading-{{ pc_id }}">{{ block.settings.heading }}</h2>
+  {%- endif -%}
+
+  {%- if block.settings.subtitle != blank -%}
+    <p class="pc-form__subtitle-{{ pc_id }}">{{ block.settings.subtitle }}</p>
+  {%- endif -%}
+
+  <div class="pc-form__fields-{{ pc_id }}">
+
+    {%- if block.settings.show_message -%}
+    <div>
+      <label for="pc-msg-{{ pc_id }}" class="pc-form__label-{{ pc_id }}">
+        {{ block.settings.message_label }}
+      </label>
+      <textarea
+        id="pc-msg-{{ pc_id }}"
+        class="pc-form__textarea-{{ pc_id }}"
+        maxlength="{{ block.settings.message_max_chars }}"
+        placeholder="{{ block.settings.message_placeholder }}"
+        required
+      ></textarea>
+      <div
+        class="pc-form__counter-{{ pc_id }}"
+        data-counter="{{ pc_id }}"
+      >0 / {{ block.settings.message_max_chars }}</div>
+    </div>
+    {%- endif -%}
+
+    <div>
+      <label for="pc-email-{{ pc_id }}" class="pc-form__label-{{ pc_id }}">
+        {{ block.settings.email_label }}
+      </label>
+      <input
+        type="email"
+        id="pc-email-{{ pc_id }}"
+        class="pc-form__input-{{ pc_id }}"
+        placeholder="{{ block.settings.email_placeholder }}"
+        autocomplete="email"
+        required
+      />
+    </div>
+
+    {%- if block.settings.show_consent -%}
+    <div class="pc-form__check-wrapper-{{ pc_id }}">
+      <input
+        type="checkbox"
+        id="pc-consent-{{ pc_id }}"
+        class="pc-form__checkbox-{{ pc_id }}"
+        required
+      />
+      <label for="pc-consent-{{ pc_id }}" class="pc-form__check-label-{{ pc_id }}">
+        {{ block.settings.consent_text }}
+      </label>
+    </div>
+    {%- endif -%}
+
+    <button
+      type="button"
+      id="pc-btn-{{ pc_id }}"
+      class="pc-form__btn-{{ pc_id }}"
+    >
+      {{ block.settings.btn_label }}
+    </button>
+
+    <div
+      id="pc-feedback-{{ pc_id }}"
+      class="pc-form__feedback-{{ pc_id }}"
+      role="alert"
+      aria-live="polite"
+    ></div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  var id       = {{ pc_id | json }};
+  var webhook  = {{ block.settings.webhook_url | json }};
+  var maxChars = parseInt({{ block.settings.message_max_chars | json }}, 10);
+  var msgEl    = document.getElementById('pc-msg-' + id);
+  var emailEl  = document.getElementById('pc-email-' + id);
+  var consentEl= document.getElementById('pc-consent-' + id);
+  var btn      = document.getElementById('pc-btn-' + id);
+  var feedback = document.getElementById('pc-feedback-' + id);
+  var counter  = document.querySelector('[data-counter="' + id + '"]');
+  var msgOk    = {{ block.settings.success_message | json }};
+  var msgErr   = {{ block.settings.error_message | json }};
+  var source   = {{ block.settings.source_tag | json }};
+
+  /* ── Char counter ── */
+  if (msgEl && counter) {
+    msgEl.addEventListener('input', function () {
+      var len = msgEl.value.length;
+      counter.textContent = len + ' / ' + maxChars;
+      counter.classList.toggle('is-over', len >= maxChars);
+    });
+  }
+
+  /* ── Submit ── */
+  btn.addEventListener('click', function () {
+    /* Validations */
+    if (msgEl && msgEl.value.trim() === '') {
+      showFeedback('error', msgErr);
+      msgEl.focus();
+      return;
+    }
+    if (!emailEl.value.trim() || !emailEl.validity.valid) {
+      showFeedback('error', msgErr);
+      emailEl.focus();
+      return;
+    }
+    if (consentEl && !consentEl.checked) {
+      showFeedback('error', msgErr);
+      return;
+    }
+
+    /* Payload */
+    var payload = {
+      email:   emailEl.value.trim(),
+      message: msgEl ? msgEl.value.trim() : '',
+      source:  source || window.location.href,
+      page:    document.title,
+      timestamp: new Date().toISOString()
+    };
+
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    fetch(webhook, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(function (res) {
+      if (res.ok) {
+        showFeedback('success', msgOk);
+        if (msgEl) msgEl.value = '';
+        emailEl.value = '';
+        if (consentEl) consentEl.checked = false;
+        if (counter) counter.textContent = '0 / ' + maxChars;
+        btn.textContent = {{ block.settings.btn_label | json }};
+        btn.disabled = false;
+      } else {
+        throw new Error('HTTP ' + res.status);
+      }
+    })
+    .catch(function () {
+      showFeedback('error', msgErr);
+      btn.textContent = {{ block.settings.btn_label | json }};
+      btn.disabled = false;
+    });
+  });
+
+  function showFeedback(type, msg) {
+    feedback.textContent = msg;
+    feedback.className = 'pc-form__feedback-' + id + ' is-' + type;
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "PC Webhook Form",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "🔗 Integración"
+    },
+    {
+      "type": "text",
+      "id": "webhook_url",
+      "label": "URL del Webhook (Make.com u otro)",
+      "default": "https://hook.us2.make.com/kovactre7oe4ytl6jhqv6dmmisct9wub",
+      "info": "Pega aquí el endpoint de Make.com, Zapier, n8n, etc."
+    },
+    {
+      "type": "text",
+      "id": "source_tag",
+      "label": "Etiqueta de origen (source)",
+      "default": "pronto-chocho-landing",
+      "info": "Se envía en el payload para identificar desde qué landing viene el lead."
+    },
+    {
+      "type": "header",
+      "content": "📝 Contenido"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Título del formulario",
+      "default": "The Weekly Release"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo / descripción",
+      "default": "Curated reflections delivered to your inbox every Sunday evening."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_message",
+      "label": "Mostrar campo de mensaje / confesión",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_label",
+      "label": "Label del mensaje",
+      "default": "Your confession"
+    },
+    {
+      "type": "text",
+      "id": "message_placeholder",
+      "label": "Placeholder del mensaje",
+      "default": "Type your confession here..."
+    },
+    {
+      "type": "range",
+      "id": "message_max_chars",
+      "label": "Límite de caracteres del mensaje",
+      "min": 80,
+      "max": 500,
+      "step": 10,
+      "default": 160
+    },
+    {
+      "type": "inline_richtext",
+      "id": "email_label",
+      "label": "Label del email",
+      "default": "Email address"
+    },
+    {
+      "type": "text",
+      "id": "email_placeholder",
+      "label": "Placeholder del email",
+      "default": "your@email.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_consent",
+      "label": "Mostrar checkbox de consentimiento",
+      "default": true
+    },
+    {
+      "type": "textarea",
+      "id": "consent_text",
+      "label": "Texto del consentimiento",
+      "default": "I agree to receive curated emails from PRONTO CHOCHO®."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "btn_label",
+      "label": "Texto del botón",
+      "default": "JOIN THE ARCHIVE"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "success_message",
+      "label": "Mensaje de éxito",
+      "default": "You've been added to the archive. Sunday awaits."
+    },
+    {
+      "type": "inline_richtext",
+      "id": "error_message",
+      "label": "Mensaje de error",
+      "default": "Something went wrong. Please complete all fields and try again."
+    },
+    {
+      "type": "header",
+      "content": "📐 Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo del bloque",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "padding_v",
+      "label": "Padding vertical",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_h",
+      "label": "Padding horizontal",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espaciado entre campos",
+      "min": 8,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "textarea_height",
+      "label": "Alto del área de texto",
+      "min": 80,
+      "max": 400,
+      "step": 20,
+      "unit": "px",
+      "default": 140
+    },
+    {
+      "type": "header",
+      "content": "🔤 Tipografía"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Fuente del título",
+      "default": "playfair_display_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "min": 20,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "label": "Peso del título",
+      "min": 300,
+      "max": 900,
+      "step": 100,
+      "default": 400
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_italic",
+      "label": "Título en cursiva",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Fuente de cuerpo / labels",
+      "default": "inter_n4"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño del subtítulo",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Tamaño de labels / botón",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "label_tracking",
+      "label": "Espaciado de labels (letter-spacing)",
+      "options": [
+        { "value": "0.05", "label": "Ajustado (0.05em)" },
+        { "value": "0.10", "label": "Normal (0.10em)" },
+        { "value": "0.15", "label": "Abierto (0.15em)" },
+        { "value": "0.20", "label": "Muy abierto (0.20em)" }
+      ],
+      "default": "0.15"
+    },
+    {
+      "type": "range",
+      "id": "input_font_size",
+      "label": "Tamaño de fuente en inputs",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "checkbox",
+      "id": "placeholder_italic",
+      "label": "Placeholder del mensaje en cursiva",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "🎨 Colores"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fondo del bloque",
+      "default": "#fbf9f9"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color de texto",
+      "default": "#1b1c1c"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Color de éxito",
+      "default": "#2e7d32"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Color de error",
+      "default": "#ba1a1a"
+    },
+    {
+      "type": "header",
+      "content": "── Inputs"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Color del borde inferior (normal)",
+      "default": "#1b1c1c"
+    },
+    {
+      "type": "color",
+      "id": "input_border_focus_color",
+      "label": "Color del borde inferior (focus)",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "label": "Grosor del borde inferior",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "── Botón"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Fondo del botón",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Fondo del botón (hover)",
+      "default": "#303031"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_text",
+      "label": "Texto del botón (hover)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_border_color",
+      "label": "Borde del botón",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "btn_border_width",
+      "label": "Grosor del borde del botón",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "btn_radius",
+      "label": "Radio del botón",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_v",
+      "label": "Padding vertical del botón",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "btn_padding_h",
+      "label": "Padding horizontal del botón",
+      "min": 16,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "PC Webhook Form — Pronto Chocho",
+      "settings": {
+        "webhook_url": "https://hook.us2.make.com/kovactre7oe4ytl6jhqv6dmmisct9wub",
+        "source_tag": "pronto-chocho-landing",
+        "heading": "The Weekly Release",
+        "heading_italic": false,
+        "show_message": true,
+        "show_consent": true,
+        "btn_label": "JOIN THE ARCHIVE",
+        "btn_radius": 0,
+        "btn_border_width": 0
+      }
+    }
+  ]
+}
+{% endschema %}
