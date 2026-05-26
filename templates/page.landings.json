@@ -116,40 +116,12 @@
             "btn_padding_h": 48
           },
           "blocks": {}
-        },
-        "ai_gen_block_736028f_8CCMW9": {
-          "type": "ai_gen_block_736028f",
-          "settings": {
-            "heading": "Contáctanos",
-            "message_label": "Tu mensaje",
-            "message_placeholder": "Escribe tu mensaje aquí (máximo 160 caracteres)",
-            "email_label": "Email",
-            "email_placeholder": "tu@email.com",
-            "consent_text": "Acepto recibir correos electrónicos de esta empresa",
-            "button_label": "Enviar",
-            "success_message": "¡Gracias! Tu mensaje ha sido enviado correctamente.",
-            "error_message": "Por favor, completa todos los campos requeridos.",
-            "desktop_width_percent": 100,
-            "border_radius": 8,
-            "input_border_radius": 4,
-            "button_border_radius": 4,
-            "background_color": "#f4f1ed",
-            "text_color": "#3e1d65",
-            "input_border_color": "#c3aa9e",
-            "button_color": "#372352",
-            "button_text_color": "#ffffff",
-            "button_hover_color": "#756c9e",
-            "success_color": "#008060",
-            "error_color": "#d82c0d"
-          },
-          "blocks": {}
         }
       },
       "block_order": [
         "text_3bCFtx",
         "text_frJhae",
-        "pc_webhook_form_JjqQJw",
-        "ai_gen_block_736028f_8CCMW9"
+        "pc_webhook_form_JjqQJw"
       ],
       "name": "t:names.custom_section",
       "settings": {
@@ -177,8 +149,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 0,
-        "padding-block-end": 0
+        "padding-block-start": 60,
+        "padding-block-end": 20
       }
     },
     "main": {
