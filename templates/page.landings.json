@@ -1091,7 +1091,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p><strong>ChochoFuel your day<br/></strong></p>",
+                "text": "<h2>The Weight of Silence</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1117,7 +1117,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>For us, PRONTO CHOCHO is more than a product. <br/>It is heritage, nourishment, and a way to simplify modern wellness without losing tradition. We are proud to share it with families like ours who are seeking real food, real strength, and real balance in their daily routines.</p><p>Bringing Andean chocho powder, <em>pronto</em> to your table.<strong><br/><br/></strong></p>",
+                "text": "<p>PRONTO CHOCHO® was conceived as a digital confessional—a space where the architectural purity of design meets the raw complexity of the human experience.<br/><br/>We believe that by articulating the unspoken, we strip it of its power to haunt us. Our archive is a living testament to the shared burdens of the modern psyche.<br/></p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
