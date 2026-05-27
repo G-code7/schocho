@@ -590,7 +590,7 @@
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "custom",
-                "custom_width": 20,
+                "custom_width": 25,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fit",
@@ -661,7 +661,7 @@
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "custom",
-                "custom_width": 20,
+                "custom_width": 25,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fit",
@@ -732,7 +732,7 @@
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "custom",
-                "custom_width": 20,
+                "custom_width": 25,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fit",
@@ -803,7 +803,7 @@
                 "vertical_alignment_flex_direction_column": "center",
                 "gap": 12,
                 "width": "custom",
-                "custom_width": 20,
+                "custom_width": 25,
                 "width_mobile": "fit-content",
                 "custom_width_mobile": 100,
                 "height": "fit",
@@ -860,85 +860,13 @@
               "block_order": [
                 "text_CyRWV8"
               ]
-            },
-            "group_JkWHAc": {
-              "type": "group",
-              "name": "t:names.group",
-              "settings": {
-                "content_direction": "column",
-                "vertical_on_mobile": true,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "center",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "center",
-                "gap": 12,
-                "width": "custom",
-                "custom_width": 20,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "inherit_color_scheme": false,
-                "color_scheme": "scheme-4da98e8f-4a56-4d5a-af2c-c29ba954518f",
-                "background_media": "none",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "border": "solid",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 12,
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "link": "",
-                "open_in_new_tab": false,
-                "placeholder": "",
-                "padding-block-start": 10,
-                "padding-block-end": 10,
-                "padding-inline-start": 15,
-                "padding-inline-end": 15
-              },
-              "blocks": {
-                "text_Fa68WV": {
-                  "type": "text",
-                  "name": "t:names.text",
-                  "settings": {
-                    "text": "<p><em>\"I've been pretending to like the taste of my protein for two years. To no one in particular.\"<br/></em></p><p><em>—</em><em><strong> </strong></em><strong>Daniel, 41. To his blender, every morning.</strong></p>",
-                    "width": "fit-content",
-                    "max_width": "normal",
-                    "alignment": "left",
-                    "type_preset": "rte",
-                    "font": "var(--font-body--family)",
-                    "font_size": "1rem",
-                    "line_height": "normal",
-                    "letter_spacing": "normal",
-                    "case": "none",
-                    "wrap": "pretty",
-                    "color": "var(--color-foreground)",
-                    "background": false,
-                    "background_color": "#00000026",
-                    "corner_radius": 0,
-                    "padding-block-start": 0,
-                    "padding-block-end": 0,
-                    "padding-inline-start": 0,
-                    "padding-inline-end": 0
-                  },
-                  "blocks": {}
-                }
-              },
-              "block_order": [
-                "text_Fa68WV"
-              ]
             }
           },
           "block_order": [
             "group_xdBEUL",
             "group_x7G4XM",
             "group_TzdBGM",
-            "group_rmbyKx",
-            "group_JkWHAc"
+            "group_rmbyKx"
           ]
         }
       },
