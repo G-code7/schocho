@@ -692,7 +692,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p><em>\"I've been pretending to like the taste of my protein for two years. To no one in particular.\"<br/></em></p><p><em>—</em><em><strong> </strong></em><strong>Daniel, 41. To his blender, every morning.</strong></p>",
+                    "text": "<p><em>\"My grandmother never read a nutrition label.She lived to 94. Something about that isstarting to feel like a clue.\"</em></p><p><em><strong>— Sofía, 29. Calling her mom in Quito on a Tuesday.</strong></em></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -763,7 +763,7 @@
                   "type": "text",
                   "name": "t:names.text",
                   "settings": {
-                    "text": "<p><em>\"I've been pretending to like the taste of my protein for two years. To no one in particular.\"<br/></em></p><p><em>—</em><em><strong> </strong></em><strong>Daniel, 41. To his blender, every morning.</strong></p>",
+                    "text": "<p><em>\"I track my macros. I track my steps.I track my sleep. I forgot what it feels liketo just eat.\"</em></p><p><em><strong>— Tom, 36. Looking at his Apple Watch.</strong></em></p>",
                     "width": "fit-content",
                     "max_width": "normal",
                     "alignment": "left",
@@ -1019,34 +1019,7 @@
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {
-            "image_HewnwN": {
-              "type": "image",
-              "name": "t:names.image",
-              "settings": {
-                "image": "shopify://shop_images/prontochochoproductgreen.webp",
-                "link": "",
-                "image_ratio": "adapt",
-                "width": "fill",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "padding-block-start": 20,
-                "padding-block-end": 20,
-                "padding-inline-start": 20,
-                "padding-inline-end": 20
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "image_HewnwN"
-          ]
+          "blocks": {}
         },
         "group_xLH9xf": {
           "type": "group",
@@ -1092,7 +1065,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h2>The Weight of Silence</h2>",
+                "text": "<p><em>Who's behind this?</em></p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1118,7 +1091,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p>PRONTO CHOCHO® was conceived as a digital confessional—a space where the architectural purity of design meets the raw complexity of the human experience.<br/><br/>We believe that by articulating the unspoken, we strip it of its power to haunt us. Our archive is a living testament to the shared burdens of the modern psyche.<br/></p>",
+                "text": "<p><em>Two women in Miami who tried fourteen protein powders.Then we stopped looking and started listening. </em><em><strong>Meet us on June 23.</strong></em></p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -1153,7 +1126,7 @@
       ],
       "name": "t:names.custom_section",
       "settings": {
-        "content_direction": "row",
+        "content_direction": "column",
         "vertical_on_mobile": true,
         "horizontal_alignment": "center",
         "vertical_alignment": "center",
@@ -1161,7 +1134,7 @@
         "horizontal_alignment_flex_direction_column": "center",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 0,
-        "section_width": "full-width",
+        "section_width": "page-width",
         "section_height": "large",
         "section_height_custom": 50,
         "color_scheme": "scheme-6",
