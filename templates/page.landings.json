@@ -1210,7 +1210,7 @@
         "wrapper_border_width": 0,
         "wrapper_border_color": "#e0e0e0",
         "wrapper_shadow": false,
-        "image_position": "left",
+        "image_position": "right",
         "mobile_image_position": "top",
         "image_column_width": 50,
         "slider_bg_color": "#f0f0f0",
