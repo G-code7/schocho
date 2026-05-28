@@ -52,7 +52,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p><em>We're collecting them.<br/>Quietly. Honestly. Without judgment.<br/>What's yours?</em></p>",
+            "text": "<p><em>We're collecting them.<br/>Quietly. Honestly. Without judgment.<br/></em></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
