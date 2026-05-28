@@ -1216,7 +1216,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<p><em>Two women in Miami who tried fourteen protein powders.Then we stopped looking and started listening. </em><em><strong>Meet us on June 23.</strong></em></p>",
+                "text": "<p><em>Two women in Miami who tried fourteen protein powders.<br/>Then we stopped looking and started listening.<br/> </em><em><strong>Meet us on June 23.</strong></em></p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
