@@ -22,7 +22,7 @@
 
   /* ── Heading ── */
   .pc-form__heading-{{ pc_id }} {
-    font-family: {{ block.settings.heading_font }};
+    font-family: inherit;
     font-size: {{ block.settings.heading_size }}px;
     font-style: {{ block.settings.heading_italic | iif: 'italic', 'normal' }};
     font-weight: {{ block.settings.heading_weight }};
@@ -34,7 +34,7 @@
 
   /* ── Subtitle ── */
   .pc-form__subtitle-{{ pc_id }} {
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: {{ block.settings.subtitle_size }}px;
     color: {{ block.settings.text_color }};
     opacity: 0.6;
@@ -51,7 +51,7 @@
 
   .pc-form__label-{{ pc_id }} {
     display: block;
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: {{ block.settings.label_size }}px;
     font-weight: 600;
     letter-spacing: {{ block.settings.label_tracking }}em;
@@ -68,7 +68,7 @@
     border: none;
     border-bottom: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }};
     border-radius: 0;
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: {{ block.settings.input_font_size }}px;
     color: {{ block.settings.text_color }};
     padding: 12px 0;
@@ -98,7 +98,7 @@
 
   /* ── Char counter ── */
   .pc-form__counter-{{ pc_id }} {
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.12em;
@@ -132,7 +132,7 @@
   }
 
   .pc-form__check-label-{{ pc_id }} {
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: {{ block.settings.label_size }}px;
     color: {{ block.settings.text_color }};
     opacity: 0.7;
@@ -148,7 +148,7 @@
     color: {{ block.settings.btn_text }};
     border: {{ block.settings.btn_border_width }}px solid {{ block.settings.btn_border_color }};
     border-radius: {{ block.settings.btn_radius }}px;
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: {{ block.settings.label_size }}px;
     font-weight: 600;
     letter-spacing: {{ block.settings.label_tracking }}em;
@@ -170,7 +170,7 @@
 
   /* ── Feedback ── */
   .pc-form__feedback-{{ pc_id }} {
-    font-family: {{ block.settings.body_font }};
+    font-family: inherit;
     font-size: {{ block.settings.label_size }}px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -530,12 +530,6 @@
       "content": "🔤 Tipografía"
     },
     {
-      "type": "font_picker",
-      "id": "heading_font",
-      "label": "Fuente del título",
-      "default": "playfair_display_n4"
-    },
-    {
       "type": "range",
       "id": "heading_size",
       "label": "Tamaño del título",
@@ -559,12 +553,6 @@
       "id": "heading_italic",
       "label": "Título en cursiva",
       "default": false
-    },
-    {
-      "type": "font_picker",
-      "id": "body_font",
-      "label": "Fuente de cuerpo / labels",
-      "default": "inter_n4"
     },
     {
       "type": "range",
