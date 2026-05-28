@@ -1341,7 +1341,7 @@
           "name": "t:names.button",
           "settings": {
             "label": "Get early access",
-            "link": "shopify://pages/things-we-dont-say-out-loud",
+            "link": "#top",
             "open_in_new_tab": false,
             "style_class": "button",
             "show_icon": false,
