@@ -9,6 +9,12 @@
  */
 {
   "sections": {
+    "ocultar_elementos_globales": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<style>#shopify-section-header, #shopify-section-footer, .shopify-section-group-header-group, .shopify-section-group-footer-group, header, footer { display: none !important; } .sections-header-group, .sections-footer-group { display: none !important; }</style>"
+      }
+    },
     "section_mGpdwB": {
       "type": "section",
       "blocks": {
@@ -1267,6 +1273,7 @@
     }
   },
   "order": [
+    "ocultar_elementos_globales",
     "section_mGpdwB",
     "main",
     "blocks_EnhCeh",
