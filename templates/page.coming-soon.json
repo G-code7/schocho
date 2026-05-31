@@ -1,0 +1,160 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ocultar_elementos_globales": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<style>#shopify-section-header, #shopify-section-footer, .shopify-section-group-header-group, .shopify-section-group-footer-group, header, footer { display: none !important; } .sections-header-group, .sections-footer-group { display: none !important; }</style>",
+        "color_scheme": "",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_form": {
+      "type": "section",
+      "blocks": {
+        "group_form_col": {
+          "type": "group",
+          "name": "Form column",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "pc_webhook_form_prelaunch": {
+              "type": "pc-webhook-form",
+              "name": "PC Webhook Form — Coming Soon",
+              "settings": {
+                "webhook_url": "https://hook.us2.make.com/4yqhag7g7lfdbls73dm8gctp3iheirv9",
+                "source_tag": "pronto-chocho-coming-soon",
+                "heading": "What's the one thing you wish the wellness world would finally be honest about?",
+                "subtitle": "",
+                "show_message": true,
+                "message_label": "Or pick one that feels familiar:",
+                "message_placeholder": "Something else... write your own",
+                "custom_option_label": "Something else... (write your own)",
+                "message_max_chars": 160,
+                "email_label": "Your email",
+                "email_placeholder": "your@email.com",
+                "show_consent": true,
+                "consent_text": "I agree to receive curated emails from PRONTO CHOCHO\u00ae.",
+                "btn_label": "Save my spot!",
+                "success_message": "You\u2019re in. We\u2019ll be in touch before launch.",
+                "error_message": "Please select an option and enter a valid email.",
+                "max_width": 700,
+                "padding_v": 48,
+                "padding_h": 24,
+                "gap": 20,
+                "textarea_height": 100,
+                "heading_size": 32,
+                "heading_weight": 500,
+                "heading_italic": false,
+                "subtitle_size": 18,
+                "label_size": 12,
+                "label_tracking": "0.10",
+                "input_font_size": 16,
+                "placeholder_italic": true,
+                "bg_color": "#fbf9f9",
+                "text_color": "#371e54",
+                "success_color": "#2e7d32",
+                "error_color": "#ba1a1a",
+                "input_border_color": "#3e2563",
+                "input_border_focus_color": "#3e2563",
+                "input_border_width": 1,
+                "btn_bg": "#371e54",
+                "btn_text": "#ffffff",
+                "btn_hover_bg": "#513280",
+                "btn_hover_text": "#ffffff",
+                "btn_border_color": "#371e54",
+                "btn_border_width": 0,
+                "btn_radius": 40,
+                "btn_padding_v": 20,
+                "btn_padding_h": 48
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "pc_webhook_form_prelaunch"
+          ]
+        }
+      },
+      "block_order": [
+        "group_form_col"
+      ],
+      "name": "coming-soon-form",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "large",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 80,
+        "padding-block-end": 80
+      }
+    }
+  },
+  "order": [
+    "ocultar_elementos_globales",
+    "section_form"
+  ]
+}
