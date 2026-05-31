@@ -24,7 +24,7 @@
   .pc-form__heading-{{ pc_id }} {
     font-family: inherit;
     font-size: {{ block.settings.heading_size }}px;
-    font-style: {{ block.settings.heading_italic | iif: 'italic', 'normal' }};
+    font-style: {% if block.settings.heading_italic %}italic{% else %}normal{% endif %};
     font-weight: {{ block.settings.heading_weight }};
     color: {{ block.settings.text_color }};
     margin: 0 0 {{ block.settings.gap }}px;
@@ -82,7 +82,7 @@
   .pc-form__input-{{ pc_id }}::placeholder {
     color: {{ block.settings.text_color }};
     opacity: 0.35;
-    font-style: {{ block.settings.placeholder_italic | iif: 'italic', 'normal' }};
+    font-style: {% if block.settings.placeholder_italic %}italic{% else %}normal{% endif %};
   }
 
   .pc-form__textarea-{{ pc_id }}:focus,
@@ -191,6 +191,70 @@
     display: block;
   }
 
+  /* ── Radio Options ── */
+  .pc-form__options-label-{{ pc_id }} {
+    display: block;
+    font-family: inherit;
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    letter-spacing: {{ block.settings.label_tracking }}em;
+    text-transform: uppercase;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 14px;
+  }
+
+  .pc-form__options-{{ pc_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pc-form__option-{{ pc_id }} {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1px solid {{ block.settings.input_border_color }};
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .pc-form__option-{{ pc_id }}:hover {
+    border-color: {{ block.settings.btn_bg }};
+    background-color: {{ block.settings.btn_bg }}0d;
+  }
+
+  .pc-form__option-{{ pc_id }}.is-selected {
+    border-color: {{ block.settings.btn_bg }};
+    background-color: {{ block.settings.btn_bg }}1a;
+  }
+
+  .pc-form__option-radio-{{ pc_id }} {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    accent-color: {{ block.settings.btn_bg }};
+    cursor: pointer;
+  }
+
+  .pc-form__option-text-{{ pc_id }} {
+    font-family: inherit;
+    font-size: {{ block.settings.input_font_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.4;
+    cursor: pointer;
+  }
+
+  .pc-form__custom-wrap-{{ pc_id }} {
+    margin-top: 6px;
+    display: none;
+  }
+
+  .pc-form__custom-wrap-{{ pc_id }}.is-visible {
+    display: block;
+  }
+
   @media screen and (max-width: 749px) {
     .pc-form-{{ pc_id }} {
       padding: {{ block.settings.padding_v | divided_by: 1.5 | round }}px {{ block.settings.padding_h | divided_by: 1.5 | round }}px;
@@ -215,20 +279,45 @@
 
     {%- if block.settings.show_message -%}
     <div>
-      <label for="pc-msg-{{ pc_id }}" class="pc-form__label-{{ pc_id }}">
+      <span class="pc-form__options-label-{{ pc_id }}">
         {{ block.settings.message_label }}
-      </label>
-      <textarea
-        id="pc-msg-{{ pc_id }}"
-        class="pc-form__textarea-{{ pc_id }}"
-        maxlength="{{ block.settings.message_max_chars }}"
-        placeholder="{{ block.settings.message_placeholder }}"
-        required
-      ></textarea>
-      <div
-        class="pc-form__counter-{{ pc_id }}"
-        data-counter="{{ pc_id }}"
-      >0 / {{ block.settings.message_max_chars }}</div>
+      </span>
+      <div class="pc-form__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.message_label }}">
+
+        {%- assign option_values = "Clean eating is exhausting.,Labels are designed to confuse you.,I don't trust ingredients I can't pronounce.,I'm tired of trying products that don't actually work.,I just want something simple." | split: "," -%}
+        {%- for opt in option_values -%}
+        <label class="pc-form__option-{{ pc_id }}">
+          <input
+            type="radio"
+            name="pc-option-{{ pc_id }}"
+            class="pc-form__option-radio-{{ pc_id }}"
+            value="{{ opt | strip }}"
+          />
+          <span class="pc-form__option-text-{{ pc_id }}">"{{ opt | strip }}"</span>
+        </label>
+        {%- endfor -%}
+
+        <label class="pc-form__option-{{ pc_id }}">
+          <input
+            type="radio"
+            name="pc-option-{{ pc_id }}"
+            class="pc-form__option-radio-{{ pc_id }}"
+            value="__custom__"
+          />
+          <span class="pc-form__option-text-{{ pc_id }}">{{ block.settings.custom_option_label | default: "Something else..." }}</span>
+        </label>
+
+      </div>
+
+      <div class="pc-form__custom-wrap-{{ pc_id }}" id="pc-custom-wrap-{{ pc_id }}">
+        <textarea
+          id="pc-msg-{{ pc_id }}"
+          class="pc-form__textarea-{{ pc_id }}"
+          maxlength="{{ block.settings.message_max_chars }}"
+          placeholder="{{ block.settings.message_placeholder }}"
+        ></textarea>
+        <div class="pc-form__counter-{{ pc_id }}" data-counter="{{ pc_id }}">0 / {{ block.settings.message_max_chars }}</div>
+      </div>
     </div>
     {%- endif -%}
 
@@ -280,18 +369,44 @@
 
 <script>
 (function () {
-  var id       = {{ pc_id | json }};
-  var webhook  = {{ block.settings.webhook_url | json }};
-  var maxChars = parseInt({{ block.settings.message_max_chars | json }}, 10);
-  var msgEl    = document.getElementById('pc-msg-' + id);
-  var emailEl  = document.getElementById('pc-email-' + id);
-  var consentEl= document.getElementById('pc-consent-' + id);
-  var btn      = document.getElementById('pc-btn-' + id);
-  var feedback = document.getElementById('pc-feedback-' + id);
-  var counter  = document.querySelector('[data-counter="' + id + '"]');
-  var msgOk    = {{ block.settings.success_message | json }};
-  var msgErr   = {{ block.settings.error_message | json }};
-  var source   = {{ block.settings.source_tag | json }};
+  var id        = {{ pc_id | json }};
+  var webhook   = {{ block.settings.webhook_url | json }};
+  var maxChars  = parseInt({{ block.settings.message_max_chars | json }}, 10);
+  var msgEl     = document.getElementById('pc-msg-' + id);
+  var emailEl   = document.getElementById('pc-email-' + id);
+  var consentEl = document.getElementById('pc-consent-' + id);
+  var btn       = document.getElementById('pc-btn-' + id);
+  var feedback  = document.getElementById('pc-feedback-' + id);
+  var counter   = document.querySelector('[data-counter="' + id + '"]');
+  var msgOk     = {{ block.settings.success_message | json }};
+  var msgErr    = {{ block.settings.error_message | json }};
+  var source    = {{ block.settings.source_tag | json }};
+  var customWrap = document.getElementById('pc-custom-wrap-' + id);
+
+  /* ── Radio option highlight + custom textarea toggle ── */
+  var radioEls = document.querySelectorAll('.pc-form__option-radio-' + id);
+  radioEls.forEach(function (radio) {
+    radio.addEventListener('change', function () {
+      /* Reset all option highlights */
+      document.querySelectorAll('.pc-form__option-' + id).forEach(function (lbl) {
+        lbl.classList.remove('is-selected');
+      });
+      /* Highlight selected */
+      radio.closest('.pc-form__option-' + id).classList.add('is-selected');
+
+      /* Toggle custom textarea */
+      if (customWrap) {
+        if (radio.value === '__custom__') {
+          customWrap.classList.add('is-visible');
+          if (msgEl) msgEl.focus();
+        } else {
+          customWrap.classList.remove('is-visible');
+          if (msgEl) msgEl.value = '';
+          if (counter) counter.textContent = '0 / ' + maxChars;
+        }
+      }
+    });
+  });
 
   /* ── Char counter ── */
   if (msgEl && counter) {
@@ -304,12 +419,27 @@
 
   /* ── Submit ── */
   btn.addEventListener('click', function () {
-    /* Validations */
-    if (msgEl && msgEl.value.trim() === '') {
+    /* Get selected radio value */
+    var selectedRadio = document.querySelector('.pc-form__option-radio-' + id + ':checked');
+    var messageValue = '';
+
+    {% if block.settings.show_message %}
+    if (!selectedRadio) {
       showFeedback('error', msgErr);
-      msgEl.focus();
       return;
     }
+    if (selectedRadio.value === '__custom__') {
+      if (!msgEl || msgEl.value.trim() === '') {
+        showFeedback('error', msgErr);
+        if (msgEl) msgEl.focus();
+        return;
+      }
+      messageValue = msgEl.value.trim();
+    } else {
+      messageValue = selectedRadio.value;
+    }
+    {% endif %}
+
     if (!emailEl.value.trim() || !emailEl.validity.valid) {
       showFeedback('error', msgErr);
       emailEl.focus();
@@ -322,10 +452,10 @@
 
     /* Payload */
     var payload = {
-      email:   emailEl.value.trim(),
-      message: msgEl ? msgEl.value.trim() : '',
-      source:  source || window.location.href,
-      page:    document.title,
+      email:     emailEl.value.trim(),
+      message:   messageValue,
+      source:    source || window.location.href,
+      page:      document.title,
       timestamp: new Date().toISOString()
     };
 
@@ -340,6 +470,12 @@
     .then(function (res) {
       if (res.ok) {
         showFeedback('success', msgOk);
+        /* Reset form */
+        radioEls.forEach(function (r) { r.checked = false; });
+        document.querySelectorAll('.pc-form__option-' + id).forEach(function (lbl) {
+          lbl.classList.remove('is-selected');
+        });
+        if (customWrap) customWrap.classList.remove('is-visible');
         if (msgEl) msgEl.value = '';
         emailEl.value = '';
         if (consentEl) consentEl.checked = false;
@@ -420,6 +556,13 @@
       "id": "message_placeholder",
       "label": "Placeholder del mensaje",
       "default": "Type your confession here..."
+    },
+    {
+      "type": "text",
+      "id": "custom_option_label",
+      "label": "Texto de la opción 'Otra respuesta'",
+      "default": "Something else... (write your own)",
+      "info": "Aparece como última opción en el grupo de radio buttons."
     },
     {
       "type": "range",
