@@ -26,14 +26,14 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<h1>Things we don't say out loud.</h1>",
+            "text": "<h1><strong>You already know</strong></h1><h1><strong>something is missing.</strong></h1>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
-            "type_preset": "rte",
-            "font": "var(--font-body--family)",
-            "font_size": "1rem",
-            "line_height": "normal",
+            "type_preset": "custom",
+            "font": "var(--font-heading--family)",
+            "font_size": "3rem",
+            "line_height": "tight",
             "letter_spacing": "normal",
             "case": "none",
             "wrap": "pretty",
@@ -52,7 +52,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p><em>We're collecting them.<br/>Quietly. Honestly. Without judgment.<br/></em></p>",
+            "text": "<p>That quiet thought you have when you do everything right, eat clean, read labels, stay consistent and something still doesn't click.<br/><br/></p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -1072,7 +1072,7 @@
         "group_brtHyn",
         "group_WHn6HN"
       ],
-      "name": "t:names.custom_section",
+      "name": "wall-of-voices--section",
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
