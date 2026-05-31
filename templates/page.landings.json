@@ -74,6 +74,32 @@
           },
           "blocks": {}
         },
+        "textii_jNnw9x": {
+          "type": "textii",
+          "name": "HTML Text",
+          "settings": {
+            "text": "<a href=\"#shopify-section-template--20960535544000__section_UwdQLR\">Visit W3Schools.com!</a>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "rgba(0, 0, 0, 0.15)",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "pc_webhook_form_JjqQJw": {
           "type": "pc-webhook-form",
           "name": "PC Webhook Form — Pronto Chocho",
@@ -129,6 +155,7 @@
       "block_order": [
         "text_3bCFtx",
         "text_frJhae",
+        "textii_jNnw9x",
         "pc_webhook_form_JjqQJw"
       ],
       "name": "t:names.custom_section",
