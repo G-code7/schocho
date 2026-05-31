@@ -259,7 +259,7 @@
                 "heading": "What's yours?",
                 "subtitle": "",
                 "show_message": true,
-                "message_label": "aqui",
+                "message_label": "What's the one thing you wish the wellness world would finally behonest about?",
                 "message_placeholder": "Type your confession here...",
                 "custom_option_label": "Something else... (write your own)",
                 "message_max_chars": 160,
