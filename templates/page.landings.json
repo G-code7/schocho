@@ -99,8 +99,47 @@
             "padding-inline-end": 0
           },
           "blocks": {}
-        },
-        "pc_webhook_form_JjqQJw": {
+        }
+      },
+      "block_order": [
+        "text_3bCFtx",
+        "text_frJhae",
+        "textii_jNnw9x"
+      ],
+      "name": "t:names.custom_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "large",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 80,
+        "padding-block-end": 40
+      }
+    },
+    "section_EWgi6L": {
+      "type": "section",
+      "blocks": {
+        "pc_webhook_form_xGdBtQ": {
           "type": "pc-webhook-form",
           "name": "PC Webhook Form — Pronto Chocho",
           "settings": {
@@ -153,10 +192,7 @@
         }
       },
       "block_order": [
-        "text_3bCFtx",
-        "text_frJhae",
-        "textii_jNnw9x",
-        "pc_webhook_form_JjqQJw"
+        "pc_webhook_form_xGdBtQ"
       ],
       "name": "t:names.custom_section",
       "settings": {
@@ -165,11 +201,11 @@
         "horizontal_alignment": "flex-start",
         "vertical_alignment": "center",
         "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "center",
+        "horizontal_alignment_flex_direction_column": "flex-start",
         "vertical_alignment_flex_direction_column": "center",
         "gap": 12,
         "section_width": "page-width",
-        "section_height": "large",
+        "section_height": "small",
         "section_height_custom": 50,
         "color_scheme": "",
         "custom_background_color": "#f5f5f5",
@@ -184,8 +220,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 80,
-        "padding-block-end": 40
+        "padding-block-start": 0,
+        "padding-block-end": 0
       }
     },
     "main": {
@@ -1628,6 +1664,7 @@
   "order": [
     "ocultar_elementos_globales",
     "section_mGpdwB",
+    "section_EWgi6L",
     "main",
     "blocks_EnhCeh",
     "section_PmLUdF",
