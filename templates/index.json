@@ -265,7 +265,10 @@
           ]
         }
       },
-      "custom_css": [],
+      "custom_css": [
+        "video::-webkit-media-controls {display: none !important;}",
+        "video::-webkit-media-controls-enclosure {display: none !important;}"
+      ],
       "name": "Hero-section",
       "settings": {
         "media_position": "right",
