@@ -134,8 +134,6 @@
       });
     }
 
-    // Corre al cargar y cada vez que el carrito se actualiza (el tema
-    // re-renderiza el summary tras cambios de cantidad/descuento).
     document.addEventListener('DOMContentLoaded', function () {
       moveInstallments();
     });
@@ -204,15 +202,9 @@
     flex-direction: column;
   }
 
-  .cart-drawer__summary {
-    background-color: var(--color-background);
-    position: sticky;
-    bottom: 0;
-    z-index: 1;
-  }
-
   /* =========================================================
-     CART ITEMS — Minimalista & Mobile-First
+     CART ITEMS — Layout de una sola fila
+     imagen | info (título) | columna derecha (precio + qty + remove)
   ========================================================= */
 
   .cart-drawer__items {
@@ -235,16 +227,16 @@
     display: block;
   }
 
-  /* Grid limpio: imagen | detalles (2 filas) | columna derecha (precio + acciones) */
+  /* Grid: media (span 2 filas) | details (span 2 filas) | precio / acciones */
   .cart-items__table-row {
     display: grid;
-    grid-template-columns: 80px 1fr auto;
+    grid-template-columns: 60px minmax(0, 1fr) max-content;
     grid-template-areas:
       'media details price'
       'media details actions';
-    column-gap: 16px;
-    row-gap: 4px;
-    padding-block: 20px;
+    column-gap: 12px;
+    row-gap: 8px;
+    padding-block: 16px;
     border-bottom: 1px solid rgba(var(--color-border-rgb), 0.08);
     align-items: start;
   }
@@ -259,7 +251,19 @@
     margin: 0;
   }
 
-  /* ----- Media ----- */
+  /* Oculta la celda de error del flujo del grid salvo cuando aparece */
+  .cart-items__error {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    margin-top: 8px;
+    font-size: 0.8rem;
+  }
+
+  .cart-items__error.hidden {
+    display: none;
+  }
+
+  /* ----- Media (imagen) ----- */
   .cart-items__media {
     grid-area: media;
     align-self: start;
@@ -267,8 +271,8 @@
 
   .cart-items__media-container {
     display: block;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 12px;
     overflow: hidden;
     background-color: rgba(var(--color-border-rgb), 0.06);
@@ -279,31 +283,39 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: 12px !important;
   }
 
-  /* ----- Details (centro, ocupa 2 filas) ----- */
+  /* ----- Details (título + info) ----- */
   .cart-items__details {
     grid-area: details;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
-    padding-top: 2px;
+    padding-top: 1px;
   }
 
   .cart-items__title {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     line-height: 1.3;
     color: var(--color-foreground);
     text-decoration: none;
-    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  /* Opciones / variantes como pills sutiles */
+  /* Texto de suscripción / opción de entrega */
+  .cart-items__details > p {
+    font-size: 0.72rem;
+    opacity: 0.6;
+    margin: 0;
+    line-height: 1.3;
+  }
+
   .cart-items__details .list-unstyled {
     display: flex;
     flex-wrap: wrap;
@@ -314,42 +326,38 @@
   }
 
   .cart-items__details .list-unstyled li {
-    font-size: 0.7rem;
-    font-weight: 500;
+    font-size: 0.68rem;
+    font-weight: 600;
     letter-spacing: 0.01em;
     text-transform: uppercase;
     color: rgba(var(--color-foreground-rgb, var(--color-foreground)), 0.75);
     background-color: rgba(var(--color-border-rgb), 0.08);
-    padding: 3px 8px;
-    border-radius: 6px;
+    padding: 2px 7px;
+    border-radius: 5px;
     width: fit-content;
-    line-height: 1;
+    line-height: 1.4;
   }
 
-  /* Precio unitario / compare-at (más tenue) */
-  .cart-items__details .unit-price,
-  .cart-items__details .price-per-item,
+  /* Precio unitario dentro de details (más tenue y pequeño) */
   .cart-items__details > div:last-child {
     display: flex;
     align-items: baseline;
     gap: 6px;
-    margin-top: 2px;
+    margin-top: 1px;
   }
 
-  .cart-items__details .unit-price span:not(.visually-hidden),
-  .cart-items__details .price-per-item span:not(.visually-hidden),
   .cart-items__details > div:last-child span:not(.visually-hidden) {
-    font-size: 0.8rem;
-    opacity: 0.6;
+    font-size: 0.78rem;
+    opacity: 0.55;
   }
 
   .cart-items__details .compare-at-price {
-    font-size: 0.78rem;
-    opacity: 0.45;
+    font-size: 0.75rem;
+    opacity: 0.4;
     text-decoration: line-through;
   }
 
-  /* ----- Price (total del line item, arriba a la derecha) ----- */
+  /* ----- Columna derecha: precio arriba ----- */
   .cart-items__price {
     grid-area: price;
     align-self: start;
@@ -357,21 +365,20 @@
     text-align: right;
     white-space: nowrap;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--color-foreground);
     line-height: 1.3;
-    padding-top: 2px;
   }
 
-  /* ----- Actions (cantidad + remove, abajo a la derecha) ----- */
+  /* ----- Columna derecha: cantidad + remove abajo ----- */
   .cart-items__quantity {
     grid-area: actions;
-    align-self: end;
+    align-self: start;
     justify-self: end;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 4px;
+    justify-content: flex-end;
+    gap: 8px;
   }
 
   .quantity-selector {
@@ -384,8 +391,8 @@
   }
 
   .quantity-selector button {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -397,16 +404,21 @@
     transition: background-color 0.15s ease;
   }
 
-  .quantity-selector button:hover {
+  .quantity-selector button:hover:not([disabled]) {
     background-color: rgba(var(--color-border-rgb), 0.12);
   }
 
+  .quantity-selector button[disabled] {
+    opacity: 0.35;
+    cursor: default;
+  }
+
   .quantity-selector input {
-    width: 32px;
+    width: 26px;
     border: none;
     background: transparent;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 500;
     color: var(--color-foreground);
     -moz-appearance: textfield;
@@ -422,8 +434,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     padding: 0;
     opacity: 0.4;
     background: none;
@@ -431,6 +443,7 @@
     cursor: pointer;
     color: var(--color-foreground);
     transition: opacity 0.15s ease;
+    flex-shrink: 0;
   }
 
   .cart-items__remove:hover {
@@ -442,22 +455,15 @@
     height: 16px;
   }
 
-  /* ----- Error ----- */
-  .cart-items__error {
-    grid-column: 1 / -1;
-    margin-top: 8px;
-    font-size: 0.8rem;
-  }
-
-  .cart-items__error:not(.hidden) {
-    display: block;
-  }
-
   /* =========================================================
      Summary — Descuento / Totales / CTAs
   ========================================================= */
 
   .cart-drawer__summary {
+    background-color: var(--color-background);
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
     padding: var(--cart-drawer-padding);
     border-top: 1px solid rgba(var(--color-border-rgb), 0.08);
   }
@@ -513,6 +519,10 @@
     list-style: none;
   }
 
+  .cart-discount__codes:empty {
+    margin-top: 0;
+  }
+
   .cart-discount__pill {
     display: flex;
     align-items: center;
@@ -556,7 +566,7 @@
   /* Installments reubicado al final (ver script) */
   .cart__installments {
     display: block;
-    margin-top: 14px;
+    margin-top: 12px;
     text-align: center;
     font-size: 0.72rem;
     opacity: 0.7;
@@ -582,93 +592,72 @@
   }
 
   /* =========================================================
-     Wallets — Forzados a ROW en mobile y desktop
+     Wallets — variables que SÍ cruzan el shadow DOM cerrado
+     La dirección (row/column) la decide un container-query interno
+     de Shopify segun el ancho del wrapper: con 3 wallets pasa a
+     columna cuando el wrapper mide <= 320px. Por eso ensanchamos
+     el contenedor en mobile (romper el padding) para mantener row.
   ========================================================= */
 
   .additional-checkout-buttons {
-    margin-top: 4px;
+    margin-top: 2px;
     --shopify-accelerated-checkout-button-block-size: 44px;
     --shopify-accelerated-checkout-button-inline-size: 44px;
     --shopify-accelerated-checkout-inline-alignment: stretch;
+    --shopify-accelerated-checkout-row-gap: 10px;
   }
 
-  .additional-checkout-buttons .wallet-cart-grid,
-  .additional-checkout-buttons .wallet-cart-grid--vertical,
-  .additional-checkout-buttons .accelerated-checkout-button-container,
-  .additional-checkout-buttons .wallet-cart-button {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 8px;
-    margin: 0 !important;
-    width: 100% !important;
+  /* Consentimiento de suscripción: compacto y discreto */
+  #shopify-buyer-consent {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.66rem;
+    line-height: 1.4;
+    opacity: 0.55;
+    text-align: left;
   }
 
-  .additional-checkout-buttons .wallet-cart-button-container,
-  .additional-checkout-buttons .accelerated-checkout-button-container {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
-    width: auto !important;
-    margin: 0 !important;
-    max-width: none !important;
+  #shopify-subscription-policy-button {
+    text-decoration: underline;
+    cursor: pointer;
   }
 
   /* =========================================================
-     Mobile refinements
+     Mobile
   ========================================================= */
 
   @media screen and (max-width: 749px) {
     .cart-items__table-row {
-      grid-template-columns: 72px 1fr auto;
-      column-gap: 12px;
-      padding-block: 16px;
+      grid-template-columns: 56px minmax(0, 1fr) max-content;
+      column-gap: 10px;
+      padding-block: 14px;
     }
 
     .cart-items__media-container {
-      width: 72px;
-      height: 72px;
-    }
-
-    .cart-items__title {
-      font-size: 0.9rem;
-    }
-
-    .cart-items__price {
-      font-size: 0.9rem;
-    }
-
-    .quantity-selector button {
-      width: 26px;
-      height: 26px;
-    }
-
-    .quantity-selector input {
-      width: 28px;
-      font-size: 0.82rem;
-    }
-
-    .cart-items__remove {
-      width: 26px;
-      height: 26px;
+      width: 56px;
+      height: 56px;
     }
 
     .cart__checkout-button {
       padding-block: 14px;
     }
+
+    /* Ensancha las CTAs a casi todo el drawer para que los 3 wallets
+       quepan en fila: el wrapper interno supera los 320px y el
+       container-query de Shopify los mantiene en row. */
+    .cart__ctas {
+      margin-inline: calc(-1 * var(--cart-drawer-padding));
+      padding-inline: 8px;
+    }
   }
 
-  /* Pantallas muy estrechas: wallets un poco más compactos */
-  @media screen and (max-width: 400px) {
+  /* Muy estrecho (320–370): wallets un pelín más bajos, sin perder
+     legibilidad, para dejar respirar el contenido. */
+  @media screen and (max-width: 370px) {
     .additional-checkout-buttons {
-      --shopify-accelerated-checkout-button-block-size: 40px;
-      --shopify-accelerated-checkout-button-inline-size: 40px;
-    }
-
-    .additional-checkout-buttons .wallet-cart-grid,
-    .additional-checkout-buttons .wallet-cart-grid--vertical,
-    .additional-checkout-buttons .accelerated-checkout-button-container,
-    .additional-checkout-buttons .wallet-cart-button {
-      gap: 6px;
+      --shopify-accelerated-checkout-button-block-size: 42px;
+      --shopify-accelerated-checkout-button-inline-size: 42px;
+      --shopify-accelerated-checkout-row-gap: 8px;
     }
   }
 {% endstylesheet %}
