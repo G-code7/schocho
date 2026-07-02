@@ -529,6 +529,10 @@
   /* Wallets (Shop Pay / PayPal / Google Pay) en fila */
   .additional-checkout-buttons {
     margin-top: 2px;
+    /* Reduce un poco la altura de los wallets manteniéndolos legibles */
+    --shopify-accelerated-checkout-button-block-size: 44px;
+    --shopify-accelerated-checkout-button-inline-size: 44px;
+    --shopify-accelerated-checkout-inline-alignment: stretch;
   }
 
   .additional-checkout-buttons .wallet-cart-grid,
@@ -577,6 +581,20 @@
     /* Botón de checkout con buen tamaño táctil */
     .cart__checkout-button {
       padding-block: 14px;
+    }
+  }
+
+  /* En pantallas muy estrechas los 3 wallets caben mejor con un
+     pelín menos de altura, sin dejar de ser legibles */
+  @media screen and (max-width: 400px) {
+    .additional-checkout-buttons {
+      --shopify-accelerated-checkout-button-block-size: 42px;
+      --shopify-accelerated-checkout-button-inline-size: 42px;
+    }
+
+    .additional-checkout-buttons .wallet-cart-grid,
+    .additional-checkout-buttons .wallet-cart-grid--vertical {
+      gap: 6px;
     }
   }
 {% endstylesheet %}
