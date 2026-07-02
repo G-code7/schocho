@@ -120,6 +120,38 @@
   </dialog>
 </cart-drawer-component>
 
+<script>
+  // Reubica el bloque de cuotas (Shop Pay Installments) al final del
+  // summary, como nota pequeña debajo de los botones de pago.
+  (function () {
+    function moveInstallments(root) {
+      var scope = root || document;
+      scope.querySelectorAll('.cart-drawer__summary').forEach(function (summary) {
+        var installments = summary.querySelector('.cart__installments');
+        if (installments && installments.parentElement !== summary) {
+          summary.appendChild(installments);
+        }
+      });
+    }
+
+    // Corre al cargar y cada vez que el carrito se actualiza (el tema
+    // re-renderiza el summary tras cambios de cantidad/descuento).
+    document.addEventListener('DOMContentLoaded', function () {
+      moveInstallments();
+    });
+
+    var observer = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        if (mutations[i].addedNodes.length) {
+          moveInstallments();
+          break;
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
+
 {% stylesheet %}
   .cart-items-component {
     width: 100%;
@@ -207,13 +239,13 @@
 
   .cart-items__table-row {
     display: grid;
-    grid-template-columns: 76px 1fr auto;
+    grid-template-columns: 64px 1fr auto;
     grid-template-areas:
       'media details price'
       'media quantity quantity';
-    column-gap: 14px;
-    row-gap: 8px;
-    padding-block: 18px;
+    column-gap: 10px;
+    row-gap: 6px;
+    padding-block: 14px;
     border-bottom: 1px solid rgba(var(--color-border-rgb), 0.08);
   }
 
@@ -465,6 +497,20 @@
     margin-top: 4px;
   }
 
+  /* Installments reubicado al final (ver script), como nota pequeña
+     centrada bajo los botones de pago */
+  .cart__installments {
+    display: block;
+    margin-top: 14px;
+    text-align: center;
+    font-size: 0.72rem;
+    opacity: 0.7;
+  }
+
+  .cart__installments shopify-payment-terms {
+    font-size: 0.72rem;
+  }
+
   .cart__ctas {
     display: flex;
     flex-direction: column;
@@ -480,19 +526,57 @@
     font-weight: 600;
   }
 
+  /* Wallets (Shop Pay / PayPal / Google Pay) en fila */
   .additional-checkout-buttons {
-    position: relative;
     margin-top: 2px;
   }
 
-  .additional-checkout-buttons::before {
-    content: 'o';
-    display: block;
-    text-align: center;
-    font-size: 0.68rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    opacity: 0.4;
-    margin: 2px 0 10px;
+  .additional-checkout-buttons .wallet-cart-grid,
+  .additional-checkout-buttons .wallet-cart-grid--vertical {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .additional-checkout-buttons .wallet-cart-button-container {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    margin: 0 !important;
+  }
+
+  /* =========================================================
+     Pulidos finales — MOBILE
+  ========================================================= */
+
+  @media screen and (max-width: 749px) {
+    .cart-items__table-row {
+      column-gap: 10px;
+      padding-block: 13px;
+    }
+
+    .cart-items__title {
+      font-size: 0.88rem;
+    }
+
+    .cart-items__price {
+      font-size: 0.85rem;
+    }
+
+    /* El selector de cantidad un poco más compacto */
+    .quantity-selector button {
+      width: 24px;
+      height: 24px;
+    }
+
+    .quantity-selector input {
+      width: 26px;
+    }
+
+    /* Botón de checkout con buen tamaño táctil */
+    .cart__checkout-button {
+      padding-block: 14px;
+    }
   }
 {% endstylesheet %}
