@@ -212,9 +212,7 @@
   }
 
   /* =========================================================
-     REDISEÑO MINIMALISTA — cart-items__table
-     Convertimos la tabla en tarjetas (grid) para dar más aire
-     a cada producto, sobre todo en mobile.
+     CART ITEMS — Minimalista & Mobile-First
   ========================================================= */
 
   .cart-drawer__items {
@@ -237,82 +235,100 @@
     display: block;
   }
 
+  /* Grid limpio: imagen | detalles (2 filas) | columna derecha (precio + acciones) */
   .cart-items__table-row {
     display: grid;
-    grid-template-columns: 64px 1fr auto;
+    grid-template-columns: 80px 1fr auto;
     grid-template-areas:
       'media details price'
-      'media quantity quantity';
-    column-gap: 10px;
-    row-gap: 6px;
-    padding-block: 14px;
+      'media details actions';
+    column-gap: 16px;
+    row-gap: 4px;
+    padding-block: 20px;
     border-bottom: 1px solid rgba(var(--color-border-rgb), 0.08);
+    align-items: start;
   }
 
   .cart-items__table-row:first-child {
-    padding-top: 2px;
+    padding-top: 4px;
   }
 
   .cart-items__table-row > td {
     display: block;
     padding: 0;
+    margin: 0;
   }
 
+  /* ----- Media ----- */
   .cart-items__media {
     grid-area: media;
+    align-self: start;
   }
 
   .cart-items__media-container {
     display: block;
-    border-radius: 10px;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
     overflow: hidden;
-    background-color: rgba(var(--color-border-rgb), 0.05);
+    background-color: rgba(var(--color-border-rgb), 0.06);
   }
 
   .cart-items__media-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 10px !important;
+    display: block;
   }
 
+  /* ----- Details (centro, ocupa 2 filas) ----- */
   .cart-items__details {
     grid-area: details;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     min-width: 0;
+    padding-top: 2px;
   }
 
   .cart-items__title {
     font-weight: 600;
     font-size: 0.95rem;
     line-height: 1.3;
-    text-decoration: none;
     color: var(--color-foreground);
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
+  /* Opciones / variantes como pills sutiles */
   .cart-items__details .list-unstyled {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    margin: 2px 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .cart-items__details .list-unstyled li {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     text-transform: uppercase;
-    color: rgb(var(--color-foreground-rgb, var(--color-foreground)));
+    color: rgba(var(--color-foreground-rgb, var(--color-foreground)), 0.75);
     background-color: rgba(var(--color-border-rgb), 0.08);
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
     width: fit-content;
+    line-height: 1;
   }
 
+  /* Precio unitario / compare-at (más tenue) */
+  .cart-items__details .unit-price,
+  .cart-items__details .price-per-item,
   .cart-items__details > div:last-child {
     display: flex;
     align-items: baseline;
@@ -320,68 +336,105 @@
     margin-top: 2px;
   }
 
+  .cart-items__details .unit-price span:not(.visually-hidden),
+  .cart-items__details .price-per-item span:not(.visually-hidden),
   .cart-items__details > div:last-child span:not(.visually-hidden) {
     font-size: 0.8rem;
-    opacity: 0.65;
+    opacity: 0.6;
   }
 
   .cart-items__details .compare-at-price {
-    font-size: 0.75rem;
+    font-size: 0.78rem;
     opacity: 0.45;
+    text-decoration: line-through;
   }
 
+  /* ----- Price (total del line item, arriba a la derecha) ----- */
   .cart-items__price {
     grid-area: price;
     align-self: start;
     justify-self: end;
+    text-align: right;
     white-space: nowrap;
     font-weight: 700;
-    font-size: 0.9rem;
-    padding-top: 1px;
+    font-size: 0.95rem;
+    color: var(--color-foreground);
+    line-height: 1.3;
+    padding-top: 2px;
   }
 
+  /* ----- Actions (cantidad + remove, abajo a la derecha) ----- */
   .cart-items__quantity {
-    grid-area: quantity;
+    grid-area: actions;
+    align-self: end;
+    justify-self: end;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 2px;
+    gap: 10px;
+    margin-top: 4px;
   }
 
   .quantity-selector {
     display: inline-flex;
     align-items: center;
-    border: 1px solid rgba(var(--color-border-rgb), 0.18);
+    border: 1px solid rgba(var(--color-border-rgb), 0.15);
     border-radius: 999px;
     padding: 2px;
+    background-color: rgba(var(--color-border-rgb), 0.03);
   }
 
   .quantity-selector button {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .quantity-selector button:hover {
+    background-color: rgba(var(--color-border-rgb), 0.12);
   }
 
   .quantity-selector input {
-    width: 30px;
+    width: 32px;
     border: none;
     background: transparent;
     text-align: center;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+    -moz-appearance: textfield;
+  }
+
+  .quantity-selector input::-webkit-outer-spin-button,
+  .quantity-selector input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   .cart-items__remove {
-    margin-left: auto;
-    opacity: 0.5;
-    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    opacity: 0.4;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: opacity 0.15s ease;
   }
 
   .cart-items__remove:hover {
-    opacity: 1;
+    opacity: 0.85;
   }
 
   .cart-items__remove svg {
@@ -389,16 +442,19 @@
     height: 16px;
   }
 
+  /* ----- Error ----- */
   .cart-items__error {
     grid-column: 1 / -1;
+    margin-top: 8px;
+    font-size: 0.8rem;
   }
 
   .cart-items__error:not(.hidden) {
-    margin-top: 6px;
+    display: block;
   }
 
   /* =========================================================
-     Descuento / Totales / CTAs
+     Summary — Descuento / Totales / CTAs
   ========================================================= */
 
   .cart-drawer__summary {
@@ -497,8 +553,7 @@
     margin-top: 4px;
   }
 
-  /* Installments reubicado al final (ver script), como nota pequeña
-     centrada bajo los botones de pago */
+  /* Installments reubicado al final (ver script) */
   .cart__installments {
     display: block;
     margin-top: 14px;
@@ -526,74 +581,93 @@
     font-weight: 600;
   }
 
-  /* Wallets (Shop Pay / PayPal / Google Pay) en fila */
+  /* =========================================================
+     Wallets — Forzados a ROW en mobile y desktop
+  ========================================================= */
+
   .additional-checkout-buttons {
-    margin-top: 2px;
-    /* Reduce un poco la altura de los wallets manteniéndolos legibles */
+    margin-top: 4px;
     --shopify-accelerated-checkout-button-block-size: 44px;
     --shopify-accelerated-checkout-button-inline-size: 44px;
     --shopify-accelerated-checkout-inline-alignment: stretch;
   }
 
   .additional-checkout-buttons .wallet-cart-grid,
-  .additional-checkout-buttons .wallet-cart-grid--vertical {
+  .additional-checkout-buttons .wallet-cart-grid--vertical,
+  .additional-checkout-buttons .accelerated-checkout-button-container,
+  .additional-checkout-buttons .wallet-cart-button {
     display: flex !important;
     flex-direction: row !important;
+    flex-wrap: nowrap !important;
     gap: 8px;
-    margin: 0;
+    margin: 0 !important;
+    width: 100% !important;
   }
 
-  .additional-checkout-buttons .wallet-cart-button-container {
+  .additional-checkout-buttons .wallet-cart-button-container,
+  .additional-checkout-buttons .accelerated-checkout-button-container {
     flex: 1 1 0 !important;
     min-width: 0 !important;
     width: auto !important;
     margin: 0 !important;
+    max-width: none !important;
   }
 
   /* =========================================================
-     Pulidos finales — MOBILE
+     Mobile refinements
   ========================================================= */
 
   @media screen and (max-width: 749px) {
     .cart-items__table-row {
-      column-gap: 10px;
-      padding-block: 13px;
+      grid-template-columns: 72px 1fr auto;
+      column-gap: 12px;
+      padding-block: 16px;
+    }
+
+    .cart-items__media-container {
+      width: 72px;
+      height: 72px;
     }
 
     .cart-items__title {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
     }
 
     .cart-items__price {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
-    /* El selector de cantidad un poco más compacto */
     .quantity-selector button {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
     }
 
     .quantity-selector input {
-      width: 26px;
+      width: 28px;
+      font-size: 0.82rem;
     }
 
-    /* Botón de checkout con buen tamaño táctil */
+    .cart-items__remove {
+      width: 26px;
+      height: 26px;
+    }
+
     .cart__checkout-button {
       padding-block: 14px;
     }
   }
 
-  /* En pantallas muy estrechas los 3 wallets caben mejor con un
-     pelín menos de altura, sin dejar de ser legibles */
+  /* Pantallas muy estrechas: wallets un poco más compactos */
   @media screen and (max-width: 400px) {
     .additional-checkout-buttons {
-      --shopify-accelerated-checkout-button-block-size: 42px;
-      --shopify-accelerated-checkout-button-inline-size: 42px;
+      --shopify-accelerated-checkout-button-block-size: 40px;
+      --shopify-accelerated-checkout-button-inline-size: 40px;
     }
 
     .additional-checkout-buttons .wallet-cart-grid,
-    .additional-checkout-buttons .wallet-cart-grid--vertical {
+    .additional-checkout-buttons .wallet-cart-grid--vertical,
+    .additional-checkout-buttons .accelerated-checkout-button-container,
+    .additional-checkout-buttons .wallet-cart-button {
       gap: 6px;
     }
   }
