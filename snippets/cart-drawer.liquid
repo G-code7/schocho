@@ -227,13 +227,18 @@
     display: block;
   }
 
-  /* Grid: media (span 2 filas) | details (span 2 filas) | precio / acciones */
+  /* Layout objetivo:
+       fila 1:  [imagen] [título + info]   [precio]
+       fila 2:  [imagen] [quantity]         [remove]
+     El remove ya vive en su propia celda (.cart-items__remove-cell),
+     separado del quantity en el snippet cart-products. */
   .cart-items__table-row {
     display: grid;
-    grid-template-columns: 60px minmax(0, 1fr) max-content;
+    grid-template-columns: 60px minmax(0, 1fr) auto;
     grid-template-areas:
-      'media details price'
-      'media details actions';
+      'media details  price'
+      'media quantity remove'
+      'media error    error';
     column-gap: 12px;
     row-gap: 8px;
     padding-block: 16px;
@@ -251,11 +256,10 @@
     margin: 0;
   }
 
-  /* Oculta la celda de error del flujo del grid salvo cuando aparece */
+  /* Error ocupa todo el ancho al final */
   .cart-items__error {
-    grid-column: 1 / -1;
-    grid-row: 3;
-    margin-top: 8px;
+    grid-area: error;
+    margin-top: 6px;
     font-size: 0.8rem;
   }
 
@@ -357,7 +361,7 @@
     text-decoration: line-through;
   }
 
-  /* ----- Columna derecha: precio arriba ----- */
+  /* ----- Fila 1 derecha: precio ----- */
   .cart-items__price {
     grid-area: price;
     align-self: start;
@@ -370,15 +374,25 @@
     line-height: 1.3;
   }
 
-  /* ----- Columna derecha: cantidad + remove abajo ----- */
+  /* ----- Fila 2 izquierda: quantity (alineado bajo el título) ----- */
   .cart-items__quantity {
-    grid-area: actions;
-    align-self: start;
+    grid-area: quantity;
+    align-self: center;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  /* ----- Fila 2 derecha: remove ----- */
+  .cart-items__remove-cell {
+    grid-area: remove;
+    align-self: center;
     justify-self: end;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
+    margin: 0;
   }
 
   .quantity-selector {
@@ -628,7 +642,7 @@
 
   @media screen and (max-width: 749px) {
     .cart-items__table-row {
-      grid-template-columns: 56px minmax(0, 1fr) max-content;
+      grid-template-columns: 56px minmax(0, 1fr) auto;
       column-gap: 10px;
       padding-block: 14px;
     }
