@@ -111,7 +111,7 @@
             <div
               class="cart-drawer__summary"
             >
-              {% render 'cart-summary' %}
+              {% render 'cart-summary', accelerated_checkout_buttons_layout: 'horizontal' %}
             </div>
           </div>
         {%- endif -%}
@@ -227,6 +227,11 @@
     display: block;
   }
 
+  /* Layout objetivo:
+       fila 1:  [imagen] [título + info]   [precio]
+       fila 2:  [imagen] [quantity]         [remove]
+     El remove ya vive en su propia celda (.cart-items__remove-cell),
+     separado del quantity en el snippet cart-products. */
   .cart-drawer__items .cart-items__table-row {
     display: grid;
     grid-template-columns: 60px minmax(0, 1fr) auto;
@@ -239,7 +244,7 @@
     padding-block: 16px;
     border-bottom: 1px solid rgba(var(--color-border-rgb), 0.08);
     align-items: start;
-    margin-bottom: 0; 
+    margin-bottom: 0; /* mata el var(--margin-lg) del snippet base */
   }
 
   .cart-drawer__items .cart-items__table-row:first-child {
@@ -252,6 +257,7 @@
     margin: 0;
   }
 
+  /* Error ocupa todo el ancho al final */
   .cart-drawer__items .cart-items__error {
     grid-area: error;
     margin-top: 6px;
@@ -657,13 +663,10 @@
       padding-block: 14px;
     }
 
-    /* Ensancha las CTAs a casi todo el drawer para que los 3 wallets
-       quepan en fila: el wrapper interno supera los 320px y el
-       container-query de Shopify los mantiene en row. */
-    .cart-drawer__summary .cart__ctas {
-      margin-inline: calc(-1 * var(--padding-xl)); /* usar SOLO el eje inline (antes: shorthand de 2 valores => calc invalido) */
-      padding-inline: 8px;
-    }
+    /* Los 3 wallets quedan en fila via el modifier --horizontal que emite
+       cart-summary (pasado desde este render). Ya NO se necesita ensanchar
+       el contenedor: con --horizontal, Shopify desactiva el fallback a
+       columna y los botones encogen (min-width:0) para caber en cualquier ancho. */
   }
 
   /* Muy estrecho (320–370): wallets un pelín más bajos, sin perder
