@@ -105,7 +105,8 @@
     <div
       class="
         additional-checkout-buttons
-        {% if accelerated_checkout_buttons_layout == 'vertical' %}additional-checkout-buttons--vertical{% endif %}
+        {% if accelerated_checkout_buttons_layout == 'vertical' %}additional-checkout-buttons--vertical
+        {% elsif accelerated_checkout_buttons_layout == 'horizontal' %}additional-checkout-buttons--horizontal{% endif %}
       "
     >
       {{ content_for_additional_checkout_buttons }}
