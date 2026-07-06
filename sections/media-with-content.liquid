@@ -141,7 +141,8 @@
   /* Keep the CSS specificity lower assuming that liquid won't assign this class with a full width section */
   .media-with-content.media-with-content--media-extend {
     grid-template-columns: var(--media-with-content-grid-columns);
-    grid-template-areas: 'media media media' 'margin-left content margin-right';
+    /* MÓVIL: contenido primero, media debajo (coherente con el layout general) */
+    grid-template-areas: 'margin-left content margin-right' 'media media media';
 
     @media screen and (min-width: 750px) {
       grid-template-areas: 'media media content margin-right';
@@ -164,7 +165,8 @@
     --media-with-content-grid-columns: var(--full-page-grid-with-margins);
 
     grid-template-columns: var(--media-with-content-grid-columns);
-    grid-template-areas: 'media media media' 'content content content';
+    /* MÓVIL (mobile-first): el contenido (h1/texto) va PRIMERO y la media DEBAJO */
+    grid-template-areas: 'content content content' 'media media media';
 
     @media screen and (min-width: 750px) {
       --media-with-content-grid-columns: 3.5fr 2.5fr;
@@ -188,6 +190,31 @@
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    /* =============================================
+       OCULTAR CONTROLES DE VIDEO (robusto, incl. iOS)
+       ============================================= */
+    /* El video del hero es DECORATIVO: no requiere interacción del usuario.
+       pointer-events: none impide que el "tap" en iOS invoque los controles
+       nativos (que viven en un shadow DOM cerrado y NO responden a las
+       pseudo-clases ::-webkit-media-controls-* en Safari iOS). */
+    .media-block video,
+    .content-video {
+      pointer-events: none;
+    }
+
+    /* Fallback para WebKit/Blink de escritorio (Safari macOS, Chrome, Android) */
+    .media-block video::-webkit-media-controls,
+    .media-block video::-webkit-media-controls-enclosure,
+    .media-block video::-webkit-media-controls-panel,
+    .media-block video::-webkit-media-controls-start-playback-button,
+    .content-video::-webkit-media-controls,
+    .content-video::-webkit-media-controls-enclosure,
+    .content-video::-webkit-media-controls-panel,
+    .content-video::-webkit-media-controls-start-playback-button {
+      display: none !important;
+      -webkit-appearance: none !important;
     }
 
     /* =============================================
@@ -313,11 +340,28 @@
     z-index: 3;
   }
 
-  /* Ajustes para mobile */
+  /* =============================================
+     AJUSTES MÓVIL
+     - La media toma su ALTURA NATURAL (auto) en lugar de un svh fijo,
+       eliminando el espaciado vertical excesivo.
+     - El contenido deja de estar atado a --media-height-mobile.
+     ============================================= */
   @media screen and (max-width: 749px) {
     .media-with-content .media-block {
-      height: var(--media-height);
-      min-height: 350px;
+      height: auto;
+      min-height: 0; /* elimina el min-height: 450px/350px que forzaba el alto */
+    }
+
+    /* La media interna respeta su relación de aspecto real */
+    .media-with-content .media-block img,
+    .media-with-content .media-block picture,
+    .media-with-content .media-block video {
+      height: auto;
+    }
+
+    /* El contenido abraza su texto; ya no hereda un alto de tipo svh */
+    .media-with-content__content {
+      min-height: 0;
     }
   }
 {% endstylesheet %}
@@ -369,16 +413,49 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
+  // --- Forzar videos SIN controles y con autoplay fiable (incl. iOS) ---
+  // El bloque de media es nativo de Shopify: no controlamos su markup desde
+  // Liquid, así que "endurecemos" el <video> por JS de forma idempotente.
+  function hardenHeroVideos() {
+    document
+      .querySelectorAll('.media-with-content .media-block video, .media-with-content .content-video')
+      .forEach(function (video) {
+        // Quitar controles aunque el bloque los añada
+        video.removeAttribute('controls');
+        video.controls = false;
+
+        // Requisitos de autoplay en iOS/Safari (evita el botón de "play" central)
+        video.muted = true;
+        video.setAttribute('muted', '');
+        video.playsInline = true;
+        video.setAttribute('playsinline', '');
+        video.setAttribute('webkit-playsinline', '');
+
+        // Intento de reproducción (iOS puede diferirlo hasta interacción)
+        var playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(function () {/* silencioso: sin ruido en consola */});
+        }
+      });
+  }
+
   // Ejecutar inmediatamente
+  hardenHeroVideos();
   initMediaGallery();
   
   // También ejecutar después de que la página termine de cargar
-  window.addEventListener('load', initMediaGallery);
+  window.addEventListener('load', function () {
+    initMediaGallery();
+    hardenHeroVideos();
+  });
   
   // Ejecutar cuando la sección se cargue dinámicamente (editor de Shopify)
   document.addEventListener('shopify:section:load', function(event) {
     if (event.target.closest('.media-with-content')) {
-      setTimeout(initMediaGallery, 100);
+      setTimeout(function () {
+        initMediaGallery();
+        hardenHeroVideos();
+      }, 100);
     }
   });
   
