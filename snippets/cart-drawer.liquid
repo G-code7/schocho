@@ -227,11 +227,6 @@
     display: block;
   }
 
-  /* Layout objetivo:
-       fila 1:  [imagen] [título + info]   [precio]
-       fila 2:  [imagen] [quantity]         [remove]
-     El remove ya vive en su propia celda (.cart-items__remove-cell),
-     separado del quantity en el snippet cart-products. */
   .cart-drawer__items .cart-items__table-row {
     display: grid;
     grid-template-columns: 60px minmax(0, 1fr) auto;
@@ -244,7 +239,7 @@
     padding-block: 16px;
     border-bottom: 1px solid rgba(var(--color-border-rgb), 0.08);
     align-items: start;
-    margin-bottom: 0; /* mata el var(--margin-lg) del snippet base */
+    margin-bottom: 0; 
   }
 
   .cart-drawer__items .cart-items__table-row:first-child {
@@ -257,7 +252,6 @@
     margin: 0;
   }
 
-  /* Error ocupa todo el ancho al final */
   .cart-drawer__items .cart-items__error {
     grid-area: error;
     margin-top: 6px;
