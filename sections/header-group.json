@@ -84,8 +84,9 @@
         }
       },
       "custom_css": [
-        "/* LOGO SOBRESALIENDO DEL HEADER */.header-logo__image-container {position: relative; height: 40px; top: -10px; /* Ajusta aquí cuánto quieres que sobresalga */ z-index: 20;}",
-        " /* Ajusta el header para que no empuje el contenido */#header-component .header__wrapper {padding-bottom: 35px; /* mismo valor que arriba */}"
+        "/* LOGO SOBRESALIENDO DEL HEADER */.header-logo__image-container {position: relative; height: 40px; top: -10px; z-index: 20;}",
+        "#header-component .header__wrapper {padding-bottom: 35px; /* mismo valor que arriba */}",
+        "@container wrapper (width <= 380px) {.wallet-cart-grid:not(.wallet-cart-grid--horizontal):has(>.wallet-cart-button-container:nth-of-type(3)).wallet-cart-grid:not(:has(>.wallet-cart-button-container:nth-of-type(4))) {justify-content: flex-end; flex-direction: row; align-items: flex-end; gap: 3px; margin: 0; }}"
       ],
       "settings": {
         "logo_position": "left",
