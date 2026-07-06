@@ -262,7 +262,7 @@
     display: none;
   }
 
-  /* ----- Media (imagen) ----- */
+  /* ----- Media ----- */
   .cart-drawer__items .cart-items__media {
     grid-area: media;
     align-self: start;
@@ -285,7 +285,7 @@
     border-radius: 12px !important;
   }
 
-  /* ----- Details (título + info) ----- */
+  /* ----- Details ----- */
   .cart-drawer__items .cart-items__details {
     grid-area: details;
     display: flex;
@@ -295,7 +295,6 @@
     padding-top: 1px;
   }
 
-  /* El snippet base separa los hijos de details con margin; lo anulamos (usamos gap) */
   .cart-drawer__items .cart-items__details > * + * {
     margin-block-start: 0;
   }
@@ -312,12 +311,12 @@
     overflow: hidden;
   }
 
-  /* Texto de suscripción / opción de entrega */
+  /* Texto de suscripción */
   .cart-drawer__items .cart-items__details > p {
     font-size: 0.72rem;
     opacity: 0.6;
     margin: 0;
-    line-height: 1.3;
+    line-height: 1;
   }
 
   .cart-drawer__items .cart-items__details .list-unstyled {
