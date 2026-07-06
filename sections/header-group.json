@@ -86,7 +86,7 @@
       "custom_css": [
         "/* LOGO SOBRESALIENDO DEL HEADER */.header-logo__image-container {position: relative; height: 40px; top: -10px; z-index: 20;}",
         "#header-component .header__wrapper {padding-bottom: 35px; /* mismo valor que arriba */}",
-        ".wallet-cart-grid {justify-content: flex-end !important; flex-direction: row !important; align-items: flex-end !important; gap: 3px; }"
+        "div > div .wallet-cart-button-containe {justify-content: flex-end !important; flex-direction: row !important; align-items: flex-end !important; gap: 3px;}"
       ],
       "settings": {
         "logo_position": "left",
