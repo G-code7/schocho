@@ -663,14 +663,9 @@
       padding-block: 14px;
     }
 
-    /* Los 3 wallets quedan en fila via el modifier --horizontal que emite
-       cart-summary (pasado desde este render). Ya NO se necesita ensanchar
-       el contenedor: con --horizontal, Shopify desactiva el fallback a
-       columna y los botones encogen (min-width:0) para caber en cualquier ancho. */
   }
 
-  /* Muy estrecho (320–370): wallets un pelín más bajos, sin perder
-     legibilidad, para dejar respirar el contenido. */
+  /* (320–370) */
   @media screen and (max-width: 370px) {
     .additional-checkout-buttons {
       --shopify-accelerated-checkout-button-block-size: 42px;
