@@ -764,6 +764,14 @@
       updateDots(index);
     }
 
+    if (isMobile) {
+      requestAnimationFrame(() => {
+        slider.scrollTo({ left: 0, behavior: 'auto' });
+        currentIndex = 0;
+        updateDots(0);
+      });
+    }
+
     function handleScroll() {
       if (!isMobile) return;
       const sliderRect = slider.getBoundingClientRect();
