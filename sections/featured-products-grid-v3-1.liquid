@@ -553,6 +553,17 @@
                     endif
                   -%}
 
+                  {%- capture primary_img -%}
+                    <img
+                      src="{{ main_image | image_url: width: 800 }}"
+                      alt="{{ main_image.alt | default: display_title | escape }}"
+                      class="featured-products__image-{{ section_id }} featured-products__image-{{ section_id }}--primary"
+                      loading="lazy"
+                      width="800"
+                      height="{{ 800 | divided_by: main_image.aspect_ratio | round }}"
+                    >
+                  {%- endcapture -%}
+
                   {% if product != blank %}
                     
                       href="{{ product.url }}"
@@ -560,19 +571,10 @@
                       aria-hidden="true"
                       tabindex="-1"
                     >
-                  {% endif %}
-
-                  <img
-                    src="{{ main_image | image_url: width: 800 }}"
-                    alt="{{ main_image.alt | default: display_title | escape }}"
-                    class="featured-products__image-{{ section_id }} featured-products__image-{{ section_id }}--primary"
-                    loading="lazy"
-                    width="800"
-                    height="{{ 800 | divided_by: main_image.aspect_ratio | round }}"
-                  >
-
-                  {% if product != blank %}
+                      {{ primary_img }}
                     </a>
+                  {% else %}
+                    {{ primary_img }}
                   {% endif %}
                 {% else %}
                   <div class="featured-products__placeholder-{{ section_id }}">
