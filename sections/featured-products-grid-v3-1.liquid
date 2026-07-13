@@ -748,13 +748,18 @@
       });
     }
 
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     function goToSlide(index) {
       if (!isMobile || !cards[index]) return;
       const card = cards[index];
-      const sliderRect = slider.getBoundingClientRect();
-      const cardRect = card.getBoundingClientRect();
-      const scrollLeft = card.offsetLeft - (sliderRect.width / 2) + (cardRect.width / 2);
-      slider.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+      // offsetLeft es relativo al padding-box del slider (ya es position:relative)
+      const target = card.offsetLeft - (slider.clientWidth - card.clientWidth) / 2;
+      const max = slider.scrollWidth - slider.clientWidth;
+      slider.scrollTo({
+        left: Math.min(Math.max(0, target), max),
+        behavior: prefersReduced ? 'auto' : 'smooth'
+      });
       currentIndex = index;
       updateDots(index);
     }
