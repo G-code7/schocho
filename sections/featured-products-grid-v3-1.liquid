@@ -451,6 +451,11 @@
     height: 50%;
     opacity: 0.3;
   }
+
+@media (hover: none) {
+    .featured-products__card-{{ section_id }}:hover { transform: none; box-shadow: none; }
+    .featured-products__image-{{ section_id }}--hover { display: none; }
+  }
 {% endstyle %}
 
 <section class="featured-products-{{ section_id }}" data-section-id="{{ section_id }}" {{ section.shopify_attributes }}>
