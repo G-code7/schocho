@@ -187,6 +187,19 @@
     background-color: {{ section.settings.image_background }};
   }
 
+  .featured-products__image-link-{{ section_id }} {
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 2;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .featured-products__image-link-{{ section_id }}:focus-visible {
+    outline: 2px solid {{ section.settings.product_title_color }};
+    outline-offset: -2px;
+  }
+
   .featured-products__image-{{ section_id }} {
     position: absolute;
     top: 0;
