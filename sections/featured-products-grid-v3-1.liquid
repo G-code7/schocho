@@ -554,8 +554,12 @@
                   -%}
 
                   {% if product != blank %}
-                    href="{{ product.url }}" class="featured-products__image-link-{{ section_id }}" aria-hidden="true"
-                    tabindex="-1" >
+                    
+                      href="{{ product.url }}"
+                      class="featured-products__image-link-{{ section_id }}"
+                      aria-hidden="true"
+                      tabindex="-1"
+                    >
                   {% endif %}
 
                   <img
