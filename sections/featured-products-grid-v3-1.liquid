@@ -74,26 +74,49 @@
       padding: 0 20px;
     }
 
-    .featured-products__grid-wrapper-{{ section_id }} {
+.featured-products__grid-wrapper-{{ section_id }} {
+      display: block;              /* mata el justify-content:center heredado */
       overflow: hidden;
       margin: 0 -20px;
       padding: 0;
     }
 
     .featured-products__grid-{{ section_id }} {
+      /* ancho de card responsive: nunca más ancho que el viewport útil */
+      --fp-card-w: min({{ section.settings.product_max_width_mobile }}px, 78vw);
+
       display: flex;
+      position: relative;          /* offsetParent correcto para el JS */
+      justify-content: flex-start; /* FIX CLAVE: permite scrollear al item 0 */
       gap: {{ section.settings.grid_gap_mobile }}px;
+      width: 100%;
       max-width: none;
+      padding: 0;                  /* el gutter va como margin en 1er/último card */
       overflow-x: auto;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
       scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
       scrollbar-width: none;
       -ms-overflow-style: none;
-      padding: 0 20px;
-      scroll-behavior: smooth;
     }
 
     .featured-products__grid-{{ section_id }}::-webkit-scrollbar {
       display: none;
+    }
+
+    .featured-products__grid-{{ section_id }} .featured-products__card-{{ section_id }} {
+      flex: 0 0 var(--fp-card-w);
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+
+    /* Gutters simétricos: hacen que el PRIMERO y el ÚLTIMO puedan centrarse */
+    .featured-products__grid-{{ section_id }} .featured-products__card-{{ section_id }}:first-child {
+      margin-left: calc(50% - (var(--fp-card-w) / 2));
+    }
+    .featured-products__grid-{{ section_id }} .featured-products__card-{{ section_id }}:last-child {
+      margin-right: calc(50% - (var(--fp-card-w) / 2));
     }
 
     .featured-products__grid-{{ section_id }} .featured-products__card-{{ section_id }} {
