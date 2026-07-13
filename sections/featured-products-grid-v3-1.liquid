@@ -586,7 +586,13 @@
                     height="{{ 800 | divided_by: product.images[1].aspect_ratio | round }}"
                   >
                 {% endif %}
+
+                {%- comment -%} Overlay link: toda la imagen es clickeable {%- endcomment -%}
+                {% if product != blank %}
+                  <a href="{{ product.url }}" class="featured-products__image-link-{{ section_id }}" aria-hidden="true" tabindex="-1"></a>
+                {% endif %}
               </div>
+
 
               {%- comment -%} Product Info dentro de la Card {%- endcomment -%}
               <div class="featured-products__info-{{ section_id }}">
