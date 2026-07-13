@@ -163,6 +163,7 @@
                 "icon_GfrQzQ": {
                   "type": "icon",
                   "name": "t:names.icon",
+                  "disabled": true,
                   "settings": {
                     "icon": "tiktok",
                     "width": 28,
@@ -177,14 +178,15 @@
                   "settings": {
                     "icon": "whatsapp",
                     "width": 28,
-                    "link": "",
-                    "open_in_new_tab": false
+                    "link": "https://wa.me/13055481244?text=Hello,%20I%20would%20like%20to%20get%20more%20information%20about%20your%20Pronto%20Chocho%20products",
+                    "open_in_new_tab": true
                   },
                   "blocks": {}
                 },
                 "icon_8LnEbx": {
                   "type": "icon",
                   "name": "t:names.icon",
+                  "disabled": true,
                   "settings": {
                     "icon": "youtube",
                     "width": 28,
@@ -199,8 +201,8 @@
                   "settings": {
                     "icon": "instagram",
                     "width": 28,
-                    "link": "",
-                    "open_in_new_tab": false
+                    "link": "https://www.instagram.com/prontochocho/",
+                    "open_in_new_tab": true
                   },
                   "blocks": {}
                 }
