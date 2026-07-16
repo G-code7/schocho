@@ -215,11 +215,7 @@
     max-width: {{ block.settings.media_max_width }}px;
     min-height: 500px;
     border-radius: {{ block.settings.media_border_radius }}px;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 1px {{ block.settings.accent_color | default: '#4CAF50' }}20,
-      0 20px 60px {{ block.settings.accent_color | default: '#4CAF50' }}22,
-      0 4px 16px rgba(0,0,0,0.12);
+    border-radius: 50%;
     animation: wt-media-float-{{ ai_gen_id }} 5s ease-in-out infinite;
   }
 
