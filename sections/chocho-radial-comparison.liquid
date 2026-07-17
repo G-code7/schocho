@@ -1,0 +1,1148 @@
+{% liquid
+  assign section_id = section.id | replace: '_', '' | downcase
+%}
+
+{% style %}
+
+/* ══════════════════════════════════════════
+   CHOCHO RADIAL COMPARISON
+   section: chocho-radial-comparison
+   ══════════════════════════════════════════ */
+
+.chocho-radial-{{ section_id }} {
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+  background-color: {{ section.settings.bg_color }};
+  font-family: var(--font-body-family, sans-serif);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient radial glow behind center */
+.chocho-radial-{{ section_id }}::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px; height: 500px;
+  background: radial-gradient(ellipse at center,
+    {{ section.settings.hub_color }}14 0%,
+    transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Container ── */
+.chocho-radial__container-{{ section_id }} {
+  max-width: {{ section.settings.max_width }}px;
+  margin: 0 auto;
+  padding: 0 {{ section.settings.container_padding }}px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ── */
+.chocho-radial__header-{{ section_id }} {
+  text-align: {{ section.settings.title_align }};
+  margin-bottom: {{ section.settings.header_gap }}px;
+}
+
+.chocho-radial__eyebrow-{{ section_id }} {
+  display: inline-block;
+  font-size: {{ section.settings.eyebrow_size }}px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: {{ section.settings.accent_color }};
+  margin-bottom: 8px;
+}
+
+.chocho-radial__title-{{ section_id }} {
+  font-size: {{ section.settings.title_size }}px;
+  font-weight: {{ section.settings.title_weight }};
+  color: {{ section.settings.title_color }};
+  margin: 0 0 12px;
+  line-height: 1.2;
+}
+
+.chocho-radial__subtitle-{{ section_id }} {
+  font-size: {{ section.settings.subtitle_size }}px;
+  color: {{ section.settings.subtitle_color }};
+  max-width: 540px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP RADIAL CANVAS
+   ══════════════════════════════════════════ */
+.chocho-radial__canvas-{{ section_id }} {
+  position: relative;
+  width: 100%;
+  max-width: {{ section.settings.canvas_size }}px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1;
+}
+
+/* SVG lines layer */
+.chocho-radial__lines-{{ section_id }} {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Hub (center) ── */
+.chocho-radial__hub-{{ section_id }} {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: {{ section.settings.hub_size }}px;
+  height: {{ section.settings.hub_size }}px;
+  border-radius: 50%;
+  background: {{ section.settings.hub_color }};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 5;
+  border: 3px solid {{ section.settings.hub_border_color }};
+  box-shadow:
+    0 0 0 10px {{ section.settings.hub_color }}18,
+    0 0 0 20px {{ section.settings.hub_color }}08;
+  animation: chocho-hub-pulse-{{ section_id }} 4s ease-in-out infinite;
+}
+
+@keyframes chocho-hub-pulse-{{ section_id }} {
+  0%, 100% { box-shadow: 0 0 0 10px {{ section.settings.hub_color }}18, 0 0 0 20px {{ section.settings.hub_color }}08; }
+  50%       { box-shadow: 0 0 0 14px {{ section.settings.hub_color }}22, 0 0 0 26px {{ section.settings.hub_color }}0c; }
+}
+
+.chocho-radial__hub-eyebrow-{{ section_id }} {
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: {{ section.settings.hub_text_muted }};
+  margin-bottom: 4px;
+}
+
+.chocho-radial__hub-name-{{ section_id }} {
+  font-size: 15px;
+  font-weight: 700;
+  color: {{ section.settings.hub_text_color }};
+  line-height: 1.15;
+}
+
+.chocho-radial__hub-pill-{{ section_id }} {
+  margin-top: 7px;
+  background: {{ section.settings.hub_pill_bg }};
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+.chocho-radial__hub-pill-{{ section_id }} span {
+  font-size: 8.5px;
+  color: {{ section.settings.hub_pill_text }};
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ── Node ── */
+.chocho-radial__node-{{ section_id }} {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: {{ section.settings.node_width }}px;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  cursor: default;
+  z-index: 3;
+}
+
+/* Nodes on the left half flip text order so text sits between node and edge */
+.chocho-radial__node-{{ section_id }}.is-left {
+  flex-direction: column-reverse;
+}
+
+.chocho-radial__node-circle-{{ section_id }} {
+  width: {{ section.settings.node_circle_size }}px;
+  height: {{ section.settings.node_circle_size }}px;
+  border-radius: 50%;
+  background: {{ section.settings.node_circle_bg }};
+  border: 2.5px solid {{ section.settings.node_circle_border }};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.chocho-radial__node-{{ section_id }}:hover .chocho-radial__node-circle-{{ section_id }} {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 6px {{ section.settings.node_circle_bg }}30;
+}
+
+.chocho-radial__node-icon-{{ section_id }} {
+  width: {{ section.settings.node_icon_size }}px;
+  height: {{ section.settings.node_icon_size }}px;
+  object-fit: contain;
+  display: block;
+}
+
+.chocho-radial__node-icon-placeholder-{{ section_id }} {
+  font-size: calc({{ section.settings.node_icon_size }}px * 0.8);
+  color: {{ section.settings.node_icon_color }};
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chocho-radial__node-icon-placeholder-{{ section_id }} svg {
+  width: calc({{ section.settings.node_icon_size }}px * 0.75);
+  height: calc({{ section.settings.node_icon_size }}px * 0.75);
+  fill: none;
+  stroke: {{ section.settings.node_icon_color }};
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chocho-radial__node-text-{{ section_id }} {
+  margin-top: 7px;
+}
+
+.chocho-radial__node-{{ section_id }}.is-left .chocho-radial__node-text-{{ section_id }} {
+  margin-top: 0;
+  margin-bottom: 7px;
+}
+
+.chocho-radial__node-title-{{ section_id }} {
+  font-size: {{ section.settings.node_title_size }}px;
+  font-weight: 600;
+  color: {{ section.settings.node_title_color }};
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+
+.chocho-radial__node-desc-{{ section_id }} {
+  font-size: {{ section.settings.node_desc_size }}px;
+  color: {{ section.settings.node_desc_color }};
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
+/* Comparison badges row */
+.chocho-radial__node-badges-{{ section_id }} {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.chocho-radial__badge-{{ section_id }} {
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chocho-radial__badge-{{ section_id }}.yes {
+  background: {{ section.settings.badge_yes_bg }};
+  color: {{ section.settings.badge_yes_text }};
+}
+
+.chocho-radial__badge-{{ section_id }}.no {
+  background: {{ section.settings.badge_no_bg }};
+  color: {{ section.settings.badge_no_text }};
+}
+
+/* ── Legend ── */
+.chocho-radial__legend-{{ section_id }} {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: {{ section.settings.legend_gap }}px;
+  flex-wrap: wrap;
+}
+
+.chocho-radial__leg-{{ section_id }} {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: {{ section.settings.subtitle_color }};
+}
+
+.chocho-radial__leg-dot-{{ section_id }} {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════
+   MOBILE LIST
+   ══════════════════════════════════════════ */
+.chocho-radial__mobile-{{ section_id }} {
+  display: none;
+}
+
+.chocho-radial__mob-table-{{ section_id }} {
+  border: 0.5px solid {{ section.settings.mob_border_color }};
+  border-radius: {{ section.settings.mob_border_radius }}px;
+  overflow: hidden;
+}
+
+.chocho-radial__mob-header-{{ section_id }} {
+  display: grid;
+  grid-template-columns: 1fr 44px 44px 44px;
+  gap: 4px;
+  padding: 8px 12px;
+  background: {{ section.settings.mob_header_bg }};
+  border-bottom: 0.5px solid {{ section.settings.mob_border_color }};
+}
+
+.chocho-radial__mob-header-{{ section_id }} span {
+  font-size: 9px;
+  font-weight: 600;
+  color: {{ section.settings.subtitle_color }};
+  text-align: center;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.chocho-radial__mob-header-{{ section_id }} span:first-child {
+  text-align: left;
+}
+
+.chocho-radial__mob-row-{{ section_id }} {
+  display: grid;
+  grid-template-columns: 1fr 44px 44px 44px;
+  gap: 4px;
+  padding: 11px 12px;
+  border-bottom: 0.5px solid {{ section.settings.mob_border_color }};
+  align-items: center;
+  cursor: pointer;
+  background: {{ section.settings.mob_row_bg }};
+  transition: background .15s ease;
+}
+
+.chocho-radial__mob-row-{{ section_id }}:last-child {
+  border-bottom: none;
+}
+
+.chocho-radial__mob-row-{{ section_id }}:hover,
+.chocho-radial__mob-row-{{ section_id }}.open {
+  background: {{ section.settings.mob_row_hover_bg }};
+}
+
+.chocho-radial__mob-left-{{ section_id }} {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.chocho-radial__mob-icon-{{ section_id }} {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: {{ section.settings.node_circle_bg }};
+  border: 1.5px solid {{ section.settings.node_circle_border }};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.chocho-radial__mob-icon-{{ section_id }} img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.chocho-radial__mob-icon-{{ section_id }} svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: {{ section.settings.node_icon_color }};
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chocho-radial__mob-label-{{ section_id }} {
+  font-size: 12px;
+  font-weight: 600;
+  color: {{ section.settings.node_title_color }};
+  line-height: 1.25;
+}
+
+.chocho-radial__mob-sub-{{ section_id }} {
+  font-size: 10.5px;
+  color: {{ section.settings.node_desc_color }};
+  line-height: 1.4;
+  margin-top: 3px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease;
+}
+
+.chocho-radial__mob-row-{{ section_id }}.open .chocho-radial__mob-sub-{{ section_id }} {
+  max-height: 100px;
+}
+
+.chocho-radial__mob-mark-{{ section_id }} {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.chocho-radial__mob-mark-{{ section_id }}.yes {
+  color: {{ section.settings.accent_color }};
+}
+
+.chocho-radial__mob-mark-{{ section_id }}.no {
+  color: {{ section.settings.badge_no_text }};
+}
+
+/* Mobile score summary */
+.chocho-radial__mob-score-{{ section_id }} {
+  margin-top: 16px;
+  padding: 14px;
+  background: {{ section.settings.mob_header_bg }};
+  border: 0.5px solid {{ section.settings.mob_border_color }};
+  border-radius: {{ section.settings.mob_border_radius }}px;
+  text-align: center;
+}
+
+.chocho-radial__mob-score-label-{{ section_id }} {
+  font-size: 10px;
+  color: {{ section.settings.subtitle_color }};
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.chocho-radial__mob-score-grid-{{ section_id }} {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.chocho-radial__mob-score-item-{{ section_id }} {
+  text-align: center;
+}
+
+.chocho-radial__mob-score-num-{{ section_id }} {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.chocho-radial__mob-score-name-{{ section_id }} {
+  font-size: 9px;
+  color: {{ section.settings.subtitle_color }};
+  margin-top: 3px;
+  line-height: 1.3;
+}
+
+/* ── Responsive switch ── */
+@media screen and (max-width: {{ section.settings.mobile_breakpoint }}px) {
+  .chocho-radial__canvas-{{ section_id }} {
+    display: none;
+  }
+  .chocho-radial__legend-{{ section_id }} {
+    display: none;
+  }
+  .chocho-radial__mobile-{{ section_id }} {
+    display: block;
+  }
+}
+
+/* ── Scroll-in animation ── */
+.chocho-radial__node-{{ section_id }} {
+  opacity: 0;
+  transition: opacity .5s ease, transform .5s ease;
+}
+.chocho-radial__node-{{ section_id }}.wt-in {
+  opacity: 1;
+}
+
+{% endstyle %}
+
+{%- comment -%}
+  Build the benefits array from section settings.
+  Each benefit has: icon (image), title, description, col2 (pea), col3 (whey).
+  "col" = true means Chocho wins (has it). col2/col3 = false means competitor lacks it.
+{%- endcomment -%}
+
+{% assign benefit_count = 0 %}
+{% for i in (1..10) %}
+  {% assign t_key = 'benefit_' | append: i | append: '_title' %}
+  {% if section.settings[t_key] != blank %}
+    {% assign benefit_count = benefit_count | plus: 1 %}
+  {% endif %}
+{% endfor %}
+
+<section class="chocho-radial-{{ section_id }}" aria-label="{{ section.settings.title }}">
+  <div class="chocho-radial__container-{{ section_id }}">
+
+    {%- comment -%} ── Header ── {%- endcomment -%}
+    <div class="chocho-radial__header-{{ section_id }}">
+      {% if section.settings.eyebrow != blank %}
+        <div class="chocho-radial__eyebrow-{{ section_id }}">{{ section.settings.eyebrow }}</div>
+      {% endif %}
+      {% if section.settings.title != blank %}
+        <h2 class="chocho-radial__title-{{ section_id }}">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.subtitle != blank %}
+        <p class="chocho-radial__subtitle-{{ section_id }}">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </div>
+
+    {%- comment -%} ════════════════════════════════
+       DESKTOP RADIAL CANVAS
+    ════════════════════════════════ {%- endcomment -%}
+    <div class="chocho-radial__canvas-{{ section_id }}" id="chocho-canvas-{{ section_id }}">
+
+      {%- comment -%} SVG connector lines — drawn by JS {%- endcomment -%}
+      <svg
+        class="chocho-radial__lines-{{ section_id }}"
+        id="chocho-lines-{{ section_id }}"
+        viewBox="0 0 {{ section.settings.canvas_size }} {{ section.settings.canvas_size }}"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      ></svg>
+
+      {%- comment -%} CENTER HUB {%- endcomment -%}
+      <div class="chocho-radial__hub-{{ section_id }}" aria-hidden="true">
+        {% if section.settings.hub_logo %}
+          <img
+            src="{{ section.settings.hub_logo | image_url: width: 120 }}"
+            alt="{{ section.settings.hub_name }}"
+            style="width: {{ section.settings.hub_size | times: 0.55 }}px; object-fit: contain; margin-bottom: 4px;"
+          >
+        {% else %}
+          <div class="chocho-radial__hub-eyebrow-{{ section_id }}">{{ section.settings.hub_eyebrow }}</div>
+          <div class="chocho-radial__hub-name-{{ section_id }}">{{ section.settings.hub_name | newline_to_br }}</div>
+        {% endif %}
+        {% if section.settings.hub_pill != blank %}
+          <div class="chocho-radial__hub-pill-{{ section_id }}">
+            <span>{{ section.settings.hub_pill }}</span>
+          </div>
+        {% endif %}
+      </div>
+
+      {%- comment -%}
+        BENEFIT NODES
+        Positions calculated via JS. We output them here as data attributes
+        and JS does the polar→cartesian math at runtime so it's responsive.
+      {%- endcomment -%}
+      {% for i in (1..10) %}
+        {% liquid
+          assign t_key    = 'benefit_' | append: i | append: '_title'
+          assign d_key    = 'benefit_' | append: i | append: '_desc'
+          assign icon_key = 'benefit_' | append: i | append: '_icon'
+          assign c2_key   = 'benefit_' | append: i | append: '_col2_has'
+          assign c3_key   = 'benefit_' | append: i | append: '_col3_has'
+
+          assign b_title  = section.settings[t_key]
+          assign b_desc   = section.settings[d_key]
+          assign b_icon   = section.settings[icon_key]
+          assign b_c2     = section.settings[c2_key]
+          assign b_c3     = section.settings[c3_key]
+        %}
+        {% if b_title != blank %}
+          <div
+            class="chocho-radial__node-{{ section_id }}"
+            data-node="{{ i }}"
+            data-index="{{ forloop.index0 }}"
+            data-total="{{ benefit_count }}"
+            aria-label="{{ b_title }}"
+          >
+            <div class="chocho-radial__node-circle-{{ section_id }}">
+              {% if b_icon %}
+                <img
+                  src="{{ b_icon | image_url: width: 120 }}"
+                  alt="{{ b_icon.alt | default: b_title | escape }}"
+                  class="chocho-radial__node-icon-{{ section_id }}"
+                  loading="lazy"
+                >
+              {% else %}
+                <div class="chocho-radial__node-icon-placeholder-{{ section_id }}">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="chocho-radial__node-text-{{ section_id }}">
+              <div class="chocho-radial__node-title-{{ section_id }}">{{ b_title }}</div>
+              {% if b_desc != blank %}
+                <div class="chocho-radial__node-desc-{{ section_id }}">{{ b_desc }}</div>
+              {% endif %}
+              <div class="chocho-radial__node-badges-{{ section_id }}">
+                <span class="chocho-radial__badge-{{ section_id }} yes">{{ section.settings.col1_label }} ✓</span>
+                <span class="chocho-radial__badge-{{ section_id }} {% if b_c2 %}yes{% else %}no{% endif %}">
+                  {{ section.settings.col2_label }} {% if b_c2 %}✓{% else %}✕{% endif %}
+                </span>
+                <span class="chocho-radial__badge-{{ section_id }} {% if b_c3 %}yes{% else %}no{% endif %}">
+                  {{ section.settings.col3_label }} {% if b_c3 %}✓{% else %}✕{% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {%- comment -%} ── Legend ── {%- endcomment -%}
+    <div class="chocho-radial__legend-{{ section_id }}" aria-hidden="true">
+      <div class="chocho-radial__leg-{{ section_id }}">
+        <div class="chocho-radial__leg-dot-{{ section_id }}" style="background:{{ section.settings.node_circle_bg }}"></div>
+        {{ section.settings.col1_label }} — exclusive advantage
+      </div>
+      <div class="chocho-radial__leg-{{ section_id }}">
+        <div class="chocho-radial__leg-dot-{{ section_id }}" style="background:{{ section.settings.hub_color }}"></div>
+        {{ section.settings.hub_name | strip_newlines }}
+      </div>
+      <div class="chocho-radial__leg-{{ section_id }}">
+        <div class="chocho-radial__leg-dot-{{ section_id }}" style="background:{{ section.settings.badge_no_text }}"></div>
+        Others lack this benefit
+      </div>
+    </div>
+
+    {%- comment -%} ════════════════════════════════
+       MOBILE LIST
+    ════════════════════════════════ {%- endcomment -%}
+    <div class="chocho-radial__mobile-{{ section_id }}">
+      <div class="chocho-radial__mob-table-{{ section_id }}">
+
+        {%- comment -%} Column headers {%- endcomment -%}
+        <div class="chocho-radial__mob-header-{{ section_id }}">
+          <span>Benefit</span>
+          <span>{{ section.settings.col1_label }}</span>
+          <span>{{ section.settings.col2_label }}</span>
+          <span>{{ section.settings.col3_label }}</span>
+        </div>
+
+        {%- comment -%} Rows {%- endcomment -%}
+        {% for i in (1..10) %}
+          {% liquid
+            assign t_key    = 'benefit_' | append: i | append: '_title'
+            assign d_key    = 'benefit_' | append: i | append: '_desc'
+            assign icon_key = 'benefit_' | append: i | append: '_icon'
+            assign c2_key   = 'benefit_' | append: i | append: '_col2_has'
+            assign c3_key   = 'benefit_' | append: i | append: '_col3_has'
+
+            assign b_title = section.settings[t_key]
+            assign b_desc  = section.settings[d_key]
+            assign b_icon  = section.settings[icon_key]
+            assign b_c2    = section.settings[c2_key]
+            assign b_c3    = section.settings[c3_key]
+          %}
+          {% if b_title != blank %}
+            <div
+              class="chocho-radial__mob-row-{{ section_id }}"
+              role="button"
+              tabindex="0"
+              aria-expanded="false"
+              data-mob-row
+            >
+              <div class="chocho-radial__mob-left-{{ section_id }}">
+                <div class="chocho-radial__mob-icon-{{ section_id }}">
+                  {% if b_icon %}
+                    <img
+                      src="{{ b_icon | image_url: width: 64 }}"
+                      alt="{{ b_icon.alt | default: b_title | escape }}"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag }}
+                  {% endif %}
+                </div>
+                <div>
+                  <div class="chocho-radial__mob-label-{{ section_id }}">{{ b_title }}</div>
+                  {% if b_desc != blank %}
+                    <div class="chocho-radial__mob-sub-{{ section_id }}">{{ b_desc }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="chocho-radial__mob-mark-{{ section_id }} yes">✓</div>
+              <div class="chocho-radial__mob-mark-{{ section_id }} {% if b_c2 %}yes{% else %}no{% endif %}">
+                {% if b_c2 %}✓{% else %}✕{% endif %}
+              </div>
+              <div class="chocho-radial__mob-mark-{{ section_id }} {% if b_c3 %}yes{% else %}no{% endif %}">
+                {% if b_c3 %}✓{% else %}✕{% endif %}
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {%- comment -%} Score summary (mobile) {%- endcomment -%}
+      {% if section.settings.show_score %}
+        <div class="chocho-radial__mob-score-{{ section_id }}">
+          <div class="chocho-radial__mob-score-label-{{ section_id }}">Advantages score</div>
+          <div class="chocho-radial__mob-score-grid-{{ section_id }}">
+            <div class="chocho-radial__mob-score-item-{{ section_id }}">
+              <div class="chocho-radial__mob-score-num-{{ section_id }}" style="color:{{ section.settings.accent_color }}">
+                {{ benefit_count }}/{{ benefit_count }}
+              </div>
+              <div class="chocho-radial__mob-score-name-{{ section_id }}">{{ section.settings.col1_label }}</div>
+            </div>
+            <div class="chocho-radial__mob-score-item-{{ section_id }}">
+              <div class="chocho-radial__mob-score-num-{{ section_id }}" style="color:{{ section.settings.mob_score_other_color }}">
+                {{ section.settings.col2_score }}
+              </div>
+              <div class="chocho-radial__mob-score-name-{{ section_id }}">{{ section.settings.col2_label }}</div>
+            </div>
+            <div class="chocho-radial__mob-score-item-{{ section_id }}">
+              <div class="chocho-radial__mob-score-num-{{ section_id }}" style="color:{{ section.settings.mob_score_other_color }}">
+                {{ section.settings.col3_score }}
+              </div>
+              <div class="chocho-radial__mob-score-name-{{ section_id }}">{{ section.settings.col3_label }}</div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function() {
+  const SID       = '{{ section_id }}';
+  const canvas    = document.getElementById('chocho-canvas-' + SID);
+  const linesSvg  = document.getElementById('chocho-lines-' + SID);
+  if (!canvas || !linesSvg) return;
+
+  const nodes     = canvas.querySelectorAll('[data-node]');
+  const total     = nodes.length;
+  if (total === 0) return;
+
+  const CANVAS_PX    = {{ section.settings.canvas_size }};
+  const RADIUS_FRAC  = {{ section.settings.orbit_radius }};   /* 0–1 fraction of half-canvas */
+  const ACCENT       = '{{ section.settings.accent_color }}';
+  const HUB_COLOR    = '{{ section.settings.hub_color }}';
+  const LINE_OPACITY = 0.35;
+
+  /* We work in SVG-space (0..CANVAS_PX) then convert to % for CSS */
+  const cx = CANVAS_PX / 2;
+  const cy = CANVAS_PX / 2;
+  const r  = (CANVAS_PX / 2) * RADIUS_FRAC;
+
+  function polarToXY(index, count) {
+    /* Start at top (−π/2) and go clockwise */
+    const angle = (index / count) * 2 * Math.PI - Math.PI / 2;
+    return {
+      x: cx + r * Math.cos(angle),
+      y: cy + r * Math.sin(angle),
+      angle: angle
+    };
+  }
+
+  nodes.forEach(function(node, i) {
+    const pos = polarToXY(i, total);
+
+    /* Position node as % so it's responsive */
+    node.style.left = (pos.x / CANVAS_PX * 100) + '%';
+    node.style.top  = (pos.y / CANVAS_PX * 100) + '%';
+
+    /* Left-half nodes: flip so label is between node and edge */
+    const degNorm = ((pos.angle * 180 / Math.PI) + 360) % 360;
+    if (degNorm > 105 && degNorm < 255) {
+      node.classList.add('is-left');
+    }
+
+    /* ── SVG connector line ── */
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', cx);
+    line.setAttribute('y1', cy);
+    line.setAttribute('x2', pos.x);
+    line.setAttribute('y2', pos.y);
+    line.setAttribute('stroke', ACCENT);
+    line.setAttribute('stroke-width', '1.5');
+    line.setAttribute('stroke-dasharray', '5 5');
+    line.setAttribute('opacity', LINE_OPACITY);
+    linesSvg.appendChild(line);
+
+    /* ── Orbit dot (midpoint pulse) ── */
+    const dotFrac = 0.68;
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', cx + dotFrac * r * Math.cos(pos.angle));
+    dot.setAttribute('cy', cy + dotFrac * r * Math.sin(pos.angle));
+    dot.setAttribute('r', '4');
+    dot.setAttribute('fill', ACCENT);
+    dot.setAttribute('opacity', '0.45');
+    linesSvg.appendChild(dot);
+
+    /* ── Scroll-in animation (staggered) ── */
+    const delay = i * 80;
+    setTimeout(function() {
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('wt-in');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      observer.observe(node);
+    }, delay);
+  });
+
+  /* ── Orbit ring (SVG) ── */
+  const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  ring.setAttribute('cx', cx);
+  ring.setAttribute('cy', cy);
+  ring.setAttribute('r', r);
+  ring.setAttribute('fill', 'none');
+  ring.setAttribute('stroke', ACCENT);
+  ring.setAttribute('stroke-width', '0.8');
+  ring.setAttribute('stroke-dasharray', '3 8');
+  ring.setAttribute('opacity', '0.25');
+  linesSvg.insertBefore(ring, linesSvg.firstChild);
+
+  /* ── Mobile: tap to expand description ── */
+  document.querySelectorAll('[data-mob-row]').forEach(function(row) {
+    function toggle() {
+      const isOpen = row.classList.contains('open');
+      row.classList.toggle('open', !isOpen);
+      row.setAttribute('aria-expanded', String(!isOpen));
+    }
+    row.addEventListener('click', toggle);
+    row.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Chocho Radial Comparison",
+  "tag": "section",
+  "settings": [
+
+    { "type": "header", "content": "━━ Content ━━" },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "What makes us different"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Why PRONTO CHOCHO is different"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle / description",
+      "default": "Chocho needs no correction, reconstruction, or complex processing. It is a single whole-food source that preserves its natural fiber and protein matrix to support gentler digestion, longer-lasting fullness, and balanced nourishment in its most natural form."
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Header alignment",
+      "options": [
+        { "value": "left",   "label": "Left"   },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+
+    { "type": "header", "content": "━━ Comparison columns ━━" },
+    {
+      "type": "text",
+      "id": "col1_label",
+      "label": "Column 1 label (your brand)",
+      "default": "Chocho"
+    },
+    {
+      "type": "text",
+      "id": "col2_label",
+      "label": "Column 2 label",
+      "default": "Pea"
+    },
+    {
+      "type": "text",
+      "id": "col3_label",
+      "label": "Column 3 label",
+      "default": "Whey"
+    },
+
+    { "type": "header", "content": "━━ Center hub ━━" },
+    {
+      "type": "image_picker",
+      "id": "hub_logo",
+      "label": "Hub logo (optional — overrides text)"
+    },
+    {
+      "type": "text",
+      "id": "hub_eyebrow",
+      "label": "Hub eyebrow text",
+      "default": "whole food"
+    },
+    {
+      "type": "text",
+      "id": "hub_name",
+      "label": "Hub name (use line break: \\n)",
+      "default": "PRONTO\nCHOCHO"
+    },
+    {
+      "type": "text",
+      "id": "hub_pill",
+      "label": "Hub pill text",
+      "default": "10 / 10 advantages"
+    },
+
+    { "type": "header", "content": "━━ Benefit 1 ━━" },
+    { "type": "image_picker", "id": "benefit_1_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_1_title",   "label": "Title",    "default": "Whole-Food Protein" },
+    { "type": "textarea",     "id": "benefit_1_desc",    "label": "Description", "default": "Protein from a real, whole ingredient — not concentrated or chemically extracted." },
+    { "type": "checkbox",     "id": "benefit_1_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_1_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 2 ━━" },
+    { "type": "image_picker", "id": "benefit_2_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_2_title",   "label": "Title",    "default": "Nutrient-Dense Superfood" },
+    { "type": "textarea",     "id": "benefit_2_desc",    "label": "Description", "default": "Naturally rich in protein, fiber, and micronutrients — all from a single real ingredient." },
+    { "type": "checkbox",     "id": "benefit_2_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_2_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 3 ━━" },
+    { "type": "image_picker", "id": "benefit_3_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_3_title",   "label": "Title",    "default": "Single Ingredient" },
+    { "type": "textarea",     "id": "benefit_3_desc",    "label": "Description", "default": "One pure, whole food. No fillers, gums, sweeteners, or stabilizers." },
+    { "type": "checkbox",     "id": "benefit_3_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_3_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 4 ━━" },
+    { "type": "image_picker", "id": "benefit_4_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_4_title",   "label": "Title",    "default": "High Protein Serving" },
+    { "type": "textarea",     "id": "benefit_4_desc",    "label": "Description", "default": "Naturally high in protein without concentration or chemical processing." },
+    { "type": "checkbox",     "id": "benefit_4_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_4_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 5 ━━" },
+    { "type": "image_picker", "id": "benefit_5_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_5_title",   "label": "Title",    "default": "Rich in Fiber" },
+    { "type": "textarea",     "id": "benefit_5_desc",    "label": "Description", "default": "Fiber occurs naturally in the whole seed — not stripped out then added back in." },
+    { "type": "checkbox",     "id": "benefit_5_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_5_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 6 ━━" },
+    { "type": "image_picker", "id": "benefit_6_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_6_title",   "label": "Title",    "default": "Natural Micronutrients" },
+    { "type": "textarea",     "id": "benefit_6_desc",    "label": "Description", "default": "Iron, zinc, folate, copper and more — vitamins and minerals stay fully intact." },
+    { "type": "checkbox",     "id": "benefit_6_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_6_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 7 ━━" },
+    { "type": "image_picker", "id": "benefit_7_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_7_title",   "label": "Title",    "default": "High Digestibility" },
+    { "type": "textarea",     "id": "benefit_7_desc",    "label": "Description", "default": "Traditional preparation methods support gentle, comfortable digestion." },
+    { "type": "checkbox",     "id": "benefit_7_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_7_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 8 ━━" },
+    { "type": "image_picker", "id": "benefit_8_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_8_title",   "label": "Title",    "default": "Free from Dairy / Soy / Gluten" },
+    { "type": "textarea",     "id": "benefit_8_desc",    "label": "Description", "default": "Naturally free from common allergens — no reformulation or special labeling needed." },
+    { "type": "checkbox",     "id": "benefit_8_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_8_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 9 ━━" },
+    { "type": "image_picker", "id": "benefit_9_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_9_title",   "label": "Title",    "default": "No Additives or Fillers" },
+    { "type": "textarea",     "id": "benefit_9_desc",    "label": "Description", "default": "Zero gums, sweeteners, stabilizers, or fillers. Proudly nothing added." },
+    { "type": "checkbox",     "id": "benefit_9_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_9_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Benefit 10 ━━" },
+    { "type": "image_picker", "id": "benefit_10_icon",    "label": "Icon image" },
+    { "type": "text",         "id": "benefit_10_title",   "label": "Title",    "default": "Minimally Processed" },
+    { "type": "textarea",     "id": "benefit_10_desc",    "label": "Description", "default": "Minimally processed to preserve nutritional integrity — no ultra-processing shortcuts." },
+    { "type": "checkbox",     "id": "benefit_10_col2_has","label": "Pea Protein has this?",  "default": false },
+    { "type": "checkbox",     "id": "benefit_10_col3_has","label": "Whey Protein has this?", "default": false },
+
+    { "type": "header", "content": "━━ Score (mobile) ━━" },
+    {
+      "type": "checkbox",
+      "id": "show_score",
+      "label": "Show advantages score (mobile)",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "col2_score",
+      "label": "Column 2 score display",
+      "default": "0/10",
+      "info": "e.g. '0/10' or '3/10'"
+    },
+    {
+      "type": "text",
+      "id": "col3_score",
+      "label": "Column 3 score display",
+      "default": "0/10"
+    },
+
+    { "type": "header", "content": "━━ Colors ━━" },
+    { "type": "color", "id": "bg_color",            "label": "Section background",       "default": "#ffffff" },
+    { "type": "color", "id": "accent_color",         "label": "Accent / node color",      "default": "#1D9E75" },
+    { "type": "color", "id": "hub_color",            "label": "Hub background",           "default": "#534AB7" },
+    { "type": "color", "id": "hub_border_color",     "label": "Hub border",               "default": "#3C3489" },
+    { "type": "color", "id": "hub_text_color",       "label": "Hub name color",           "default": "#ffffff" },
+    { "type": "color", "id": "hub_text_muted",       "label": "Hub eyebrow color",        "default": "#CECBF6" },
+    { "type": "color", "id": "hub_pill_bg",          "label": "Hub pill background",      "default": "#26215C" },
+    { "type": "color", "id": "hub_pill_text",        "label": "Hub pill text",            "default": "#EEEDFE" },
+    { "type": "color", "id": "node_circle_bg",       "label": "Node circle background",   "default": "#1D9E75" },
+    { "type": "color", "id": "node_circle_border",   "label": "Node circle border",       "default": "#0F6E56" },
+    { "type": "color", "id": "node_icon_color",      "label": "Node icon / placeholder",  "default": "#ffffff" },
+    { "type": "color", "id": "node_title_color",     "label": "Node title color",         "default": "#1b1b1b" },
+    { "type": "color", "id": "node_desc_color",      "label": "Node description color",   "default": "#555555" },
+    { "type": "color", "id": "badge_yes_bg",         "label": "✓ Badge background",       "default": "#E1F5EE" },
+    { "type": "color", "id": "badge_yes_text",       "label": "✓ Badge text",             "default": "#0F6E56" },
+    { "type": "color", "id": "badge_no_bg",          "label": "✕ Badge background",       "default": "#FCEBEB" },
+    { "type": "color", "id": "badge_no_text",        "label": "✕ Badge text",             "default": "#A32D2D" },
+    { "type": "color", "id": "title_color",          "label": "Title color",              "default": "#1b1b1b" },
+    { "type": "color", "id": "subtitle_color",       "label": "Subtitle / legend color",  "default": "#666666" },
+    { "type": "color", "id": "mob_border_color",     "label": "Mobile table border",      "default": "#e8e8e8" },
+    { "type": "color", "id": "mob_header_bg",        "label": "Mobile header background", "default": "#f8f8f8" },
+    { "type": "color", "id": "mob_row_bg",           "label": "Mobile row background",    "default": "#ffffff" },
+    { "type": "color", "id": "mob_row_hover_bg",     "label": "Mobile row hover",         "default": "#f5f5f5" },
+    { "type": "color", "id": "mob_score_other_color","label": "Mobile score: others color","default": "#B4B2A9" },
+
+    { "type": "header", "content": "━━ Typography ━━" },
+    { "type": "range", "id": "eyebrow_size",  "min": 9,  "max": 14, "step": 1, "unit": "px", "label": "Eyebrow size",   "default": 11 },
+    { "type": "range", "id": "title_size",    "min": 20, "max": 56, "step": 2, "unit": "px", "label": "Title size",     "default": 30 },
+    { "type": "range", "id": "title_weight",  "min": 400,"max": 800,"step": 100,              "label": "Title weight",   "default": 700 },
+    { "type": "range", "id": "subtitle_size", "min": 12, "max": 20, "step": 1, "unit": "px", "label": "Subtitle size",  "default": 14 },
+    { "type": "range", "id": "node_title_size","min": 9, "max": 14, "step": 1, "unit": "px", "label": "Node title size","default": 11 },
+    { "type": "range", "id": "node_desc_size", "min": 8, "max": 12, "step": 1, "unit": "px", "label": "Node desc size", "default": 9  },
+
+    { "type": "header", "content": "━━ Layout ━━" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0, "max": 120, "step": 4, "unit": "px",
+      "label": "Top padding",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0, "max": 120, "step": 4, "unit": "px",
+      "label": "Bottom padding",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 900, "max": 1400, "step": 20, "unit": "px",
+      "label": "Max container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "container_padding",
+      "min": 12, "max": 60, "step": 4, "unit": "px",
+      "label": "Container side padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "header_gap",
+      "min": 16, "max": 80, "step": 4, "unit": "px",
+      "label": "Gap: header → radial",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "legend_gap",
+      "min": 8, "max": 40, "step": 4, "unit": "px",
+      "label": "Gap: radial → legend",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "canvas_size",
+      "min": 500, "max": 900, "step": 20,
+      "label": "Radial canvas size (px, desktop)",
+      "default": 700,
+      "info": "The SVG viewBox and JS coordinates use this value."
+    },
+    {
+      "type": "range",
+      "id": "orbit_radius",
+      "min": 50, "max": 85, "step": 1,
+      "label": "Orbit radius (% of half-canvas)",
+      "default": 72,
+      "info": "How far nodes sit from center. 72 = 72% of the half-width."
+    },
+    {
+      "type": "range",
+      "id": "hub_size",
+      "min": 90, "max": 200, "step": 5, "unit": "px",
+      "label": "Hub circle size",
+      "default": 140
+    },
+    {
+      "type": "range",
+      "id": "node_width",
+      "min": 90, "max": 160, "step": 5, "unit": "px",
+      "label": "Node text width",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "node_circle_size",
+      "min": 48, "max": 100, "step": 4, "unit": "px",
+      "label": "Node circle size",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "node_icon_size",
+      "min": 20, "max": 52, "step": 2, "unit": "px",
+      "label": "Node icon size",
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "mobile_breakpoint",
+      "min": 480, "max": 900, "step": 20, "unit": "px",
+      "label": "Mobile breakpoint",
+      "default": 680
+    },
+    {
+      "type": "range",
+      "id": "mob_border_radius",
+      "min": 0, "max": 20, "step": 2, "unit": "px",
+      "label": "Mobile table border radius",
+      "default": 10
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Chocho Radial Comparison"
+    }
+  ]
+}
+{% endschema %}
