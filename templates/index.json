@@ -1080,6 +1080,55 @@
         "right_bg_5": "#d4745a"
       }
     },
+    "section_VqC6BG": {
+      "type": "section",
+      "blocks": {
+        "divider_Uh9KBN": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 1,
+            "corner_radius": "square",
+            "width_percent": 100,
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "divider_Uh9KBN"
+      ],
+      "name": "divider",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 0,
+        "section_width": "page-width",
+        "section_height": "small",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-4",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 10,
+        "padding-block-end": 0
+      }
+    },
     "17659250859c18afff": {
       "type": "_blocks",
       "blocks": {
@@ -2167,6 +2216,7 @@
     "comparison_table_v3_fqnVag",
     "featured_products_grid_v3_1_j9CWAV",
     "dual_product_showcase_v2_wf3chC",
+    "section_VqC6BG",
     "17659250859c18afff",
     "blog_slider_v4_jwH7en",
     "two_columns_acordion_slider_v2_phmmCR",
