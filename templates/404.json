@@ -6,7 +6,8 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
     "main": {
       "type": "main-404",
@@ -71,10 +72,37 @@
             "link": "shopify://collections/all",
             "open_in_new_tab": false,
             "style_class": "button",
+            "show_icon": false,
+            "icon_type": "arrow_right",
+            "icon_position": "right",
+            "icon_size": 16,
+            "icon_gap": 8,
             "width": "fit-content",
             "custom_width": 100,
             "width_mobile": "fit-content",
-            "custom_width_mobile": 100
+            "custom_width_mobile": 100,
+            "padding_top": 12,
+            "padding_bottom": 12,
+            "padding_left": 24,
+            "padding_right": 24,
+            "margin_top": 0,
+            "margin_bottom": 0,
+            "margin_left": 0,
+            "margin_right": 0,
+            "font_size": 16,
+            "font_size_mobile": 14,
+            "font_weight": "500",
+            "text_transform": "none",
+            "bg_color": "",
+            "text_color": "",
+            "border_color": "",
+            "bg_color_hover": "",
+            "text_color_hover": "",
+            "border_color_hover": "",
+            "border_width": 1,
+            "border_radius": 4,
+            "hover_animation": "lift",
+            "transition_duration": 0.3
           },
           "blocks": {}
         }
@@ -101,6 +129,7 @@
       "blocks": {
         "static-header": {
           "type": "_product-list-content",
+          "disabled": true,
           "static": true,
           "settings": {
             "content_direction": "row",
@@ -131,56 +160,12 @@
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {
-            "product_list_text_RBgnL9": {
-              "type": "_product-list-text",
-              "name": "t:names.collection_title",
-              "settings": {
-                "text": "<h3>Discover something new</h3>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-primary--family)",
-                "font_size": "",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "collection_link_button_JFqkQj": {
-              "type": "_product-list-button",
-              "name": "t:names.product_list_button",
-              "settings": {
-                "label": "View all",
-                "open_in_new_tab": false,
-                "style_class": "link",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_list_text_RBgnL9",
-            "collection_link_button_JFqkQj"
-          ]
+          "blocks": {}
         },
         "static-product-card": {
           "type": "_product-card",
           "name": "t:names.product_card",
+          "disabled": true,
           "static": true,
           "settings": {
             "product_card_gap": 12,
@@ -215,7 +200,6 @@
             "group_NVNfgE": {
               "type": "_product-card-group",
               "settings": {
-                "open_in_new_tab": false,
                 "content_direction": "column",
                 "vertical_on_mobile": true,
                 "horizontal_alignment": "flex-start",
@@ -243,6 +227,8 @@
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
                 "gradient_direction": "to top",
+                "link": "",
+                "open_in_new_tab": false,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
@@ -325,6 +311,7 @@
       },
       "name": "Featured collection",
       "settings": {
+        "collection": "",
         "layout_type": "carousel",
         "carousel_on_mobile": false,
         "max_products": 8,
