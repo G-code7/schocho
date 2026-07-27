@@ -1252,7 +1252,7 @@
                     "paragraph_margin_bottom": 28,
                     "paragraph_margin_bottom_mobile": 24,
                     "button_text": "View More Recipes",
-                    "button_link": "",
+                    "button_link": "shopify://blogs/recipes",
                     "button_show_arrow": true,
                     "button_font_size": 15,
                     "button_font_weight": "500",
