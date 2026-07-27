@@ -163,11 +163,10 @@
                 "icon_GfrQzQ": {
                   "type": "icon",
                   "name": "t:names.icon",
-                  "disabled": true,
                   "settings": {
-                    "icon": "tiktok",
+                    "icon": "facebook",
                     "width": 28,
-                    "link": "",
+                    "link": "https://www.facebook.com/people/Prontochocho/61590414699109/",
                     "open_in_new_tab": false
                   },
                   "blocks": {}
