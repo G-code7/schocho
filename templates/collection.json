@@ -491,7 +491,7 @@
         "grid_gap": 60,
         "grid_gap_mobile": 40,
         "row_padding": 24,
-        "card_background": "#EFF0F5",
+        "card_background": "#E9E7E4",
         "card_border_radius": 26,
         "card_padding": 24,
         "enable_animation": true,
