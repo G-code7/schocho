@@ -56,11 +56,10 @@
   .featured-products__row-{{ section_id }} {
     display: grid;
     grid-template-columns: {{ section.settings.media_text_ratio }};
-    align-items: start;              /* texto pegado a la parte superior */
+    align-items: {{ section.settings.row_vertical_align }};
     gap: {{ section.settings.row_media_gap }}px;
     background-color: {{ section.settings.card_background }};
     border-radius: {{ section.settings.card_border_radius }}px;
-    overflow: hidden;
     padding: {{ section.settings.row_padding }}px;
   }
 
@@ -103,6 +102,8 @@
   .featured-products__media-{{ section_id }} {
     position: relative;
     width: 100%;
+    max-width: {{ section.settings.media_max_width }}px;
+    justify-self: {{ section.settings.media_align }};
   }
 
   .featured-products__track-{{ section_id }} {
@@ -112,6 +113,7 @@
     border-radius: {{ section.settings.media_border_radius }}px;
     overflow: hidden;
     background-color: {{ section.settings.image_background }};
+    {% if section.settings.media_shadow %}box-shadow: 0 22px 48px -22px rgba(0, 0, 0, 0.30);{% endif %}
   }
 
   .featured-products__slide-{{ section_id }} {
@@ -140,7 +142,20 @@
     width: 100%;
     height: 100%;
     object-fit: {{ section.settings.image_fit }};
+    {% if section.settings.enable_image_zoom %}transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);{% endif %}
   }
+
+  {% if section.settings.enable_image_zoom %}
+  @media (hover: hover) {
+    .featured-products__row-{{ section_id }}:hover .featured-products__slide-{{ section_id }}.is-active .featured-products__slide-img-{{ section_id }} {
+      transform: scale(1.045);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .featured-products__slide-img-{{ section_id }} { transition: none; }
+    .featured-products__row-{{ section_id }}:hover .featured-products__slide-img-{{ section_id }} { transform: none; }
+  }
+  {% endif %}
 
   /* Gallery dots */
   .featured-products__gallery-dots-{{ section_id }} {
@@ -179,9 +194,10 @@
   .featured-products__info-{{ section_id }} {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: {{ section.settings.info_gap }}px;
     padding: {{ section.settings.card_padding }}px 0;
     text-align: {{ section.settings.info_alignment }};
+    align-items: {% if section.settings.info_alignment == 'center' %}center{% elsif section.settings.info_alignment == 'right' %}flex-end{% else %}flex-start{% endif %};
   }
 
   .featured-products__product-title-{{ section_id }} {
@@ -189,7 +205,8 @@
     font-weight: {{ section.settings.product_title_weight }};
     color: {{ section.settings.product_title_color }};
     margin: 0;
-    line-height: 1.3;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
   }
 
   .featured-products__product-title-{{ section_id }} a {
@@ -212,6 +229,37 @@
     font-size: 0.5em;
     vertical-align: super;
   }
+
+  /* Tagline / accent line */
+  .featured-products__tagline-{{ section_id }} {
+    font-size: {{ section.settings.tagline_size }}px;
+    color: {{ section.settings.tagline_color }};
+    line-height: 1.4;
+    margin: -2px 0 0;
+  }
+
+  /* Short description */
+  .featured-products__description-{{ section_id }} {
+    font-size: {{ section.settings.description_size }}px;
+    line-height: 1.65;
+    color: {{ section.settings.description_color }};
+    margin: 4px 0 0;
+    max-width: {{ section.settings.description_max_width }}px;
+    {% if section.settings.info_alignment == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+  }
+  .featured-products__description-{{ section_id }} p {
+    margin: 0 0 0.7em;
+  }
+  .featured-products__description-{{ section_id }} p:last-child {
+    margin-bottom: 0;
+  }
+  .featured-products__description-{{ section_id }} a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .featured-products__description-{{ section_id }} strong { font-weight: 600; }
+  .featured-products__description-{{ section_id }} em { font-style: italic; }
 
   /* Precio */
   .featured-products__price-{{ section_id }} {
@@ -421,15 +469,24 @@
 
     .featured-products__row-{{ section_id }} {
       grid-template-columns: 1fr;   /* una sola columna: imagen arriba, texto abajo */
-      gap: 16px;
+      gap: {{ section.settings.row_media_gap | at_most: 24 }}px;
       direction: ltr !important;    /* anula la alternancia en mobile */
     }
     .featured-products__row-{{ section_id }}:nth-child(even) {
       direction: ltr;
     }
 
+    .featured-products__media-{{ section_id }} {
+      max-width: none;              /* imagen a ancho completo en mobile */
+      justify-self: stretch;
+    }
+
     .featured-products__info-{{ section_id }} {
       padding: 0;
+    }
+
+    .featured-products__description-{{ section_id }} {
+      max-width: none;             /* sin recorte de ancho en pantallas chicas */
     }
 
     /* Galería en mobile → scroller con swipe táctil */
@@ -523,16 +580,22 @@
               assign custom_image = section.settings.product_1_image
               assign hover_image = section.settings.product_1_hover_image
               assign custom_title = section.settings.product_1_title
+              assign custom_subtitle = section.settings.product_1_subtitle
+              assign custom_desc = section.settings.product_1_description
             when 2
               assign product = section.settings.product_2
               assign custom_image = section.settings.product_2_image
               assign hover_image = section.settings.product_2_hover_image
               assign custom_title = section.settings.product_2_title
+              assign custom_subtitle = section.settings.product_2_subtitle
+              assign custom_desc = section.settings.product_2_description
             when 3
               assign product = section.settings.product_3
               assign custom_image = section.settings.product_3_image
               assign hover_image = section.settings.product_3_hover_image
               assign custom_title = section.settings.product_3_title
+              assign custom_subtitle = section.settings.product_3_subtitle
+              assign custom_desc = section.settings.product_3_description
           endcase
 
           assign display_title = custom_title | default: product.title
@@ -639,6 +702,14 @@
                   </a>
                 </h3>
 
+                {% if custom_subtitle != blank %}
+                  <div class="featured-products__tagline-{{ section_id }}">{{ custom_subtitle }}</div>
+                {% endif %}
+
+                {% if custom_desc != blank %}
+                  <div class="featured-products__description-{{ section_id }}">{{ custom_desc }}</div>
+                {% endif %}
+
                 <div class="featured-products__price-{{ section_id }}">
                   <span>{{ product.price | money }}</span>
                   {% if product.compare_at_price > product.price %}
@@ -689,6 +760,12 @@
                 <h3 class="featured-products__product-title-{{ section_id }}">
                   {{ custom_title | default: 'Product Title' }}
                 </h3>
+                {% if custom_subtitle != blank %}
+                  <div class="featured-products__tagline-{{ section_id }}">{{ custom_subtitle }}</div>
+                {% endif %}
+                {% if custom_desc != blank %}
+                  <div class="featured-products__description-{{ section_id }}">{{ custom_desc }}</div>
+                {% endif %}
                 <div class="featured-products__price-{{ section_id }}">$29.99</div>
               {% endif %}
             </div>
@@ -1132,8 +1209,16 @@
     { "type": "header", "content": "Product 1" },
     { "type": "product", "id": "product_1", "label": "Product" },
     {
-      "type": "html", "id": "product_1_title", "label": "Custom title (HTML allowed)",
-      "info": "Leave empty to use product title. HTML allowed, e.g. PRONTO CHOCHO<sup>™</sup>"
+      "type": "html", "id": "product_1_title", "label": "Product title (HTML)",
+      "info": "Leave empty to use the product's own title. HTML allowed, e.g. Andean Chocho Powder<sup>™</sup>"
+    },
+    {
+      "type": "html", "id": "product_1_subtitle", "label": "Tagline (HTML, optional)",
+      "info": "Short accent line under the title, e.g. an italic colored phrase."
+    },
+    {
+      "type": "richtext", "id": "product_1_description", "label": "Short description",
+      "info": "One or two sentences. Styling is handled automatically."
     },
     {
       "type": "image_picker", "id": "product_1_image", "label": "Primary image",
@@ -1147,8 +1232,16 @@
     { "type": "header", "content": "Product 2" },
     { "type": "product", "id": "product_2", "label": "Product" },
     {
-      "type": "html", "id": "product_2_title", "label": "Custom title (HTML allowed)",
-      "info": "Leave empty to use product title. HTML allowed, e.g. PRONTO CHOCHO<sup>™</sup>"
+      "type": "html", "id": "product_2_title", "label": "Product title (HTML)",
+      "info": "Leave empty to use the product's own title. HTML allowed, e.g. Andean Chocho Powder<sup>™</sup>"
+    },
+    {
+      "type": "html", "id": "product_2_subtitle", "label": "Tagline (HTML, optional)",
+      "info": "Short accent line under the title, e.g. an italic colored phrase."
+    },
+    {
+      "type": "richtext", "id": "product_2_description", "label": "Short description",
+      "info": "One or two sentences. Styling is handled automatically."
     },
     {
       "type": "image_picker", "id": "product_2_image", "label": "Primary image",
@@ -1162,8 +1255,16 @@
     { "type": "header", "content": "Product 3" },
     { "type": "product", "id": "product_3", "label": "Product" },
     {
-      "type": "html", "id": "product_3_title", "label": "Custom title (HTML allowed)",
-      "info": "Leave empty to use product title. HTML allowed, e.g. PRONTO CHOCHO<sup>™</sup>"
+      "type": "html", "id": "product_3_title", "label": "Product title (HTML)",
+      "info": "Leave empty to use the product's own title. HTML allowed, e.g. Andean Chocho Powder<sup>™</sup>"
+    },
+    {
+      "type": "html", "id": "product_3_subtitle", "label": "Tagline (HTML, optional)",
+      "info": "Short accent line under the title, e.g. an italic colored phrase."
+    },
+    {
+      "type": "richtext", "id": "product_3_description", "label": "Short description",
+      "info": "One or two sentences. Styling is handled automatically."
     },
     {
       "type": "image_picker", "id": "product_3_image", "label": "Primary image",
@@ -1202,9 +1303,31 @@
       "type": "range", "id": "row_padding", "min": 0, "max": 48, "step": 4,
       "unit": "px", "label": "Row inner padding", "default": 0
     },
+    {
+      "type": "range", "id": "media_max_width", "min": 240, "max": 760, "step": 10,
+      "unit": "px", "label": "Image max width", "default": 520,
+      "info": "Caps the image width inside its half. Lower it to make images smaller and airier; for a wider image also raise the Image / text split."
+    },
+    {
+      "type": "select", "id": "media_align", "label": "Image alignment (in its half)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select", "id": "row_vertical_align", "label": "Vertical alignment (image vs text)",
+      "options": [
+        { "value": "start", "label": "Top" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
 
     { "type": "header", "content": "Card Design" },
-    { "type": "color", "id": "card_background", "label": "Row background", "default": "#f7f5f3" },
+    { "type": "color", "id": "card_background", "label": "Row background", "default": "rgba(0,0,0,0)" },
     {
       "type": "range", "id": "card_border_radius", "min": 0, "max": 30, "step": 2,
       "unit": "px", "label": "Row border radius", "default": 0
@@ -1250,6 +1373,8 @@
       "unit": "ms", "label": "Gallery fade duration", "default": 300
     },
     { "type": "color", "id": "dot_color", "label": "Gallery dot color", "default": "#1b1b1b" },
+    { "type": "checkbox", "id": "media_shadow", "label": "Soft shadow under image", "default": true },
+    { "type": "checkbox", "id": "enable_image_zoom", "label": "Zoom image on hover", "default": true },
 
     { "type": "header", "content": "Gallery Autoplay" },
     { "type": "checkbox", "id": "slider_autoplay", "label": "Auto-advance gallery images", "default": false },
@@ -1370,17 +1495,37 @@
       "default": "left"
     },
     {
-      "type": "range", "id": "product_title_size", "min": 12, "max": 40, "step": 1,
-      "unit": "px", "label": "Product title size", "default": 22
+      "type": "range", "id": "info_gap", "min": 4, "max": 28, "step": 2,
+      "unit": "px", "label": "Spacing between text blocks", "default": 12
+    },
+    {
+      "type": "range", "id": "product_title_size", "min": 12, "max": 56, "step": 1,
+      "unit": "px", "label": "Product title size", "default": 30
     },
     {
       "type": "select", "id": "product_title_weight", "label": "Product title weight",
       "options": [
         { "value": "400", "label": "Regular" },
         { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi Bold" }
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
       ],
-      "default": "500"
+      "default": "600"
+    },
+    {
+      "type": "range", "id": "tagline_size", "min": 12, "max": 24, "step": 1,
+      "unit": "px", "label": "Tagline size", "default": 16
+    },
+    { "type": "color", "id": "tagline_color", "label": "Tagline color", "default": "#6c4d6e" },
+    {
+      "type": "range", "id": "description_size", "min": 12, "max": 22, "step": 1,
+      "unit": "px", "label": "Description size", "default": 16
+    },
+    { "type": "color", "id": "description_color", "label": "Description color", "default": "#5a5a5a" },
+    {
+      "type": "range", "id": "description_max_width", "min": 240, "max": 640, "step": 10,
+      "unit": "px", "label": "Description max width", "default": 440,
+      "info": "Keeps the paragraph at a comfortable reading length."
     },
     {
       "type": "range", "id": "price_size", "min": 12, "max": 32, "step": 1,
