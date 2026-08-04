@@ -9,6 +9,95 @@
  */
 {
   "sections": {
+    "section_JwpHJP": {
+      "type": "section",
+      "blocks": {
+        "text_KTaXah": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<p><strong>Crafted with pure <br/>whole-food ingredients <br/>to fuel your daily performance.</strong></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "2rem",
+            "line_height": "tight",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_gcGReh": {
+          "type": "text",
+          "settings": {
+            "text": "<p><br/>Three naturally unsweetened, <br/>nutrient-dense, functional blends. <br/>Each with a distinct real-food flavor.</p>",
+            "width": "fit-content",
+            "max_width": "narrow",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_KTaXah",
+        "text_gcGReh"
+      ],
+      "name": "t:names.custom_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "medium",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "media_with_gallery_pDADnd": {
       "type": "media-with-gallery",
       "blocks": {
@@ -150,6 +239,7 @@
           ]
         }
       },
+      "disabled": true,
       "name": "Media Gallery with Text",
       "settings": {
         "image_1": "shopify://shop_images/freepik__create-a-hyperrealistic-lifestyle-product-photogra__71607_1.jpg",
@@ -356,6 +446,207 @@
         "padding-block-end": 64
       }
     },
+    "marquee_NQTmkA": {
+      "type": "marquee",
+      "blocks": {
+        "text_with_icon_TcyAHz": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Sweeteners",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_36_3x_5f352826-9128-40e7-93fb-217829c33243.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
+        "text_with_icon_jneJxJ": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Additives",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_35_3x_a1185c99-542d-4df8-b4d1-a2192db28d8a.png",
+            "icon_position": "left",
+            "icon_size": 34,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
+        "text_with_icon_nYTj3U": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Fillers",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_34_3x_3a616850-798f-4a9b-9856-3f41c54f039b.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
+        "text_with_icon_aGc4wc": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Isolates",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_33_3x_400af91f-4ed2-4dbd-a667-983965b0f814.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
+        "text_with_icon_gfzEqi": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Concentrates",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_31_3x_b306b580-5924-4e51-9fcc-d02711aef8dc.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
+        "text_with_icon_En94NH": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Anti-caking Agents",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_44_3x_4bbe45c9-8d3b-48be-8e4f-8e933a63d730.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        },
+        "text_with_icon_WgNbFH": {
+          "type": "text_with_icon",
+          "settings": {
+            "text": "No Bleaching",
+            "icon_type": "image",
+            "custom_icon": "shopify://shop_images/Recurso_31_3x_b306b580-5924-4e51-9fcc-d02711aef8dc.png",
+            "icon_position": "left",
+            "icon_size": 38,
+            "icon_gap": 8,
+            "icon_color": "#ffffff",
+            "type_preset": "custom",
+            "font_size": 18
+          }
+        }
+      },
+      "block_order": [
+        "text_with_icon_TcyAHz",
+        "text_with_icon_jneJxJ",
+        "text_with_icon_nYTj3U",
+        "text_with_icon_aGc4wc",
+        "text_with_icon_gfzEqi",
+        "text_with_icon_En94NH",
+        "text_with_icon_WgNbFH"
+      ],
+      "name": "t:names.marquee_section",
+      "settings": {
+        "movement_direction": "normal",
+        "color_scheme": "scheme-4",
+        "padding-block-start": 22,
+        "padding-block-end": 18,
+        "gap_between_elements": 80
+      }
+    },
+    "featured_product_v2_hwaxKE": {
+      "type": "featured-product-v2",
+      "name": "Featured Product V2",
+      "settings": {
+        "product": "chocho-pure-ingredient",
+        "variant_id": "",
+        "custom_title": "",
+        "media_text_ratio": "55fr 45fr",
+        "column_gap": 56,
+        "vertical_align": "start",
+        "sticky_media": true,
+        "sticky_offset": 40,
+        "max_width": 1200,
+        "enable_animation": true,
+        "gallery_nav": "thumbnails",
+        "image_aspect_ratio": "1/1",
+        "image_fit": "contain",
+        "image_bg": "#00000000",
+        "media_border_radius": 16,
+        "media_shadow": false,
+        "thumb_size": 64,
+        "dot_color": "#370c07",
+        "show_promo": true,
+        "promo_badge": "20% OFF",
+        "promo_text": "Limited-time launch offer",
+        "countdown_enabled": true,
+        "promo_hide_on_expiry": true,
+        "promo_padding": 16,
+        "promo_radius": 12,
+        "cd_year": 2026,
+        "cd_month": 12,
+        "cd_day": 31,
+        "cd_hour": 23,
+        "cd_minute": 59,
+        "cd_days_label": "Days",
+        "cd_hours_label": "Hrs",
+        "cd_mins_label": "Min",
+        "cd_secs_label": "Sec",
+        "atc_text": "Add to Cart",
+        "added_text": "Added!",
+        "sold_out_text": "Sold Out",
+        "show_buy_now": true,
+        "button_radius": 8,
+        "button_text_transform": "none",
+        "button_letter_spacing": 0,
+        "show_recipes": true,
+        "recipes_title": "Recipes with this product",
+        "recipes_show_name": true,
+        "recipe_namespace": "recipe",
+        "recipe_key": "products",
+        "recipe_card_width": 180,
+        "recipe_aspect_ratio": "1/1",
+        "recipes_title_size": 18,
+        "text_align": "left",
+        "details_gap": 20,
+        "title_size": 36,
+        "title_weight": "700",
+        "price_size": 24,
+        "price_weight": "600",
+        "section_bg": "#ffffff",
+        "title_color": "#370c07",
+        "price_color": "#370c07",
+        "accent_color": "#6c4d6e",
+        "accent_soft": "#efe7f0",
+        "promo_bg": "#faf6f0",
+        "promo_border": "#ece3d7",
+        "promo_text_color": "#5a4a3a",
+        "promo_badge_color": "#ffffff",
+        "cd_box_bg": "#ffffff",
+        "cd_num_color": "#370c07",
+        "cd_label_color": "#8a7a6a",
+        "qty_bg": "#ffffff",
+        "qty_border": "#d8d2c8",
+        "qty_color": "#370c07",
+        "atc_bg": "#370c07",
+        "atc_color": "#ffffff",
+        "atc_bg_hover": "#54130b",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
     "featured_products_rows_Jem9zw": {
       "type": "featured-products-rows",
       "name": "Featured Products Rows",
@@ -363,7 +654,7 @@
         "heading": "Our Products",
         "heading_icon_size": 40,
         "heading_icon_radius": 50,
-        "subtitle": "Whole-food nutrition from the Andes. <br>One single ingredient. 5,000 years in the making.",
+        "subtitle": "Whole-food nutrition from the Andes. One single ingredient. 5,000 years in the making.",
         "heading_alignment": "center",
         "heading_size": 42,
         "heading_size_mobile": 28,
@@ -687,8 +978,11 @@
     }
   },
   "order": [
+    "section_JwpHJP",
     "media_with_gallery_pDADnd",
     "main",
+    "marquee_NQTmkA",
+    "featured_product_v2_hwaxKE",
     "featured_products_rows_Jem9zw",
     "17722383868c1baea3",
     "blocks_mYCxMa"
