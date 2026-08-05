@@ -22,6 +22,7 @@
   .fpv2-{{ section_id }} {
     padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
     background-color: {{ section.settings.section_bg }};
+    border-bottom: {{ section.settings.section_border_bottom_width }}px solid {{ section.settings.section_border_bottom_color }};
   }
 
   .fpv2__container-{{ section_id }} {
@@ -161,15 +162,16 @@
     padding: 3px 10px; border-radius: 100px;
   }
 
-  /* Discount + Countdown */
+  /* Discount + Countdown + Coupon */
   .fpv2__promo-{{ section_id }} {
-    display: flex; flex-direction: column; gap: 8px;
+    display: flex; flex-direction: column; gap: 10px;
     padding: {{ section.settings.promo_padding }}px;
     border-radius: {{ section.settings.promo_radius }}px;
     background: {{ section.settings.promo_bg }};
     border: 1px solid {{ section.settings.promo_border }};
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
   }
   .fpv2__promo-head-{{ section_id }} { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .fpv2__promo-badge-{{ section_id }} {
@@ -188,6 +190,8 @@
     display: flex; flex-direction: column; align-items: center; min-width: 46px;
     background: {{ section.settings.cd_box_bg }};
     border-radius: 8px; padding: 6px 4px;
+    border: 1px solid {{ section.settings.promo_border }};
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
   }
   .fpv2__cd-num-{{ section_id }} {
     font-size: 20px; font-weight: 700; line-height: 1; color: {{ section.settings.cd_num_color }};
@@ -197,6 +201,68 @@
     font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
     color: {{ section.settings.cd_label_color }}; margin-top: 4px;
   }
+
+  /* Promo code copy */
+  .fpv2__promo-code-{{ section_id }} {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+  }
+  .fpv2__promo-code-label-{{ section_id }} {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: {{ section.settings.promo_text_color }};
+    opacity: 0.75;
+    font-weight: 700;
+  }
+  .fpv2__promo-code-box-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: {{ section.settings.cd_box_bg }};
+    border: 2px dashed {{ section.settings.accent_color }};
+    border-radius: 10px;
+    padding: 3px 3px 3px 16px;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .fpv2__promo-code-box-{{ section_id }}:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .fpv2__promo-code-value-{{ section_id }} {
+    font-family: 'SF Mono', Monaco, Inconsolata, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: {{ section.settings.cd_num_color }};
+    letter-spacing: 0.06em;
+  }
+  .fpv2__promo-code-copy-{{ section_id }} {
+    margin-left: 12px;
+    padding: 8px 18px;
+    border: none;
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.promo_badge_color }};
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s ease;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .fpv2__promo-code-copy-{{ section_id }}:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.12);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .fpv2__promo-code-copy-{{ section_id }}:active { transform: scale(0.96); }
+  .fpv2__promo-code-copied-text-{{ section_id }} { display: none; }
+  .fpv2__promo-code-copy-{{ section_id }}.is-copied .fpv2__promo-code-copy-text-{{ section_id }} { display: none; }
+  .fpv2__promo-code-copy-{{ section_id }}.is-copied .fpv2__promo-code-copied-text-{{ section_id }} { display: inline; }
 
   /* Quantity + Buttons */
   .fpv2__buy-{{ section_id }} { display: flex; flex-direction: column; gap: 12px; width: 100%; }
@@ -264,6 +330,35 @@
     background: #e6e6e6; color: #777; font-weight: 600; width: 100%;
   }
 
+  /* ===== Free-shipping CTA ===== */
+  .fpv2__freeship-{{ section_id }} {
+    position: relative;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 52px; padding: 8px 20px;
+    border-radius: {{ section.settings.button_radius }}px;
+    background: {{ section.settings.freeship_bg }};
+    color: {{ section.settings.freeship_color }};
+    border: 1px solid {{ section.settings.freeship_border }};
+    cursor: pointer; text-align: center;
+    transition: background .25s ease, color .25s ease, opacity .25s ease, transform .1s ease;
+    {% if section.settings.freeship_width == '100' %}
+      width: 100%;
+    {% else %}
+      width: auto;
+      min-width: 260px;
+      align-self: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+    {% endif %}
+  }
+  .fpv2__freeship-{{ section_id }}:hover { background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
+  .fpv2__freeship-{{ section_id }}:active { transform: scale(0.99); }
+  .fpv2__freeship-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
+  .fpv2__freeship-main-{{ section_id }} { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.25; }
+  .fpv2__freeship-text-{{ section_id }} { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+  .fpv2__freeship-ico-{{ section_id }} { margin-right: 4px; }
+  .fpv2__freeship-sub-{{ section_id }} { font-size: 12px; font-weight: 500; opacity: 0.85; }
+  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__freeship-main-{{ section_id }} { visibility: hidden; }
+  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__spinner-{{ section_id }} { display: block; }
+
   /* ===== Recipes ===== */
   .fpv2__recipes-{{ section_id }} { width: 100%; margin-top: 4px; }
   .fpv2__recipes-head-{{ section_id }} {
@@ -296,47 +391,69 @@
   .fpv2__recipe-{{ section_id }} {
     flex: 0 0 calc((100% - (var(--fpv2-rper) - 1) * var(--fpv2-rgap)) / var(--fpv2-rper));
     scroll-snap-align: start;
-    text-decoration: none; color: inherit; display: block;
+    text-decoration: none; color: inherit;
+    display: block;
+    position: relative;
+    cursor: default;
+    border-radius: 10px;
+  }
+  .fpv2__recipe--linked-{{ section_id }} { cursor: pointer; }
+
+  .fpv2__recipe-media-{{ section_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    aspect-ratio: {{ section.settings.recipe_aspect_ratio }};
+    background: {{ section.settings.image_bg }};
   }
   .fpv2__recipe-img-{{ section_id }} {
-    width: 100%; aspect-ratio: {{ section.settings.recipe_aspect_ratio }};
-    object-fit: cover; border-radius: 10px; display: block; background: {{ section.settings.image_bg }};
-    transition: transform .4s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s cubic-bezier(.22,1,.36,1);
   }
-  .fpv2__recipe-{{ section_id }}:hover .fpv2__recipe-img-{{ section_id }} { transform: scale(1.03); }
-  .fpv2__recipe-link-{{ section_id }} { text-decoration: none; color: inherit; display: block; }
-  .fpv2__recipe-ph-{{ section_id }} { display: flex; align-items: center; justify-content: center; }
+  .fpv2__recipe--linked-{{ section_id }}:hover .fpv2__recipe-img-{{ section_id }} { transform: scale(1.06); }
+  .fpv2__recipe-ph-{{ section_id }} {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
   .fpv2__recipe-ph-{{ section_id }} svg { width: 40%; height: 40%; opacity: 0.35; }
+
+  .fpv2__recipe-overlay-{{ section_id }} {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.20) 45%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px 12px;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    border-radius: 10px;
+    pointer-events: none;
+  }
+  .fpv2__recipe-{{ section_id }}:hover .fpv2__recipe-overlay-{{ section_id }} {
+    opacity: 1;
+  }
   .fpv2__recipe-name-{{ section_id }} {
-    font-size: 14px; font-weight: 500; margin: 10px 0 0; line-height: 1.35;
-    color: {{ section.settings.title_color }};
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.35;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+    transform: translateY(10px);
+    transition: transform 0.45s cubic-bezier(.22,1,.36,1);
+  }
+  .fpv2__recipe-{{ section_id }}:hover .fpv2__recipe-name-{{ section_id }} {
+    transform: translateY(0);
   }
   .fpv2__recipes-empty-{{ section_id }} {
     width: 100%; padding: 14px 16px; border: 1px dashed {{ section.settings.qty_border }};
     border-radius: 10px; color: {{ section.settings.description_color }}; font-size: 14px; margin: 4px 0 0;
   }
-
-  /* ===== Free-shipping CTA ===== */
-  .fpv2__freeship-{{ section_id }} {
-    position: relative;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; min-height: 52px; padding: 8px 20px;
-    border-radius: {{ section.settings.button_radius }}px;
-    background: {{ section.settings.freeship_bg }};
-    color: {{ section.settings.freeship_color }};
-    border: 1px solid {{ section.settings.freeship_border }};
-    cursor: pointer; text-align: center;
-    transition: background .25s ease, color .25s ease, opacity .25s ease, transform .1s ease;
-  }
-  .fpv2__freeship-{{ section_id }}:hover { background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
-  .fpv2__freeship-{{ section_id }}:active { transform: scale(0.99); }
-  .fpv2__freeship-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
-  .fpv2__freeship-main-{{ section_id }} { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.25; }
-  .fpv2__freeship-text-{{ section_id }} { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
-  .fpv2__freeship-ico-{{ section_id }} { margin-right: 4px; }
-  .fpv2__freeship-sub-{{ section_id }} { font-size: 12px; font-weight: 500; opacity: 0.85; }
-  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__freeship-main-{{ section_id }} { visibility: hidden; }
-  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__spinner-{{ section_id }} { display: block; }
 
   /* Entry animation */
   .fpv2__container-{{ section_id }}.fpv2-anim .fpv2__media-{{ section_id }},
@@ -353,6 +470,8 @@
       opacity: 1 !important; transform: none !important; transition: none !important;
     }
     .fpv2__recipe-img-{{ section_id }} { transition: none; }
+    .fpv2__recipe-overlay-{{ section_id }} { transition: none; opacity: 1; }
+    .fpv2__recipe-name-{{ section_id }} { transform: none; }
   }
 
   /* ===== Responsive ===== */
@@ -366,6 +485,20 @@
     .fpv2__qty-row-{{ section_id }} { flex-direction: column; }
     .fpv2__atc-{{ section_id }} { width: 100%; }
     .fpv2__recipes-track-{{ section_id }} { --fpv2-rper: {{ section.settings.recipes_per_view_mobile }}; }
+    .fpv2__freeship-{{ section_id }} {
+      width: 100%;
+      align-self: stretch;
+    }
+    .fpv2__promo-code-box-{{ section_id }} {
+      padding: 3px 3px 3px 12px;
+    }
+    .fpv2__promo-code-value-{{ section_id }} {
+      font-size: 14px;
+    }
+    .fpv2__promo-code-copy-{{ section_id }} {
+      padding: 7px 14px;
+      font-size: 12px;
+    }
   }
 {% endstyle %}
 
@@ -447,6 +580,7 @@
                   data-extra-qty="{{ section.settings.freeship_extra_qty }}">
             <span class="fpv2__freeship-main-{{ section_id }}">
               <span class="fpv2__freeship-text-{{ section_id }}">
+                {% if section.settings.freeship_icon %}<span class="fpv2__freeship-ico-{{ section_id }}">🚚</span>{% endif %}
                 {{ section.settings.freeship_text }}
               </span>
               {% if section.settings.freeship_subtext != blank %}
@@ -468,7 +602,7 @@
           <div class="fpv2__description-{{ section_id }}">{{ desc }}</div>
         {% endif %}
 
-        {%- comment -%} Discount + Countdown {%- endcomment -%}
+        {%- comment -%} Discount + Countdown + Coupon Code {%- endcomment -%}
         {% if section.settings.show_promo %}
           <div class="fpv2__promo-{{ section_id }}" data-fpv2-promo
                {% if section.settings.promo_hide_on_expiry %}data-hide-on-expiry{% endif %}>
@@ -494,6 +628,20 @@
                 <div class="fpv2__cd-unit-{{ section_id }}"><span class="fpv2__cd-num-{{ section_id }}" data-cd-secs>00</span><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_secs_label }}</span></div>
               </div>
             {% endif %}
+            {% if section.settings.promo_code != blank %}
+              <div class="fpv2__promo-code-{{ section_id }}">
+                <span class="fpv2__promo-code-label-{{ section_id }}">{{ section.settings.promo_code_label }}</span>
+                <div class="fpv2__promo-code-box-{{ section_id }}">
+                  <code class="fpv2__promo-code-value-{{ section_id }}">{{ section.settings.promo_code }}</code>
+                  {% if section.settings.promo_code_copyable %}
+                    <button type="button" class="fpv2__promo-code-copy-{{ section_id }}" data-promo-code="{{ section.settings.promo_code }}" aria-label="Copiar código de descuento">
+                      <span class="fpv2__promo-code-copy-text-{{ section_id }}">{{ section.settings.promo_code_copy_text }}</span>
+                      <span class="fpv2__promo-code-copied-text-{{ section_id }}">{{ section.settings.promo_code_copied_text }}</span>
+                    </button>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
           </div>
         {% endif %}
 
@@ -504,10 +652,10 @@
 
             <div class="fpv2__qty-row-{{ section_id }}">
               <div class="fpv2__qty-{{ section_id }}">
-                <button type="button" class="fpv2__qty-btn-{{ section_id }}" data-qty-decrease aria-label="Decrease quantity">−</button>
+                <button type="button" class="fpv2__qty-btn-{{ section_id }}" data-qty-decrease aria-label="Disminuir cantidad">−</button>
                 <input type="number" class="fpv2__qty-input-{{ section_id }}" name="quantity"
-                       value="1" min="1" data-qty-input aria-label="Quantity">
-                <button type="button" class="fpv2__qty-btn-{{ section_id }}" data-qty-increase aria-label="Increase quantity">+</button>
+                       value="1" min="1" data-qty-input aria-label="Cantidad">
+                <button type="button" class="fpv2__qty-btn-{{ section_id }}" data-qty-increase aria-label="Aumentar cantidad">+</button>
               </div>
 
               <button type="button" class="fpv2__atc-{{ section_id }}" data-fpv2-atc
@@ -545,9 +693,18 @@
                       assign r_img = block.settings.image
                       assign r_name = block.settings.name
                       assign r_url = block.settings.link
+                      
+                      assign has_link = false
+                      if r_url != blank
+                        assign has_link = true
+                      endif
                     -%}
-                    <div class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
-                      {% if r_url != blank %}<a href="{{ r_url }}" class="fpv2__recipe-link-{{ section_id }}">{% endif %}
+                    {% if has_link %}
+                      <a href="{{ r_url }}" class="fpv2__recipe-{{ section_id }} fpv2__recipe--linked-{{ section_id }}" {{ block.shopify_attributes }}>
+                    {% else %}
+                      <div class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
+                    {% endif %}
+                      <div class="fpv2__recipe-media-{{ section_id }}">
                         {% if r_img != blank %}
                           <img src="{{ r_img | image_url: width: 500 }}"
                                alt="{{ r_img.alt | default: r_name | escape }}"
@@ -560,10 +717,12 @@
                           </div>
                         {% endif %}
                         {% if section.settings.recipes_show_name and r_name != blank %}
-                          <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
+                          <div class="fpv2__recipe-overlay-{{ section_id }}">
+                            <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
+                          </div>
                         {% endif %}
-                      {% if r_url != blank %}</a>{% endif %}
-                    </div>
+                      </div>
+                    {% if has_link %}</a>{% else %}</div>{% endif %}
                   {% endif %}
                 {% endfor %}
               </div>
@@ -670,7 +829,30 @@
       const timer = setInterval(tick, 1000);
     })();
 
-    /* ===== Recipes carousel arrows ===== */
+    /* ===== Promo code copy ===== */
+    (function initPromoCode() {
+      const btn = section.querySelector('[data-promo-code]');
+      if (!btn) return;
+      btn.addEventListener('click', async function() {
+        const code = this.dataset.promoCode;
+        try {
+          await navigator.clipboard.writeText(code);
+          this.classList.add('is-copied');
+          setTimeout(() => this.classList.remove('is-copied'), 2000);
+        } catch (err) {
+          const ta = document.createElement('textarea');
+          ta.value = code;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          this.classList.add('is-copied');
+          setTimeout(() => this.classList.remove('is-copied'), 2000);
+        }
+      });
+    })();
+
+    /* ===== Recipes carousel arrows + autoplay ===== */
     (function initRecipes() {
       const wrap = section.querySelector('[data-fpv2-recipes]');
       if (!wrap) return;
@@ -680,7 +862,7 @@
       if (!track) return;
 
       function step() {
-        const first = track.querySelector('a');
+        const first = track.querySelector('.fpv2__recipe-' + sectionId);
         if (!first) return track.clientWidth * 0.8;
         const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || 14) || 14;
         return first.offsetWidth + gap;
@@ -694,6 +876,27 @@
       next && next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
       track.addEventListener('scroll', () => { clearTimeout(track._t); track._t = setTimeout(update, 60); }, { passive: true });
       update();
+
+      {% if section.settings.recipes_autoplay %}
+      let autoplayInterval;
+      function startAutoplay() {
+        autoplayInterval = setInterval(() => {
+          const maxScroll = track.scrollWidth - track.clientWidth - 2;
+          if (track.scrollLeft >= maxScroll) {
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            track.scrollBy({ left: step(), behavior: 'smooth' });
+          }
+        }, {{ section.settings.recipes_autoplay_speed }});
+      }
+      function stopAutoplay() {
+        clearInterval(autoplayInterval);
+      }
+      startAutoplay();
+      wrap.addEventListener('mouseenter', stopAutoplay);
+      wrap.addEventListener('mouseleave', startAutoplay);
+      wrap.addEventListener('touchstart', stopAutoplay, { passive: true });
+      {% endif %}
     })();
 
     /* ===== Quantity ===== */
@@ -919,8 +1122,15 @@
       "type": "range", "id": "max_width", "min": 800, "max": 1600, "step": 20,
       "unit": "px", "label": "Section max width", "default": 1200
     },
+    { "type": "checkbox", "id": "enable_animation", "label": "Fade-in on scroll", "default": true },
+
+    { "type": "header", "content": "Section Separator" },
     {
-      "type": "checkbox", "id": "enable_animation", "label": "Fade-in on scroll", "default": true
+      "type": "range", "id": "section_border_bottom_width", "min": 0, "max": 20, "step": 1,
+      "unit": "px", "label": "Bottom separator height", "default": 10
+    },
+    {
+      "type": "color", "id": "section_border_bottom_color", "label": "Bottom separator color", "default": "#ece3d7"
     },
 
     { "type": "header", "content": "Image Gallery" },
@@ -990,6 +1200,16 @@
     { "type": "text", "id": "cd_mins_label", "label": "Minutes label", "default": "Min" },
     { "type": "text", "id": "cd_secs_label", "label": "Seconds label", "default": "Sec" },
 
+    { "type": "header", "content": "Discount Code (Copy to Clipboard)" },
+    {
+      "type": "text", "id": "promo_code", "label": "Discount code",
+      "info": "Optional coupon code users can copy. Leave empty to hide."
+    },
+    { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
+    { "type": "text", "id": "promo_code_label", "label": "Code label", "default": "Your code:" },
+    { "type": "text", "id": "promo_code_copy_text", "label": "Copy button text", "default": "Copy" },
+    { "type": "text", "id": "promo_code_copied_text", "label": "Copied feedback text", "default": "Copied!" },
+
     { "type": "header", "content": "Buy Buttons" },
     { "type": "text", "id": "atc_text", "label": "Add to cart text", "default": "Add to Cart" },
     { "type": "text", "id": "added_text", "label": "Added text", "default": "Added!" },
@@ -1018,6 +1238,14 @@
       "content": "Adds the units below to the cart and goes straight to checkout (for a 2+ items free-shipping offer)."
     },
     { "type": "checkbox", "id": "show_freeship", "label": "Show free-shipping CTA", "default": false },
+    {
+      "type": "select", "id": "freeship_width", "label": "CTA width",
+      "options": [
+        { "value": "100", "label": "Full width (100%)" },
+        { "value": "auto", "label": "Auto width (aligned)" }
+      ],
+      "default": "100"
+    },
     { "type": "text", "id": "freeship_text", "label": "CTA text", "default": "Buy 2 & get FREE shipping" },
     { "type": "text", "id": "freeship_subtext", "label": "CTA sub-text (optional)", "default": "Straight to checkout" },
     { "type": "checkbox", "id": "freeship_icon", "label": "Show truck icon", "default": true },
@@ -1066,6 +1294,11 @@
     {
       "type": "range", "id": "recipes_title_size", "min": 14, "max": 26, "step": 1,
       "unit": "px", "label": "Recipes heading size", "default": 18
+    },
+    { "type": "checkbox", "id": "recipes_autoplay", "label": "Autoplay recipes carousel", "default": true },
+    {
+      "type": "range", "id": "recipes_autoplay_speed", "min": 2000, "max": 8000, "step": 500,
+      "unit": "ms", "label": "Autoplay interval", "default": 4000
     },
 
     { "type": "header", "content": "Details Typography & Spacing" },
@@ -1153,7 +1386,7 @@
       "settings": [
         { "type": "image_picker", "id": "image", "label": "Recipe image" },
         { "type": "text", "id": "name", "label": "Recipe name" },
-        { "type": "url", "id": "link", "label": "Recipe link" }
+        { "type": "url", "id": "link", "label": "Recipe link (optional)" }
       ]
     }
   ],
