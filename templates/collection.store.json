@@ -592,12 +592,21 @@
             "name": "Apple Cinnamon Overnight Oats",
             "link": ""
           }
+        },
+        "recipe_drNJEN": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
         }
       },
       "block_order": [
         "recipe_jah9CB",
         "recipe_CJ8VJw",
-        "recipe_6tVqaB"
+        "recipe_6tVqaB",
+        "recipe_drNJEN"
       ],
       "name": "Featured Product V2",
       "settings": {
@@ -620,7 +629,7 @@
         "media_border_radius": 16,
         "media_shadow": false,
         "thumb_size": 64,
-        "dot_color": "#3D2258",
+        "dot_color": "#3d2258",
         "show_promo": true,
         "promo_badge": "20% OFF",
         "promo_text": "Limited-time launch offer",
@@ -651,14 +660,15 @@
         "freeship_qty": 2,
         "freeship_extra_variant": "",
         "freeship_extra_qty": 1,
-        "freeship_bg": "#2e7d32",
+        "freeship_bg": "#3D2258",
         "freeship_color": "#ffffff",
-        "freeship_bg_hover": "#256628",
-        "freeship_border": "#2e7d32",
+        "freeship_bg_hover": "#6B4097",
+        "freeship_border": "#3D2258",
         "show_recipes": true,
         "recipes_title": "Recipes with this product",
         "recipes_show_name": true,
-        "recipe_card_width": 180,
+        "recipes_per_view": 3,
+        "recipes_per_view_mobile": 1.5,
         "recipe_aspect_ratio": "1/1",
         "recipes_title_size": 18,
         "text_align": "left",
