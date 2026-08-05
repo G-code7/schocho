@@ -283,7 +283,9 @@
   .fpv2__recipes-arrow-{{ section_id }}:disabled { opacity: 0.3; cursor: default; }
 
   .fpv2__recipes-track-{{ section_id }} {
-    display: flex; gap: 14px; overflow-x: auto;
+    --fpv2-rgap: 14px;
+    --fpv2-rper: {{ section.settings.recipes_per_view }};
+    display: flex; gap: var(--fpv2-rgap); overflow-x: auto;
     scroll-snap-type: x mandatory; scroll-behavior: smooth;
     scrollbar-width: none; -ms-overflow-style: none;
     overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
@@ -292,7 +294,7 @@
   .fpv2__recipes-track-{{ section_id }}::-webkit-scrollbar { display: none; }
 
   .fpv2__recipe-{{ section_id }} {
-    flex: 0 0 {{ section.settings.recipe_card_width }}px;
+    flex: 0 0 calc((100% - (var(--fpv2-rper) - 1) * var(--fpv2-rgap)) / var(--fpv2-rper));
     scroll-snap-align: start;
     text-decoration: none; color: inherit; display: block;
   }
@@ -363,6 +365,7 @@
     .fpv2__title-{{ section_id }} { font-size: {{ section.settings.title_size | times: 0.78 | round }}px; }
     .fpv2__qty-row-{{ section_id }} { flex-direction: column; }
     .fpv2__atc-{{ section_id }} { width: 100%; }
+    .fpv2__recipes-track-{{ section_id }} { --fpv2-rper: {{ section.settings.recipes_per_view_mobile }}; }
   }
 {% endstyle %}
 
@@ -1042,11 +1045,15 @@
     { "type": "checkbox", "id": "recipes_show_name", "label": "Show recipe name", "default": true },
     {
       "type": "paragraph",
-      "content": "Add each recipe as a block at the bottom of this section (image, name, link)."
+      "content": "Add each recipe as a block at the bottom of this section (image, name, link). Extra recipes stay reachable via the slider."
     },
     {
-      "type": "range", "id": "recipe_card_width", "min": 120, "max": 280, "step": 10,
-      "unit": "px", "label": "Recipe card width", "default": 180
+      "type": "range", "id": "recipes_per_view", "min": 2, "max": 4, "step": 1,
+      "label": "Recipes per view (desktop)", "default": 3
+    },
+    {
+      "type": "range", "id": "recipes_per_view_mobile", "min": 1, "max": 2.5, "step": 0.5,
+      "label": "Recipes per view (mobile)", "default": 1.5
     },
     {
       "type": "select", "id": "recipe_aspect_ratio", "label": "Recipe image ratio",
