@@ -13,12 +13,7 @@
     endfor
   endif
 
-  # ---- Recetas: metafield configurable (namespace/key) ----
-  assign recipe_ns = section.settings.recipe_namespace | default: 'recipe'
-  assign recipe_key = section.settings.recipe_key | default: 'products'
-  assign recipe_field = product.metafields[recipe_ns][recipe_key]
-  assign recipe_items = recipe_field.value
-
+  # ---- IDs del form nativo ----
   assign form_id = 'fpv2-form-' | append: section_id
   assign form_class = 'fpv2__buy-' | append: section_id
 %}
@@ -126,6 +121,22 @@
   }
   .fpv2__title-{{ section_id }} a { color: inherit; text-decoration: none; }
   .fpv2__title-{{ section_id }} sup, .fpv2__title-{{ section_id }} sub { font-size: 0.55em; }
+
+  .fpv2__description-{{ section_id }} {
+    font-size: {{ section.settings.description_size }}px;
+    line-height: 1.65;
+    color: {{ section.settings.description_color }};
+    margin: 0;
+    max-width: {{ section.settings.description_max_width }}px;
+    {% if section.settings.text_align == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+  }
+  .fpv2__description-{{ section_id }} p { margin: 0 0 0.7em; }
+  .fpv2__description-{{ section_id }} p:last-child { margin-bottom: 0; }
+  .fpv2__description-{{ section_id }} a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .fpv2__description-{{ section_id }} strong { font-weight: 600; }
+  .fpv2__description-{{ section_id }} em { font-style: italic; }
+  .fpv2__description-{{ section_id }} ul,
+  .fpv2__description-{{ section_id }} ol { margin: 0.4em 0; padding-left: 1.2em; }
 
   .fpv2__price-{{ section_id }} {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
@@ -395,6 +406,17 @@
           {% endif %}
         </div>
 
+        {%- comment -%} Description {%- endcomment -%}
+        {%- liquid
+          assign desc = section.settings.description
+          if desc == blank and section.settings.use_product_description
+            assign desc = product.description
+          endif
+        -%}
+        {% if desc != blank %}
+          <div class="fpv2__description-{{ section_id }}">{{ desc }}</div>
+        {% endif %}
+
         {%- comment -%} Discount + Countdown {%- endcomment -%}
         {% if section.settings.show_promo %}
           <div class="fpv2__promo-{{ section_id }}" data-fpv2-promo
@@ -454,8 +476,8 @@
           <div class="fpv2__soldout-{{ section_id }}">{{ section.settings.sold_out_text }}</div>
         {% endif %}
 
-        {%- comment -%} ================= RECIPES ================= {%- endcomment -%}
-        {% if section.settings.show_recipes and recipe_items != blank and recipe_items.size > 0 %}
+        {%- comment -%} ================= RECIPES (manual blocks) ================= {%- endcomment -%}
+        {% if section.settings.show_recipes and section.blocks.size > 0 %}
           <div class="fpv2__recipes-{{ section_id }}" data-fpv2-recipes>
             <div class="fpv2__recipes-head-{{ section_id }}">
               <h3 class="fpv2__recipes-title-{{ section_id }}">{{ section.settings.recipes_title }}</h3>
@@ -465,22 +487,31 @@
               </div>
             </div>
             <div class="fpv2__recipes-track-{{ section_id }}" data-recipes-track>
-              {% for recipe in recipe_items %}
-                {%- liquid
-                  assign recipe_url = recipe.url | default: recipe.system.url
-                  assign recipe_img = recipe.featured_image | default: recipe.image
-                  assign recipe_name = recipe.title | default: recipe.name
-                -%}
-                <a href="{{ recipe_url }}" class="fpv2__recipe-{{ section_id }}">
-                  {% if recipe_img %}
-                    <img src="{{ recipe_img | image_url: width: 500 }}"
-                         alt="{{ recipe_name | escape }}"
-                         class="fpv2__recipe-img-{{ section_id }}" loading="lazy">
-                  {% endif %}
-                  {% if section.settings.recipes_show_name and recipe_name != blank %}
-                    <p class="fpv2__recipe-name-{{ section_id }}">{{ recipe_name }}</p>
-                  {% endif %}
-                </a>
+              {% for block in section.blocks %}
+                {% if block.type == 'recipe' %}
+                  {%- liquid
+                    assign r_img = block.settings.image
+                    assign r_name = block.settings.name
+                    assign r_url = block.settings.link
+                  -%}
+                  {% if r_url != blank %}<a href="{{ r_url }}"{% else %}<div{% endif %}
+                     class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
+                    {% if r_img != blank %}
+                      <img src="{{ r_img | image_url: width: 500 }}"
+                           alt="{{ r_img.alt | default: r_name | escape }}"
+                           class="fpv2__recipe-img-{{ section_id }}"
+                           width="500" height="{{ 500 | divided_by: r_img.aspect_ratio | round }}"
+                           loading="lazy">
+                    {% else %}
+                      <div class="fpv2__recipe-img-{{ section_id }}">
+                        {{ 'image' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                    {% if section.settings.recipes_show_name and r_name != blank %}
+                      <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
+                    {% endif %}
+                  {% if r_url != blank %}</a>{% else %}</div>{% endif %}
+                {% endif %}
               {% endfor %}
             </div>
           </div>
@@ -751,6 +782,13 @@
       "type": "html", "id": "custom_title", "label": "Custom title (HTML, optional)",
       "info": "Leave empty to use the product's title."
     },
+    {
+      "type": "richtext", "id": "description", "label": "Short description",
+      "info": "Shown under the price. Leave empty to fall back to the product description (if enabled below)."
+    },
+    {
+      "type": "checkbox", "id": "use_product_description", "label": "Fall back to product description", "default": false
+    },
 
     { "type": "header", "content": "Layout" },
     {
@@ -878,15 +916,14 @@
       "label": "Button letter spacing", "default": 0
     },
 
-    { "type": "header", "content": "Recipes (metafield)" },
+    { "type": "header", "content": "Recipes (add manually below)" },
     { "type": "checkbox", "id": "show_recipes", "label": "Show recipes carousel", "default": true },
     { "type": "text", "id": "recipes_title", "label": "Recipes heading", "default": "Recipes with this product" },
     { "type": "checkbox", "id": "recipes_show_name", "label": "Show recipe name", "default": true },
     {
-      "type": "text", "id": "recipe_namespace", "label": "Metafield namespace", "default": "recipe",
-      "info": "Reads product.metafields.[namespace].[key] as a list of product references."
+      "type": "paragraph",
+      "content": "Add each recipe as a block at the bottom of this section (image, name, link)."
     },
-    { "type": "text", "id": "recipe_key", "label": "Metafield key", "default": "products" },
     {
       "type": "range", "id": "recipe_card_width", "min": 120, "max": 280, "step": 10,
       "unit": "px", "label": "Recipe card width", "default": 180
@@ -934,6 +971,15 @@
       "default": "700"
     },
     {
+      "type": "range", "id": "description_size", "min": 12, "max": 22, "step": 1,
+      "unit": "px", "label": "Description size", "default": 16
+    },
+    { "type": "color", "id": "description_color", "label": "Description color", "default": "#5a4a3a" },
+    {
+      "type": "range", "id": "description_max_width", "min": 280, "max": 680, "step": 10,
+      "unit": "px", "label": "Description max width", "default": 460
+    },
+    {
       "type": "range", "id": "price_size", "min": 16, "max": 40, "step": 1,
       "unit": "px", "label": "Price size", "default": 24
     },
@@ -974,8 +1020,27 @@
     { "type": "range", "id": "padding_top", "min": 0, "max": 120, "step": 5, "unit": "px", "label": "Top padding", "default": 60 },
     { "type": "range", "id": "padding_bottom", "min": 0, "max": 120, "step": 5, "unit": "px", "label": "Bottom padding", "default": 60 }
   ],
+  "blocks": [
+    {
+      "type": "recipe",
+      "name": "Recipe",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Recipe image" },
+        { "type": "text", "id": "name", "label": "Recipe name" },
+        { "type": "url", "id": "link", "label": "Recipe link" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
   "presets": [
-    { "name": "Featured Product V2" }
+    {
+      "name": "Featured Product V2",
+      "blocks": [
+        { "type": "recipe" },
+        { "type": "recipe" },
+        { "type": "recipe" }
+      ]
+    }
   ]
 }
 {% endschema %}
