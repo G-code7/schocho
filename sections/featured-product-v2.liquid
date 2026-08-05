@@ -302,10 +302,39 @@
     transition: transform .4s ease;
   }
   .fpv2__recipe-{{ section_id }}:hover .fpv2__recipe-img-{{ section_id }} { transform: scale(1.03); }
+  .fpv2__recipe-link-{{ section_id }} { text-decoration: none; color: inherit; display: block; }
+  .fpv2__recipe-ph-{{ section_id }} { display: flex; align-items: center; justify-content: center; }
+  .fpv2__recipe-ph-{{ section_id }} svg { width: 40%; height: 40%; opacity: 0.35; }
   .fpv2__recipe-name-{{ section_id }} {
     font-size: 14px; font-weight: 500; margin: 10px 0 0; line-height: 1.35;
     color: {{ section.settings.title_color }};
   }
+  .fpv2__recipes-empty-{{ section_id }} {
+    width: 100%; padding: 14px 16px; border: 1px dashed {{ section.settings.qty_border }};
+    border-radius: 10px; color: {{ section.settings.description_color }}; font-size: 14px; margin: 4px 0 0;
+  }
+
+  /* ===== Free-shipping CTA ===== */
+  .fpv2__freeship-{{ section_id }} {
+    position: relative;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 52px; padding: 8px 20px;
+    border-radius: {{ section.settings.button_radius }}px;
+    background: {{ section.settings.freeship_bg }};
+    color: {{ section.settings.freeship_color }};
+    border: 1px solid {{ section.settings.freeship_border }};
+    cursor: pointer; text-align: center;
+    transition: background .25s ease, color .25s ease, opacity .25s ease, transform .1s ease;
+  }
+  .fpv2__freeship-{{ section_id }}:hover { background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
+  .fpv2__freeship-{{ section_id }}:active { transform: scale(0.99); }
+  .fpv2__freeship-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
+  .fpv2__freeship-main-{{ section_id }} { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.25; }
+  .fpv2__freeship-text-{{ section_id }} { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+  .fpv2__freeship-ico-{{ section_id }} { margin-right: 4px; }
+  .fpv2__freeship-sub-{{ section_id }} { font-size: 12px; font-weight: 500; opacity: 0.85; }
+  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__freeship-main-{{ section_id }} { visibility: hidden; }
+  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__spinner-{{ section_id }} { display: block; }
 
   /* Entry animation */
   .fpv2__container-{{ section_id }}.fpv2-anim .fpv2__media-{{ section_id }},
@@ -406,6 +435,26 @@
           {% endif %}
         </div>
 
+        {%- comment -%} Free-shipping CTA (adds N units → checkout) {%- endcomment -%}
+        {% if section.settings.show_freeship and v != blank and v.available %}
+          <button type="button" class="fpv2__freeship-{{ section_id }}" data-fpv2-freeship
+                  data-variant-id="{{ v.id }}"
+                  data-qty="{{ section.settings.freeship_qty }}"
+                  data-extra-id="{{ section.settings.freeship_extra_variant }}"
+                  data-extra-qty="{{ section.settings.freeship_extra_qty }}">
+            <span class="fpv2__freeship-main-{{ section_id }}">
+              <span class="fpv2__freeship-text-{{ section_id }}">
+                {% if section.settings.freeship_icon %}<span class="fpv2__freeship-ico-{{ section_id }}">🚚</span>{% endif %}
+                {{ section.settings.freeship_text }}
+              </span>
+              {% if section.settings.freeship_subtext != blank %}
+                <span class="fpv2__freeship-sub-{{ section_id }}">{{ section.settings.freeship_subtext }}</span>
+              {% endif %}
+            </span>
+            <span class="fpv2__spinner-{{ section_id }}"></span>
+          </button>
+        {% endif %}
+
         {%- comment -%} Description {%- endcomment -%}
         {%- liquid
           assign desc = section.settings.description
@@ -477,44 +526,51 @@
         {% endif %}
 
         {%- comment -%} ================= RECIPES (manual blocks) ================= {%- endcomment -%}
-        {% if section.settings.show_recipes and section.blocks.size > 0 %}
-          <div class="fpv2__recipes-{{ section_id }}" data-fpv2-recipes>
-            <div class="fpv2__recipes-head-{{ section_id }}">
-              <h3 class="fpv2__recipes-title-{{ section_id }}">{{ section.settings.recipes_title }}</h3>
-              <div class="fpv2__recipes-nav-{{ section_id }}">
-                <button type="button" class="fpv2__recipes-arrow-{{ section_id }}" data-recipes-prev aria-label="Anterior">‹</button>
-                <button type="button" class="fpv2__recipes-arrow-{{ section_id }}" data-recipes-next aria-label="Siguiente">›</button>
+        {% if section.settings.show_recipes %}
+          {% if section.blocks.size > 0 %}
+            <div class="fpv2__recipes-{{ section_id }}" data-fpv2-recipes>
+              <div class="fpv2__recipes-head-{{ section_id }}">
+                <h3 class="fpv2__recipes-title-{{ section_id }}">{{ section.settings.recipes_title }}</h3>
+                <div class="fpv2__recipes-nav-{{ section_id }}">
+                  <button type="button" class="fpv2__recipes-arrow-{{ section_id }}" data-recipes-prev aria-label="Anterior">‹</button>
+                  <button type="button" class="fpv2__recipes-arrow-{{ section_id }}" data-recipes-next aria-label="Siguiente">›</button>
+                </div>
+              </div>
+              <div class="fpv2__recipes-track-{{ section_id }}" data-recipes-track>
+                {% for block in section.blocks %}
+                  {% if block.type == 'recipe' %}
+                    {%- liquid
+                      assign r_img = block.settings.image
+                      assign r_name = block.settings.name
+                      assign r_url = block.settings.link
+                    -%}
+                    <div class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
+                      {% if r_url != blank %}<a href="{{ r_url }}" class="fpv2__recipe-link-{{ section_id }}">{% endif %}
+                        {% if r_img != blank %}
+                          <img src="{{ r_img | image_url: width: 500 }}"
+                               alt="{{ r_img.alt | default: r_name | escape }}"
+                               class="fpv2__recipe-img-{{ section_id }}"
+                               width="500" height="{{ 500 | divided_by: r_img.aspect_ratio | round }}"
+                               loading="lazy">
+                        {% else %}
+                          <div class="fpv2__recipe-img-{{ section_id }} fpv2__recipe-ph-{{ section_id }}">
+                            {{ 'image' | placeholder_svg_tag }}
+                          </div>
+                        {% endif %}
+                        {% if section.settings.recipes_show_name and r_name != blank %}
+                          <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
+                        {% endif %}
+                      {% if r_url != blank %}</a>{% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
               </div>
             </div>
-            <div class="fpv2__recipes-track-{{ section_id }}" data-recipes-track>
-              {% for block in section.blocks %}
-                {% if block.type == 'recipe' %}
-                  {%- liquid
-                    assign r_img = block.settings.image
-                    assign r_name = block.settings.name
-                    assign r_url = block.settings.link
-                  -%}
-                  {% if r_url != blank %}<a href="{{ r_url }}"{% else %}<div{% endif %}
-                     class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
-                    {% if r_img != blank %}
-                      <img src="{{ r_img | image_url: width: 500 }}"
-                           alt="{{ r_img.alt | default: r_name | escape }}"
-                           class="fpv2__recipe-img-{{ section_id }}"
-                           width="500" height="{{ 500 | divided_by: r_img.aspect_ratio | round }}"
-                           loading="lazy">
-                    {% else %}
-                      <div class="fpv2__recipe-img-{{ section_id }}">
-                        {{ 'image' | placeholder_svg_tag }}
-                      </div>
-                    {% endif %}
-                    {% if section.settings.recipes_show_name and r_name != blank %}
-                      <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
-                    {% endif %}
-                  {% if r_url != blank %}</a>{% else %}</div>{% endif %}
-                {% endif %}
-              {% endfor %}
-            </div>
-          </div>
+          {% elsif request.design_mode %}
+            <p class="fpv2__recipes-empty-{{ section_id }}">
+              {{ section.settings.recipes_title }} — usa <strong>“Agregar bloque → Recipe”</strong> para añadir recetas (imagen, nombre y link).
+            </p>
+          {% endif %}
         {% endif %}
 
       </div>
@@ -749,6 +805,44 @@
       });
     }
 
+    /* ===== Free-shipping CTA: add N units (+ optional extra) → checkout ===== */
+    const freeship = section.querySelector('[data-fpv2-freeship]');
+    if (freeship) {
+      freeship.addEventListener('click', async function (e) {
+        e.preventDefault();
+        if (freeship.disabled) return;
+
+        const mainId = parseInt(freeship.dataset.variantId, 10);
+        const mainQty = Math.max(1, parseInt(freeship.dataset.qty, 10) || 2);
+        const extraId = parseInt(freeship.dataset.extraId, 10);
+        const extraQty = Math.max(1, parseInt(freeship.dataset.extraQty, 10) || 1);
+
+        const items = [{ id: mainId, quantity: mainQty }];
+        if (extraId && !Number.isNaN(extraId) && extraId !== mainId) {
+          items.push({ id: extraId, quantity: extraQty });
+        }
+
+        freeship.classList.add('is-loading');
+        freeship.disabled = true;
+
+        try {
+          const res = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ items })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.description || data.message || 'Error');
+          window.location.href = '/checkout';
+        } catch (err) {
+          console.error('Featured Product V2 - Free shipping CTA error:', err);
+          alert(err.message || 'Error adding to cart.');
+          freeship.classList.remove('is-loading');
+          freeship.disabled = false;
+        }
+      });
+    }
+
     /* ===== Entry animation ===== */
     {% if section.settings.enable_animation %}
     (function initAnim() {
@@ -915,6 +1009,32 @@
       "type": "range", "id": "button_letter_spacing", "min": 0, "max": 8, "step": 1,
       "label": "Button letter spacing", "default": 0
     },
+
+    { "type": "header", "content": "Free-shipping CTA" },
+    {
+      "type": "paragraph",
+      "content": "Adds the units below to the cart and goes straight to checkout (for a 2+ items free-shipping offer)."
+    },
+    { "type": "checkbox", "id": "show_freeship", "label": "Show free-shipping CTA", "default": false },
+    { "type": "text", "id": "freeship_text", "label": "CTA text", "default": "Buy 2 & get FREE shipping" },
+    { "type": "text", "id": "freeship_subtext", "label": "CTA sub-text (optional)", "default": "Straight to checkout" },
+    { "type": "checkbox", "id": "freeship_icon", "label": "Show truck icon", "default": true },
+    {
+      "type": "range", "id": "freeship_qty", "min": 2, "max": 6, "step": 1,
+      "label": "Units of this product to add", "default": 2
+    },
+    {
+      "type": "text", "id": "freeship_extra_variant", "label": "Extra variant ID (optional)",
+      "info": "Add a different product too. Leave empty to only add this product."
+    },
+    {
+      "type": "range", "id": "freeship_extra_qty", "min": 1, "max": 4, "step": 1,
+      "label": "Units of the extra product", "default": 1
+    },
+    { "type": "color", "id": "freeship_bg", "label": "CTA background", "default": "#2e7d32" },
+    { "type": "color", "id": "freeship_color", "label": "CTA text color", "default": "#ffffff" },
+    { "type": "color", "id": "freeship_bg_hover", "label": "CTA hover background", "default": "#256628" },
+    { "type": "color", "id": "freeship_border", "label": "CTA border", "default": "#2e7d32" },
 
     { "type": "header", "content": "Recipes (add manually below)" },
     { "type": "checkbox", "id": "show_recipes", "label": "Show recipes carousel", "default": true },
