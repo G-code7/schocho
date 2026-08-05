@@ -343,9 +343,13 @@
     transition: background .25s ease, color .25s ease, opacity .25s ease, transform .1s ease;
     {% if section.settings.freeship_width == '100' %}
       width: 100%;
+    {% elsif section.settings.freeship_width == '80' %}
+      width: 80%;
+    {% elsif section.settings.freeship_width == '60' %}
+      width: 60%;
     {% else %}
       width: auto;
-      min-width: 260px;
+      min-width: 380px;
       align-self: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
     {% endif %}
   }
