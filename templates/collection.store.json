@@ -568,6 +568,37 @@
     },
     "featured_product_v2_hwaxKE": {
       "type": "featured-product-v2",
+      "blocks": {
+        "recipe_jah9CB": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
+        },
+        "recipe_CJ8VJw": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
+        },
+        "recipe_6tVqaB": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "recipe_jah9CB",
+        "recipe_CJ8VJw",
+        "recipe_6tVqaB"
+      ],
       "name": "Featured Product V2",
       "settings": {
         "product": "chocho-pure-ingredient",
@@ -589,7 +620,7 @@
         "media_border_radius": 16,
         "media_shadow": false,
         "thumb_size": 64,
-        "dot_color": "#370c07",
+        "dot_color": "#3D2258",
         "show_promo": true,
         "promo_badge": "20% OFF",
         "promo_text": "Limited-time launch offer",
@@ -613,6 +644,17 @@
         "button_radius": 8,
         "button_text_transform": "none",
         "button_letter_spacing": 0,
+        "show_freeship": true,
+        "freeship_text": "Buy 2 & get FREE shipping",
+        "freeship_subtext": "Straight to checkout",
+        "freeship_icon": true,
+        "freeship_qty": 2,
+        "freeship_extra_variant": "",
+        "freeship_extra_qty": 1,
+        "freeship_bg": "#2e7d32",
+        "freeship_color": "#ffffff",
+        "freeship_bg_hover": "#256628",
+        "freeship_border": "#2e7d32",
         "show_recipes": true,
         "recipes_title": "Recipes with this product",
         "recipes_show_name": true,
