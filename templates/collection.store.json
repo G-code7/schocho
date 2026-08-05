@@ -580,16 +580,48 @@
         "recipe_6tVqaB": {
           "type": "recipe",
           "settings": {
-            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
-            "name": "",
+            "image": "shopify://shop_images/freepik__professional-food-photography-shot-on-kodak-portra__15678.jpg",
+            "name": "Tomato Basil Protein Marinara",
             "link": ""
           }
         },
         "recipe_drNJEN": {
           "type": "recipe",
           "settings": {
-            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
-            "name": "",
+            "image": "shopify://shop_images/High-Protein_Pesto_Sauce.webp",
+            "name": "High-Protein Pesto Sauce",
+            "link": ""
+          }
+        },
+        "recipe_66tXGy": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Green_Plantain_Chocho_Tortillas.webp",
+            "name": "Green Plantain Chocho Tortillas",
+            "link": ""
+          }
+        },
+        "recipe_U7tdDj": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Andean_Aji_Verde_Protein_Sauce.webp",
+            "name": "Andean Aji Verde Protein Sauce",
+            "link": ""
+          }
+        },
+        "recipe_yNjk6j": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Vegan_Protein_Wrap.webp",
+            "name": "Mediterranean Vegan Protein Wrap",
+            "link": ""
+          }
+        },
+        "recipe_fYEFWB": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/GuacamoleChochoProteinDip.webp",
+            "name": "Guacamole Chocho Protein Dip",
             "link": ""
           }
         }
@@ -597,7 +629,11 @@
       "block_order": [
         "recipe_CJ8VJw",
         "recipe_6tVqaB",
-        "recipe_drNJEN"
+        "recipe_drNJEN",
+        "recipe_66tXGy",
+        "recipe_U7tdDj",
+        "recipe_yNjk6j",
+        "recipe_fYEFWB"
       ],
       "name": "Featured Product V2",
       "settings": {
