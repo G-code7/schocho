@@ -569,19 +569,11 @@
     "featured_product_v2_hwaxKE": {
       "type": "featured-product-v2",
       "blocks": {
-        "recipe_jah9CB": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
-            "name": "",
-            "link": ""
-          }
-        },
         "recipe_CJ8VJw": {
           "type": "recipe",
           "settings": {
             "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
-            "name": "",
+            "name": "Apple Cinnamon Overnight Oats",
             "link": ""
           }
         },
@@ -603,7 +595,6 @@
         }
       },
       "block_order": [
-        "recipe_jah9CB",
         "recipe_CJ8VJw",
         "recipe_6tVqaB",
         "recipe_drNJEN"
@@ -613,26 +604,26 @@
         "product": "chocho-pure-ingredient",
         "variant_id": "",
         "custom_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
-        "description": "<p>The foundation of everything we do. Pure Andean chocho bean powder packed with clean, plant-based protein and essential amino acids. No fillers, no processing tricks—just 5,000 years of agricultural heritage ground into a versatile daily superfood.</p>",
+        "description": "<p>The foundation of everything we do. Pure Andean chocho bean powder packed with clean, plant-based protein and essential amino acids. No fillers, no processing tricks just 5,000 years of agricultural heritage ground into a versatile daily superfood.</p>",
         "use_product_description": false,
         "media_text_ratio": "45fr 55fr",
-        "column_gap": 56,
+        "column_gap": 52,
         "vertical_align": "start",
         "sticky_media": true,
         "sticky_offset": 40,
         "max_width": 1200,
         "enable_animation": true,
-        "section_border_bottom_width": 10,
-        "section_border_bottom_color": "#ece3d7",
+        "section_border_bottom_width": 16,
+        "section_border_bottom_color": "#3E1D65",
         "gallery_nav": "thumbnails",
         "image_aspect_ratio": "1/1",
-        "image_fit": "contain",
+        "image_fit": "cover",
         "image_bg": "rgba(0,0,0,0)",
-        "media_border_radius": 16,
+        "media_border_radius": 12,
         "media_shadow": false,
-        "thumb_size": 64,
+        "thumb_size": 60,
         "dot_color": "#3d2258",
-        "show_promo": true,
+        "show_promo": false,
         "promo_badge": "20% OFF",
         "promo_text": "Limited-time launch offer",
         "countdown_enabled": true,
@@ -648,7 +639,7 @@
         "cd_hours_label": "Hrs",
         "cd_mins_label": "Min",
         "cd_secs_label": "Sec",
-        "promo_code": "",
+        "promo_code": "asfdasdf",
         "promo_code_copyable": true,
         "promo_code_label": "Your code:",
         "promo_code_copy_text": "Copy",
