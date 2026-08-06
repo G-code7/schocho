@@ -601,6 +601,27 @@
             "text": ""
           }
         },
+        "tab_zfLGr9": {
+          "type": "tab",
+          "settings": {
+            "title": "Shipping",
+            "content": "<p>Add your info here.</p>"
+          }
+        },
+        "tab_AQNMtC": {
+          "type": "tab",
+          "settings": {
+            "title": "Savory",
+            "content": "<p>Add your info here.</p>"
+          }
+        },
+        "tab_yi3qnB": {
+          "type": "tab",
+          "settings": {
+            "title": "Servings",
+            "content": "<p>Add your info here.</p>"
+          }
+        },
         "recipe_CJ8VJw": {
           "type": "recipe",
           "settings": {
@@ -663,6 +684,9 @@
         "badge_JzzF7n",
         "badge_kWFqmD",
         "badge_FNmHHP",
+        "tab_zfLGr9",
+        "tab_AQNMtC",
+        "tab_yi3qnB",
         "recipe_CJ8VJw",
         "recipe_6tVqaB",
         "recipe_drNJEN",
