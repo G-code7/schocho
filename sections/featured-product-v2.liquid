@@ -624,13 +624,21 @@
     }
     .fpv2__badges-{{ section_id }} { justify-content: center; gap: 14px 18px; }
     .fpv2__tab-btn-{{ section_id }} { font-size: 12px; padding: 10px 12px; min-width: 88px; }
+    .fpv2__badge-icon-{{ section_id }} {
+      width: {{ section.settings.badge_icon_size_mobile }}px;
+      height: {{ section.settings.badge_icon_size_mobile }}px;
+    }
   }
 {% endstyle %}
 
-<section id="{{ section_id }}" class="fpv2-{{ section_id }}" data-section-id="{{ section_id }}" {{ section.shopify_attributes }}>
+<section
+  id="{{ section_id }}"
+  class="fpv2-{{ section_id }}"
+  data-section-id="{{ section_id }}"
+  {{ section.shopify_attributes }}
+>
   {% if product != blank %}
     <div class="fpv2__container-{{ section_id }}" data-fpv2-container>
-
       {%- comment -%} ================= MEDIA (left) ================= {%- endcomment -%}
       <div class="fpv2__media-{{ section_id }}">
         <div class="fpv2__media-wrapper-{{ section_id }}">
@@ -644,7 +652,9 @@
                     alt="{{ img.alt | default: product.title | escape }}"
                     class="fpv2__slide-img-{{ section_id }}"
                     loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-                    width="1200" height="{{ 1200 | divided_by: r | round }}">
+                    width="1200"
+                    height="{{ 1200 | divided_by: r | round }}"
+                  >
                 </div>
               {% endfor %}
             {% else %}
@@ -657,9 +667,12 @@
           {% if product.images.size > 1 and section.settings.gallery_nav == 'thumbnails' %}
             <div class="fpv2__thumbs-{{ section_id }}" data-fpv2-thumbs>
               {% for img in product.images %}
-                <button type="button"
-                        class="fpv2__thumb-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
-                        data-thumb="{{ forloop.index0 }}" aria-label="Ver imagen {{ forloop.index }}">
+                <button
+                  type="button"
+                  class="fpv2__thumb-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                  data-thumb="{{ forloop.index0 }}"
+                  aria-label="Ver imagen {{ forloop.index }}"
+                >
                   <img src="{{ img | image_url: width: 200 }}" alt="" loading="lazy">
                 </button>
               {% endfor %}
@@ -670,9 +683,12 @@
         {% if product.images.size > 1 and section.settings.gallery_nav != 'thumbnails' %}
           <div class="fpv2__dots-{{ section_id }}" data-fpv2-dots>
             {% for img in product.images %}
-              <button type="button"
-                      class="fpv2__dot-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
-                      data-dot="{{ forloop.index0 }}" aria-label="Ver imagen {{ forloop.index }}"></button>
+              <button
+                type="button"
+                class="fpv2__dot-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                data-dot="{{ forloop.index0 }}"
+                aria-label="Ver imagen {{ forloop.index }}"
+              ></button>
             {% endfor %}
           </div>
         {% endif %}
@@ -680,11 +696,14 @@
 
       {%- comment -%} ================= DETAILS (right) ================= {%- endcomment -%}
       <div class="fpv2__details-{{ section_id }}">
-
         {%- comment -%} Title {%- endcomment -%}
         <h2 class="fpv2__title-{{ section_id }}">
           <a href="{{ product.url }}">
-            {% if section.settings.custom_title != blank %}{{ section.settings.custom_title }}{% else %}{{ product.title }}{% endif %}
+            {% if section.settings.custom_title != blank -%}
+              {{- section.settings.custom_title -}}
+            {%- else -%}
+              {{- product.title -}}
+            {%- endif %}
           </a>
         </h2>
 
@@ -693,18 +712,27 @@
           <span class="fpv2__price-current-{{ section_id }}">{{ v.price | money }}</span>
           {% if v.compare_at_price > v.price %}
             <span class="fpv2__price-compare-{{ section_id }}">{{ v.compare_at_price | money }}</span>
-            {% assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round %}
+            {% assign pct = v.compare_at_price
+              | minus: v.price
+              | times: 100.0
+              | divided_by: v.compare_at_price
+              | round
+            %}
             <span class="fpv2__price-save-{{ section_id }}">-{{ pct }}%</span>
           {% endif %}
         </div>
 
         {%- comment -%} Free-shipping CTA (adds N units → checkout) {%- endcomment -%}
         {% if section.settings.show_freeship and v != blank and v.available %}
-          <button type="button" class="fpv2__freeship-{{ section_id }}" data-fpv2-freeship
-                  data-variant-id="{{ v.id }}"
-                  data-qty="{{ section.settings.freeship_qty }}"
-                  data-extra-id="{{ section.settings.freeship_extra_variant }}"
-                  data-extra-qty="{{ section.settings.freeship_extra_qty }}">
+          <button
+            type="button"
+            class="fpv2__freeship-{{ section_id }}"
+            data-fpv2-freeship
+            data-variant-id="{{ v.id }}"
+            data-qty="{{ section.settings.freeship_qty }}"
+            data-extra-id="{{ section.settings.freeship_extra_variant }}"
+            data-extra-qty="{{ section.settings.freeship_extra_qty }}"
+          >
             <span class="fpv2__freeship-main-{{ section_id }}">
               <span class="fpv2__freeship-text-{{ section_id }}">
                 {{ section.settings.freeship_text }}
@@ -730,8 +758,13 @@
 
         {%- comment -%} Discount + Countdown + Coupon Code {%- endcomment -%}
         {% if section.settings.show_promo %}
-          <div class="fpv2__promo-{{ section_id }}" data-fpv2-promo
-               {% if section.settings.promo_hide_on_expiry %}data-hide-on-expiry{% endif %}>
+          <div
+            class="fpv2__promo-{{ section_id }}"
+            data-fpv2-promo
+            {% if section.settings.promo_hide_on_expiry %}
+              data-hide-on-expiry
+            {% endif %}
+          >
             <div class="fpv2__promo-head-{{ section_id }}">
               {% if section.settings.promo_badge != blank %}
                 <span class="fpv2__promo-badge-{{ section_id }}">{{ section.settings.promo_badge }}</span>
@@ -741,17 +774,31 @@
               {% endif %}
             </div>
             {% if section.settings.countdown_enabled %}
-              <div class="fpv2__countdown-{{ section_id }}"
-                   data-fpv2-countdown
-                   data-year="{{ section.settings.cd_year }}"
-                   data-month="{{ section.settings.cd_month }}"
-                   data-day="{{ section.settings.cd_day }}"
-                   data-hour="{{ section.settings.cd_hour }}"
-                   data-minute="{{ section.settings.cd_minute }}">
-                <div class="fpv2__cd-unit-{{ section_id }}"><span class="fpv2__cd-num-{{ section_id }}" data-cd-days>00</span><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_days_label }}</span></div>
-                <div class="fpv2__cd-unit-{{ section_id }}"><span class="fpv2__cd-num-{{ section_id }}" data-cd-hours>00</span><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_hours_label }}</span></div>
-                <div class="fpv2__cd-unit-{{ section_id }}"><span class="fpv2__cd-num-{{ section_id }}" data-cd-mins>00</span><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_mins_label }}</span></div>
-                <div class="fpv2__cd-unit-{{ section_id }}"><span class="fpv2__cd-num-{{ section_id }}" data-cd-secs>00</span><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_secs_label }}</span></div>
+              <div
+                class="fpv2__countdown-{{ section_id }}"
+                data-fpv2-countdown
+                data-year="{{ section.settings.cd_year }}"
+                data-month="{{ section.settings.cd_month }}"
+                data-day="{{ section.settings.cd_day }}"
+                data-hour="{{ section.settings.cd_hour }}"
+                data-minute="{{ section.settings.cd_minute }}"
+              >
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-days>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_days_label }}</span>
+                </div>
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-hours>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_hours_label }}</span>
+                </div>
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-mins>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_mins_label }}</span>
+                </div>
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-secs>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_secs_label }}</span>
+                </div>
               </div>
             {% endif %}
             {% if section.settings.promo_code != blank %}
@@ -760,9 +807,18 @@
                 <div class="fpv2__promo-code-box-{{ section_id }}">
                   <code class="fpv2__promo-code-value-{{ section_id }}">{{ section.settings.promo_code }}</code>
                   {% if section.settings.promo_code_copyable %}
-                    <button type="button" class="fpv2__promo-code-copy-{{ section_id }}" data-promo-code="{{ section.settings.promo_code }}" aria-label="Copiar código de descuento">
-                      <span class="fpv2__promo-code-copy-text-{{ section_id }}">{{ section.settings.promo_code_copy_text }}</span>
-                      <span class="fpv2__promo-code-copied-text-{{ section_id }}">{{ section.settings.promo_code_copied_text }}</span>
+                    <button
+                      type="button"
+                      class="fpv2__promo-code-copy-{{ section_id }}"
+                      data-promo-code="{{ section.settings.promo_code }}"
+                      aria-label="Copiar código de descuento"
+                    >
+                      <span class="fpv2__promo-code-copy-text-{{ section_id }}">
+                        {{- section.settings.promo_code_copy_text -}}
+                      </span>
+                      <span class="fpv2__promo-code-copied-text-{{ section_id }}">
+                        {{- section.settings.promo_code_copied_text -}}
+                      </span>
                     </button>
                   {% endif %}
                 </div>
@@ -778,14 +834,40 @@
 
             <div class="fpv2__qty-row-{{ section_id }}">
               <div class="fpv2__qty-{{ section_id }}">
-                <button type="button" class="fpv2__qty-btn-{{ section_id }}" data-qty-decrease aria-label="Disminuir cantidad">−</button>
-                <input type="number" class="fpv2__qty-input-{{ section_id }}" name="quantity"
-                       value="1" min="1" data-qty-input aria-label="Cantidad">
-                <button type="button" class="fpv2__qty-btn-{{ section_id }}" data-qty-increase aria-label="Aumentar cantidad">+</button>
+                <button
+                  type="button"
+                  class="fpv2__qty-btn-{{ section_id }}"
+                  data-qty-decrease
+                  aria-label="Disminuir cantidad"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="fpv2__qty-input-{{ section_id }}"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  data-qty-input
+                  aria-label="Cantidad"
+                >
+                <button
+                  type="button"
+                  class="fpv2__qty-btn-{{ section_id }}"
+                  data-qty-increase
+                  aria-label="Aumentar cantidad"
+                >
+                  +
+                </button>
               </div>
 
-              <button type="button" class="fpv2__atc-{{ section_id }}" data-fpv2-atc
-                      data-variant-id="{{ v.id }}" style="position: relative;">
+              <button
+                type="button"
+                class="fpv2__atc-{{ section_id }}"
+                data-fpv2-atc
+                data-variant-id="{{ v.id }}"
+                style="position: relative;"
+              >
                 <span class="fpv2__atc-text-{{ section_id }}">{{ section.settings.atc_text }}</span>
                 <span class="fpv2__spinner-{{ section_id }}"></span>
               </button>
@@ -812,10 +894,16 @@
                     <span class="fpv2__badge-icon-{{ section_id }}">{{ block.settings.icon_svg }}</span>
                   {% elsif block.settings.icon_image != blank %}
                     <span class="fpv2__badge-icon-{{ section_id }}">
-                      <img src="{{ block.settings.icon_image | image_url: width: 80 }}" alt="{{ block.settings.text | escape }}" loading="lazy">
+                      <img
+                        src="{{ block.settings.icon_image | image_url: width: 80 }}"
+                        alt="{{ block.settings.text | escape }}"
+                        loading="lazy"
+                      >
                     </span>
                   {% endif %}
-                  {% if block.settings.text != blank %}<span>{{ block.settings.text }}</span>{% endif %}
+                  {% if block.settings.text != blank -%}
+                    <span>{{ block.settings.text }}</span>
+                  {%- endif %}
                 </div>
               {% endfor %}
             </div>
@@ -833,19 +921,24 @@
             <div class="fpv2__tabs-{{ section_id }}" data-fpv2-tabs>
               <div class="fpv2__tabs-nav-{{ section_id }}" role="tablist">
                 {% for block in tab_blocks %}
-                  <button type="button"
-                          class="fpv2__tab-btn-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
-                          data-tab-btn="{{ forloop.index0 }}"
-                          role="tab"
-                          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
-                          {{ block.shopify_attributes }}>
+                  <button
+                    type="button"
+                    class="fpv2__tab-btn-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                    data-tab-btn="{{ forloop.index0 }}"
+                    role="tab"
+                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
                     {{ block.settings.title }}
                   </button>
                 {% endfor %}
               </div>
               {% for block in tab_blocks %}
-                <div class="fpv2__tab-panel-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
-                     data-tab-panel="{{ forloop.index0 }}" role="tabpanel">
+                <div
+                  class="fpv2__tab-panel-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                  data-tab-panel="{{ forloop.index0 }}"
+                  role="tabpanel"
+                >
                   {{ block.settings.content }}
                 </div>
               {% endfor %}
@@ -864,8 +957,22 @@
               <div class="fpv2__recipes-head-{{ section_id }}">
                 <h3 class="fpv2__recipes-title-{{ section_id }}">{{ section.settings.recipes_title }}</h3>
                 <div class="fpv2__recipes-nav-{{ section_id }}">
-                  <button type="button" class="fpv2__recipes-arrow-{{ section_id }}" data-recipes-prev aria-label="Anterior">‹</button>
-                  <button type="button" class="fpv2__recipes-arrow-{{ section_id }}" data-recipes-next aria-label="Siguiente">›</button>
+                  <button
+                    type="button"
+                    class="fpv2__recipes-arrow-{{ section_id }}"
+                    data-recipes-prev
+                    aria-label="Anterior"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    class="fpv2__recipes-arrow-{{ section_id }}"
+                    data-recipes-next
+                    aria-label="Siguiente"
+                  >
+                    ›
+                  </button>
                 </div>
               </div>
               <div class="fpv2__recipes-track-{{ section_id }}" data-recipes-track>
@@ -881,28 +988,35 @@
                       endif
                     -%}
                     {% if has_link %}
-                      <a href="{{ r_url }}" class="fpv2__recipe-{{ section_id }} fpv2__recipe--linked-{{ section_id }}" {{ block.shopify_attributes }}>
+                      <a
+                        href="{{ r_url }}"
+                        class="fpv2__recipe-{{ section_id }} fpv2__recipe--linked-{{ section_id }}"
+                        {{ block.shopify_attributes }}
+                      >
                     {% else %}
                       <div class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
                     {% endif %}
-                      <div class="fpv2__recipe-media-{{ section_id }}">
-                        {% if r_img != blank %}
-                          <img src="{{ r_img | image_url: width: 500 }}"
-                               alt="{{ r_img.alt | default: r_name | escape }}"
-                               class="fpv2__recipe-img-{{ section_id }}"
-                               width="500" height="{{ 500 | divided_by: r_img.aspect_ratio | round }}"
-                               loading="lazy">
-                        {% else %}
-                          <div class="fpv2__recipe-img-{{ section_id }} fpv2__recipe-ph-{{ section_id }}">
-                            {{ 'image' | placeholder_svg_tag }}
-                          </div>
-                        {% endif %}
-                        {% if section.settings.recipes_show_name and r_name != blank %}
-                          <div class="fpv2__recipe-overlay-{{ section_id }}">
-                            <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
-                          </div>
-                        {% endif %}
-                      </div>
+                    <div class="fpv2__recipe-media-{{ section_id }}">
+                      {% if r_img != blank %}
+                        <img
+                          src="{{ r_img | image_url: width: 500 }}"
+                          alt="{{ r_img.alt | default: r_name | escape }}"
+                          class="fpv2__recipe-img-{{ section_id }}"
+                          width="500"
+                          height="{{ 500 | divided_by: r_img.aspect_ratio | round }}"
+                          loading="lazy"
+                        >
+                      {% else %}
+                        <div class="fpv2__recipe-img-{{ section_id }} fpv2__recipe-ph-{{ section_id }}">
+                          {{ 'image' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                      {% if section.settings.recipes_show_name and r_name != blank %}
+                        <div class="fpv2__recipe-overlay-{{ section_id }}">
+                          <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
+                        </div>
+                      {% endif %}
+                    </div>
                     {% if has_link %}</a>{% else %}</div>{% endif %}
                   {% endif %}
                 {% endfor %}
@@ -910,11 +1024,11 @@
             </div>
           {% elsif request.design_mode %}
             <p class="fpv2__recipes-empty-{{ section_id }}">
-              {{ section.settings.recipes_title }} — usa <strong>“Agregar bloque → Recipe”</strong> para añadir recetas (imagen, nombre y link).
+              {{ section.settings.recipes_title }} — usa <strong>“Agregar bloque → Recipe”</strong> para añadir recetas
+              (imagen, nombre y link).
             </p>
           {% endif %}
         {% endif %}
-
       </div>
     </div>
   {% else %}
@@ -1274,24 +1388,35 @@
     { "type": "header", "content": "Product" },
     { "type": "product", "id": "product", "label": "Product" },
     {
-      "type": "text", "id": "variant_id", "label": "Variant ID (optional)",
+      "type": "text",
+      "id": "variant_id",
+      "label": "Variant ID (optional)",
       "info": "Pin a specific variant for this block (e.g. 500g). Leave empty to use the first available variant."
     },
     {
-      "type": "html", "id": "custom_title", "label": "Custom title (HTML, optional)",
+      "type": "html",
+      "id": "custom_title",
+      "label": "Custom title (HTML, optional)",
       "info": "Leave empty to use the product's title."
     },
     {
-      "type": "richtext", "id": "description", "label": "Short description",
+      "type": "richtext",
+      "id": "description",
+      "label": "Short description",
       "info": "Shown under the price. Leave empty to fall back to the product description (if enabled below)."
     },
     {
-      "type": "checkbox", "id": "use_product_description", "label": "Fall back to product description", "default": false
+      "type": "checkbox",
+      "id": "use_product_description",
+      "label": "Fall back to product description",
+      "default": false
     },
 
     { "type": "header", "content": "Layout" },
     {
-      "type": "select", "id": "media_text_ratio", "label": "Image / details split (desktop)",
+      "type": "select",
+      "id": "media_text_ratio",
+      "label": "Image / details split (desktop)",
       "options": [
         { "value": "1fr 1fr", "label": "50 / 50" },
         { "value": "55fr 45fr", "label": "55 / 45" },
@@ -1302,11 +1427,19 @@
       "default": "55fr 45fr"
     },
     {
-      "type": "range", "id": "column_gap", "min": 20, "max": 100, "step": 4,
-      "unit": "px", "label": "Gap between columns", "default": 56
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between columns",
+      "default": 56
     },
     {
-      "type": "select", "id": "vertical_align", "label": "Vertical alignment",
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Vertical alignment",
       "options": [
         { "value": "start", "label": "Top" },
         { "value": "center", "label": "Center" }
@@ -1315,32 +1448,61 @@
     },
     { "type": "checkbox", "id": "sticky_media", "label": "Sticky image on scroll (desktop)", "default": false },
     {
-      "type": "range", "id": "sticky_offset", "min": 0, "max": 160, "step": 8,
-      "unit": "px", "label": "Sticky offset from top", "default": 40
+      "type": "range",
+      "id": "sticky_offset",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "label": "Sticky offset from top",
+      "default": 40
     },
     {
-      "type": "range", "id": "max_width", "min": 800, "max": 1600, "step": 20,
-      "unit": "px", "label": "Section max width", "default": 1200
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Section max width",
+      "default": 1200
     },
     { "type": "checkbox", "id": "enable_animation", "label": "Fade-in on scroll", "default": true },
 
     { "type": "header", "content": "Section Separator" },
     {
-      "type": "range", "id": "section_border_bottom_width", "min": 0, "max": 20, "step": 1,
-      "unit": "px", "label": "Bottom separator height", "default": 10
+      "type": "range",
+      "id": "section_border_bottom_width",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom separator height",
+      "default": 10
     },
     {
-      "type": "color", "id": "section_border_bottom_color", "label": "Bottom separator color", "default": "#ece3d7"
+      "type": "color",
+      "id": "section_border_bottom_color",
+      "label": "Bottom separator color",
+      "default": "#ece3d7"
     },
 
     { "type": "header", "content": "Image Gallery" },
     {
-      "type": "range", "id": "image_max_width", "min": 300, "max": 900, "step": 20,
-      "unit": "px", "label": "Image container max width", "default": 600,
+      "type": "range",
+      "id": "image_max_width",
+      "min": 300,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Image container max width",
+      "default": 600,
       "info": "Controls the overall image size. Combine with the 60/40 split to fine-tune the layout."
     },
     {
-      "type": "select", "id": "gallery_nav", "label": "Gallery navigation",
+      "type": "select",
+      "id": "gallery_nav",
+      "label": "Gallery navigation",
       "options": [
         { "value": "dots", "label": "Dots (below)" },
         { "value": "thumbnails", "label": "Thumbnails (left column)" }
@@ -1348,7 +1510,9 @@
       "default": "thumbnails"
     },
     {
-      "type": "select", "id": "image_aspect_ratio", "label": "Image aspect ratio",
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
       "options": [
         { "value": "1/1", "label": "Square (1:1)" },
         { "value": "4/5", "label": "Portrait (4:5)" },
@@ -1358,7 +1522,9 @@
       "default": "1/1"
     },
     {
-      "type": "select", "id": "image_fit", "label": "Image fit",
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
       "options": [
         { "value": "cover", "label": "Cover" },
         { "value": "contain", "label": "Contain" }
@@ -1367,29 +1533,59 @@
     },
     { "type": "color", "id": "image_bg", "label": "Image background", "default": "#f2efe9" },
     {
-      "type": "range", "id": "media_border_radius", "min": 0, "max": 32, "step": 2,
-      "unit": "px", "label": "Image border radius", "default": 16
+      "type": "range",
+      "id": "media_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 16
     },
     { "type": "checkbox", "id": "media_shadow", "label": "Soft shadow under image", "default": true },
     {
-      "type": "range", "id": "thumb_size", "min": 48, "max": 96, "step": 4,
-      "unit": "px", "label": "Thumbnail size", "default": 64
+      "type": "range",
+      "id": "thumb_size",
+      "min": 48,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "label": "Thumbnail size",
+      "default": 64
     },
     { "type": "color", "id": "dot_color", "label": "Dot color", "default": "#370c07" },
 
     { "type": "header", "content": "Discount & Countdown" },
     { "type": "checkbox", "id": "show_promo", "label": "Show discount block", "default": true },
-    { "type": "text", "id": "promo_badge", "label": "Discount badge", "default": "20% OFF", "info": "Short label, e.g. 20% OFF" },
+    {
+      "type": "text",
+      "id": "promo_badge",
+      "label": "Discount badge",
+      "default": "20% OFF",
+      "info": "Short label, e.g. 20% OFF"
+    },
     { "type": "text", "id": "promo_text", "label": "Discount text", "default": "Limited-time launch offer" },
     { "type": "checkbox", "id": "countdown_enabled", "label": "Show countdown", "default": true },
     { "type": "checkbox", "id": "promo_hide_on_expiry", "label": "Hide block when countdown ends", "default": true },
     {
-      "type": "range", "id": "promo_padding", "min": 8, "max": 32, "step": 2,
-      "unit": "px", "label": "Discount block padding", "default": 16
+      "type": "range",
+      "id": "promo_padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Discount block padding",
+      "default": 16
     },
     {
-      "type": "range", "id": "promo_radius", "min": 0, "max": 24, "step": 2,
-      "unit": "px", "label": "Discount block radius", "default": 12
+      "type": "range",
+      "id": "promo_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Discount block radius",
+      "default": 12
     },
     {
       "type": "paragraph",
@@ -1407,7 +1603,9 @@
 
     { "type": "header", "content": "Discount Code (Copy to Clipboard)" },
     {
-      "type": "text", "id": "promo_code", "label": "Discount code",
+      "type": "text",
+      "id": "promo_code",
+      "label": "Discount code",
       "info": "Optional coupon code users can copy. Leave empty to hide."
     },
     { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
@@ -1421,11 +1619,19 @@
     { "type": "text", "id": "sold_out_text", "label": "Sold out text", "default": "Sold Out" },
     { "type": "checkbox", "id": "show_buy_now", "label": "Show Buy it Now (dynamic checkout)", "default": true },
     {
-      "type": "range", "id": "button_radius", "min": 0, "max": 40, "step": 2,
-      "unit": "px", "label": "Button radius", "default": 8
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button radius",
+      "default": 8
     },
     {
-      "type": "select", "id": "button_text_transform", "label": "Button text transform",
+      "type": "select",
+      "id": "button_text_transform",
+      "label": "Button text transform",
       "options": [
         { "value": "none", "label": "None" },
         { "value": "uppercase", "label": "Uppercase" }
@@ -1433,8 +1639,13 @@
       "default": "none"
     },
     {
-      "type": "range", "id": "button_letter_spacing", "min": 0, "max": 8, "step": 1,
-      "label": "Button letter spacing", "default": 0
+      "type": "range",
+      "id": "button_letter_spacing",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "label": "Button letter spacing",
+      "default": 0
     },
 
     { "type": "header", "content": "Free-shipping CTA" },
@@ -1444,7 +1655,9 @@
     },
     { "type": "checkbox", "id": "show_freeship", "label": "Show free-shipping CTA", "default": false },
     {
-      "type": "select", "id": "freeship_width", "label": "CTA width",
+      "type": "select",
+      "id": "freeship_width",
+      "label": "CTA width",
       "options": [
         { "value": "100", "label": "Full width (100%)" },
         { "value": "80", "label": "Full width (80%)" },
@@ -1457,16 +1670,28 @@
     { "type": "text", "id": "freeship_subtext", "label": "CTA sub-text (optional)", "default": "Straight to checkout" },
     { "type": "checkbox", "id": "freeship_icon", "label": "Show truck icon", "default": true },
     {
-      "type": "range", "id": "freeship_qty", "min": 2, "max": 6, "step": 1,
-      "label": "Units of this product to add", "default": 2
+      "type": "range",
+      "id": "freeship_qty",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Units of this product to add",
+      "default": 2
     },
     {
-      "type": "text", "id": "freeship_extra_variant", "label": "Extra variant ID (optional)",
+      "type": "text",
+      "id": "freeship_extra_variant",
+      "label": "Extra variant ID (optional)",
       "info": "Add a different product too. Leave empty to only add this product."
     },
     {
-      "type": "range", "id": "freeship_extra_qty", "min": 1, "max": 4, "step": 1,
-      "label": "Units of the extra product", "default": 1
+      "type": "range",
+      "id": "freeship_extra_qty",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Units of the extra product",
+      "default": 1
     },
     { "type": "color", "id": "freeship_bg", "label": "CTA background", "default": "#2e7d32" },
     { "type": "color", "id": "freeship_color", "label": "CTA text color", "default": "#ffffff" },
@@ -1480,8 +1705,24 @@
       "content": "Add each badge as a Badge block at the bottom of this section (icon + text). Shows in a row after the buy buttons."
     },
     {
-      "type": "range", "id": "badge_icon_size", "min": 40, "max": 90, "step": 2,
-      "unit": "px", "label": "Badge icon size", "default": 78
+      "type": "range",
+      "id": "badge_icon_size",
+      "min": 40,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge icon size",
+      "default": 78
+    },
+    {
+      "type": "range",
+      "id": "badge_icon_size_mobile",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge icon size (mobile)",
+      "default": 24
     },
 
     { "type": "header", "content": "Tabs (add Tab blocks below)" },
@@ -1500,15 +1741,27 @@
       "content": "Add each recipe as a block at the bottom of this section (image, name, link). Extra recipes stay reachable via the slider."
     },
     {
-      "type": "range", "id": "recipes_per_view", "min": 2, "max": 4, "step": 1,
-      "label": "Recipes per view (desktop)", "default": 3
+      "type": "range",
+      "id": "recipes_per_view",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Recipes per view (desktop)",
+      "default": 3
     },
     {
-      "type": "range", "id": "recipes_per_view_mobile", "min": 1, "max": 2.5, "step": 0.5,
-      "label": "Recipes per view (mobile)", "default": 1.5
+      "type": "range",
+      "id": "recipes_per_view_mobile",
+      "min": 1,
+      "max": 2.5,
+      "step": 0.5,
+      "label": "Recipes per view (mobile)",
+      "default": 1.5
     },
     {
-      "type": "select", "id": "recipe_aspect_ratio", "label": "Recipe image ratio",
+      "type": "select",
+      "id": "recipe_aspect_ratio",
+      "label": "Recipe image ratio",
       "options": [
         { "value": "1/1", "label": "Square (1:1)" },
         { "value": "4/5", "label": "Portrait (4:5)" },
@@ -1517,18 +1770,32 @@
       "default": "1/1"
     },
     {
-      "type": "range", "id": "recipes_title_size", "min": 14, "max": 26, "step": 1,
-      "unit": "px", "label": "Recipes heading size", "default": 18
+      "type": "range",
+      "id": "recipes_title_size",
+      "min": 14,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "label": "Recipes heading size",
+      "default": 18
     },
     { "type": "checkbox", "id": "recipes_autoplay", "label": "Autoplay recipes carousel", "default": true },
     {
-      "type": "range", "id": "recipes_autoplay_speed", "min": 2000, "max": 8000, "step": 500,
-      "unit": "ms", "label": "Autoplay interval", "default": 4000
+      "type": "range",
+      "id": "recipes_autoplay_speed",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay interval",
+      "default": 4000
     },
 
     { "type": "header", "content": "Details Typography & Spacing" },
     {
-      "type": "select", "id": "text_align", "label": "Text alignment",
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
       "options": [
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
@@ -1537,15 +1804,29 @@
       "default": "left"
     },
     {
-      "type": "range", "id": "details_gap", "min": 12, "max": 40, "step": 2,
-      "unit": "px", "label": "Spacing between blocks", "default": 20
+      "type": "range",
+      "id": "details_gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Spacing between blocks",
+      "default": 20
     },
     {
-      "type": "range", "id": "title_size", "min": 20, "max": 64, "step": 1,
-      "unit": "px", "label": "Title size", "default": 36
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Title size",
+      "default": 36
     },
     {
-      "type": "select", "id": "title_weight", "label": "Title weight",
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title weight",
       "options": [
         { "value": "400", "label": "Regular" },
         { "value": "500", "label": "Medium" },
@@ -1555,16 +1836,30 @@
       "default": "700"
     },
     {
-      "type": "range", "id": "description_size", "min": 12, "max": 22, "step": 1,
-      "unit": "px", "label": "Description size", "default": 16
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 16
     },
     { "type": "color", "id": "description_color", "label": "Description color", "default": "#5a4a3a" },
     {
-      "type": "range", "id": "description_max_width", "min": 280, "max": 680, "step": 10,
-      "unit": "px", "label": "Description max width", "default": 460
+      "type": "range",
+      "id": "description_max_width",
+      "min": 280,
+      "max": 680,
+      "step": 10,
+      "unit": "px",
+      "label": "Description max width",
+      "default": 460
     },
     {
-      "type": "select", "id": "description_text_align", "label": "Description text align",
+      "type": "select",
+      "id": "description_text_align",
+      "label": "Description text align",
       "options": [
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
@@ -1574,11 +1869,19 @@
       "default": "justify"
     },
     {
-      "type": "range", "id": "price_size", "min": 16, "max": 40, "step": 1,
-      "unit": "px", "label": "Price size", "default": 24
+      "type": "range",
+      "id": "price_size",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 24
     },
     {
-      "type": "select", "id": "price_weight", "label": "Price weight",
+      "type": "select",
+      "id": "price_weight",
+      "label": "Price weight",
       "options": [
         { "value": "400", "label": "Regular" },
         { "value": "500", "label": "Medium" },
@@ -1611,8 +1914,26 @@
     { "type": "color", "id": "atc_bg_hover", "label": "Add to cart hover", "default": "#54130b" },
 
     { "type": "header", "content": "Section Spacing" },
-    { "type": "range", "id": "padding_top", "min": 0, "max": 120, "step": 5, "unit": "px", "label": "Top padding", "default": 60 },
-    { "type": "range", "id": "padding_bottom", "min": 0, "max": 120, "step": 5, "unit": "px", "label": "Bottom padding", "default": 60 }
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
   ],
   "blocks": [
     {
@@ -1629,7 +1950,9 @@
       "name": "Badge",
       "settings": [
         {
-          "type": "html", "id": "icon_svg", "label": "Icon (SVG code)",
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Icon (SVG code)",
           "info": "Paste inline SVG. Takes priority over the image below."
         },
         { "type": "image_picker", "id": "icon_image", "label": "Icon image (fallback)" },
