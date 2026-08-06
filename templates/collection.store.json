@@ -605,21 +605,21 @@
           "type": "tab",
           "settings": {
             "title": "Shipping",
-            "content": "<p>Add your info here.</p>"
+            "content": "<p><strong>Fast & Flexible</strong><br/>Enjoy <strong>FREE shipping when you buy 2+ bags</strong>. Subscribe and save 20% with total flexibility—skip, swap, or cancel anytime with zero hassle.</p>"
           }
         },
         "tab_AQNMtC": {
           "type": "tab",
           "settings": {
-            "title": "Savory",
-            "content": "<p>Add your info here.</p>"
+            "title": "Flavor",
+            "content": "<p><strong>Clean & Versatile</strong><br/>A single-ingredient powder with a clean, earthy profile designed to blend seamlessly into your daily shakes, smoothies, or recipes without altering your favorite flavors.</p>"
           }
         },
         "tab_yi3qnB": {
           "type": "tab",
           "settings": {
             "title": "Servings",
-            "content": "<p>Add your info here.</p>"
+            "content": "<p><strong>Fuel for 16 Days</strong><br/>Exactly <strong>16 servings</strong> per bag. Perfectly proportioned for your daily routine, whether you're fueling up for recovery or keeping your nutrition steady on the go.</p>"
           }
         },
         "recipe_CJ8VJw": {
@@ -778,7 +778,7 @@
         "title_size": 31,
         "title_weight": "700",
         "description_size": 16,
-        "description_color": "#211032",
+        "description_color": "#2C1641",
         "description_max_width": 500,
         "description_text_align": "justify",
         "price_size": 22,
