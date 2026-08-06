@@ -861,59 +861,27 @@
             "content": "<p>Exactly <strong>16 servings</strong> per bag. Perfectly proportioned to supercharge your daily routine with clean, sustained energy and focus.</p>"
           }
         },
+        "recipe_xNFiBq": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/freepik__talk__70368.webp",
+            "name": "Chocolate Peanut Butter Smoothie",
+            "link": ""
+          }
+        },
+        "recipe_R6Xht6": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/freepik__documentarystyle-food-photography-inspired-by-kinf__40397.png",
+            "name": "Chocolate Berry Protein Mug Cake",
+            "link": ""
+          }
+        },
         "recipe_Jmymf6": {
           "type": "recipe",
           "settings": {
             "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
             "name": "Apple Cinnamon Overnight Oats",
-            "link": ""
-          }
-        },
-        "recipe_VgBRTd": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/freepik__professional-food-photography-shot-on-kodak-portra__15678.jpg",
-            "name": "Tomato Basil Protein Marinara",
-            "link": ""
-          }
-        },
-        "recipe_4Wf3EN": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/High-Protein_Pesto_Sauce.webp",
-            "name": "High-Protein Pesto Sauce",
-            "link": ""
-          }
-        },
-        "recipe_YJcCwE": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/Green_Plantain_Chocho_Tortillas.webp",
-            "name": "Green Plantain Chocho Tortillas",
-            "link": ""
-          }
-        },
-        "recipe_YrKbwA": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/Andean_Aji_Verde_Protein_Sauce.webp",
-            "name": "Andean Aji Verde Protein Sauce",
-            "link": ""
-          }
-        },
-        "recipe_M8Ad6j": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/Vegan_Protein_Wrap.webp",
-            "name": "Mediterranean Vegan Protein Wrap",
-            "link": ""
-          }
-        },
-        "recipe_F8FVRG": {
-          "type": "recipe",
-          "settings": {
-            "image": "shopify://shop_images/GuacamoleChochoProteinDip.webp",
-            "name": "Guacamole Chocho Protein Dip",
             "link": ""
           }
         }
@@ -926,13 +894,9 @@
         "tab_RbPwgB",
         "tab_gNmK6R",
         "tab_7HAeFT",
-        "recipe_Jmymf6",
-        "recipe_VgBRTd",
-        "recipe_4Wf3EN",
-        "recipe_YJcCwE",
-        "recipe_YrKbwA",
-        "recipe_M8Ad6j",
-        "recipe_F8FVRG"
+        "recipe_xNFiBq",
+        "recipe_R6Xht6",
+        "recipe_Jmymf6"
       ],
       "name": "Featured Product maca",
       "settings": {
