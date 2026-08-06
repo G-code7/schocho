@@ -913,7 +913,7 @@
         "max_width": 1200,
         "enable_animation": true,
         "section_border_bottom_width": 16,
-        "section_border_bottom_color": "#3e1d65",
+        "section_border_bottom_color": "#709089",
         "image_max_width": 600,
         "gallery_nav": "thumbnails",
         "image_aspect_ratio": "1/1",
