@@ -1015,7 +1015,7 @@
           "type": "badge",
           "settings": {
             "icon_svg": "",
-            "icon_image": "shopify://shop_images/Recurso_64_3x_5622a315-d6c2-4a3d-9ec3-8ce5f3387db1.png",
+            "icon_image": "shopify://shop_images/Recurso_59_3x_be1dbabf-9370-430e-b6f7-e3582452b791.png",
             "text": ""
           }
         },
@@ -1023,7 +1023,7 @@
           "type": "badge",
           "settings": {
             "icon_svg": "",
-            "icon_image": "shopify://shop_images/Recurso_63_3x_3ce8bbb9-b151-4b92-9261-78f1422af3aa.png",
+            "icon_image": "shopify://shop_images/Recurso_58_3x_ec46942e-8237-4524-b206-d612c811a475.png",
             "text": ""
           }
         },
@@ -1031,7 +1031,7 @@
           "type": "badge",
           "settings": {
             "icon_svg": "",
-            "icon_image": "shopify://shop_images/Recurso_62_3x_7fe86127-f040-4294-a418-4de9c61bc2b7.png",
+            "icon_image": "shopify://shop_images/Recurso_57_3x_791231d8-ace6-4b57-ab19-1aadf953845b.png",
             "text": ""
           }
         },
@@ -1039,7 +1039,7 @@
           "type": "badge",
           "settings": {
             "icon_svg": "",
-            "icon_image": "shopify://shop_images/Recurso_61_3x_ea30fa1c-fe57-4f30-90d5-7913889e410b.png",
+            "icon_image": "shopify://shop_images/Recurso_56_3x_d9468c5e-29a1-44ab-a459-e770ff0bba19.png",
             "text": ""
           }
         },
@@ -1067,24 +1067,24 @@
         "recipe_nDYiDJ": {
           "type": "recipe",
           "settings": {
-            "image": "shopify://shop_images/freepik__talk__70368.webp",
-            "name": "Chocolate Peanut Butter Smoothie",
+            "image": "shopify://shop_images/Chocho_Peanut_Ginger_Sauce.webp",
+            "name": "Chocho Peanut Ginger Sauce",
             "link": ""
           }
         },
         "recipe_DC9yaL": {
           "type": "recipe",
           "settings": {
-            "image": "shopify://shop_images/freepik__documentarystyle-food-photography-inspired-by-kinf__40397.png",
-            "name": "Chocolate Berry Protein Mug Cake",
+            "image": "shopify://shop_images/Golden_Turmeric_Protein_Naan.webp",
+            "name": "Golden Turmeric Protein Naan",
             "link": ""
           }
         },
         "recipe_h8rPEK": {
           "type": "recipe",
           "settings": {
-            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
-            "name": "Apple Cinnamon Overnight Oats",
+            "image": "shopify://shop_images/Chocho_Thai_Lemongrass_Protein_Soup.jpg",
+            "name": "Chocho Thai Lemongrass Protein Soup",
             "link": ""
           }
         }
@@ -1116,7 +1116,7 @@
         "max_width": 1200,
         "enable_animation": true,
         "section_border_bottom_width": 16,
-        "section_border_bottom_color": "#709089",
+        "section_border_bottom_color": "#C85B42",
         "image_max_width": 600,
         "gallery_nav": "thumbnails",
         "image_aspect_ratio": "1/1",
@@ -1125,7 +1125,7 @@
         "media_border_radius": 12,
         "media_shadow": false,
         "thumb_size": 60,
-        "dot_color": "#3d2258",
+        "dot_color": "#C85B42",
         "show_promo": false,
         "promo_badge": "20% OFF",
         "promo_text": "Limited-time launch offer",
@@ -1162,10 +1162,10 @@
         "freeship_qty": 2,
         "freeship_extra_variant": "",
         "freeship_extra_qty": 1,
-        "freeship_bg": "#709089",
+        "freeship_bg": "#C85B42",
         "freeship_color": "#ffffff",
-        "freeship_bg_hover": "#5A4A3F",
-        "freeship_border": "#709089",
+        "freeship_bg_hover": "#693C20",
+        "freeship_border": "#C85B42",
         "show_badges": true,
         "badge_icon_size": 78,
         "badge_icon_size_mobile": 58,
@@ -1184,31 +1184,31 @@
         "title_size": 31,
         "title_weight": "600",
         "description_size": 16,
-        "description_color": "#2F3B3F",
+        "description_color": "#724326",
         "description_max_width": 500,
         "description_text_align": "justify",
         "price_size": 22,
         "price_weight": "500",
-        "section_bg": "#EFEFEF",
-        "title_color": "#52676F",
-        "price_color": "#5C7A74",
-        "accent_color": "#709089",
+        "section_bg": "#FCF7F5",
+        "title_color": "#C86A42",
+        "price_color": "#C86A42",
+        "accent_color": "#C86A42",
         "accent_soft": "#EAF2F0",
-        "promo_bg": "#E8EAEE",
-        "promo_border": "#EEEFF3",
-        "promo_text_color": "#52676F",
+        "promo_bg": "#FDF2ED",
+        "promo_border": "#FDE2D7",
+        "promo_text_color": "#C86A42",
         "promo_badge_color": "#ffffff",
         "cd_box_bg": "#ffffff",
-        "cd_num_color": "#33444B",
-        "cd_label_color": "#2F3B3F",
+        "cd_num_color": "#C86A42",
+        "cd_label_color": "#C86A42",
         "qty_bg": "#ecebea",
         "qty_border": "#ecebea",
-        "qty_color": "#33444B",
-        "atc_bg": "#709089",
+        "qty_color": "#724326",
+        "atc_bg": "#C85B42",
         "atc_color": "#ffffff",
-        "atc_bg_hover": "#5A4A3F",
-        "padding_top": 80,
-        "padding_bottom": 80
+        "atc_bg_hover": "#693C20",
+        "padding_top": 60,
+        "padding_bottom": 60
       }
     },
     "17722383868c1baea3": {
