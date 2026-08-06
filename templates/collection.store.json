@@ -577,6 +577,30 @@
             "text": ""
           }
         },
+        "badge_JzzF7n": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_53_3x_870a52ff-08c5-4652-b8e7-77e133d1cd16.png",
+            "text": ""
+          }
+        },
+        "badge_kWFqmD": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_52_3x_bb7e566f-9402-44d4-86c1-dda61241aa9a.png",
+            "text": ""
+          }
+        },
+        "badge_FNmHHP": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_51_3x_45ae6b01-4eb9-4f91-a20f-bf4d234275e7.png",
+            "text": ""
+          }
+        },
         "recipe_CJ8VJw": {
           "type": "recipe",
           "settings": {
@@ -636,6 +660,9 @@
       },
       "block_order": [
         "badge_9aQrpR",
+        "badge_JzzF7n",
+        "badge_kWFqmD",
+        "badge_FNmHHP",
         "recipe_CJ8VJw",
         "recipe_6tVqaB",
         "recipe_drNJEN",
@@ -660,6 +687,7 @@
         "enable_animation": true,
         "section_border_bottom_width": 16,
         "section_border_bottom_color": "#3e1d65",
+        "image_max_width": 600,
         "gallery_nav": "thumbnails",
         "image_aspect_ratio": "1/1",
         "image_fit": "contain",
@@ -708,6 +736,9 @@
         "freeship_color": "#ffffff",
         "freeship_bg_hover": "#6b4097",
         "freeship_border": "#3d2258",
+        "show_badges": true,
+        "badge_icon_size": 78,
+        "show_tabs": true,
         "show_recipes": true,
         "recipes_title": "Recipes with this product",
         "recipes_show_name": true,
@@ -724,11 +755,12 @@
         "description_size": 16,
         "description_color": "#211032",
         "description_max_width": 500,
+        "description_text_align": "justify",
         "price_size": 22,
         "price_weight": "500",
-        "section_bg": "#F4F1F8",
-        "title_color": "#311A48",
-        "price_color": "#3D2258",
+        "section_bg": "#f4f1f8",
+        "title_color": "#311a48",
+        "price_color": "#3d2258",
         "accent_color": "#6c4d6e",
         "accent_soft": "#efe7f0",
         "promo_bg": "#faf6f0",
@@ -766,6 +798,7 @@
         "enable_animation": true,
         "section_border_bottom_width": 16,
         "section_border_bottom_color": "#3e1d65",
+        "image_max_width": 600,
         "gallery_nav": "thumbnails",
         "image_aspect_ratio": "1/1",
         "image_fit": "cover",
@@ -814,6 +847,9 @@
         "freeship_color": "#ffffff",
         "freeship_bg_hover": "#6b4097",
         "freeship_border": "#3d2258",
+        "show_badges": true,
+        "badge_icon_size": 78,
+        "show_tabs": true,
         "show_recipes": true,
         "recipes_title": "Recipes with this product",
         "recipes_show_name": true,
@@ -830,11 +866,12 @@
         "description_size": 16,
         "description_color": "#5a4a3a",
         "description_max_width": 460,
+        "description_text_align": "justify",
         "price_size": 24,
         "price_weight": "600",
-        "section_bg": "#F4F1F8",
-        "title_color": "#311A48",
-        "price_color": "#3D2258",
+        "section_bg": "#f4f1f8",
+        "title_color": "#311a48",
+        "price_color": "#3d2258",
         "accent_color": "#6c4d6e",
         "accent_soft": "#efe7f0",
         "promo_bg": "#faf6f0",
