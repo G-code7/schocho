@@ -741,11 +741,11 @@
     },
     "featured_product_v2_z4FkiY": {
       "type": "featured-product-v2",
-      "name": "Featured Product V2",
+      "name": "Featured Product maca",
       "settings": {
-        "product": "chocho-pure-ingredient",
+        "product": "chocho-cacao-spirulina-maca",
         "variant_id": "",
-        "custom_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
+        "custom_title": "Andean Chocho <span style=\"color:#7a868e; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>Cacao + Spirulina + Maca</span>",
         "description": "<p>The foundation of everything we do. Pure Andean chocho bean powder packed with clean, plant-based protein and essential amino acids. No fillers, no processing tricks just 5,000 years of agricultural heritage ground into a versatile daily superfood.</p>",
         "use_product_description": false,
         "media_text_ratio": "45fr 55fr",
