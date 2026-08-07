@@ -378,6 +378,7 @@
       align-self: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
     {% endif %}
   }
+  .fpv2__freeship-{{ section_id }}:hover { color: {{ section.settings.freeship_color }}; border-color: {{ section.settings.freeship_color }}; }
   .fpv2__freeship-{{ section_id }}:hover { background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
   .fpv2__freeship-{{ section_id }}:active { transform: scale(0.99); }
   .fpv2__freeship-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -1694,6 +1695,7 @@
     },
     { "type": "color", "id": "freeship_bg", "label": "CTA background", "default": "#2e7d32" },
     { "type": "color", "id": "freeship_color", "label": "CTA text color", "default": "#ffffff" },
+    { "type": "color", "id": "freeship_color_hover", "label": "CTA hover color", "default": "#256628" },
     { "type": "color", "id": "freeship_bg_hover", "label": "CTA hover background", "default": "#256628" },
     { "type": "color", "id": "freeship_border", "label": "CTA border", "default": "#2e7d32" },
 
