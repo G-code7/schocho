@@ -378,8 +378,7 @@
       align-self: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
     {% endif %}
   }
-  .fpv2__freeship-{{ section_id }}:hover { color: {{ section.settings.freeship_color }}; border-color: {{ section.settings.freeship_color }}; }
-  .fpv2__freeship-{{ section_id }}:hover { background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
+  .fpv2__freeship-{{ section_id }}:hover { color: {{ section.settings.freeship_color_hover }}; background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
   .fpv2__freeship-{{ section_id }}:active { transform: scale(0.99); }
   .fpv2__freeship-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
   .fpv2__freeship-main-{{ section_id }} { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.25; }
