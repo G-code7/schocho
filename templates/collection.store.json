@@ -845,21 +845,21 @@
           "type": "tab",
           "settings": {
             "title": "Ingredients",
-            "content": "<p><strong>Energizing Blend</strong><br/>Andean Chocho paired with raw cacao for antioxidants, organic spirulina for phytonutrients, and adaptogenic maca root to support natural stamina, mood balance, and daily vitality.</p>"
+            "content": "<p><strong>Energizing Blend</strong><br/>Our chocho and maca are sourced from smallholder farmers in the Ecuadorian highlands, while our cacao comes from the Ecuadorian coast, distinct ecosystems that help shape the character of this blend.<br/>Spirulina is sourced from a trusted producer who shares our commitment to quality and whole-food integrity. Each ingredient is carefully prepared and gently milled to preserve its natural character and nutritional integrity from soil to scoop.</p>"
           }
         },
         "tab_gNmK6R": {
           "type": "tab",
           "settings": {
             "title": "Flavor",
-            "content": "<p><strong>Rich & Earthy</strong><br/>A functional superfood fusion combining the smooth, nutrient-dense base of chocho with raw cacao, organic spirulina, and adaptogenic maca for a naturally rich, grounding flavor profile.</p>"
+            "content": "<p><strong>Rich & Earthy</strong><br/>A naturally unsweetened blend with a rich cacao-forward flavor, balanced by grounding flavor of spirulina and maca.</p><ul><li><strong>Notes</strong>: Rich cacao-forward profile with earthy undertones.</li><li><strong>Character</strong>: Distinct notes of spirulina and maca; naturally unsweetened.</li><li><strong>Versatility</strong>: A balanced, real-food flavor for smoothies, oatmeal, pancakes, and nutrient-dense baked recipes.</li></ul>"
           }
         },
         "tab_7HAeFT": {
           "type": "tab",
           "settings": {
-            "title": "Servings",
-            "content": "<p>Exactly <strong>16 servings</strong> per bag. Perfectly proportioned to supercharge your daily routine with clean, sustained energy and focus.</p>"
+            "title": "Product Info",
+            "content": "<ul><li><strong>Net Weight</strong>: 27 oz (768 g)</li><li><strong>Servings</strong>: 16 per container</li><li><strong>Serving Size</strong>: 2 scoops (48 g)</li></ul>"
           }
         },
         "recipe_xNFiBq": {
@@ -904,7 +904,7 @@
         "product": "chocho-cacao-spirulina-maca",
         "variant_id": "",
         "custom_title": "Andean Chocho <span style=\"color:#7a868e; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>Cacao + Spirulina + Maca</span>",
-        "description": "<p>A functional fusion designed for sustained energy and daily vitality. We combine our nutrient-dense chocho base with raw cacao, antioxidant rich spirulina, and adaptogenic maca. Clean fuel for your mornings, crafted with uncompromising transparency.</p>",
+        "description": "<p>Crafted for the whole-food seeker, this blend combines Andean chocho with cacao, spirulina, and maca<br/>for complete plant protein, fiber-rich nourishment, and a naturally rich, earthy flavor. Inspired by ingredients traditionally enjoyed for energy and vitality, it’s an easy way to add functional whole-food nutrition to smoothies, breakfast, and everyday recipes.</p>",
         "use_product_description": true,
         "media_text_ratio": "3fr 2fr",
         "column_gap": 52,
