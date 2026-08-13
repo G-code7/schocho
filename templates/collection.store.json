@@ -605,14 +605,14 @@
           "type": "tab",
           "settings": {
             "title": "Ingredients",
-            "content": "<p><strong>Pure & Simple</strong><br/>100% Andean Chocho (Lupinus Mutabilis). An ancient, non-GMO superfood providing a complete plant-based protein with no fillers, additives, or processing tricks.</p>"
+            "content": "<p><strong>Pure & Simple</strong><br/>100% Andean Chocho (Andean Pearl Lupin, Lupinus mutabilis).<br/><br/>We partner directly with smallholder farmers in the Ecuadorian highlands who grow and harvest chocho using traditional methods. The beans are then carefully debittered and gently milled into a pure, nutrient-rich powder, preserving the integrity of the seed from soil to scoop.</p>"
           }
         },
         "tab_AQNMtC": {
           "type": "tab",
           "settings": {
             "title": "Flavor",
-            "content": "<p><strong>Clean & Versatile</strong><br/>A single-ingredient powder with a clean, earthy profile designed to blend seamlessly into your daily shakes, smoothies, or recipes without altering your favorite flavors.</p>"
+            "content": "<p><strong>Mild & Versatile</strong><br/>A neutral, slightly nutty flavor that blends easily into both sweet and savory recipes, adding whole-food nutrition without overpowering the flavors you already enjoy.<br/>Blend it. Stir it. Bake it. Cook with it.</p>"
           }
         },
         "tab_yi3qnB": {
@@ -700,7 +700,7 @@
         "product": "chocho-pure-ingredient",
         "variant_id": "",
         "custom_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
-        "description": "<p>The foundation of everything we do. Pure Andean chocho bean powder packed with clean, plant-based protein and essential amino acids. No fillers, no processing tricks just 5,000 years of agricultural heritage ground into a versatile daily superfood.</p>",
+        "description": "<p>The foundation of <strong>PRONTO CHOCHO</strong>. Made from a single ingredient, 100% Andean Chocho, an ancient<br/>legume regeneratively grown high in the Andes. This minimally processed whole-food powder naturally<br/>provides complete plant protein, fiber, healthy fats, and naturally occurring nutrients. No gums, fillers,<br/>isolates, sweeteners, or unnecessary additives.</p>",
         "use_product_description": true,
         "media_text_ratio": "3fr 2fr",
         "column_gap": 52,
