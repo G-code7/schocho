@@ -1049,14 +1049,14 @@
           "type": "tab",
           "settings": {
             "title": "Ingredients",
-            "content": "<p><strong>Soothing Blend</strong><br/>Andean Chocho enhanced with warming ginger to support digestion, turmeric for a healthy inflammatory response, and black pepper to maximize nutrient bioavailability.</p>"
+            "content": "<p><strong>Soothing Blend</strong><br/>Our chocho is sourced from smallholder farmers in the Ecuadorian highlands who grow and harvest it using traditional methods. For this blend, we also source ginger, turmeric, and black pepper from smallholder farmers in the Ecuadorian Amazon. These distinct ecosystems help shape the character of the blend. Each ingredient is carefully prepared and gently milled to preserve its natural character and integrity from soil to scoop.</p>"
           }
         },
         "tab_miJKiB": {
           "type": "tab",
           "settings": {
             "title": "Flavor",
-            "content": "<p><strong>Warm & Spiced</strong><br/>A harmonious botanical blend pairing the nutrient-rich chocho base with warming ginger, soothing turmeric, and black pepper for a subtly spiced, comforting profile that supports everyday wellness.</p>"
+            "content": "<p><strong>Warm & Savory</strong><br/>A naturally unsweetened blend with warm notes of ginger and turmeric, balanced by a subtle peppery finish.</p><ul><li><strong>Notes</strong>: Warm and gently spiced with zesty ginger and earthy turmeric.</li><li><strong>Character</strong>: Savory, aromatic, and naturally unsweetened.</li><li><strong>Versatility</strong>: A balanced real-food flavor for soups, savory pancakes, sauces, dips, smoothies, and everyday cooking.</li></ul>"
           }
         },
         "tab_iyN6eg": {
@@ -1108,7 +1108,7 @@
         "product": "chocho-ginger-turmeric-black-pepper-powder-blend",
         "variant_id": "",
         "custom_title": "Andean Chocho <span style=\"color:#b25a45; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>\nGinger + Turmeric + Black Pepper</span>",
-        "description": "<p>A restorative daily blend engineered to support recovery and soothe the body. Rooted in ancient wellness traditions, the dynamic trio of ginger, turmeric, and black pepper is paired with our whole-food protein to maximize absorption and natural performance.</p>",
+        "description": "<p>Crafted for the whole-food seeker, this blend pairs Andean chocho with ginger, turmeric, and black pepper for complete plant protein, fiber-rich nourishment, and a warm, savory flavor. Rooted in ingredients traditionally valued in everyday wellness practices, it brings functional whole-food nutrition to modern routines and recipes.</p>",
         "use_product_description": true,
         "media_text_ratio": "3fr 2fr",
         "column_gap": 52,
