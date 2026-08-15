@@ -231,8 +231,9 @@
   .fpv2__promo-code-{{ section_id }} {
     margin-top: 4px;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
     align-items: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
   }
   .fpv2__promo-code-label-{{ section_id }} {
