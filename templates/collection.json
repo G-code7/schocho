@@ -356,129 +356,652 @@
         "padding-block-end": 64
       }
     },
-    "featured_products_rows_Jem9zw": {
-      "type": "featured-products-rows",
-      "name": "Featured Products Rows",
+    "featured_product_v2_hgtnfd": {
+      "type": "featured-product-v2",
+      "blocks": {
+        "badge_jKfNNV": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_54_3x_91ebdbda-2193-47aa-82c2-910fe7f130fc.png",
+            "text": ""
+          }
+        },
+        "badge_QcFgwH": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_53_3x_870a52ff-08c5-4652-b8e7-77e133d1cd16.png",
+            "text": ""
+          }
+        },
+        "badge_4b8aJh": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_52_3x_bb7e566f-9402-44d4-86c1-dda61241aa9a.png",
+            "text": ""
+          }
+        },
+        "badge_mh6VHg": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_51_3x_45ae6b01-4eb9-4f91-a20f-bf4d234275e7.png",
+            "text": ""
+          }
+        },
+        "tab_twB7cB": {
+          "type": "tab",
+          "settings": {
+            "title": "Ingredients",
+            "content": "<p><strong>Pure & Simple</strong><br/>100% Andean Chocho (Andean Pearl Lupin, Lupinus mutabilis).<br/><br/>We partner directly with smallholder farmers in the Ecuadorian highlands who grow and harvest chocho using traditional methods. The beans are then carefully debittered and gently milled into a pure, nutrient-rich powder, preserving the integrity of the seed from soil to scoop.</p>"
+          }
+        },
+        "tab_pjrKcU": {
+          "type": "tab",
+          "settings": {
+            "title": "Flavor",
+            "content": "<p><strong>Mild & Versatile</strong><br/>A neutral, slightly nutty flavor that blends easily into both sweet and savory recipes, adding whole-food nutrition without overpowering the flavors you already enjoy.<br/>Blend it. Stir it. Bake it. Cook with it.</p>"
+          }
+        },
+        "tab_QUrJCQ": {
+          "type": "tab",
+          "settings": {
+            "title": "Product Info",
+            "content": "<ul><li><strong>Net Weight</strong>: 26.5 oz (750 g)</li><li><strong>Servings</strong>: ~16 per container</li><li><strong>Serving Size</strong>: 2 scoops (48 g)</li></ul>"
+          }
+        },
+        "recipe_jdjyni": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
+        },
+        "recipe_37yf8P": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/freepik__professional-food-photography-shot-on-kodak-portra__15678.jpg",
+            "name": "Tomato Basil Protein Marinara",
+            "link": ""
+          }
+        },
+        "recipe_XXjDh3": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/High-Protein_Pesto_Sauce.webp",
+            "name": "High-Protein Pesto Sauce",
+            "link": ""
+          }
+        },
+        "recipe_kcTEia": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Green_Plantain_Chocho_Tortillas.webp",
+            "name": "Green Plantain Chocho Tortillas",
+            "link": ""
+          }
+        },
+        "recipe_kXY3fL": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Andean_Aji_Verde_Protein_Sauce.webp",
+            "name": "Andean Aji Verde Protein Sauce",
+            "link": ""
+          }
+        },
+        "recipe_HPc9eA": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Vegan_Protein_Wrap.webp",
+            "name": "Mediterranean Vegan Protein Wrap",
+            "link": ""
+          }
+        },
+        "recipe_JHtxn9": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/GuacamoleChochoProteinDip.webp",
+            "name": "Guacamole Chocho Protein Dip",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "badge_jKfNNV",
+        "badge_QcFgwH",
+        "badge_4b8aJh",
+        "badge_mh6VHg",
+        "tab_twB7cB",
+        "tab_pjrKcU",
+        "tab_QUrJCQ",
+        "recipe_jdjyni",
+        "recipe_37yf8P",
+        "recipe_XXjDh3",
+        "recipe_kcTEia",
+        "recipe_kXY3fL",
+        "recipe_HPc9eA",
+        "recipe_JHtxn9"
+      ],
+      "name": "Featured Product V2",
       "settings": {
-        "heading": "Our Products",
-        "heading_icon_size": 40,
-        "heading_icon_radius": 50,
-        "subtitle": "Whole-food nutrition from the Andes. One single ingredient. 5,000 years in the making.",
-        "heading_alignment": "center",
-        "heading_size": 42,
-        "heading_size_mobile": 28,
-        "heading_weight": "600",
-        "heading_transform": "none",
-        "heading_letter_spacing": 0,
-        "subtitle_size": 16,
-        "header_margin_bottom": 40,
-        "product_1": "chocho-pure-ingredient",
-        "product_1_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
-        "product_1_subtitle": "<p style=\"font-size: 16px; width:70%; line-height: 22px;\">A single-ingredient protein made entirely from Andean chocho (Andean Pearl Lupin/Lupinus Mutabilis), an ancient superfood grown high in the Andes and traditionally consumed to support strength, endurance, and longevity.</p>",
-        "product_1_description": "",
-        "product_2": "chocho-cacao-spirulina-maca",
-        "product_2_title": "Andean Chocho <span style=\"color:#7a868e; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>Cacao + Spirulina + Maca</span>",
-        "product_2_subtitle": "<p style=\"font-size: 16px; width:70%; line-height: 22px;\">Crafted for the whole-food seeker, this blend delivers protein- and fiber-rich nourishment enhanced with ancestral superfoods traditionally used to support natural energy, focus, and daily balance. Together, these ingredients provide functional nourishment that supports sustained vitality and complements an active, intentional lifestyle.</p>",
-        "product_2_description": "",
-        "product_3": "chocho-ginger-turmeric-black-pepper-powder-blend",
-        "product_3_title": "Andean Chocho <span style=\"color:#b25a45; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>\nGinger + Turmeric + Black Pepper</span>",
-        "product_3_subtitle": "<p style=\"font-size: 16px; width:70%; line-height: 22px;\">Crafted for the whole-food seeker, this blend delivers protein and fiber-rich nourishment enhanced with ancestral botanicals traditionally used to support digestive comfort and daily balance. Together, these ingredients provide functional nourishment that complements mindful rituals and supports everyday wellness.</p>",
-        "product_3_description": "",
-        "media_text_ratio": "40fr 60fr",
-        "row_media_gap": 32,
-        "grid_gap": 60,
-        "grid_gap_mobile": 40,
-        "row_padding": 24,
-        "media_max_width": 520,
-        "media_align": "center",
-        "row_vertical_align": "start",
-        "card_background": "#e9e7e4",
-        "card_border_radius": 26,
-        "card_padding": 24,
+        "product": "chocho-pure-ingredient",
+        "variant_id": "",
+        "custom_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
+        "description": "<p>The foundation of <strong>PRONTO CHOCHO</strong>. Made from a single ingredient, 100% Andean Chocho, an ancient<br/>legume regeneratively grown high in the Andes. This minimally processed whole-food powder naturally<br/>provides complete plant protein, fiber, healthy fats, and naturally occurring nutrients. No gums, fillers,<br/>isolates, sweeteners, or unnecessary additives.</p>",
+        "use_product_description": false,
+        "media_text_ratio": "3fr 2fr",
+        "column_gap": 52,
+        "vertical_align": "start",
+        "sticky_media": true,
+        "sticky_offset": 40,
+        "max_width": 1200,
         "enable_animation": true,
-        "image_aspect_ratio": "4/3",
+        "section_border_bottom_width": 0,
+        "section_border_bottom_color": "#3E1D65",
+        "image_max_width": 600,
+        "gallery_nav": "thumbnails",
+        "image_aspect_ratio": "1/1",
         "image_fit": "contain",
-        "image_background": "rgba(0,0,0,0)",
+        "image_bg": "#00000000",
         "media_border_radius": 12,
-        "transition_duration": 450,
-        "dot_color": "#361756",
-        "media_shadow": true,
-        "enable_image_zoom": true,
-        "slider_autoplay": true,
-        "slider_autoplay_speed": 5,
-        "show_quantity_selector": true,
-        "quantity_add_button_text": "Add to Cart",
+        "media_shadow": false,
+        "thumb_size": 60,
+        "dot_color": "#3D2258",
+        "show_promo": false,
+        "promo_badge": "20% OFF",
+        "promo_text": "Limited-time launch offer",
+        "countdown_enabled": true,
+        "promo_hide_on_expiry": true,
+        "promo_padding": 16,
+        "promo_radius": 12,
+        "cd_year": 2026,
+        "cd_month": 12,
+        "cd_day": 31,
+        "cd_hour": 23,
+        "cd_minute": 59,
+        "cd_days_label": "Days",
+        "cd_hours_label": "Hrs",
+        "cd_mins_label": "Min",
+        "cd_secs_label": "Sec",
+        "promo_code": "",
+        "promo_code_copyable": true,
+        "promo_code_label": "Your code:",
+        "promo_code_copy_text": "Copy",
+        "promo_code_copied_text": "Copied!",
+        "atc_text": "Add to Cart",
         "added_text": "Added!",
         "sold_out_text": "Sold Out",
-        "quantity_gap": 14,
-        "quantity_bg": "#e9e7e4",
-        "quantity_border_color": "#3d2258",
-        "quantity_border_width": 1,
-        "quantity_border_radius": 22,
-        "quantity_color": "#361756",
-        "quantity_button_size": 36,
-        "quantity_button_font_size": 18,
-        "quantity_button_hover_bg": "#e9e7e4",
-        "quantity_button_hover_color": "#6b4096",
-        "quantity_input_width": 36,
-        "quantity_font_size": 14,
-        "quantity_font_weight": "500",
-        "quantity_add_button_bg": "#3d2258",
-        "quantity_add_button_color": "#ffffff",
-        "quantity_add_button_border_color": "#3d2258",
-        "quantity_add_button_border_width": 1,
-        "quantity_add_button_border_radius": 22,
-        "quantity_add_button_bg_hover": "#e8e7e9",
-        "quantity_add_button_color_hover": "#3d2258",
-        "quantity_add_button_border_hover": "#3d2258",
-        "quantity_add_button_padding_y": 12,
-        "quantity_add_button_padding_x": 20,
-        "quantity_add_button_font_size": 13,
-        "quantity_add_button_font_weight": "600",
-        "quantity_add_button_text_transform": "none",
-        "quantity_add_button_letter_spacing": 0,
-        "info_alignment": "left",
-        "info_gap": 12,
-        "product_title_size": 26,
-        "product_title_weight": "500",
-        "tagline_size": 16,
-        "tagline_color": "#6c4d6e",
+        "show_buy_now": true,
+        "button_radius": 30,
+        "button_text_transform": "none",
+        "button_letter_spacing": 0,
+        "show_freeship": true,
+        "freeship_width": "100",
+        "freeship_text": "Buy 2 & get FREE shipping",
+        "freeship_subtext": "Straight to checkout",
+        "freeship_icon": true,
+        "freeship_qty": 2,
+        "freeship_extra_variant": "",
+        "freeship_extra_qty": 1,
+        "freeship_bg": "#C0C0C0",
+        "freeship_color": "#3D3D3D",
+        "freeship_color_hover": "#FFFFFF",
+        "freeship_bg_hover": "#35115C",
+        "freeship_border": "#F0F0F0",
+        "show_badges": true,
+        "badge_icon_size": 78,
+        "badge_icon_size_mobile": 58,
+        "show_tabs": true,
+        "show_recipes": true,
+        "recipes_title": "Recipes with this product",
+        "recipes_show_name": true,
+        "recipes_per_view": 3,
+        "recipes_per_view_mobile": 1.5,
+        "recipe_aspect_ratio": "1/1",
+        "recipes_title_size": 18,
+        "recipes_autoplay": true,
+        "recipes_autoplay_speed": 4000,
+        "text_align": "left",
+        "details_gap": 20,
+        "title_size": 31,
+        "title_weight": "700",
         "description_size": 16,
-        "description_color": "#5a5a5a",
-        "description_max_width": 440,
-        "price_size": 18,
-        "price_weight": "600",
-        "show_view_all": false,
-        "view_all_text": "Shop All",
-        "view_all_link": "",
-        "view_all_margin_top": 40,
-        "view_all_bg": "rgba(0,0,0,0)",
-        "view_all_color": "#1b1b1b",
-        "view_all_border_color": "#1b1b1b",
-        "view_all_border_width": 1,
-        "view_all_border_radius": 6,
-        "view_all_bg_hover": "#1b1b1b",
-        "view_all_color_hover": "#ffffff",
-        "view_all_border_hover": "#1b1b1b",
-        "view_all_padding_y": 14,
-        "view_all_padding_x": 32,
-        "view_all_font_size": 16,
-        "view_all_font_weight": "500",
-        "view_all_text_transform": "none",
-        "view_all_letter_spacing": 0,
-        "background_color": "#f4f4f2",
-        "heading_color": "#361756",
-        "subtitle_color": "#361756",
-        "product_title_color": "#361756",
-        "product_title_hover": "#63398f",
-        "price_color": "#271040",
-        "columns_desktop": 3,
-        "product_max_width": 320,
-        "product_max_width_tablet": 280,
-        "product_max_width_mobile": 260,
+        "description_color": "#2C1641",
+        "description_max_width": 500,
+        "description_text_align": "justify",
+        "price_size": 22,
+        "price_weight": "500",
+        "section_bg": "#F4F1F8",
+        "title_color": "#311A48",
+        "price_color": "#3D2258",
+        "accent_color": "#35115C",
+        "accent_soft": "#efe7f0",
+        "promo_bg": "#faf6f0",
+        "promo_border": "#ece3d7",
+        "promo_text_color": "#5a4a3a",
+        "promo_badge_color": "#ffffff",
+        "cd_box_bg": "#ffffff",
+        "cd_num_color": "#370c07",
+        "cd_label_color": "#8a7a6a",
+        "qty_bg": "#ffffff",
+        "qty_border": "#d8d2c8",
+        "qty_color": "#370c07",
+        "atc_bg": "#3D2258",
+        "atc_color": "#ffffff",
+        "atc_bg_hover": "#592C85",
         "padding_top": 60,
-        "padding_bottom": 60,
-        "max_width": 1200
+        "padding_bottom": 60
+      }
+    },
+    "featured_product_v2_JTB7i3": {
+      "type": "featured-product-v2",
+      "blocks": {
+        "badge_yrWVkb": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_64_3x_5622a315-d6c2-4a3d-9ec3-8ce5f3387db1.png",
+            "text": ""
+          }
+        },
+        "badge_MRzWmQ": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_63_3x_3ce8bbb9-b151-4b92-9261-78f1422af3aa.png",
+            "text": ""
+          }
+        },
+        "badge_GkCzFa": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_62_3x_7fe86127-f040-4294-a418-4de9c61bc2b7.png",
+            "text": ""
+          }
+        },
+        "badge_jeXFhX": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_61_3x_ea30fa1c-fe57-4f30-90d5-7913889e410b.png",
+            "text": ""
+          }
+        },
+        "tab_WPWpXW": {
+          "type": "tab",
+          "settings": {
+            "title": "Ingredients",
+            "content": "<p><strong>Energizing Blend</strong><br/>Our chocho and maca are sourced from smallholder farmers in the Ecuadorian highlands, while our cacao comes from the Ecuadorian coast, distinct ecosystems that help shape the character of this blend.<br/>Spirulina is sourced from a trusted producer who shares our commitment to quality and whole-food integrity. Each ingredient is carefully prepared and gently milled to preserve its natural character and nutritional integrity from soil to scoop.</p>"
+          }
+        },
+        "tab_KXX8jX": {
+          "type": "tab",
+          "settings": {
+            "title": "Flavor",
+            "content": "<p><strong>Rich & Earthy</strong><br/>A naturally unsweetened blend with a rich cacao-forward flavor, balanced by grounding flavor of spirulina and maca.</p><ul><li><strong>Notes</strong>: Rich cacao-forward profile with earthy undertones.</li><li><strong>Character</strong>: Distinct notes of spirulina and maca; naturally unsweetened.</li><li><strong>Versatility</strong>: A balanced, real-food flavor for smoothies, oatmeal, pancakes, and nutrient-dense baked recipes.</li></ul>"
+          }
+        },
+        "tab_LgNCcP": {
+          "type": "tab",
+          "settings": {
+            "title": "Product Info",
+            "content": "<ul><li><strong>Net Weight</strong>: 27 oz (768 g)</li><li><strong>Servings</strong>: 16 per container</li><li><strong>Serving Size</strong>: 2 scoops (48 g)</li></ul>"
+          }
+        },
+        "recipe_UenMAR": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/freepik__talk__70368.webp",
+            "name": "Chocolate Peanut Butter Smoothie",
+            "link": ""
+          }
+        },
+        "recipe_WdQUkK": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/freepik__documentarystyle-food-photography-inspired-by-kinf__40397.png",
+            "name": "Chocolate Berry Protein Mug Cake",
+            "link": ""
+          }
+        },
+        "recipe_ybjccj": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "badge_yrWVkb",
+        "badge_MRzWmQ",
+        "badge_GkCzFa",
+        "badge_jeXFhX",
+        "tab_WPWpXW",
+        "tab_KXX8jX",
+        "tab_LgNCcP",
+        "recipe_UenMAR",
+        "recipe_WdQUkK",
+        "recipe_ybjccj"
+      ],
+      "name": "Featured Product maca",
+      "settings": {
+        "product": "chocho-cacao-spirulina-maca",
+        "variant_id": "",
+        "custom_title": "Andean Chocho <span style=\"color:#7a868e; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>Cacao + Spirulina + Maca</span>",
+        "description": "<p>Crafted for the whole-food seeker, this blend combines Andean chocho with cacao, spirulina, and maca<br/>for complete plant protein, fiber-rich nourishment, and a naturally rich, earthy flavor. Inspired by ingredients traditionally enjoyed for energy and vitality, it’s an easy way to add functional whole-food nutrition to smoothies, breakfast, and everyday recipes.</p>",
+        "use_product_description": true,
+        "media_text_ratio": "3fr 2fr",
+        "column_gap": 52,
+        "vertical_align": "start",
+        "sticky_media": true,
+        "sticky_offset": 40,
+        "max_width": 1200,
+        "enable_animation": true,
+        "section_border_bottom_width": 0,
+        "section_border_bottom_color": "#709089",
+        "image_max_width": 600,
+        "gallery_nav": "thumbnails",
+        "image_aspect_ratio": "1/1",
+        "image_fit": "contain",
+        "image_bg": "rgba(0,0,0,0)",
+        "media_border_radius": 12,
+        "media_shadow": false,
+        "thumb_size": 60,
+        "dot_color": "#3d2258",
+        "show_promo": false,
+        "promo_badge": "20% OFF",
+        "promo_text": "Celebrate wellness month.",
+        "countdown_enabled": false,
+        "promo_hide_on_expiry": true,
+        "promo_padding": 12,
+        "promo_radius": 12,
+        "cd_year": 2026,
+        "cd_month": 8,
+        "cd_day": 20,
+        "cd_hour": 15,
+        "cd_minute": 59,
+        "cd_days_label": "Days",
+        "cd_hours_label": "Hrs",
+        "cd_mins_label": "Min",
+        "cd_secs_label": "Sec",
+        "promo_code": "WELLNESS20",
+        "promo_code_copyable": true,
+        "promo_code_label": "Your code:",
+        "promo_code_copy_text": "Copy",
+        "promo_code_copied_text": "Copied!",
+        "atc_text": "Add to Cart",
+        "added_text": "Added!",
+        "sold_out_text": "Sold Out",
+        "show_buy_now": true,
+        "button_radius": 30,
+        "button_text_transform": "none",
+        "button_letter_spacing": 0,
+        "show_freeship": true,
+        "freeship_width": "100",
+        "freeship_text": "Buy 2 & get FREE shipping",
+        "freeship_subtext": "Straight to checkout",
+        "freeship_icon": true,
+        "freeship_qty": 2,
+        "freeship_extra_variant": "",
+        "freeship_extra_qty": 1,
+        "freeship_bg": "#c0c0c0",
+        "freeship_color": "#3d3d3d",
+        "freeship_color_hover": "#ffffff",
+        "freeship_bg_hover": "#35115c",
+        "freeship_border": "#f0f0f0",
+        "show_badges": true,
+        "badge_icon_size": 78,
+        "badge_icon_size_mobile": 58,
+        "show_tabs": true,
+        "show_recipes": true,
+        "recipes_title": "Recipes with this product",
+        "recipes_show_name": true,
+        "recipes_per_view": 3,
+        "recipes_per_view_mobile": 1.5,
+        "recipe_aspect_ratio": "1/1",
+        "recipes_title_size": 18,
+        "recipes_autoplay": true,
+        "recipes_autoplay_speed": 4000,
+        "text_align": "left",
+        "details_gap": 20,
+        "title_size": 31,
+        "title_weight": "600",
+        "description_size": 16,
+        "description_color": "#2f3b3f",
+        "description_max_width": 500,
+        "description_text_align": "justify",
+        "price_size": 22,
+        "price_weight": "500",
+        "section_bg": "#efefef",
+        "title_color": "#52676f",
+        "price_color": "#5c7a74",
+        "accent_color": "#709089",
+        "accent_soft": "#eaf2f0",
+        "promo_bg": "#e8eaee",
+        "promo_border": "#eeeff3",
+        "promo_text_color": "#52676f",
+        "promo_badge_color": "#ffffff",
+        "cd_box_bg": "#ffffff",
+        "cd_num_color": "#33444b",
+        "cd_label_color": "#2f3b3f",
+        "qty_bg": "#ecebea",
+        "qty_border": "#ecebea",
+        "qty_color": "#33444b",
+        "atc_bg": "#709089",
+        "atc_color": "#ffffff",
+        "atc_bg_hover": "#5a4a3f",
+        "padding_top": 80,
+        "padding_bottom": 80
+      }
+    },
+    "featured_product_v2_YiaTjm": {
+      "type": "featured-product-v2",
+      "blocks": {
+        "badge_NFcFJt": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_59_3x_be1dbabf-9370-430e-b6f7-e3582452b791.png",
+            "text": ""
+          }
+        },
+        "badge_EwrwjA": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_58_3x_ec46942e-8237-4524-b206-d612c811a475.png",
+            "text": ""
+          }
+        },
+        "badge_7PibjG": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_57_3x_791231d8-ace6-4b57-ab19-1aadf953845b.png",
+            "text": ""
+          }
+        },
+        "badge_NUJTnY": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_56_3x_d9468c5e-29a1-44ab-a459-e770ff0bba19.png",
+            "text": ""
+          }
+        },
+        "tab_Ad933b": {
+          "type": "tab",
+          "settings": {
+            "title": "Ingredients",
+            "content": "<p><strong>Soothing Blend</strong><br/>Our chocho is sourced from smallholder farmers in the Ecuadorian highlands who grow and harvest it using traditional methods. For this blend, we also source ginger, turmeric, and black pepper from smallholder farmers in the Ecuadorian Amazon. These distinct ecosystems help shape the character of the blend. Each ingredient is carefully prepared and gently milled to preserve its natural character and integrity from soil to scoop.</p>"
+          }
+        },
+        "tab_TP9qNE": {
+          "type": "tab",
+          "settings": {
+            "title": "Flavor",
+            "content": "<p><strong>Warm & Savory</strong><br/>A naturally unsweetened blend with warm notes of ginger and turmeric, balanced by a subtle peppery finish.</p><ul><li><strong>Notes</strong>: Warm and gently spiced with zesty ginger and earthy turmeric.</li><li><strong>Character</strong>: Savory, aromatic, and naturally unsweetened.</li><li><strong>Versatility</strong>: A balanced real-food flavor for soups, savory pancakes, sauces, dips, smoothies, and everyday cooking.</li></ul>"
+          }
+        },
+        "tab_9kAtpm": {
+          "type": "tab",
+          "settings": {
+            "title": "Product info",
+            "content": "<ul><li><strong>Net Weight</strong>: 27 oz (768 g)</li><li><strong>Servings</strong>: 16 per container</li><li><strong>Serving Size</strong>: 2 scoops (48 g)</li></ul>"
+          }
+        },
+        "recipe_nerFww": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Chocho_Peanut_Ginger_Sauce.webp",
+            "name": "Chocho Peanut Ginger Sauce",
+            "link": ""
+          }
+        },
+        "recipe_qh89YL": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Golden_Turmeric_Protein_Naan.webp",
+            "name": "Golden Turmeric Protein Naan",
+            "link": ""
+          }
+        },
+        "recipe_iCMWRQ": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Chocho_Thai_Lemongrass_Protein_Soup.jpg",
+            "name": "Chocho Thai Lemongrass Protein Soup",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "badge_NFcFJt",
+        "badge_EwrwjA",
+        "badge_7PibjG",
+        "badge_NUJTnY",
+        "tab_Ad933b",
+        "tab_TP9qNE",
+        "tab_9kAtpm",
+        "recipe_nerFww",
+        "recipe_qh89YL",
+        "recipe_iCMWRQ"
+      ],
+      "name": "Featured Product Root",
+      "settings": {
+        "product": "chocho-ginger-turmeric-black-pepper-powder-blend",
+        "variant_id": "",
+        "custom_title": "Andean Chocho <span style=\"color:#b25a45; font-style: italic; font-weight: 600;\">with</span> <br>\n<span>\nGinger + Turmeric + Black Pepper</span>",
+        "description": "<p>Crafted for the whole-food seeker, this blend pairs Andean chocho with ginger, turmeric, and black pepper for complete plant protein, fiber-rich nourishment, and a warm, savory flavor. Rooted in ingredients traditionally valued in everyday wellness practices, it brings functional whole-food nutrition to modern routines and recipes.</p>",
+        "use_product_description": true,
+        "media_text_ratio": "3fr 2fr",
+        "column_gap": 52,
+        "vertical_align": "start",
+        "sticky_media": true,
+        "sticky_offset": 40,
+        "max_width": 1200,
+        "enable_animation": true,
+        "section_border_bottom_width": 0,
+        "section_border_bottom_color": "#c85b42",
+        "image_max_width": 600,
+        "gallery_nav": "thumbnails",
+        "image_aspect_ratio": "1/1",
+        "image_fit": "contain",
+        "image_bg": "rgba(0,0,0,0)",
+        "media_border_radius": 12,
+        "media_shadow": false,
+        "thumb_size": 60,
+        "dot_color": "#c85b42",
+        "show_promo": false,
+        "promo_badge": "20% OFF",
+        "promo_text": "Celebrate wellness month.",
+        "countdown_enabled": false,
+        "promo_hide_on_expiry": true,
+        "promo_padding": 12,
+        "promo_radius": 12,
+        "cd_year": 2026,
+        "cd_month": 8,
+        "cd_day": 20,
+        "cd_hour": 15,
+        "cd_minute": 59,
+        "cd_days_label": "Days",
+        "cd_hours_label": "Hrs",
+        "cd_mins_label": "Min",
+        "cd_secs_label": "Sec",
+        "promo_code": "WELLNESS20",
+        "promo_code_copyable": true,
+        "promo_code_label": "Your code:",
+        "promo_code_copy_text": "Copy",
+        "promo_code_copied_text": "Copied!",
+        "atc_text": "Add to Cart",
+        "added_text": "Added!",
+        "sold_out_text": "Sold Out",
+        "show_buy_now": true,
+        "button_radius": 30,
+        "button_text_transform": "none",
+        "button_letter_spacing": 0,
+        "show_freeship": true,
+        "freeship_width": "100",
+        "freeship_text": "Buy 2 & get FREE shipping",
+        "freeship_subtext": "Straight to checkout",
+        "freeship_icon": true,
+        "freeship_qty": 2,
+        "freeship_extra_variant": "",
+        "freeship_extra_qty": 1,
+        "freeship_bg": "#c0c0c0",
+        "freeship_color": "#3d3d3d",
+        "freeship_color_hover": "#ffffff",
+        "freeship_bg_hover": "#35115c",
+        "freeship_border": "#f0f0f0",
+        "show_badges": true,
+        "badge_icon_size": 78,
+        "badge_icon_size_mobile": 58,
+        "show_tabs": true,
+        "show_recipes": true,
+        "recipes_title": "Recipes with this product",
+        "recipes_show_name": true,
+        "recipes_per_view": 3,
+        "recipes_per_view_mobile": 1.5,
+        "recipe_aspect_ratio": "1/1",
+        "recipes_title_size": 18,
+        "recipes_autoplay": true,
+        "recipes_autoplay_speed": 4000,
+        "text_align": "left",
+        "details_gap": 20,
+        "title_size": 31,
+        "title_weight": "600",
+        "description_size": 16,
+        "description_color": "#724326",
+        "description_max_width": 500,
+        "description_text_align": "justify",
+        "price_size": 22,
+        "price_weight": "500",
+        "section_bg": "#fcf7f5",
+        "title_color": "#c86a42",
+        "price_color": "#c86a42",
+        "accent_color": "#c86a42",
+        "accent_soft": "#eaf2f0",
+        "promo_bg": "#fdf2ed",
+        "promo_border": "#fde2d7",
+        "promo_text_color": "#c86a42",
+        "promo_badge_color": "#ffffff",
+        "cd_box_bg": "#ffffff",
+        "cd_num_color": "#c86a42",
+        "cd_label_color": "#c86a42",
+        "qty_bg": "#ecebea",
+        "qty_border": "#ecebea",
+        "qty_color": "#724326",
+        "atc_bg": "#c85b42",
+        "atc_color": "#ffffff",
+        "atc_bg_hover": "#693c20",
+        "padding_top": 60,
+        "padding_bottom": 60
       }
     },
     "17722383868c1baea3": {
@@ -689,7 +1212,9 @@
   "order": [
     "media_with_gallery_pDADnd",
     "main",
-    "featured_products_rows_Jem9zw",
+    "featured_product_v2_hgtnfd",
+    "featured_product_v2_JTB7i3",
+    "featured_product_v2_YiaTjm",
     "17722383868c1baea3",
     "blocks_mYCxMa"
   ]
