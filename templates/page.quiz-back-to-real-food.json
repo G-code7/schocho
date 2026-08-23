@@ -1,0 +1,92 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ocultar_elementos_globales": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<style>#shopify-section-header, #shopify-section-footer, .shopify-section-group-header-group, .shopify-section-group-footer-group, header, footer { display: none !important; } .sections-header-group, .sections-footer-group { display: none !important; }</style>",
+        "color_scheme": "",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_quiz": {
+      "type": "section",
+      "blocks": {
+        "group_quiz_col": {
+          "type": "group",
+          "name": "Quiz column",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "center",
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "border": "none",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "pc_quiz_btrf": {
+              "type": "pc-quiz-form",
+              "name": "PC Quiz — Back to Real Food",
+              "settings": {
+                "webhook_url": "https://hook.us2.make.com/REEMPLAZAR_CON_TU_WEBHOOK",
+                "source_tag": "pronto-chocho-quiz-btrf",
+                "discount_code": "WELLNESS20",
+                "q1_heading": "How do you cook?",
+                "q2_heading": "What are you after?",
+                "q3_heading": "Who are you feeding?",
+                "gate_heading": "Where should we send your match?",
+                "gate_subtitle": "We'll reveal your Chocho and send your 20% code — no spam, ever.",
+                "gate_btn_label": "Reveal my match",
+                "shop_btn_label": "Shop my Chocho — 20% off"
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": ["pc_quiz_btrf"]
+        }
+      },
+      "block_order": ["group_quiz_col"],
+      "name": "quiz-back-to-real-food",
+      "settings": {
+        "content_direction": "column",
+        "horizontal_alignment": "center",
+        "vertical_alignment": "center",
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "large",
+        "color_scheme": "",
+        "background_media": "none",
+        "border": "none",
+        "padding-block-start": 80,
+        "padding-block-end": 80
+      }
+    }
+  },
+  "order": ["ocultar_elementos_globales", "section_quiz"]
+}
