@@ -1,359 +1,328 @@
 {% doc %}
   @name        PC Quiz Form — "Which Chocho fits your routine?"
-  @description Quiz conversacional nativo (una pregunta por pantalla) para tráfico frío.
-               3 preguntas -> gate de email -> resultado con el blend match + botón de compra
-               con WELLNESS20 aplicado. Envía las respuestas + el match al webhook de Make.com
-               (fetch directo, sin apps de terceros tipo Octane/Jebbit).
+  @description Landing conversacional de viewport completo para tráfico frío.
+               Header propio (solo logo) + panel de marca + quiz de 3 preguntas ->
+               gate de email -> resultado con el blend match y compra con WELLNESS20.
+               Envía respuestas + match al webhook de Make.com (sin apps de terceros).
 
-               Reparto de responsabilidades:
-               - LANDING (este bloque): UI del quiz, scoring, gate de email, pantalla de resultado.
-               - MAKE.com: recibe el webhook y suscribe a Klaviyo (private key server-side).
-               - KLAVIYO: lista + flows. La propiedad `chocho_match` habilita el email
-                 "tu match + recetas" a futuro.
+               Reparto: LANDING (este bloque) captura · MAKE suscribe a Klaviyo · KLAVIYO segmenta/flows.
+               La propiedad `chocho_match` habilita el email "tu match + recetas" a futuro.
 
-  @usage       Colócalo dentro de una sección en el template de la landing (page.quiz-*.json).
+  @usage       Va dentro de una sección a ancho completo y sin padding (page.quiz-*.json).
 
   ── EDITAR COPY DE CAMPAÑA ──
-  Las 3 preguntas y sus respuestas están en los arrays Liquid de abajo (assign q1_*, q2_*, q3_*).
-  Cada respuesta de Q1 y Q2 lleva un blend en el sufijo (::pure / ::kalpa / ::root) que alimenta
-  el scoring. Q3 es solo segmentación (no afecta el match). Para cambiar el copy, edita las labels
-  antes del "::" — no toques el sufijo salvo que quieras recablear el scoring.
+  Preguntas/respuestas en los arrays q1_*/q2_*/q3_* de abajo. Cada respuesta de Q1 y Q2 lleva
+  el blend tras "::" (::pure/::kalpa/::root) que alimenta el scoring. Q3 solo segmenta.
 {% enddoc %}
 
 {% assign pc_id = block.id | replace: '_', '' | downcase %}
 
-{%- comment -%} ── Productos por match (pickers en el editor) ── {%- endcomment -%}
 {%- assign p_pure  = block.settings.product_pure  -%}
 {%- assign p_kalpa = block.settings.product_kalpa -%}
 {%- assign p_root  = block.settings.product_root  -%}
 {%- assign discount = block.settings.discount_code -%}
 
-{%- comment -%} ── Preguntas y respuestas (formato: "Label::blend") ── {%- endcomment -%}
+{%- comment -%} Logo: override del bloque > logo global del tema > nombre de la tienda {%- endcomment -%}
+{%- if block.settings.logo_override != blank -%}
+  {%- assign logo_img = block.settings.logo_override -%}
+{%- elsif settings.logo != blank -%}
+  {%- assign logo_img = settings.logo -%}
+{%- endif -%}
+
 {%- assign q1_options = "Sweet — smoothies, oats, baking::kalpa,Savory — soups, sauces, golden milk::root,A bit of everything::pure" | split: "," -%}
 {%- assign q2_options = "Steady energy::kalpa,Everyday wellness::root,Just keep it simple::pure" | split: "," -%}
 {%- assign q3_options = "Just me,Me + my kids,The whole family" | split: "," -%}
 
 {% style %}
+  /* ── Full-bleed: fuerza edge-to-edge aunque la sección tenga ancho/padding ── */
   .pcq-{{ pc_id }} {
-    width: 100%;
-    max-width: {{ block.settings.max_width }}px;
-    margin-inline: auto;
-    padding: {{ block.settings.padding_v }}px {{ block.settings.padding_h }}px;
+    width: 100vw;
+    max-width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
     background-color: {{ block.settings.bg_color }};
     color: {{ block.settings.text_color }};
-    box-sizing: border-box;
     font-family: inherit;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
+  .pcq-{{ pc_id }} *, .pcq-{{ pc_id }} *::before, .pcq-{{ pc_id }} *::after { box-sizing: border-box; }
 
-  /* ── Progress ── */
-  .pcq__progress-{{ pc_id }} {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 28px;
-  }
-  .pcq__progress-dot-{{ pc_id }} {
-    flex: 1;
-    height: 3px;
-    border-radius: 2px;
-    background-color: {{ block.settings.text_color }}26;
-    transition: background-color 0.3s ease;
-  }
-  .pcq__progress-dot-{{ pc_id }}.is-done {
-    background-color: {{ block.settings.btn_bg }};
-  }
-
-  /* ── Steps ── */
-  .pcq__step-{{ pc_id }} {
-    display: none;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .pcq__step-{{ pc_id }}.is-active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .pcq__eyebrow-{{ pc_id }} {
-    font-size: {{ block.settings.label_size }}px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    opacity: 0.55;
-    margin: 0 0 12px;
-  }
-  .pcq__heading-{{ pc_id }} {
-    font-size: {{ block.settings.heading_size }}px;
-    font-weight: {{ block.settings.heading_weight }};
-    line-height: 1.15;
-    letter-spacing: 0.02em;
-    margin: 0 0 24px;
-  }
-  .pcq__subtitle-{{ pc_id }} {
-    font-size: {{ block.settings.subtitle_size }}px;
-    line-height: 1.6;
-    opacity: 0.7;
-    margin: -12px 0 24px;
-  }
-
-  /* ── Answer options ── */
-  .pcq__options-{{ pc_id }} { display: flex; flex-direction: column; gap: 10px; }
-  .pcq__option-{{ pc_id }} {
+  /* ── Header (solo logo) ── */
+  .pcq__header-{{ pc_id }} {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 18px 20px;
-    border: 1px solid {{ block.settings.input_border_color }};
-    border-radius: 12px;
-    cursor: pointer;
-    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.1s ease;
-    font-size: {{ block.settings.input_font_size }}px;
-    line-height: 1.4;
+    justify-content: {{ block.settings.logo_align }};
+    padding: 18px 32px;
+    border-bottom: 1px solid {{ block.settings.text_color }}14;
+    background-color: {{ block.settings.bg_color }};
   }
-  .pcq__option-{{ pc_id }}:hover { border-color: {{ block.settings.btn_bg }}; background-color: {{ block.settings.btn_bg }}0d; }
-  .pcq__option-{{ pc_id }}.is-selected { border-color: {{ block.settings.btn_bg }}; background-color: {{ block.settings.btn_bg }}1a; }
-  .pcq__option-{{ pc_id }} input { position: absolute; opacity: 0; pointer-events: none; }
-  .pcq__option-marker-{{ pc_id }} {
-    width: 18px; height: 18px; flex-shrink: 0;
-    border: 1px solid {{ block.settings.input_border_color }};
-    border-radius: 50%;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .pcq__option-{{ pc_id }}.is-selected .pcq__option-marker-{{ pc_id }} {
-    border-color: {{ block.settings.btn_bg }};
-    box-shadow: inset 0 0 0 4px {{ block.settings.btn_bg }};
-  }
+  .pcq__logo-{{ pc_id }} { display: inline-flex; align-items: center; }
+  .pcq__logo-{{ pc_id }} img { display: block; height: {{ block.settings.logo_height }}px; width: auto; }
+  .pcq__logo-txt-{{ pc_id }} { font-size: 22px; font-weight: 600; letter-spacing: 0.04em; }
 
-  /* ── Email gate ── */
-  .pcq__field-{{ pc_id }} { margin-bottom: 20px; }
-  .pcq__label-{{ pc_id }} {
-    display: block;
-    font-size: {{ block.settings.label_size }}px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
+  /* ── Body (split en desktop) ── */
+  .pcq__body-{{ pc_id }} { flex: 1; display: flex; min-height: 0; }
+
+  /* Panel de marca (izquierda) */
+  .pcq__brand-{{ pc_id }} {
+    flex: 0 0 42%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px;
+    background-color: {{ block.settings.brand_bg }};
+    color: {{ block.settings.brand_text }};
+    overflow: hidden;
   }
-  .pcq__input-{{ pc_id }} {
-    width: 100%;
-    box-sizing: border-box;
-    background: transparent;
-    border: none;
-    border-bottom: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }};
-    border-radius: 0;
-    font-family: inherit;
-    font-size: {{ block.settings.input_font_size }}px;
-    color: {{ block.settings.text_color }};
-    padding: 12px 0;
-    transition: border-color 0.2s ease;
-    -webkit-appearance: none; appearance: none;
+  {% if block.settings.brand_image != blank %}
+  .pcq__brand-{{ pc_id }}::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: url('{{ block.settings.brand_image | image_url: width: 1400 }}');
+    background-size: cover; background-position: center;
+    opacity: {{ block.settings.brand_image_opacity | divided_by: 100.0 }};
   }
+  {% endif %}
+  .pcq__brand-inner-{{ pc_id }} { position: relative; z-index: 1; max-width: 30ch; }
+  .pcq__brand-eyebrow-{{ pc_id }} { font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; margin: 0 0 20px; }
+  .pcq__brand-headline-{{ pc_id }} { font-size: clamp(30px, 3vw, 46px); font-weight: {{ block.settings.heading_weight }}; line-height: 1.1; letter-spacing: 0.01em; margin: 0 0 20px; }
+  .pcq__brand-sub-{{ pc_id }} { font-size: 17px; line-height: 1.6; opacity: 0.82; margin: 0; }
+
+  /* Panel del quiz (derecha) */
+  .pcq__quiz-{{ pc_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 32px;
+    min-height: 0;
+  }
+  .pcq__inner-{{ pc_id }} { width: 100%; max-width: {{ block.settings.max_width }}px; }
+
+  /* ── Progress ── */
+  .pcq__progress-{{ pc_id }} { display: flex; gap: 8px; margin-bottom: 32px; transition: opacity 0.3s ease; }
+  .pcq__quiz-{{ pc_id }}[data-current="0"] .pcq__progress-{{ pc_id }},
+  .pcq__quiz-{{ pc_id }}[data-current="5"] .pcq__progress-{{ pc_id }} { opacity: 0; pointer-events: none; }
+  .pcq__progress-dot-{{ pc_id }} { flex: 1; height: 3px; border-radius: 2px; background-color: {{ block.settings.text_color }}22; overflow: hidden; }
+  .pcq__progress-dot-{{ pc_id }}::after { content: ""; display: block; height: 100%; width: 0; background-color: {{ block.settings.btn_bg }}; transition: width 0.4s ease; }
+  .pcq__progress-dot-{{ pc_id }}.is-done::after { width: 100%; }
+
+  /* ── Steps + transición ── */
+  .pcq__steps-{{ pc_id }} { position: relative; }
+  .pcq__step-{{ pc_id }} { display: none; }
+  .pcq__step-{{ pc_id }}.is-active { display: block; animation: pcqIn-{{ pc_id }} 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .pcq__quiz-{{ pc_id }}.is-back .pcq__step-{{ pc_id }}.is-active { animation-name: pcqInBack-{{ pc_id }}; }
+  @keyframes pcqIn-{{ pc_id }}     { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: none; } }
+  @keyframes pcqInBack-{{ pc_id }} { from { opacity: 0; transform: translateX(-32px); } to { opacity: 1; transform: none; } }
+
+  .pcq__eyebrow-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5; margin: 0 0 14px; }
+  .pcq__heading-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; line-height: 1.15; letter-spacing: 0.02em; margin: 0 0 28px; }
+  .pcq__subtitle-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.7; margin: -16px 0 28px; }
+
+  /* Intro */
+  .pcq__intro-{{ pc_id }} { font-size: clamp(28px, 4vw, 44px); font-weight: {{ block.settings.heading_weight }}; line-height: 1.12; margin: 0 0 20px; letter-spacing: 0.01em; }
+  .pcq__intro-sub-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.72; margin: 0 0 32px; max-width: 46ch; }
+  .pcq__meta-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5; margin-top: 18px; }
+
+  /* Opciones */
+  .pcq__options-{{ pc_id }} { display: flex; flex-direction: column; gap: 12px; }
+  .pcq__option-{{ pc_id }} {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 22px;
+    border: 1px solid {{ block.settings.input_border_color }}66;
+    border-radius: 14px; cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.12s ease;
+    font-size: {{ block.settings.input_font_size }}px; line-height: 1.4;
+  }
+  .pcq__option-{{ pc_id }}:hover { border-color: {{ block.settings.btn_bg }}; background-color: {{ block.settings.btn_bg }}0d; transform: translateY(-1px); }
+  .pcq__option-{{ pc_id }}.is-selected { border-color: {{ block.settings.btn_bg }}; background-color: {{ block.settings.btn_bg }}17; }
+  .pcq__option-{{ pc_id }} input { position: absolute; opacity: 0; pointer-events: none; }
+  .pcq__option-{{ pc_id }}:focus-within { outline: 2px solid {{ block.settings.btn_bg }}; outline-offset: 2px; }
+  .pcq__option-marker-{{ pc_id }} { width: 20px; height: 20px; flex-shrink: 0; border: 1px solid {{ block.settings.input_border_color }}; border-radius: 50%; transition: border-color 0.2s, box-shadow 0.2s; }
+  .pcq__option-{{ pc_id }}.is-selected .pcq__option-marker-{{ pc_id }} { border-color: {{ block.settings.btn_bg }}; box-shadow: inset 0 0 0 5px {{ block.settings.btn_bg }}; }
+
+  /* Email gate */
+  .pcq__field-{{ pc_id }} { margin-bottom: 22px; }
+  .pcq__label-{{ pc_id }} { display: block; font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+  .pcq__input-{{ pc_id }} { width: 100%; background: transparent; border: none; border-bottom: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }}; border-radius: 0; font-family: inherit; font-size: {{ block.settings.input_font_size }}px; color: {{ block.settings.text_color }}; padding: 12px 0; transition: border-color 0.2s ease; -webkit-appearance: none; appearance: none; }
   .pcq__input-{{ pc_id }}::placeholder { color: {{ block.settings.text_color }}; opacity: 0.35; font-style: italic; }
   .pcq__input-{{ pc_id }}:focus { outline: none; border-color: {{ block.settings.btn_bg }}; }
-
-  .pcq__check-{{ pc_id }} { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+  .pcq__check-{{ pc_id }} { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 26px; }
   .pcq__check-{{ pc_id }} input { width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; accent-color: {{ block.settings.btn_bg }}; cursor: pointer; }
   .pcq__check-{{ pc_id }} label { font-size: {{ block.settings.label_size }}px; opacity: 0.7; line-height: 1.5; cursor: pointer; }
 
-  /* ── Buttons ── */
-  .pcq__btn-{{ pc_id }} {
-    width: 100%;
-    padding: {{ block.settings.btn_padding_v }}px {{ block.settings.btn_padding_h }}px;
-    background-color: {{ block.settings.btn_bg }};
-    color: {{ block.settings.btn_text }};
-    border: none;
-    border-radius: {{ block.settings.btn_radius }}px;
-    font-family: inherit;
-    font-size: {{ block.settings.label_size }}px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.25s ease, opacity 0.25s ease;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-  }
+  /* Botones */
+  .pcq__btn-{{ pc_id }} { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: {{ block.settings.btn_padding_v }}px {{ block.settings.btn_padding_h }}px; background-color: {{ block.settings.btn_bg }}; color: {{ block.settings.btn_text }}; border: none; border-radius: {{ block.settings.btn_radius }}px; font-family: inherit; font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background-color 0.25s ease, opacity 0.25s ease; text-align: center; text-decoration: none; }
   .pcq__btn-{{ pc_id }}:hover:not(:disabled) { background-color: {{ block.settings.btn_hover_bg }}; }
-  .pcq__btn-{{ pc_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
+  .pcq__btn-{{ pc_id }}:disabled { opacity: 0.6; cursor: not-allowed; }
+  .pcq__spinner-{{ pc_id }} { width: 15px; height: 15px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: pcqSpin-{{ pc_id }} 0.7s linear infinite; display: none; }
+  .pcq__btn-{{ pc_id }}.is-loading .pcq__spinner-{{ pc_id }} { display: inline-block; }
+  .pcq__btn-{{ pc_id }}.is-loading .pcq__btn-label-{{ pc_id }} { display: none; }
+  @keyframes pcqSpin-{{ pc_id }} { to { transform: rotate(360deg); } }
 
-  .pcq__back-{{ pc_id }} {
-    background: none; border: none; cursor: pointer;
-    font-family: inherit; font-size: {{ block.settings.label_size }}px;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: {{ block.settings.text_color }}; opacity: 0.5;
-    padding: 14px 0 0; transition: opacity 0.2s;
-  }
+  .pcq__back-{{ pc_id }} { background: none; border: none; cursor: pointer; font-family: inherit; font-size: {{ block.settings.label_size }}px; letter-spacing: 0.1em; text-transform: uppercase; color: {{ block.settings.text_color }}; opacity: 0.45; padding: 16px 0 0; transition: opacity 0.2s; }
   .pcq__back-{{ pc_id }}:hover { opacity: 1; }
-
-  .pcq__feedback-{{ pc_id }} {
-    font-size: {{ block.settings.label_size }}px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: {{ block.settings.error_color }};
-    margin-top: 14px;
-    min-height: 1em;
-    display: none;
-  }
+  .pcq__feedback-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; letter-spacing: 0.06em; text-transform: uppercase; color: {{ block.settings.error_color }}; margin-top: 16px; min-height: 1em; display: none; }
   .pcq__feedback-{{ pc_id }}.is-visible { display: block; }
 
-  /* ── Result ── */
+  /* Resultado */
   .pcq__result-card-{{ pc_id }} { display: none; text-align: center; }
   .pcq__result-card-{{ pc_id }}.is-match { display: block; }
-  .pcq__result-img-{{ pc_id }} {
-    width: 100%; max-width: 280px; height: auto; margin: 0 auto 24px;
-    border-radius: 12px; display: block;
-  }
-  .pcq__result-eyebrow-{{ pc_id }} {
-    font-size: {{ block.settings.label_size }}px; font-weight: 600;
-    letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.55; margin: 0 0 8px;
-  }
-  .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; margin: 0 0 12px; letter-spacing: 0.02em; }
-  .pcq__result-desc-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.75; margin: 0 auto 20px; max-width: 46ch; }
-  .pcq__result-price-{{ pc_id }} { font-size: {{ block.settings.input_font_size }}px; margin: 0 0 8px; }
-  .pcq__result-code-{{ pc_id }} {
-    display: inline-block; margin: 0 0 24px; padding: 8px 16px;
-    border: 1px dashed {{ block.settings.btn_bg }}; border-radius: 8px;
-    font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase;
-  }
+  .pcq__result-img-{{ pc_id }} { width: 100%; max-width: 300px; height: auto; margin: 0 auto 26px; border-radius: 14px; display: block; }
+  .pcq__result-eyebrow-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.5; margin: 0 0 10px; }
+  .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; margin: 0 0 14px; letter-spacing: 0.02em; }
+  .pcq__result-desc-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.75; margin: 0 auto 22px; max-width: 44ch; }
+  .pcq__result-price-{{ pc_id }} { font-size: {{ block.settings.input_font_size }}px; margin: 0 0 10px; }
+  .pcq__result-code-{{ pc_id }} { display: inline-block; margin: 0 0 26px; padding: 9px 18px; border: 1px dashed {{ block.settings.btn_bg }}; border-radius: 8px; font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase; }
 
+  /* ── Responsive ── */
+  @media screen and (max-width: 959px) {
+    .pcq__body-{{ pc_id }} { flex-direction: column; }
+    .pcq__brand-{{ pc_id }} { flex: 0 0 auto; padding: 40px 32px; text-align: center; align-items: center; }
+    .pcq__brand-inner-{{ pc_id }} { max-width: 40ch; }
+    .pcq__brand-headline-{{ pc_id }} { font-size: clamp(26px, 6vw, 34px); }
+    .pcq__brand-sub-{{ pc_id }} { display: none; }
+    .pcq__quiz-{{ pc_id }} { padding: 40px 24px 56px; }
+  }
   @media screen and (max-width: 749px) {
-    .pcq-{{ pc_id }} { padding: {{ block.settings.padding_v | divided_by: 1.5 | round }}px {{ block.settings.padding_h | divided_by: 1.5 | round }}px; }
-    .pcq__heading-{{ pc_id }}, .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size | times: 0.72 | round }}px; }
+    .pcq__header-{{ pc_id }} { padding: 16px 20px; }
+    {% if block.settings.hide_brand_mobile %}.pcq__brand-{{ pc_id }} { display: none; }{% endif %}
+    .pcq__heading-{{ pc_id }}, .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size | times: 0.78 | round }}px; }
+    .pcq__quiz-{{ pc_id }} { padding: 32px 20px 48px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pcq__step-{{ pc_id }} { transition: none; transform: none; }
+    .pcq__step-{{ pc_id }}.is-active { animation: none; }
+    .pcq__option-{{ pc_id }}:hover { transform: none; }
+    .pcq__progress-dot-{{ pc_id }}::after { transition: none; }
   }
 {% endstyle %}
 
 <div class="pcq-{{ pc_id }}" {{ block.shopify_attributes }}>
 
-  <div class="pcq__progress-{{ pc_id }}" aria-hidden="true">
-    {%- for i in (1..4) -%}
-      <span class="pcq__progress-dot-{{ pc_id }}" data-dot="{{ i }}"></span>
-    {%- endfor -%}
-  </div>
+  {%- if block.settings.show_header -%}
+    <header class="pcq__header-{{ pc_id }}">
+      {%- if block.settings.logo_links_home -%}<a href="{{ routes.root_url }}" class="pcq__logo-{{ pc_id }}" aria-label="{{ shop.name | escape }}">{%- else -%}<span class="pcq__logo-{{ pc_id }}" aria-label="{{ shop.name | escape }}">{%- endif -%}
+        {%- if logo_img -%}
+          <img src="{{ logo_img | image_url: width: 480 }}" alt="{{ shop.name | escape }}" width="{{ block.settings.logo_height }}" height="{{ block.settings.logo_height }}">
+        {%- else -%}
+          <span class="pcq__logo-txt-{{ pc_id }}">{{ shop.name }}</span>
+        {%- endif -%}
+      {%- if block.settings.logo_links_home -%}</a>{%- else -%}</span>{%- endif -%}
+    </header>
+  {%- endif -%}
 
-  <div class="pcq__steps-{{ pc_id }}" aria-live="polite">
+  <div class="pcq__body-{{ pc_id }}">
 
-    {%- comment -%} ── STEP 1 — Q1: recipe type ── {%- endcomment -%}
-    <div class="pcq__step-{{ pc_id }} is-active" data-step="1" role="group">
-      <p class="pcq__eyebrow-{{ pc_id }}">Question 1 of 3</p>
-      <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q1_heading }}</h2>
-      <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q1_heading | strip_html }}">
-        {%- for opt in q1_options -%}
-          {%- assign parts = opt | split: "::" -%}
-          <label class="pcq__option-{{ pc_id }}">
-            <input type="radio" name="pcq-q1-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="2">
-            <span class="pcq__option-marker-{{ pc_id }}"></span>
-            <span>{{ parts[0] | strip }}</span>
-          </label>
-        {%- endfor -%}
-      </div>
-    </div>
-
-    {%- comment -%} ── STEP 2 — Q2: goal ── {%- endcomment -%}
-    <div class="pcq__step-{{ pc_id }}" data-step="2" role="group">
-      <p class="pcq__eyebrow-{{ pc_id }}">Question 2 of 3</p>
-      <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q2_heading }}</h2>
-      <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q2_heading | strip_html }}">
-        {%- for opt in q2_options -%}
-          {%- assign parts = opt | split: "::" -%}
-          <label class="pcq__option-{{ pc_id }}">
-            <input type="radio" name="pcq-q2-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="3">
-            <span class="pcq__option-marker-{{ pc_id }}"></span>
-            <span>{{ parts[0] | strip }}</span>
-          </label>
-        {%- endfor -%}
-      </div>
-      <button type="button" class="pcq__back-{{ pc_id }}" data-back="1">← Back</button>
-    </div>
-
-    {%- comment -%} ── STEP 3 — Q3: who for (segmentation only) ── {%- endcomment -%}
-    <div class="pcq__step-{{ pc_id }}" data-step="3" role="group">
-      <p class="pcq__eyebrow-{{ pc_id }}">Question 3 of 3</p>
-      <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q3_heading }}</h2>
-      <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q3_heading | strip_html }}">
-        {%- for opt in q3_options -%}
-          <label class="pcq__option-{{ pc_id }}">
-            <input type="radio" name="pcq-q3-{{ pc_id }}" value="{{ opt | strip }}" data-advance="4">
-            <span class="pcq__option-marker-{{ pc_id }}"></span>
-            <span>{{ opt | strip }}</span>
-          </label>
-        {%- endfor -%}
-      </div>
-      <button type="button" class="pcq__back-{{ pc_id }}" data-back="2">← Back</button>
-    </div>
-
-    {%- comment -%} ── STEP 4 — Email gate (before result) ── {%- endcomment -%}
-    <div class="pcq__step-{{ pc_id }}" data-step="4" role="group">
-      <p class="pcq__eyebrow-{{ pc_id }}">One last thing</p>
-      <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.gate_heading }}</h2>
-      {%- if block.settings.gate_subtitle != blank -%}
-        <p class="pcq__subtitle-{{ pc_id }}">{{ block.settings.gate_subtitle }}</p>
-      {%- endif -%}
-
-      <div class="pcq__field-{{ pc_id }}">
-        <label for="pcq-email-{{ pc_id }}" class="pcq__label-{{ pc_id }}">{{ block.settings.email_label }}</label>
-        <input type="email" id="pcq-email-{{ pc_id }}" class="pcq__input-{{ pc_id }}" placeholder="{{ block.settings.email_placeholder }}" autocomplete="email" required>
-      </div>
-
-      {%- if block.settings.show_consent -%}
-        <div class="pcq__check-{{ pc_id }}">
-          <input type="checkbox" id="pcq-consent-{{ pc_id }}" required>
-          <label for="pcq-consent-{{ pc_id }}">{{ block.settings.consent_text }}</label>
+    {%- if block.settings.show_brand -%}
+      <aside class="pcq__brand-{{ pc_id }}">
+        <div class="pcq__brand-inner-{{ pc_id }}">
+          {%- if block.settings.brand_eyebrow != blank -%}<p class="pcq__brand-eyebrow-{{ pc_id }}">{{ block.settings.brand_eyebrow }}</p>{%- endif -%}
+          <h2 class="pcq__brand-headline-{{ pc_id }}">{{ block.settings.brand_headline }}</h2>
+          {%- if block.settings.brand_sub != blank -%}<p class="pcq__brand-sub-{{ pc_id }}">{{ block.settings.brand_sub }}</p>{%- endif -%}
         </div>
-      {%- endif -%}
+      </aside>
+    {%- endif -%}
 
-      <button type="button" class="pcq__btn-{{ pc_id }}" data-submit>{{ block.settings.gate_btn_label }}</button>
-      <div class="pcq__feedback-{{ pc_id }}" role="alert" aria-live="assertive"></div>
-      <button type="button" class="pcq__back-{{ pc_id }}" data-back="3">← Back</button>
-    </div>
+    <div class="pcq__quiz-{{ pc_id }}" data-current="0">
+      <div class="pcq__inner-{{ pc_id }}">
 
-    {%- comment -%} ── STEP 5 — Result (dynamic per match) ── {%- endcomment -%}
-    <div class="pcq__step-{{ pc_id }}" data-step="5" role="group">
+        <div class="pcq__progress-{{ pc_id }}" aria-hidden="true">
+          {%- for i in (1..4) -%}<span class="pcq__progress-dot-{{ pc_id }}" data-dot="{{ i }}"></span>{%- endfor -%}
+        </div>
 
-      {%- comment -%} PURE {%- endcomment -%}
-      <div class="pcq__result-card-{{ pc_id }}" data-match="pure">
-        {%- if p_pure != blank -%}
-          {%- if p_pure.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ p_pure.featured_image | image_url: width: 560 }}" alt="{{ p_pure.title | escape }}" loading="lazy" width="280">{%- endif -%}
-          <p class="pcq__result-eyebrow-{{ pc_id }}">Your match</p>
-          <h2 class="pcq__result-name-{{ pc_id }}">{{ p_pure.title }}</h2>
-          <p class="pcq__result-desc-{{ pc_id }}">{{ block.settings.desc_pure }}</p>
-          <p class="pcq__result-price-{{ pc_id }}">{{ p_pure.price | money }}</p>
-          {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
-          <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ p_pure.url }}{% else %}{{ p_pure.url }}{% endif %}">{{ block.settings.shop_btn_label }}</a>
-        {%- endif -%}
+        <div class="pcq__steps-{{ pc_id }}" aria-live="polite">
+
+          {%- comment -%} STEP 0 — Intro {%- endcomment -%}
+          {%- if block.settings.show_intro -%}
+          <div class="pcq__step-{{ pc_id }} is-active" data-step="0" role="group">
+            <h2 class="pcq__intro-{{ pc_id }}">{{ block.settings.intro_heading }}</h2>
+            {%- if block.settings.intro_sub != blank -%}<p class="pcq__intro-sub-{{ pc_id }}">{{ block.settings.intro_sub }}</p>{%- endif -%}
+            <button type="button" class="pcq__btn-{{ pc_id }}" data-advance="1"><span class="pcq__btn-label-{{ pc_id }}">{{ block.settings.intro_btn }}</span></button>
+            <p class="pcq__meta-{{ pc_id }}">{{ block.settings.intro_meta }}</p>
+          </div>
+          {%- endif -%}
+
+          {%- comment -%} STEP 1 — Q1 {%- endcomment -%}
+          <div class="pcq__step-{{ pc_id }}{% unless block.settings.show_intro %} is-active{% endunless %}" data-step="1" role="group">
+            <p class="pcq__eyebrow-{{ pc_id }}">Question 1 of 3</p>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q1_heading }}</h2>
+            <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q1_heading | strip_html }}">
+              {%- for opt in q1_options -%}{%- assign parts = opt | split: "::" -%}
+                <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q1-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="2"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
+              {%- endfor -%}
+            </div>
+          </div>
+
+          {%- comment -%} STEP 2 — Q2 {%- endcomment -%}
+          <div class="pcq__step-{{ pc_id }}" data-step="2" role="group">
+            <p class="pcq__eyebrow-{{ pc_id }}">Question 2 of 3</p>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q2_heading }}</h2>
+            <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q2_heading | strip_html }}">
+              {%- for opt in q2_options -%}{%- assign parts = opt | split: "::" -%}
+                <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q2-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="3"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
+              {%- endfor -%}
+            </div>
+            <button type="button" class="pcq__back-{{ pc_id }}" data-back="1">← Back</button>
+          </div>
+
+          {%- comment -%} STEP 3 — Q3 (segmentación) {%- endcomment -%}
+          <div class="pcq__step-{{ pc_id }}" data-step="3" role="group">
+            <p class="pcq__eyebrow-{{ pc_id }}">Question 3 of 3</p>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q3_heading }}</h2>
+            <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q3_heading | strip_html }}">
+              {%- for opt in q3_options -%}
+                <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q3-{{ pc_id }}" value="{{ opt | strip }}" data-advance="4"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ opt | strip }}</span></label>
+              {%- endfor -%}
+            </div>
+            <button type="button" class="pcq__back-{{ pc_id }}" data-back="2">← Back</button>
+          </div>
+
+          {%- comment -%} STEP 4 — Email gate {%- endcomment -%}
+          <div class="pcq__step-{{ pc_id }}" data-step="4" role="group">
+            <p class="pcq__eyebrow-{{ pc_id }}">One last thing</p>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.gate_heading }}</h2>
+            {%- if block.settings.gate_subtitle != blank -%}<p class="pcq__subtitle-{{ pc_id }}">{{ block.settings.gate_subtitle }}</p>{%- endif -%}
+            <div class="pcq__field-{{ pc_id }}">
+              <label for="pcq-email-{{ pc_id }}" class="pcq__label-{{ pc_id }}">{{ block.settings.email_label }}</label>
+              <input type="email" id="pcq-email-{{ pc_id }}" class="pcq__input-{{ pc_id }}" placeholder="{{ block.settings.email_placeholder }}" autocomplete="email" inputmode="email" required>
+            </div>
+            {%- if block.settings.show_consent -%}
+              <div class="pcq__check-{{ pc_id }}"><input type="checkbox" id="pcq-consent-{{ pc_id }}" required><label for="pcq-consent-{{ pc_id }}">{{ block.settings.consent_text }}</label></div>
+            {%- endif -%}
+            <button type="button" class="pcq__btn-{{ pc_id }}" data-submit><span class="pcq__spinner-{{ pc_id }}" aria-hidden="true"></span><span class="pcq__btn-label-{{ pc_id }}">{{ block.settings.gate_btn_label }}</span></button>
+            <div class="pcq__feedback-{{ pc_id }}" role="alert" aria-live="assertive"></div>
+            <button type="button" class="pcq__back-{{ pc_id }}" data-back="3">← Back</button>
+          </div>
+
+          {%- comment -%} STEP 5 — Result {%- endcomment -%}
+          <div class="pcq__step-{{ pc_id }}" data-step="5" role="group">
+            {%- assign matches = "pure,kalpa,root" | split: "," -%}
+            {%- for m in matches -%}
+              {%- case m -%}{%- when "pure" -%}{%- assign prod = p_pure -%}{%- assign mdesc = block.settings.desc_pure -%}{%- when "kalpa" -%}{%- assign prod = p_kalpa -%}{%- assign mdesc = block.settings.desc_kalpa -%}{%- when "root" -%}{%- assign prod = p_root -%}{%- assign mdesc = block.settings.desc_root -%}{%- endcase -%}
+              <div class="pcq__result-card-{{ pc_id }}" data-match="{{ m }}">
+                {%- if prod != blank -%}
+                  {%- if prod.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ prod.featured_image | image_url: width: 600 }}" alt="{{ prod.title | escape }}" loading="lazy" width="300">{%- endif -%}
+                  <p class="pcq__result-eyebrow-{{ pc_id }}">Your match</p>
+                  <h2 class="pcq__result-name-{{ pc_id }}">{{ prod.title }}</h2>
+                  <p class="pcq__result-desc-{{ pc_id }}">{{ mdesc }}</p>
+                  <p class="pcq__result-price-{{ pc_id }}">{{ prod.price | money }}</p>
+                  {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
+                  <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ prod.url }}{% else %}{{ prod.url }}{% endif %}"><span class="pcq__btn-label-{{ pc_id }}">{{ block.settings.shop_btn_label }}</span></a>
+                {%- else -%}
+                  <p class="pcq__result-desc-{{ pc_id }}">⚠️ Selecciona el producto <strong>{{ m }}</strong> en el editor del bloque.</p>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+
+        </div>
       </div>
-
-      {%- comment -%} KALPA {%- endcomment -%}
-      <div class="pcq__result-card-{{ pc_id }}" data-match="kalpa">
-        {%- if p_kalpa != blank -%}
-          {%- if p_kalpa.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ p_kalpa.featured_image | image_url: width: 560 }}" alt="{{ p_kalpa.title | escape }}" loading="lazy" width="280">{%- endif -%}
-          <p class="pcq__result-eyebrow-{{ pc_id }}">Your match</p>
-          <h2 class="pcq__result-name-{{ pc_id }}">{{ p_kalpa.title }}</h2>
-          <p class="pcq__result-desc-{{ pc_id }}">{{ block.settings.desc_kalpa }}</p>
-          <p class="pcq__result-price-{{ pc_id }}">{{ p_kalpa.price | money }}</p>
-          {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
-          <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ p_kalpa.url }}{% else %}{{ p_kalpa.url }}{% endif %}">{{ block.settings.shop_btn_label }}</a>
-        {%- endif -%}
-      </div>
-
-      {%- comment -%} ROOT {%- endcomment -%}
-      <div class="pcq__result-card-{{ pc_id }}" data-match="root">
-        {%- if p_root != blank -%}
-          {%- if p_root.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ p_root.featured_image | image_url: width: 560 }}" alt="{{ p_root.title | escape }}" loading="lazy" width="280">{%- endif -%}
-          <p class="pcq__result-eyebrow-{{ pc_id }}">Your match</p>
-          <h2 class="pcq__result-name-{{ pc_id }}">{{ p_root.title }}</h2>
-          <p class="pcq__result-desc-{{ pc_id }}">{{ block.settings.desc_root }}</p>
-          <p class="pcq__result-price-{{ pc_id }}">{{ p_root.price | money }}</p>
-          {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
-          <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ p_root.url }}{% else %}{{ p_root.url }}{% endif %}">{{ block.settings.shop_btn_label }}</a>
-        {%- endif -%}
-      </div>
-
     </div>
 
   </div>
@@ -361,16 +330,17 @@
 
 <script>
 (function () {
-  var id      = {{ pc_id | json }};
-  var root    = document.querySelector('.pcq-' + id);
+  var id       = {{ pc_id | json }};
+  var root     = document.querySelector('.pcq-' + id);
   if (!root) return;
 
-  var webhook = {{ block.settings.webhook_url | json }};
-  var source  = {{ block.settings.source_tag | json }};
-  var errMsg  = {{ block.settings.error_message | json }};
+  var webhook  = {{ block.settings.webhook_url | json }};
+  var source   = {{ block.settings.source_tag | json }};
+  var errMsg   = {{ block.settings.error_message | json }};
 
-  var steps   = root.querySelectorAll('.pcq__step-' + id);
-  var dots    = root.querySelectorAll('[data-dot]');
+  var quiz     = root.querySelector('.pcq__quiz-' + id);
+  var steps    = root.querySelectorAll('.pcq__step-' + id);
+  var dots     = root.querySelectorAll('[data-dot]');
   var feedback = root.querySelector('.pcq__feedback-' + id);
   var emailEl  = root.querySelector('#pcq-email-' + id);
   var consentEl = root.querySelector('#pcq-consent-' + id);
@@ -378,40 +348,40 @@
 
   var answers = { q1: null, q2: null, q3: null, blend1: null, blend2: null };
 
-  function goTo(step) {
+  function goTo(step, dir) {
+    quiz.classList.toggle('is-back', dir === 'back');
     steps.forEach(function (s) { s.classList.toggle('is-active', s.getAttribute('data-step') === String(step)); });
+    quiz.setAttribute('data-current', String(step));
     dots.forEach(function (d) {
       var n = parseInt(d.getAttribute('data-dot'), 10);
-      d.classList.toggle('is-done', n <= Math.min(step, 4));
+      d.classList.toggle('is-done', n <= Math.min(step, 4) && step > 0);
     });
-    // move focus to the new step's heading for a11y
-    var active = root.querySelector('.pcq__step-' + id + '.is-active h2');
-    if (active) { active.setAttribute('tabindex', '-1'); active.focus({ preventScroll: false }); }
+    var h = root.querySelector('.pcq__step-' + id + '.is-active h2');
+    if (h) { h.setAttribute('tabindex', '-1'); try { h.focus({ preventScroll: true }); } catch (e) { h.focus(); } }
+    if (step === 5) { dots.forEach(function (d) { d.classList.add('is-done'); }); }
   }
 
-  // Option selection: highlight + record + auto-advance
   root.querySelectorAll('.pcq__option-' + id + ' input').forEach(function (input) {
     input.addEventListener('change', function () {
       var group = input.closest('.pcq__options-' + id);
       group.querySelectorAll('.pcq__option-' + id).forEach(function (l) { l.classList.remove('is-selected'); });
       input.closest('.pcq__option-' + id).classList.add('is-selected');
-
       var name = input.name;
       if (name.indexOf('q1') !== -1) { answers.q1 = input.value; answers.blend1 = input.getAttribute('data-blend'); }
       else if (name.indexOf('q2') !== -1) { answers.q2 = input.value; answers.blend2 = input.getAttribute('data-blend'); }
       else if (name.indexOf('q3') !== -1) { answers.q3 = input.value; }
-
       var next = input.getAttribute('data-advance');
-      if (next) { setTimeout(function () { goTo(parseInt(next, 10)); }, 260); }
+      if (next) { setTimeout(function () { goTo(parseInt(next, 10), 'fwd'); }, 280); }
     });
   });
 
-  // Back buttons
+  root.querySelectorAll('[data-advance]').forEach(function (btn) {
+    if (btn.tagName === 'BUTTON') { btn.addEventListener('click', function () { goTo(parseInt(btn.getAttribute('data-advance'), 10), 'fwd'); }); }
+  });
   root.querySelectorAll('[data-back]').forEach(function (btn) {
-    btn.addEventListener('click', function () { goTo(parseInt(btn.getAttribute('data-back'), 10)); });
+    btn.addEventListener('click', function () { goTo(parseInt(btn.getAttribute('data-back'), 10), 'back'); });
   });
 
-  // Scoring: tally blend1 + blend2; tie/mixed -> pure (the versatile base)
   function computeMatch() {
     var tally = { pure: 0, kalpa: 0, root: 0 };
     if (answers.blend1) tally[answers.blend1]++;
@@ -424,20 +394,15 @@
     return tie ? 'pure' : top;
   }
 
-  function showFeedback(msg) {
-    feedback.textContent = msg;
-    feedback.classList.add('is-visible');
-  }
+  function showFeedback(msg) { feedback.textContent = msg; feedback.classList.add('is-visible'); }
 
   function showResult(match) {
     root.querySelectorAll('.pcq__result-card-' + id).forEach(function (c) {
       c.classList.toggle('is-match', c.getAttribute('data-match') === match);
     });
-    goTo(5);
-    dots.forEach(function (d) { d.classList.add('is-done'); });
+    goTo(5, 'fwd');
   }
 
-  // Email gate submit -> validate, fetch, then reveal result
   if (submitBtn) {
     submitBtn.addEventListener('click', function () {
       feedback.classList.remove('is-visible');
@@ -446,39 +411,21 @@
 
       var match = computeMatch();
       var matchLabel = match.charAt(0).toUpperCase() + match.slice(1);
-
       var payload = {
-        email:       emailEl.value.trim(),
-        recipe_type: answers.q1,
-        goal:        answers.q2,
-        buying_for:  answers.q3,
+        email: emailEl.value.trim(),
+        recipe_type: answers.q1, goal: answers.q2, buying_for: answers.q3,
         chocho_match: matchLabel,
-        source:      source || window.location.href,
-        page:        document.title,
-        timestamp:   new Date().toISOString()
+        source: source || window.location.href,
+        page: document.title, timestamp: new Date().toISOString()
       };
 
       submitBtn.disabled = true;
-      var originalLabel = submitBtn.textContent;
-      submitBtn.textContent = '...';
-
+      submitBtn.classList.add('is-loading');
       var reveal = function () { showResult(match); };
 
-      fetch(webhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      .then(function (res) {
-        // Reveal the result regardless of webhook latency; the lead is what matters.
-        reveal();
-        if (!res.ok) { console.warn('PC Quiz: webhook responded ' + res.status); }
-      })
-      .catch(function (err) {
-        // Network failed: don't punish the user — still show their match.
-        console.warn('PC Quiz: webhook error', err);
-        reveal();
-      });
+      fetch(webhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+        .then(function (res) { reveal(); if (!res.ok) console.warn('PC Quiz: webhook ' + res.status); })
+        .catch(function (err) { console.warn('PC Quiz: webhook error', err); reveal(); });
     });
   }
 })();
@@ -490,27 +437,52 @@
   "tag": null,
   "settings": [
     { "type": "header", "content": "🔗 Integración" },
-    { "type": "text", "id": "webhook_url", "label": "URL del Webhook (Make.com)", "info": "El lead + respuestas + match se envían aquí. Make suscribe a Klaviyo server-side." },
-    { "type": "text", "id": "source_tag", "label": "Etiqueta de origen (source)", "default": "pronto-chocho-quiz-btrf" },
-    { "type": "text", "id": "discount_code", "label": "Código de descuento", "default": "WELLNESS20", "info": "Se muestra en el resultado y se aplica vía /discount/CÓDIGO al ir al producto. Déjalo vacío para enlazar al producto sin descuento." },
+    { "type": "text", "id": "webhook_url", "label": "URL del Webhook (Make.com)", "info": "Recibe email + respuestas + match. Make suscribe a Klaviyo server-side." },
+    { "type": "text", "id": "source_tag", "label": "Etiqueta de origen", "default": "pronto-chocho-quiz-btrf" },
+    { "type": "text", "id": "discount_code", "label": "Código de descuento", "default": "WELLNESS20", "info": "Se muestra en el resultado y se aplica vía /discount/CÓDIGO al ir al producto." },
+
+    { "type": "header", "content": "🏷️ Header (solo logo)" },
+    { "type": "checkbox", "id": "show_header", "label": "Mostrar header", "default": true },
+    { "type": "image_picker", "id": "logo_override", "label": "Logo (opcional)", "info": "Si lo dejas vacío usa el logo global del tema (Branding)." },
+    { "type": "range", "id": "logo_height", "label": "Alto del logo", "min": 24, "max": 80, "step": 2, "unit": "px", "default": 44 },
+    { "type": "select", "id": "logo_align", "label": "Alineación del logo", "options": [{ "value": "flex-start", "label": "Izquierda" }, { "value": "center", "label": "Centro" }], "default": "center" },
+    { "type": "checkbox", "id": "logo_links_home", "label": "El logo enlaza al inicio", "default": false, "info": "Desactivado reduce salidas de la landing." },
+
+    { "type": "header", "content": "🎨 Panel de marca (desktop)" },
+    { "type": "checkbox", "id": "show_brand", "label": "Mostrar panel de marca", "default": true },
+    { "type": "checkbox", "id": "hide_brand_mobile", "label": "Ocultar en móvil", "default": false },
+    { "type": "image_picker", "id": "brand_image", "label": "Imagen de fondo (opcional)" },
+    { "type": "range", "id": "brand_image_opacity", "label": "Opacidad de la imagen", "min": 10, "max": 100, "step": 5, "unit": "%", "default": 100 },
+    { "type": "text", "id": "brand_eyebrow", "label": "Antetítulo", "default": "Back to real food" },
+    { "type": "inline_richtext", "id": "brand_headline", "label": "Titular", "default": "Not pea. Not soy. Not rice." },
+    { "type": "textarea", "id": "brand_sub", "label": "Texto de apoyo", "default": "Real Andean chocho — the protein your grandparents would recognize. Find the one that fits your routine." },
+    { "type": "color", "id": "brand_bg", "label": "Fondo del panel", "default": "#371e54" },
+    { "type": "color", "id": "brand_text", "label": "Texto del panel", "default": "#fbf9f9" },
 
     { "type": "header", "content": "🛒 Productos por match" },
-    { "type": "paragraph", "content": "Elige el producto real de cada blend. El botón de compra y la imagen se sacan solos de aquí." },
+    { "type": "paragraph", "content": "Elige el producto real de cada blend. La imagen y el botón salen de aquí." },
     { "type": "product", "id": "product_pure", "label": "Match: PURE (de todo / simplicidad)" },
     { "type": "product", "id": "product_kalpa", "label": "Match: KALPA (dulce / energía)" },
     { "type": "product", "id": "product_root", "label": "Match: ROOT (salado / bienestar)" },
 
+    { "type": "header", "content": "👋 Intro" },
+    { "type": "checkbox", "id": "show_intro", "label": "Mostrar pantalla de intro", "default": true },
+    { "type": "inline_richtext", "id": "intro_heading", "label": "Titular de intro", "default": "Which Chocho fits your routine?" },
+    { "type": "textarea", "id": "intro_sub", "label": "Subtítulo de intro", "default": "Answer 3 quick questions and we'll match you with your blend — plus 20% off your first bag." },
+    { "type": "inline_richtext", "id": "intro_btn", "label": "Botón de intro", "default": "Take the 30-second quiz" },
+    { "type": "text", "id": "intro_meta", "label": "Nota pequeña", "default": "Takes 30 seconds · No spam" },
+
     { "type": "header", "content": "❓ Preguntas" },
     { "type": "inline_richtext", "id": "q1_heading", "label": "Pregunta 1 (recetas)", "default": "How do you cook?" },
     { "type": "inline_richtext", "id": "q2_heading", "label": "Pregunta 2 (objetivo)", "default": "What are you after?" },
-    { "type": "inline_richtext", "id": "q3_heading", "label": "Pregunta 3 (para quién — segmentación)", "default": "Who are you feeding?" },
-    { "type": "paragraph", "content": "Las respuestas de cada pregunta se editan en el código del bloque (arriba del todo, arrays q1/q2/q3)." },
+    { "type": "inline_richtext", "id": "q3_heading", "label": "Pregunta 3 (para quién)", "default": "Who are you feeding?" },
+    { "type": "paragraph", "content": "Las respuestas se editan en el código del bloque (arrays q1/q2/q3)." },
 
     { "type": "header", "content": "✉️ Gate de email" },
     { "type": "inline_richtext", "id": "gate_heading", "label": "Título del gate", "default": "Where should we send your match?" },
-    { "type": "textarea", "id": "gate_subtitle", "label": "Subtítulo del gate", "default": "We'll reveal your Chocho and send your 20% code — no spam, ever." },
+    { "type": "textarea", "id": "gate_subtitle", "label": "Subtítulo", "default": "We'll reveal your Chocho and send your 20% code — no spam, ever." },
     { "type": "inline_richtext", "id": "email_label", "label": "Label del email", "default": "Your email" },
-    { "type": "text", "id": "email_placeholder", "label": "Placeholder del email", "default": "your@email.com" },
+    { "type": "text", "id": "email_placeholder", "label": "Placeholder", "default": "your@email.com" },
     { "type": "inline_richtext", "id": "gate_btn_label", "label": "Botón del gate", "default": "Reveal my match" },
     { "type": "checkbox", "id": "show_consent", "label": "Mostrar consentimiento", "default": true },
     { "type": "textarea", "id": "consent_text", "label": "Texto de consentimiento", "default": "I agree to receive curated emails from PRONTO CHOCHO®." },
@@ -522,42 +494,31 @@
     { "type": "textarea", "id": "desc_root", "label": "Descripción — Root", "default": "For savory cooking and everyday wellness. Golden milk, soups and warm dishes, rooted in real food." },
     { "type": "inline_richtext", "id": "shop_btn_label", "label": "Botón de compra", "default": "Shop my Chocho — 20% off" },
 
-    { "type": "header", "content": "📐 Layout" },
-    { "type": "range", "id": "max_width", "label": "Ancho máximo", "min": 400, "max": 900, "step": 20, "unit": "px", "default": 560 },
-    { "type": "range", "id": "padding_v", "label": "Padding vertical", "min": 0, "max": 120, "step": 8, "unit": "px", "default": 56 },
-    { "type": "range", "id": "padding_h", "label": "Padding horizontal", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 24 },
-
-    { "type": "header", "content": "🔤 Tipografía" },
-    { "type": "range", "id": "heading_size", "label": "Tamaño de títulos", "min": 20, "max": 64, "step": 2, "unit": "px", "default": 32 },
+    { "type": "header", "content": "📐 Layout & tipografía" },
+    { "type": "range", "id": "max_width", "label": "Ancho del quiz", "min": 380, "max": 640, "step": 10, "unit": "px", "default": 460 },
+    { "type": "range", "id": "heading_size", "label": "Tamaño de títulos", "min": 20, "max": 56, "step": 2, "unit": "px", "default": 30 },
     { "type": "range", "id": "heading_weight", "label": "Peso de títulos", "min": 300, "max": 900, "step": 100, "default": 500 },
     { "type": "range", "id": "subtitle_size", "label": "Tamaño de subtítulo", "min": 12, "max": 22, "step": 1, "unit": "px", "default": 16 },
     { "type": "range", "id": "label_size", "label": "Tamaño de labels/botón", "min": 10, "max": 16, "step": 1, "unit": "px", "default": 12 },
-    { "type": "range", "id": "input_font_size", "label": "Tamaño de texto en opciones/inputs", "min": 14, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "input_font_size", "label": "Tamaño de opciones/inputs", "min": 14, "max": 22, "step": 1, "unit": "px", "default": 16 },
 
-    { "type": "header", "content": "🎨 Colores" },
+    { "type": "header", "content": "🎨 Colores del quiz" },
     { "type": "color", "id": "bg_color", "label": "Fondo", "default": "#fbf9f9" },
     { "type": "color", "id": "text_color", "label": "Texto", "default": "#371e54" },
     { "type": "color", "id": "input_border_color", "label": "Bordes", "default": "#3e2563" },
-    { "type": "range", "id": "input_border_width", "label": "Grosor de borde inferior (email)", "min": 1, "max": 4, "step": 1, "unit": "px", "default": 1 },
-    { "type": "color", "id": "success_color", "label": "Color de éxito", "default": "#2e7d32" },
+    { "type": "range", "id": "input_border_width", "label": "Grosor borde inferior (email)", "min": 1, "max": 4, "step": 1, "unit": "px", "default": 1 },
     { "type": "color", "id": "error_color", "label": "Color de error", "default": "#ba1a1a" },
 
     { "type": "header", "content": "── Botón" },
     { "type": "color", "id": "btn_bg", "label": "Fondo del botón", "default": "#371e54" },
     { "type": "color", "id": "btn_text", "label": "Texto del botón", "default": "#ffffff" },
-    { "type": "color", "id": "btn_hover_bg", "label": "Fondo del botón (hover)", "default": "#513280" },
+    { "type": "color", "id": "btn_hover_bg", "label": "Fondo (hover)", "default": "#513280" },
     { "type": "range", "id": "btn_radius", "label": "Radio del botón", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range", "id": "btn_padding_v", "label": "Padding vertical del botón", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 18 },
-    { "type": "range", "id": "btn_padding_h", "label": "Padding horizontal del botón", "min": 16, "max": 120, "step": 8, "unit": "px", "default": 40 }
+    { "type": "range", "id": "btn_padding_v", "label": "Padding vertical botón", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 18 },
+    { "type": "range", "id": "btn_padding_h", "label": "Padding horizontal botón", "min": 16, "max": 120, "step": 8, "unit": "px", "default": 40 }
   ],
   "presets": [
-    {
-      "name": "PC Quiz — Which Chocho fits your routine?",
-      "settings": {
-        "source_tag": "pronto-chocho-quiz-btrf",
-        "discount_code": "WELLNESS20"
-      }
-    }
+    { "name": "PC Quiz — Which Chocho fits your routine?", "settings": { "source_tag": "pronto-chocho-quiz-btrf", "discount_code": "WELLNESS20" } }
   ]
 }
 {% endschema %}
