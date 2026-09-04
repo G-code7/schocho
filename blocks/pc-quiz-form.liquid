@@ -60,9 +60,34 @@
     border-bottom: 1px solid {{ block.settings.text_color }}14;
     background-color: {{ block.settings.bg_color }};
   }
-  .pcq__logo-{{ pc_id }} { display: inline-flex; align-items: center; }
+  .pcq__logo-{{ pc_id }} { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
   .pcq__logo-{{ pc_id }} img { display: block; height: {{ block.settings.logo_height }}px; width: auto; }
   .pcq__logo-txt-{{ pc_id }} { font-size: 22px; font-weight: 600; letter-spacing: 0.04em; }
+
+  /* ── Footer (paso a paso) ── */
+  .pcq__footer-{{ pc_id }} {
+    flex-shrink: 0;
+    padding: 20px 32px;
+    border-top: 1px solid {{ block.settings.text_color }}14;
+    background-color: {{ block.settings.bg_color }};
+  }
+  .pcq__steps-list-{{ pc_id }} {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 8px 16px;
+    font-size: {{ block.settings.label_size }}px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: {{ block.settings.text_color }};
+  }
+  .pcq__fstep-{{ pc_id }} { display: inline-flex; align-items: center; gap: 16px; opacity: 0.72; }
+  .pcq__fstep-{{ pc_id }}:not(:first-child)::before { content: "→"; opacity: 0.4; }
+  .pcq__fstep-{{ pc_id }} span { display: inline-flex; align-items: center; gap: 8px; }
+  .pcq__fnum-{{ pc_id }} {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1px solid {{ block.settings.text_color }}40;
+    font-size: 0.82em; letter-spacing: 0; opacity: 0.9;
+  }
 
   /* ── Body (split en desktop) ── */
   .pcq__body-{{ pc_id }} { flex: 1; display: flex; min-height: 0; }
@@ -326,6 +351,16 @@
     </div>
 
   </div>
+
+  {%- if block.settings.show_footer -%}
+    <footer class="pcq__footer-{{ pc_id }}">
+      <ol class="pcq__steps-list-{{ pc_id }}" aria-label="How it works">
+        <li class="pcq__fstep-{{ pc_id }}"><span>{%- if block.settings.footer_numbered -%}<span class="pcq__fnum-{{ pc_id }}">1</span>{%- endif -%}{{ block.settings.footer_step1 }}</span></li>
+        <li class="pcq__fstep-{{ pc_id }}"><span>{%- if block.settings.footer_numbered -%}<span class="pcq__fnum-{{ pc_id }}">2</span>{%- endif -%}{{ block.settings.footer_step2 }}</span></li>
+        <li class="pcq__fstep-{{ pc_id }}"><span>{%- if block.settings.footer_numbered -%}<span class="pcq__fnum-{{ pc_id }}">3</span>{%- endif -%}{{ block.settings.footer_step3 }}</span></li>
+      </ol>
+    </footer>
+  {%- endif -%}
 </div>
 
 <script>
@@ -445,8 +480,8 @@
     { "type": "checkbox", "id": "show_header", "label": "Mostrar header", "default": true },
     { "type": "image_picker", "id": "logo_override", "label": "Logo (opcional)", "info": "Si lo dejas vacío usa el logo global del tema (Branding)." },
     { "type": "range", "id": "logo_height", "label": "Alto del logo", "min": 24, "max": 80, "step": 2, "unit": "px", "default": 44 },
-    { "type": "select", "id": "logo_align", "label": "Alineación del logo", "options": [{ "value": "flex-start", "label": "Izquierda" }, { "value": "center", "label": "Centro" }], "default": "center" },
-    { "type": "checkbox", "id": "logo_links_home", "label": "El logo enlaza al inicio", "default": false, "info": "Desactivado reduce salidas de la landing." },
+    { "type": "select", "id": "logo_align", "label": "Alineación del logo", "options": [{ "value": "flex-start", "label": "Izquierda" }, { "value": "center", "label": "Centro" }], "default": "flex-start" },
+    { "type": "checkbox", "id": "logo_links_home", "label": "El logo enlaza al inicio", "default": true, "info": "Permite salir de la landing si el usuario no quiere hacer el quiz." },
 
     { "type": "header", "content": "🎨 Panel de marca (desktop)" },
     { "type": "checkbox", "id": "show_brand", "label": "Mostrar panel de marca", "default": true },
@@ -493,6 +528,13 @@
     { "type": "textarea", "id": "desc_kalpa", "label": "Descripción — Kalpa", "default": "For sweet routines and steady energy. Made for smoothies, oats and baking that actually carry you through the morning." },
     { "type": "textarea", "id": "desc_root", "label": "Descripción — Root", "default": "For savory cooking and everyday wellness. Golden milk, soups and warm dishes, rooted in real food." },
     { "type": "inline_richtext", "id": "shop_btn_label", "label": "Botón de compra", "default": "Shop my Chocho — 20% off" },
+
+    { "type": "header", "content": "🦶 Footer (paso a paso)" },
+    { "type": "checkbox", "id": "show_footer", "label": "Mostrar footer", "default": true },
+    { "type": "checkbox", "id": "footer_numbered", "label": "Numerar los pasos (1 · 2 · 3)", "default": true },
+    { "type": "text", "id": "footer_step1", "label": "Paso 1", "default": "Start the quiz" },
+    { "type": "text", "id": "footer_step2", "label": "Paso 2", "default": "Answer" },
+    { "type": "text", "id": "footer_step3", "label": "Paso 3", "default": "Meet your match" },
 
     { "type": "header", "content": "📐 Layout & tipografía" },
     { "type": "range", "id": "max_width", "label": "Ancho del quiz", "min": 380, "max": 640, "step": 10, "unit": "px", "default": 460 },
