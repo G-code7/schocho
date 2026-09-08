@@ -142,6 +142,7 @@
   .pcq__result-card-{{ pc_id }}.is-match { display: block; }
   .pcq__result-img-{{ pc_id }} { width: 100%; max-width: 300px; height: auto; margin: 0 auto 26px; border-radius: 14px; display: block; }
   .pcq__result-eyebrow-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.5; margin: 0 0 10px; }
+  .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 14px; }
   .pcq__result-desc-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.75; margin: 0 auto 22px; max-width: 44ch; }
   .pcq__result-price-{{ pc_id }} { font-size: {{ block.settings.input_font_size }}px; margin: 0 0 10px; }
   .pcq__result-code-{{ pc_id }} { display: inline-block; margin: 0 0 26px; padding: 9px 18px; border: 1px dashed {{ block.settings.btn_bg }}; border-radius: 8px; font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -182,7 +183,7 @@
       <aside class="pcq__brand-{{ pc_id }}">
         <div class="pcq__brand-inner-{{ pc_id }}">
           {%- if block.settings.brand_eyebrow != blank -%}<p class="pcq__brand-eyebrow-{{ pc_id }}">{{ block.settings.brand_eyebrow }}</p>{%- endif -%}
-          <h2 class="pcq__brand-headline-{{ pc_id }}">{{ block.settings.brand_headline | newline_to_br }}</h2>
+          <h2 class="pcq__brand-headline-{{ pc_id }}">{{ block.settings.brand_headline }}</h2>
           {%- if block.settings.brand_sub != blank -%}<p class="pcq__brand-sub-{{ pc_id }}">{{ block.settings.brand_sub }}</p>{%- endif -%}
         </div>
       </aside>
@@ -199,7 +200,7 @@
 
           {%- if block.settings.show_intro -%}
           <div class="pcq__step-{{ pc_id }} is-active" data-step="0" role="group">
-            <h2 class="pcq__intro-{{ pc_id }}">{{ block.settings.intro_heading | newline_to_br }}</h2>
+            <h2 class="pcq__intro-{{ pc_id }}">{{ block.settings.intro_heading }}</h2>
             {%- if block.settings.intro_sub != blank -%}<p class="pcq__intro-sub-{{ pc_id }}">{{ block.settings.intro_sub | newline_to_br }}</p>{%- endif -%}
             <button type="button" class="pcq__btn-{{ pc_id }}" data-advance="1"><span class="pcq__btn-label-{{ pc_id }}">{{ block.settings.intro_btn }}</span></button>
             <p class="pcq__meta-{{ pc_id }}">{{ block.settings.intro_meta }}</p>
@@ -208,7 +209,7 @@
 
           <div class="pcq__step-{{ pc_id }}{% unless block.settings.show_intro %} is-active{% endunless %}" data-step="1" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">Question 1 of 3</p>
-            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q1_heading | newline_to_br }}</h2>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q1_heading }}</h2>
             <div class="pcq__options-{{ pc_id }}" role="radiogroup">
               {%- for opt in q1_options -%}{%- assign parts = opt | split: "::" -%}
                 <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q1-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="2"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
@@ -218,7 +219,7 @@
 
           <div class="pcq__step-{{ pc_id }}" data-step="2" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">Question 2 of 3</p>
-            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q2_heading | newline_to_br }}</h2>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q2_heading }}</h2>
             <div class="pcq__options-{{ pc_id }}" role="radiogroup">
               {%- for opt in q2_options -%}{%- assign parts = opt | split: "::" -%}
                 <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q2-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="3"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
@@ -229,7 +230,7 @@
 
           <div class="pcq__step-{{ pc_id }}" data-step="3" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">Question 3 of 3</p>
-            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q3_heading | newline_to_br }}</h2>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q3_heading }}</h2>
             <div class="pcq__options-{{ pc_id }}" role="radiogroup">
               {%- for opt in q3_options -%}{%- assign parts = opt | split: "::" -%}
                 <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q3-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="4"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
@@ -240,7 +241,7 @@
 
           <div class="pcq__step-{{ pc_id }}" data-step="4" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">One last thing</p>
-            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.gate_heading | newline_to_br }}</h2>
+            <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.gate_heading }}</h2>
             {%- if block.settings.gate_subtitle != blank -%}<p class="pcq__subtitle-{{ pc_id }}">{{ block.settings.gate_subtitle }}</p>{%- endif -%}
             <div class="pcq__field-{{ pc_id }}">
               <label for="pcq-email-{{ pc_id }}" class="pcq__label-{{ pc_id }}">{{ block.settings.email_label }}</label>
@@ -257,16 +258,16 @@
           <div class="pcq__step-{{ pc_id }}" data-step="5" role="group">
             {%- assign matches = "pure,kalpa,root" | split: "," -%}
             {%- for m in matches -%}
-              {%- case m -%}{%- when "pure" -%}{%- assign prod = p_pure -%}{%- assign mdesc = block.settings.desc_pure -%}{%- when "kalpa" -%}{%- assign prod = p_kalpa -%}{%- assign mdesc = block.settings.desc_kalpa -%}{%- when "root" -%}{%- assign prod = p_root -%}{%- assign mdesc = block.settings.desc_root -%}{%- endcase -%}
+              {%- case m -%}{%- when "pure" -%}{%- assign prod = p_pure -%}{%- assign mtitle = block.settings.title_pure -%}{%- assign mdesc = block.settings.desc_pure -%}{%- assign mcta = block.settings.cta_pure -%}{%- when "kalpa" -%}{%- assign prod = p_kalpa -%}{%- assign mtitle = block.settings.title_kalpa -%}{%- assign mdesc = block.settings.desc_kalpa -%}{%- assign mcta = block.settings.cta_kalpa -%}{%- when "root" -%}{%- assign prod = p_root -%}{%- assign mtitle = block.settings.title_root -%}{%- assign mdesc = block.settings.desc_root -%}{%- assign mcta = block.settings.cta_root -%}{%- endcase -%}
               <div class="pcq__result-card-{{ pc_id }}" data-match="{{ m }}">
                 {%- if prod != blank -%}
                   {%- if prod.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ prod.featured_image | image_url: width: 600 }}" alt="{{ prod.title | escape }}" loading="lazy" width="300">{%- endif -%}
+                  {%- if block.settings.results_eyebrow != blank -%}<p class="pcq__result-eyebrow-{{ pc_id }}">{{ block.settings.results_eyebrow }}</p>{%- endif -%}
+                  <h2 class="pcq__result-name-{{ pc_id }}">{{ mtitle }}</h2>
                   <p class="pcq__result-desc-{{ pc_id }}">{{ mdesc | newline_to_br }}</p>
                   <p class="pcq__result-price-{{ pc_id }}">{{ prod.price | money }}</p>
                   {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
-                  {%- assign cta_label = m | upcase -%}
-                  {%- if m == 'kalpa' -%}{%- assign cta_label = 'KALLPA' -%}{%- endif -%}
-                  <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ prod.url }}{% else %}{{ prod.url }}{% endif %}"><span class="pcq__btn-label-{{ pc_id }}">MEET {{ cta_label }}</span></a>
+                  <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ prod.url }}{% else %}{{ prod.url }}{% endif %}"><span class="pcq__btn-label-{{ pc_id }}">{% if mcta != blank %}{{ mcta }}{% else %}MEET {{ m | upcase }}{% endif %}</span></a>
                 {%- else -%}
                   <p class="pcq__result-desc-{{ pc_id }}">⚠️ Selecciona el producto <strong>{{ m }}</strong> en el editor del bloque.</p>
                 {%- endif -%}
@@ -374,7 +375,7 @@
       if (consentEl && !consentEl.checked) { showFeedback(errMsg); return; }
 
       var match = computeMatch();
-      var matchLabel = match === 'kalpa' ? 'Kallpa' : match.charAt(0).toUpperCase() + match.slice(1);
+      var matchLabel = match.charAt(0).toUpperCase() + match.slice(1);
       var payload = {
         email: emailEl.value.trim(),
         recipe_type: answers.q1, goal: answers.q2, buying_for: answers.q3,
@@ -451,9 +452,16 @@
     { "type": "inline_richtext", "id": "error_message", "label": "Mensaje de error", "default": "Please enter a valid email and accept to continue." },
 
     { "type": "header", "content": "🎯 Resultado" },
-    { "type": "textarea", "id": "desc_pure", "label": "Descripción — Pure", "default": "You’re a PURE.\n\nSimple. Versatile. No overthinking required.\n\n<strong>Your match: Pure - 100% Andean Chocho.</strong>\n\nOne whole-food ingredient. Complete plant protein + fiber. Ready for smoothies, breakfast, baking and whatever you're making." },
-    { "type": "textarea", "id": "desc_kalpa", "label": "Descripción — Kalpa", "default": "You’re a KALLPA.\n\nActive. Curious. Always moving.\n\n<strong>Your match: Kallpa - Andean Chocho + Cacao + Spirulina + Maca.</strong>\n\nWhole-food nourishment made for smoothies, active mornings and whatever the day brings." },
-    { "type": "textarea", "id": "desc_root", "label": "Descripción — Root", "default": "You’re a ROOT.\n\nGrounded. Intentional. Into the good stuff.\n\n<strong>Your match: Root - Andean Chocho + Turmeric + Ginger + Black Pepper.</strong>\n\nWhole-food nourishment with warm ingredients for smoothies, recipes and everyday rituals." },
+    { "type": "text", "id": "results_eyebrow", "label": "Antetítulo del resultado", "default": "THE RESULTS" },
+    { "type": "inline_richtext", "id": "title_pure", "label": "Título — Pure", "default": "You’re a PURE." },
+    { "type": "textarea", "id": "desc_pure", "label": "Descripción — Pure", "default": "Simple. Versatile. No overthinking required.\n\n<strong>Your match: Pure - 100% Andean Chocho.</strong>\n\nOne whole-food ingredient. Complete plant protein + fiber. Ready for smoothies, breakfast, baking and whatever you're making." },
+    { "type": "inline_richtext", "id": "title_kalpa", "label": "Título — Kallpa", "default": "You’re a KALLPA." },
+    { "type": "textarea", "id": "desc_kalpa", "label": "Descripción — Kalpa", "default": "Active. Curious. Always moving.\n\n<strong>Your match: Kallpa - Andean Chocho + Cacao + Spirulina + Maca.</strong>\n\nWhole-food nourishment made for smoothies, active mornings and whatever the day brings." },
+    { "type": "inline_richtext", "id": "title_root", "label": "Título — Root", "default": "You’re a ROOT." },
+    { "type": "textarea", "id": "desc_root", "label": "Descripción — Root", "default": "Grounded. Intentional. Into the good stuff.\n\n<strong>Your match: Root - Andean Chocho + Turmeric + Ginger + Black Pepper.</strong>\n\nWhole-food nourishment with warm ingredients for smoothies, recipes and everyday rituals." },
+    { "type": "text", "id": "cta_pure", "label": "CTA — Pure", "default": "MEET PURE" },
+    { "type": "text", "id": "cta_kalpa", "label": "CTA — Kallpa", "default": "MEET KALLPA" },
+    { "type": "text", "id": "cta_root", "label": "CTA — Root", "default": "MEET ROOT" },
 
     { "type": "header", "content": "🦶 Footer (paso a paso)" },
     { "type": "checkbox", "id": "show_footer", "label": "Mostrar footer", "default": true },
