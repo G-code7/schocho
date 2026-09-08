@@ -1,19 +1,8 @@
-{% doc %}
+{%- comment -%}
   @name        PC Quiz Form — "Which Chocho fits your routine?"
   @description Landing conversacional de viewport completo para tráfico frío.
-               Header propio (solo logo) + panel de marca + quiz de 3 preguntas ->
-               gate de email -> resultado con el blend match y compra con WELLNESS20.
-               Envía respuestas + match al webhook de Make.com (sin apps de terceros).
-
-               Reparto: LANDING (este bloque) captura · MAKE suscribe a Klaviyo · KLAVIYO segmenta/flows.
-               La propiedad `chocho_match` habilita el email "tu match + recetas" a futuro.
-
-  @usage       Va dentro de una sección a ancho completo y sin padding (page.quiz-*.json).
-
-  ── EDITAR COPY DE CAMPAÑA ──
-  Preguntas/respuestas en los arrays q1_*/q2_*/q3_* de abajo. Cada respuesta de Q1 y Q2 lleva
-  el blend tras "::" (::pure/::kalpa/::root) que alimenta el scoring. Q3 solo segmenta.
-{% enddoc %}
+               Lógica matemática ajustada para soportar 4 opciones y sistema de tie-breaker.
+{%- endcomment -%}
 
 {% assign pc_id = block.id | replace: '_', '' | downcase %}
 
@@ -22,87 +11,60 @@
 {%- assign p_root  = block.settings.product_root  -%}
 {%- assign discount = block.settings.discount_code -%}
 
-{%- comment -%} Logo: override del bloque > logo global del tema > nombre de la tienda {%- endcomment -%}
 {%- if block.settings.logo_override != blank -%}
   {%- assign logo_img = block.settings.logo_override -%}
 {%- elsif settings.logo != blank -%}
   {%- assign logo_img = settings.logo -%}
 {%- endif -%}
 
-{%- assign q1_options = "Sweet — smoothies, oats, baking::kalpa,Savory — soups, sauces, golden milk::root,A bit of everything::pure" | split: "," -%}
-{%- assign q2_options = "Steady energy::kalpa,Everyday wellness::root,Just keep it simple::pure" | split: "," -%}
-{%- assign q3_options = "Just me,Me + my kids,The whole family" | split: "," -%}
+{%- comment -%} 
+  ARRAYS ACTUALIZADOS (4 opciones). 
+  La Q3 ahora tiene valores fraccionales de desempate en la lógica JS.
+{%- endcomment -%}
+{%- assign q1_options = "A creamy smoothie::kalpa,Something rich + chocolatey::kalpa,Something warm + grounding::root,Keep it simple. I’ll add my own twist::pure" | split: "," -%}
+{%- assign q2_options = "More protein in my day::pure,More whole foods::root,Fuel for an active routine::kalpa,A little of everything::pure" | split: "," -%}
+{%- assign q3_options = "My everyday smoothie::kalpa,Breakfast + bowls::pure,Cooking + baking::root,All of the above::pure" | split: "," -%}
 
 {% style %}
-  /* ── Full-bleed: fuerza edge-to-edge aunque la sección tenga ancho/padding ── */
   .pcq-{{ pc_id }} {
-    width: 100vw;
-    max-width: 100vw;
-    margin-inline: calc(50% - 50vw);
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    background-color: {{ block.settings.bg_color }};
-    color: {{ block.settings.text_color }};
-    font-family: inherit;
-    overflow-x: hidden;
-    box-sizing: border-box;
+    width: 100vw; max-width: 100vw; margin-inline: calc(50% - 50vw);
+    min-height: 100svh; display: flex; flex-direction: column;
+    background-color: {{ block.settings.bg_color }}; color: {{ block.settings.text_color }};
+    font-family: inherit; overflow-x: hidden; box-sizing: border-box;
   }
   .pcq-{{ pc_id }} *, .pcq-{{ pc_id }} *::before, .pcq-{{ pc_id }} *::after { box-sizing: border-box; }
 
-  /* ── Header (solo logo) ── */
   .pcq__header-{{ pc_id }} {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: {{ block.settings.logo_align }};
-    padding: 18px 32px;
-    border-bottom: 1px solid {{ block.settings.text_color }}14;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: {{ block.settings.logo_align }};
+    padding: 18px 32px; border-bottom: 1px solid {{ block.settings.text_color }}14;
     background-color: {{ block.settings.bg_color }};
   }
   .pcq__logo-{{ pc_id }} { display: inline-flex; align-items: center; text-decoration: none; color: inherit; }
   .pcq__logo-{{ pc_id }} img { display: block; height: {{ block.settings.logo_height }}px; width: auto; }
   .pcq__logo-txt-{{ pc_id }} { font-size: 22px; font-weight: 600; letter-spacing: 0.04em; }
 
-  /* ── Footer (paso a paso) ── */
   .pcq__footer-{{ pc_id }} {
-    flex-shrink: 0;
-    padding: 20px 32px;
-    border-top: 1px solid {{ block.settings.text_color }}14;
+    flex-shrink: 0; padding: 20px 32px; border-top: 1px solid {{ block.settings.text_color }}14;
     background-color: {{ block.settings.bg_color }};
   }
   .pcq__steps-list-{{ pc_id }} {
-    list-style: none; margin: 0; padding: 0;
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
-    gap: 8px 16px;
-    font-size: {{ block.settings.label_size }}px;
-    letter-spacing: 0.14em; text-transform: uppercase;
+    list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 8px 16px; font-size: {{ block.settings.label_size }}px; letter-spacing: 0.14em; text-transform: uppercase;
     color: {{ block.settings.text_color }};
   }
   .pcq__fstep-{{ pc_id }} { display: inline-flex; align-items: center; gap: 16px; opacity: 0.72; }
   .pcq__fstep-{{ pc_id }}:not(:first-child)::before { content: "→"; opacity: 0.4; }
   .pcq__fstep-{{ pc_id }} span { display: inline-flex; align-items: center; gap: 8px; }
   .pcq__fnum-{{ pc_id }} {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 50%;
-    border: 1px solid {{ block.settings.text_color }}40;
-    font-size: 0.82em; letter-spacing: 0; opacity: 0.9;
+    display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+    border-radius: 50%; border: 1px solid {{ block.settings.text_color }}40; font-size: 0.82em; opacity: 0.9;
   }
 
-  /* ── Body (split en desktop) ── */
   .pcq__body-{{ pc_id }} { flex: 1; display: flex; min-height: 0; }
 
-  /* Panel de marca (izquierda) */
   .pcq__brand-{{ pc_id }} {
-    flex: 0 0 42%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 64px;
-    background-color: {{ block.settings.brand_bg }};
-    color: {{ block.settings.brand_text }};
-    overflow: hidden;
+    flex: 0 0 42%; position: relative; display: flex; flex-direction: column; justify-content: center;
+    padding: 64px; background-color: {{ block.settings.brand_bg }}; color: {{ block.settings.brand_text }}; overflow: hidden;
   }
   {% if block.settings.brand_image != blank %}
   .pcq__brand-{{ pc_id }}::before {
@@ -114,22 +76,12 @@
   {% endif %}
   .pcq__brand-inner-{{ pc_id }} { position: relative; z-index: 1; max-width: 30ch; }
   .pcq__brand-eyebrow-{{ pc_id }} { font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; margin: 0 0 20px; }
-  .pcq__brand-headline-{{ pc_id }} { font-size: clamp(30px, 3vw, 46px); font-weight: {{ block.settings.heading_weight }}; line-height: 1.1; letter-spacing: 0.01em; margin: 0 0 20px; }
+  .pcq__brand-headline-{{ pc_id }} { font-size: clamp(30px, 3vw, 46px); font-weight: {{ block.settings.heading_weight }}; line-height: 1.1; margin: 0 0 20px; }
   .pcq__brand-sub-{{ pc_id }} { font-size: 17px; line-height: 1.6; opacity: 0.82; margin: 0; }
 
-  /* Panel del quiz (derecha) */
-  .pcq__quiz-{{ pc_id }} {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 48px 32px;
-    min-height: 0;
-  }
+  .pcq__quiz-{{ pc_id }} { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 48px 32px; min-height: 0; }
   .pcq__inner-{{ pc_id }} { width: 100%; max-width: {{ block.settings.max_width }}px; }
 
-  /* ── Progress ── */
   .pcq__progress-{{ pc_id }} { display: flex; gap: 8px; margin-bottom: 32px; transition: opacity 0.3s ease; }
   .pcq__quiz-{{ pc_id }}[data-current="0"] .pcq__progress-{{ pc_id }},
   .pcq__quiz-{{ pc_id }}[data-current="5"] .pcq__progress-{{ pc_id }} { opacity: 0; pointer-events: none; }
@@ -137,7 +89,6 @@
   .pcq__progress-dot-{{ pc_id }}::after { content: ""; display: block; height: 100%; width: 0; background-color: {{ block.settings.btn_bg }}; transition: width 0.4s ease; }
   .pcq__progress-dot-{{ pc_id }}.is-done::after { width: 100%; }
 
-  /* ── Steps + transición ── */
   .pcq__steps-{{ pc_id }} { position: relative; }
   .pcq__step-{{ pc_id }} { display: none; }
   .pcq__step-{{ pc_id }}.is-active { display: block; animation: pcqIn-{{ pc_id }} 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
@@ -146,43 +97,35 @@
   @keyframes pcqInBack-{{ pc_id }} { from { opacity: 0; transform: translateX(-32px); } to { opacity: 1; transform: none; } }
 
   .pcq__eyebrow-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5; margin: 0 0 14px; }
-  .pcq__heading-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; line-height: 1.15; letter-spacing: 0.02em; margin: 0 0 28px; }
+  .pcq__heading-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; line-height: 1.15; margin: 0 0 28px; }
   .pcq__subtitle-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.7; margin: -16px 0 28px; }
 
-  /* Intro */
-  .pcq__intro-{{ pc_id }} { font-size: clamp(28px, 4vw, 44px); font-weight: {{ block.settings.heading_weight }}; line-height: 1.12; margin: 0 0 20px; letter-spacing: 0.01em; }
+  .pcq__intro-{{ pc_id }} { font-size: clamp(28px, 4vw, 44px); font-weight: {{ block.settings.heading_weight }}; line-height: 1.12; margin: 0 0 20px; }
   .pcq__intro-sub-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.72; margin: 0 0 32px; max-width: 46ch; }
   .pcq__meta-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.5; margin-top: 18px; }
 
-  /* Opciones */
   .pcq__options-{{ pc_id }} { display: flex; flex-direction: column; gap: 12px; }
   .pcq__option-{{ pc_id }} {
-    display: flex; align-items: center; gap: 16px;
-    padding: 20px 22px;
-    border: 1px solid {{ block.settings.input_border_color }}66;
-    border-radius: 14px; cursor: pointer;
+    display: flex; align-items: center; gap: 16px; padding: 20px 22px;
+    border: 1px solid {{ block.settings.input_border_color }}66; border-radius: 14px; cursor: pointer;
     transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.12s ease;
     font-size: {{ block.settings.input_font_size }}px; line-height: 1.4;
   }
   .pcq__option-{{ pc_id }}:hover { border-color: {{ block.settings.btn_bg }}; background-color: {{ block.settings.btn_bg }}0d; transform: translateY(-1px); }
   .pcq__option-{{ pc_id }}.is-selected { border-color: {{ block.settings.btn_bg }}; background-color: {{ block.settings.btn_bg }}17; }
   .pcq__option-{{ pc_id }} input { position: absolute; opacity: 0; pointer-events: none; }
-  .pcq__option-{{ pc_id }}:focus-within { outline: 2px solid {{ block.settings.btn_bg }}; outline-offset: 2px; }
   .pcq__option-marker-{{ pc_id }} { width: 20px; height: 20px; flex-shrink: 0; border: 1px solid {{ block.settings.input_border_color }}; border-radius: 50%; transition: border-color 0.2s, box-shadow 0.2s; }
   .pcq__option-{{ pc_id }}.is-selected .pcq__option-marker-{{ pc_id }} { border-color: {{ block.settings.btn_bg }}; box-shadow: inset 0 0 0 5px {{ block.settings.btn_bg }}; }
 
-  /* Email gate */
   .pcq__field-{{ pc_id }} { margin-bottom: 22px; }
   .pcq__label-{{ pc_id }} { display: block; font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
-  .pcq__input-{{ pc_id }} { width: 100%; background: transparent; border: none; border-bottom: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }}; border-radius: 0; font-family: inherit; font-size: {{ block.settings.input_font_size }}px; color: {{ block.settings.text_color }}; padding: 12px 0; transition: border-color 0.2s ease; -webkit-appearance: none; appearance: none; }
-  .pcq__input-{{ pc_id }}::placeholder { color: {{ block.settings.text_color }}; opacity: 0.35; font-style: italic; }
+  .pcq__input-{{ pc_id }} { width: 100%; background: transparent; border: none; border-bottom: {{ block.settings.input_border_width }}px solid {{ block.settings.input_border_color }}; border-radius: 0; font-family: inherit; font-size: {{ block.settings.input_font_size }}px; color: {{ block.settings.text_color }}; padding: 12px 0; -webkit-appearance: none; appearance: none; }
   .pcq__input-{{ pc_id }}:focus { outline: none; border-color: {{ block.settings.btn_bg }}; }
   .pcq__check-{{ pc_id }} { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 26px; }
   .pcq__check-{{ pc_id }} input { width: 16px; height: 16px; flex-shrink: 0; margin-top: 3px; accent-color: {{ block.settings.btn_bg }}; cursor: pointer; }
   .pcq__check-{{ pc_id }} label { font-size: {{ block.settings.label_size }}px; opacity: 0.7; line-height: 1.5; cursor: pointer; }
 
-  /* Botones */
-  .pcq__btn-{{ pc_id }} { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: {{ block.settings.btn_padding_v }}px {{ block.settings.btn_padding_h }}px; background-color: {{ block.settings.btn_bg }}; color: {{ block.settings.btn_text }}; border: none; border-radius: {{ block.settings.btn_radius }}px; font-family: inherit; font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background-color 0.25s ease, opacity 0.25s ease; text-align: center; text-decoration: none; }
+  .pcq__btn-{{ pc_id }} { display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: {{ block.settings.btn_padding_v }}px {{ block.settings.btn_padding_h }}px; background-color: {{ block.settings.btn_bg }}; color: {{ block.settings.btn_text }}; border: none; border-radius: {{ block.settings.btn_radius }}px; font-family: inherit; font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: background-color 0.25s, opacity 0.25s; text-align: center; text-decoration: none; }
   .pcq__btn-{{ pc_id }}:hover:not(:disabled) { background-color: {{ block.settings.btn_hover_bg }}; }
   .pcq__btn-{{ pc_id }}:disabled { opacity: 0.6; cursor: not-allowed; }
   .pcq__spinner-{{ pc_id }} { width: 15px; height: 15px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: pcqSpin-{{ pc_id }} 0.7s linear infinite; display: none; }
@@ -195,17 +138,15 @@
   .pcq__feedback-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; letter-spacing: 0.06em; text-transform: uppercase; color: {{ block.settings.error_color }}; margin-top: 16px; min-height: 1em; display: none; }
   .pcq__feedback-{{ pc_id }}.is-visible { display: block; }
 
-  /* Resultado */
   .pcq__result-card-{{ pc_id }} { display: none; text-align: center; }
   .pcq__result-card-{{ pc_id }}.is-match { display: block; }
   .pcq__result-img-{{ pc_id }} { width: 100%; max-width: 300px; height: auto; margin: 0 auto 26px; border-radius: 14px; display: block; }
   .pcq__result-eyebrow-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.5; margin: 0 0 10px; }
-  .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size }}px; font-weight: {{ block.settings.heading_weight }}; margin: 0 0 14px; letter-spacing: 0.02em; }
+  .pcq__result-name-{{ pc_id }} { display:none; } /* Oculto porque ahora el nombre va dentro del desc */
   .pcq__result-desc-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.75; margin: 0 auto 22px; max-width: 44ch; }
   .pcq__result-price-{{ pc_id }} { font-size: {{ block.settings.input_font_size }}px; margin: 0 0 10px; }
   .pcq__result-code-{{ pc_id }} { display: inline-block; margin: 0 0 26px; padding: 9px 18px; border: 1px dashed {{ block.settings.btn_bg }}; border-radius: 8px; font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase; }
 
-  /* ── Responsive ── */
   @media screen and (max-width: 959px) {
     .pcq__body-{{ pc_id }} { flex-direction: column; }
     .pcq__brand-{{ pc_id }} { flex: 0 0 auto; padding: 40px 32px; text-align: center; align-items: center; }
@@ -217,14 +158,8 @@
   @media screen and (max-width: 749px) {
     .pcq__header-{{ pc_id }} { padding: 16px 20px; }
     {% if block.settings.hide_brand_mobile %}.pcq__brand-{{ pc_id }} { display: none; }{% endif %}
-    .pcq__heading-{{ pc_id }}, .pcq__result-name-{{ pc_id }} { font-size: {{ block.settings.heading_size | times: 0.78 | round }}px; }
+    .pcq__heading-{{ pc_id }} { font-size: {{ block.settings.heading_size | times: 0.78 | round }}px; }
     .pcq__quiz-{{ pc_id }} { padding: 32px 20px 48px; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .pcq__step-{{ pc_id }}.is-active { animation: none; }
-    .pcq__option-{{ pc_id }}:hover { transform: none; }
-    .pcq__progress-dot-{{ pc_id }}::after { transition: none; }
   }
 {% endstyle %}
 
@@ -263,32 +198,29 @@
 
         <div class="pcq__steps-{{ pc_id }}" aria-live="polite">
 
-          {%- comment -%} STEP 0 — Intro {%- endcomment -%}
           {%- if block.settings.show_intro -%}
           <div class="pcq__step-{{ pc_id }} is-active" data-step="0" role="group">
             <h2 class="pcq__intro-{{ pc_id }}">{{ block.settings.intro_heading }}</h2>
-            {%- if block.settings.intro_sub != blank -%}<p class="pcq__intro-sub-{{ pc_id }}">{{ block.settings.intro_sub }}</p>{%- endif -%}
+            {%- if block.settings.intro_sub != blank -%}<p class="pcq__intro-sub-{{ pc_id }}">{{ block.settings.intro_sub | newline_to_br }}</p>{%- endif -%}
             <button type="button" class="pcq__btn-{{ pc_id }}" data-advance="1"><span class="pcq__btn-label-{{ pc_id }}">{{ block.settings.intro_btn }}</span></button>
             <p class="pcq__meta-{{ pc_id }}">{{ block.settings.intro_meta }}</p>
           </div>
           {%- endif -%}
 
-          {%- comment -%} STEP 1 — Q1 {%- endcomment -%}
           <div class="pcq__step-{{ pc_id }}{% unless block.settings.show_intro %} is-active{% endunless %}" data-step="1" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">Question 1 of 3</p>
             <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q1_heading }}</h2>
-            <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q1_heading | strip_html }}">
+            <div class="pcq__options-{{ pc_id }}" role="radiogroup">
               {%- for opt in q1_options -%}{%- assign parts = opt | split: "::" -%}
                 <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q1-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="2"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
               {%- endfor -%}
             </div>
           </div>
 
-          {%- comment -%} STEP 2 — Q2 {%- endcomment -%}
           <div class="pcq__step-{{ pc_id }}" data-step="2" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">Question 2 of 3</p>
             <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q2_heading }}</h2>
-            <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q2_heading | strip_html }}">
+            <div class="pcq__options-{{ pc_id }}" role="radiogroup">
               {%- for opt in q2_options -%}{%- assign parts = opt | split: "::" -%}
                 <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q2-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="3"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
               {%- endfor -%}
@@ -296,19 +228,17 @@
             <button type="button" class="pcq__back-{{ pc_id }}" data-back="1">← Back</button>
           </div>
 
-          {%- comment -%} STEP 3 — Q3 (segmentación) {%- endcomment -%}
           <div class="pcq__step-{{ pc_id }}" data-step="3" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">Question 3 of 3</p>
             <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.q3_heading }}</h2>
-            <div class="pcq__options-{{ pc_id }}" role="radiogroup" aria-label="{{ block.settings.q3_heading | strip_html }}">
-              {%- for opt in q3_options -%}
-                <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q3-{{ pc_id }}" value="{{ opt | strip }}" data-advance="4"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ opt | strip }}</span></label>
+            <div class="pcq__options-{{ pc_id }}" role="radiogroup">
+              {%- for opt in q3_options -%}{%- assign parts = opt | split: "::" -%}
+                <label class="pcq__option-{{ pc_id }}"><input type="radio" name="pcq-q3-{{ pc_id }}" value="{{ parts[0] | strip }}" data-blend="{{ parts[1] | strip }}" data-advance="4"><span class="pcq__option-marker-{{ pc_id }}"></span><span>{{ parts[0] | strip }}</span></label>
               {%- endfor -%}
             </div>
             <button type="button" class="pcq__back-{{ pc_id }}" data-back="2">← Back</button>
           </div>
 
-          {%- comment -%} STEP 4 — Email gate {%- endcomment -%}
           <div class="pcq__step-{{ pc_id }}" data-step="4" role="group">
             <p class="pcq__eyebrow-{{ pc_id }}">One last thing</p>
             <h2 class="pcq__heading-{{ pc_id }}">{{ block.settings.gate_heading }}</h2>
@@ -325,7 +255,6 @@
             <button type="button" class="pcq__back-{{ pc_id }}" data-back="3">← Back</button>
           </div>
 
-          {%- comment -%} STEP 5 — Result {%- endcomment -%}
           <div class="pcq__step-{{ pc_id }}" data-step="5" role="group">
             {%- assign matches = "pure,kalpa,root" | split: "," -%}
             {%- for m in matches -%}
@@ -334,11 +263,10 @@
                 {%- if prod != blank -%}
                   {%- if prod.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ prod.featured_image | image_url: width: 600 }}" alt="{{ prod.title | escape }}" loading="lazy" width="300">{%- endif -%}
                   <p class="pcq__result-eyebrow-{{ pc_id }}">Your match</p>
-                  <h2 class="pcq__result-name-{{ pc_id }}">{{ prod.title }}</h2>
-                  <p class="pcq__result-desc-{{ pc_id }}">{{ mdesc }}</p>
+                  <p class="pcq__result-desc-{{ pc_id }}">{{ mdesc | newline_to_br }}</p>
                   <p class="pcq__result-price-{{ pc_id }}">{{ prod.price | money }}</p>
                   {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
-                  <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ prod.url }}{% else %}{{ prod.url }}{% endif %}"><span class="pcq__btn-label-{{ pc_id }}">{{ block.settings.shop_btn_label }}</span></a>
+                  <a class="pcq__btn-{{ pc_id }}" data-shop href="{% if discount != blank %}/discount/{{ discount }}?redirect={{ prod.url }}{% else %}{{ prod.url }}{% endif %}"><span class="pcq__btn-label-{{ pc_id }}">MEET {{ m | upcase }}</span></a>
                 {%- else -%}
                   <p class="pcq__result-desc-{{ pc_id }}">⚠️ Selecciona el producto <strong>{{ m }}</strong> en el editor del bloque.</p>
                 {%- endif -%}
@@ -381,7 +309,7 @@
   var consentEl = root.querySelector('#pcq-consent-' + id);
   var submitBtn = root.querySelector('[data-submit]');
 
-  var answers = { q1: null, q2: null, q3: null, blend1: null, blend2: null };
+  var answers = { q1: null, q2: null, q3: null, blend1: null, blend2: null, blend3: null };
 
   function goTo(step, dir) {
     quiz.classList.toggle('is-back', dir === 'back');
@@ -404,7 +332,7 @@
       var name = input.name;
       if (name.indexOf('q1') !== -1) { answers.q1 = input.value; answers.blend1 = input.getAttribute('data-blend'); }
       else if (name.indexOf('q2') !== -1) { answers.q2 = input.value; answers.blend2 = input.getAttribute('data-blend'); }
-      else if (name.indexOf('q3') !== -1) { answers.q3 = input.value; }
+      else if (name.indexOf('q3') !== -1) { answers.q3 = input.value; answers.blend3 = input.getAttribute('data-blend'); }
       var next = input.getAttribute('data-advance');
       if (next) { setTimeout(function () { goTo(parseInt(next, 10), 'fwd'); }, 280); }
     });
@@ -421,12 +349,13 @@
     var tally = { pure: 0, kalpa: 0, root: 0 };
     if (answers.blend1) tally[answers.blend1]++;
     if (answers.blend2) tally[answers.blend2]++;
-    var top = 'pure', topScore = -1, tie = false;
+    if (answers.blend3) tally[answers.blend3] += 0.5; // Tie breaker fraccional basado en comportamiento
+
+    var top = 'pure', topScore = -1;
     ['kalpa', 'root', 'pure'].forEach(function (k) {
-      if (tally[k] > topScore) { topScore = tally[k]; top = k; tie = false; }
-      else if (tally[k] === topScore) { tie = true; }
+      if (tally[k] > topScore) { topScore = tally[k]; top = k; }
     });
-    return tie ? 'pure' : top;
+    return top;
   }
 
   function showFeedback(msg) { feedback.textContent = msg; feedback.classList.add('is-visible'); }
@@ -472,46 +401,44 @@
   "tag": null,
   "settings": [
     { "type": "header", "content": "🔗 Integración" },
-    { "type": "text", "id": "webhook_url", "label": "URL del Webhook (Make.com)", "info": "Recibe email + respuestas + match. Make suscribe a Klaviyo server-side." },
+    { "type": "text", "id": "webhook_url", "label": "URL del Webhook (Make.com)" },
     { "type": "text", "id": "source_tag", "label": "Etiqueta de origen", "default": "pronto-chocho-quiz-btrf" },
-    { "type": "text", "id": "discount_code", "label": "Código de descuento", "default": "WELLNESS20", "info": "Se muestra en el resultado y se aplica vía /discount/CÓDIGO al ir al producto." },
+    { "type": "text", "id": "discount_code", "label": "Código de descuento", "default": "WELLNESS20" },
 
     { "type": "header", "content": "🏷️ Header (solo logo)" },
     { "type": "checkbox", "id": "show_header", "label": "Mostrar header", "default": true },
-    { "type": "image_picker", "id": "logo_override", "label": "Logo (opcional)", "info": "Si lo dejas vacío usa el logo global del tema (Branding)." },
+    { "type": "image_picker", "id": "logo_override", "label": "Logo (opcional)" },
     { "type": "range", "id": "logo_height", "label": "Alto del logo", "min": 24, "max": 80, "step": 2, "unit": "px", "default": 44 },
     { "type": "select", "id": "logo_align", "label": "Alineación del logo", "options": [{ "value": "flex-start", "label": "Izquierda" }, { "value": "center", "label": "Centro" }], "default": "flex-start" },
-    { "type": "checkbox", "id": "logo_links_home", "label": "El logo enlaza al inicio", "default": true, "info": "Permite salir de la landing si el usuario no quiere hacer el quiz." },
+    { "type": "checkbox", "id": "logo_links_home", "label": "El logo enlaza al inicio", "default": true },
 
     { "type": "header", "content": "🎨 Panel de marca (desktop)" },
     { "type": "checkbox", "id": "show_brand", "label": "Mostrar panel de marca", "default": true },
     { "type": "checkbox", "id": "hide_brand_mobile", "label": "Ocultar en móvil", "default": false },
     { "type": "image_picker", "id": "brand_image", "label": "Imagen de fondo (opcional)" },
     { "type": "range", "id": "brand_image_opacity", "label": "Opacidad de la imagen", "min": 10, "max": 100, "step": 5, "unit": "%", "default": 100 },
-    { "type": "text", "id": "brand_eyebrow", "label": "Antetítulo", "default": "Back to real food" },
-    { "type": "inline_richtext", "id": "brand_headline", "label": "Titular", "default": "Not pea. Not soy. Not rice." },
-    { "type": "textarea", "id": "brand_sub", "label": "Texto de apoyo", "default": "Real Andean chocho — the protein your grandparents would recognize. Find the one that fits your routine." },
+    { "type": "text", "id": "brand_eyebrow", "label": "Antetítulo", "default": "ANCIENT FOOD. MODERN LIFE." },
+    { "type": "inline_richtext", "id": "brand_headline", "label": "Titular", "default": "Real food. Real fuel." },
+    { "type": "textarea", "id": "brand_sub", "label": "Texto de apoyo", "default": "Andean chocho, the whole food behind every blend. Naturally rich in complete plant protein + fiber. Find the one that fits your routine." },
     { "type": "color", "id": "brand_bg", "label": "Fondo del panel", "default": "#371e54" },
     { "type": "color", "id": "brand_text", "label": "Texto del panel", "default": "#fbf9f9" },
 
     { "type": "header", "content": "🛒 Productos por match" },
-    { "type": "paragraph", "content": "Elige el producto real de cada blend. La imagen y el botón salen de aquí." },
-    { "type": "product", "id": "product_pure", "label": "Match: PURE (de todo / simplicidad)" },
-    { "type": "product", "id": "product_kalpa", "label": "Match: KALPA (dulce / energía)" },
-    { "type": "product", "id": "product_root", "label": "Match: ROOT (salado / bienestar)" },
+    { "type": "product", "id": "product_pure", "label": "Match: PURE" },
+    { "type": "product", "id": "product_kalpa", "label": "Match: KALPA" },
+    { "type": "product", "id": "product_root", "label": "Match: ROOT" },
 
     { "type": "header", "content": "👋 Intro" },
     { "type": "checkbox", "id": "show_intro", "label": "Mostrar pantalla de intro", "default": true },
-    { "type": "inline_richtext", "id": "intro_heading", "label": "Titular de intro", "default": "Which Chocho fits your routine?" },
-    { "type": "textarea", "id": "intro_sub", "label": "Subtítulo de intro", "default": "Answer 3 quick questions and we'll match you with your blend — plus 20% off your first bag." },
-    { "type": "inline_richtext", "id": "intro_btn", "label": "Botón de intro", "default": "Take the 30-second quiz" },
+    { "type": "inline_richtext", "id": "intro_heading", "label": "Titular de intro", "default": "Find your PRONTO CHOCHO" },
+    { "type": "textarea", "id": "intro_sub", "label": "Subtítulo de intro", "default": "3 quick questions. One delicious match.\nPlus 20% off your first order." },
+    { "type": "inline_richtext", "id": "intro_btn", "label": "Botón de intro", "default": "FIND MY MATCH →" },
     { "type": "text", "id": "intro_meta", "label": "Nota pequeña", "default": "Takes 30 seconds · No spam" },
 
     { "type": "header", "content": "❓ Preguntas" },
-    { "type": "inline_richtext", "id": "q1_heading", "label": "Pregunta 1 (recetas)", "default": "How do you cook?" },
-    { "type": "inline_richtext", "id": "q2_heading", "label": "Pregunta 2 (objetivo)", "default": "What are you after?" },
-    { "type": "inline_richtext", "id": "q3_heading", "label": "Pregunta 3 (para quién)", "default": "Who are you feeding?" },
-    { "type": "paragraph", "content": "Las respuestas se editan en el código del bloque (arrays q1/q2/q3)." },
+    { "type": "inline_richtext", "id": "q1_heading", "label": "Pregunta 1", "default": "Which sounds more like you?" },
+    { "type": "inline_richtext", "id": "q2_heading", "label": "Pregunta 2", "default": "What are you looking for the most?" },
+    { "type": "inline_richtext", "id": "q3_heading", "label": "Pregunta 3", "default": "How would you use it the most?" },
 
     { "type": "header", "content": "✉️ Gate de email" },
     { "type": "inline_richtext", "id": "gate_heading", "label": "Título del gate", "default": "Where should we send your match?" },
@@ -524,14 +451,13 @@
     { "type": "inline_richtext", "id": "error_message", "label": "Mensaje de error", "default": "Please enter a valid email and accept to continue." },
 
     { "type": "header", "content": "🎯 Resultado" },
-    { "type": "textarea", "id": "desc_pure", "label": "Descripción — Pure", "default": "The versatile base. One clean ingredient that folds into anything — smoothies, oats, sauces. Start here." },
-    { "type": "textarea", "id": "desc_kalpa", "label": "Descripción — Kalpa", "default": "For sweet routines and steady energy. Made for smoothies, oats and baking that actually carry you through the morning." },
-    { "type": "textarea", "id": "desc_root", "label": "Descripción — Root", "default": "For savory cooking and everyday wellness. Golden milk, soups and warm dishes, rooted in real food." },
-    { "type": "inline_richtext", "id": "shop_btn_label", "label": "Botón de compra", "default": "Shop my Chocho — 20% off" },
+    { "type": "textarea", "id": "desc_pure", "label": "Descripción — Pure", "default": "Simple. Versatile. No overthinking required.\n\n<strong>Your match: Pure - 100% Andean Chocho.</strong>\n\nOne whole-food ingredient. Complete plant protein + fiber. Ready for smoothies, breakfast, baking and whatever you're making." },
+    { "type": "textarea", "id": "desc_kalpa", "label": "Descripción — Kalpa", "default": "Active. Curious. Always moving.\n\n<strong>Your match: Kallpa - Andean Chocho + Cacao + Spirulina + Maca.</strong>\n\nWhole-food nourishment made for smoothies, active mornings and whatever the day brings." },
+    { "type": "textarea", "id": "desc_root", "label": "Descripción — Root", "default": "Grounded. Intentional. Into the good stuff.\n\n<strong>Your match: Root - Andean Chocho + Turmeric + Ginger + Black Pepper.</strong>\n\nWhole-food nourishment with warm ingredients for smoothies, recipes and everyday rituals." },
 
     { "type": "header", "content": "🦶 Footer (paso a paso)" },
     { "type": "checkbox", "id": "show_footer", "label": "Mostrar footer", "default": true },
-    { "type": "checkbox", "id": "footer_numbered", "label": "Numerar los pasos (1 · 2 · 3)", "default": true },
+    { "type": "checkbox", "id": "footer_numbered", "label": "Numerar los pasos", "default": true },
     { "type": "text", "id": "footer_step1", "label": "Paso 1", "default": "Start the quiz" },
     { "type": "text", "id": "footer_step2", "label": "Paso 2", "default": "Answer" },
     { "type": "text", "id": "footer_step3", "label": "Paso 3", "default": "Meet your match" },
@@ -556,8 +482,8 @@
     { "type": "color", "id": "btn_text", "label": "Texto del botón", "default": "#ffffff" },
     { "type": "color", "id": "btn_hover_bg", "label": "Fondo (hover)", "default": "#513280" },
     { "type": "range", "id": "btn_radius", "label": "Radio del botón", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 40 },
-    { "type": "range", "id": "btn_padding_v", "label": "Padding vertical botón", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 18 },
-    { "type": "range", "id": "btn_padding_h", "label": "Padding horizontal botón", "min": 16, "max": 120, "step": 8, "unit": "px", "default": 40 }
+    { "type": "range", "id": "btn_padding_v", "label": "Padding vertical", "min": 8, "max": 40, "step": 2, "unit": "px", "default": 18 },
+    { "type": "range", "id": "btn_padding_h", "label": "Padding horizontal", "min": 16, "max": 120, "step": 8, "unit": "px", "default": 40 }
   ],
   "presets": [
     { "name": "PC Quiz — Which Chocho fits your routine?", "settings": { "source_tag": "pronto-chocho-quiz-btrf", "discount_code": "WELLNESS20" } }
