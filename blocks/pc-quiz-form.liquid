@@ -142,7 +142,6 @@
   .pcq__result-card-{{ pc_id }}.is-match { display: block; }
   .pcq__result-img-{{ pc_id }} { width: 100%; max-width: 300px; height: auto; margin: 0 auto 26px; border-radius: 14px; display: block; }
   .pcq__result-eyebrow-{{ pc_id }} { font-size: {{ block.settings.label_size }}px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.5; margin: 0 0 10px; }
-  .pcq__result-name-{{ pc_id }} { display:none; } /* Oculto porque ahora el nombre va dentro del desc */
   .pcq__result-desc-{{ pc_id }} { font-size: {{ block.settings.subtitle_size }}px; line-height: 1.6; opacity: 0.75; margin: 0 auto 22px; max-width: 44ch; }
   .pcq__result-price-{{ pc_id }} { font-size: {{ block.settings.input_font_size }}px; margin: 0 0 10px; }
   .pcq__result-code-{{ pc_id }} { display: inline-block; margin: 0 0 26px; padding: 9px 18px; border: 1px dashed {{ block.settings.btn_bg }}; border-radius: 8px; font-size: {{ block.settings.label_size }}px; letter-spacing: 0.12em; text-transform: uppercase; }
@@ -183,7 +182,7 @@
       <aside class="pcq__brand-{{ pc_id }}">
         <div class="pcq__brand-inner-{{ pc_id }}">
           {%- if block.settings.brand_eyebrow != blank -%}<p class="pcq__brand-eyebrow-{{ pc_id }}">{{ block.settings.brand_eyebrow }}</p>{%- endif -%}
-          <h2 class="pcq__brand-headline-{{ pc_id }}">{{ block.settings.brand_headline }}</h2>
+          <h2 class="pcq__brand-headline-{{ pc_id }}">{{ block.settings.brand_headline | newline_to_br }}</h2>
           {%- if block.settings.brand_sub != blank -%}<p class="pcq__brand-sub-{{ pc_id }}">{{ block.settings.brand_sub }}</p>{%- endif -%}
         </div>
       </aside>
@@ -262,7 +261,6 @@
               <div class="pcq__result-card-{{ pc_id }}" data-match="{{ m }}">
                 {%- if prod != blank -%}
                   {%- if prod.featured_image -%}<img class="pcq__result-img-{{ pc_id }}" src="{{ prod.featured_image | image_url: width: 600 }}" alt="{{ prod.title | escape }}" loading="lazy" width="300">{%- endif -%}
-                  <p class="pcq__result-eyebrow-{{ pc_id }}">Your match</p>
                   <p class="pcq__result-desc-{{ pc_id }}">{{ mdesc | newline_to_br }}</p>
                   <p class="pcq__result-price-{{ pc_id }}">{{ prod.price | money }}</p>
                   {%- if discount != blank -%}<span class="pcq__result-code-{{ pc_id }}">20% off · {{ discount }}</span>{%- endif -%}
@@ -376,7 +374,7 @@
       if (consentEl && !consentEl.checked) { showFeedback(errMsg); return; }
 
       var match = computeMatch();
-      var matchLabel = match.charAt(0).toUpperCase() + match.slice(1);
+      var matchLabel = match === 'kalpa' ? 'Kallpa' : match.charAt(0).toUpperCase() + match.slice(1);
       var payload = {
         email: emailEl.value.trim(),
         recipe_type: answers.q1, goal: answers.q2, buying_for: answers.q3,
