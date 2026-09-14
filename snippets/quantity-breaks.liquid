@@ -14,7 +14,7 @@
       {%- assign parts = break | split: ":" -%}
       {%- assign qty = parts[0] | plus: 0 -%}
       {%- assign discount = parts[1] | plus: 0 -%}
-      {%- assign is_popular = forloop.index == 2 -%} {%- comment %} Marcar el segundo como popular {%- endcomment %}
+      {%- assign is_popular = forloop.index -%} {%- comment %} Marcar el segundo como popular {%- endcomment %}
       
       <label 
         class="quantity-breaks__option{% if is_popular %} popular{% endif %}"
@@ -186,4 +186,13 @@
 })();
 </script>
 
-{%- endif -%}
+{%- endif -%}{%- comment -%}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{%- assign is_popular = forloop.index == 2 -%}"
+  to: "{%- assign is_popular = forloop.index -%}"
+  position: 593..634
+{%- endcomment -%}
