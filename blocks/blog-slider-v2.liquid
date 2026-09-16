@@ -1,790 +1,601 @@
+{%- liquid
+  assign bid = block.id
+  assign blog = block.settings.blog
+  assign max_articles = block.settings.articles_limit | default: 5
+  assign layout = block.settings.layout | default: 'split'
+
+  # Si estamos dentro de un artículo, no lo repetimos en el slider
+  assign skip_id = 0
+  if template.name == 'article' and article
+    assign skip_id = article.id
+  endif
+
+  # Pedimos uno extra por si hay que saltar el artículo actual
+  assign fetch_limit = max_articles | plus: 1
+
+  # Conteo real de slides (necesario para contador y dots)
+  assign total = 0
+  if blog != blank
+    for post in blog.articles limit: fetch_limit
+      if post.id == skip_id
+        continue
+      endif
+      if total >= max_articles
+        break
+      endif
+      assign total = total | plus: 1
+    endfor
+  endif
+
+  # Slides visibles por vista
+  if layout == 'split'
+    assign per_view = 1
+    assign per_view_tablet = 1
+    assign per_view_mobile = 1
+  else
+    assign per_view = block.settings.cards_per_view | default: 3
+    assign per_view_tablet = 2
+    if per_view < 2
+      assign per_view_tablet = per_view
+    endif
+    assign per_view_mobile = block.settings.cards_per_view_mobile | default: 1.15
+  endif
+
+  assign autoplay_ms = block.settings.autoplay_seconds | default: 6 | times: 1000
+-%}
+
 {%- style -%}
-  .blog-slider-{{ block.id }} {
-    --color-background: {{ block.settings.background_color }};
-    --color-background-1: {{ block.settings.content_background_color }};
-    --color-foreground: {{ block.settings.text_color }};
-    --color-accent: {{ block.settings.accent_color }};
-    --color-border: {{ block.settings.border_color }};
-    --color-eyebrow: {{ block.settings.eyebrow_color }};
-    
-    background-color: var(--color-background);
+  #bs-{{ bid }} {
+    --bs-bg: {{ block.settings.background_color }};
+    --bs-card: {{ block.settings.content_background_color }};
+    --bs-fg: {{ block.settings.text_color }};
+    --bs-accent: {{ block.settings.accent_color }};
+    --bs-border: {{ block.settings.border_color }};
+    --bs-eyebrow: {{ block.settings.eyebrow_color }};
+    --bs-img-bg: {{ block.settings.image_background }};
+    --bs-gap: {{ block.settings.slide_gap }}px;
+    --bs-per: {{ per_view }};
+    --bs-radius: {{ block.settings.radius }}px;
+    --bs-ease: cubic-bezier(0.83, 0, 0.17, 1);
+
+    background-color: var(--bs-bg);
+    color: var(--bs-fg);
     padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
   }
 
-  .blog-slider__container-{{ block.id }} {
+  #bs-{{ bid }} .bs__container {
     max-width: var(--page-width, 1200px);
     margin: 0 auto;
     padding: 0 {{ block.settings.horizontal_padding }}px;
   }
 
-  /* ═══════════════════════════════════════
-     HEADER DE SECCIÓN
-  ═══════════════════════════════════════ */
-  .blog-slider__header-{{ block.id }} {
-    text-align: {{ block.settings.header_alignment }};
+  /* ── Header ─────────────────────────────── */
+  #bs-{{ bid }} .bs__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
     margin-bottom: {{ block.settings.header_spacing }}px;
   }
-
-  .blog-slider__eyebrow-{{ block.id }} {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-eyebrow);
-    margin-bottom: 12px;
-    display: block;
-    font-weight: 500;
+  #bs-{{ bid }} .bs__header-text { text-align: {{ block.settings.header_alignment }}; flex: 1; }
+  #bs-{{ bid }} .bs__eyebrow {
+    display: block; font-size: 11px; font-weight: 500;
+    letter-spacing: .15em; text-transform: uppercase;
+    color: var(--bs-eyebrow); margin-bottom: 12px;
   }
-
-  .blog-slider__section-title-{{ block.id }} {
-    font-size: {{ block.settings.title_size }}px;
-    color: var(--color-foreground);
-    margin: 0;
-    line-height: 1.1;
-    font-weight: 400;
+  #bs-{{ bid }} .bs__section-title {
+    font-size: {{ block.settings.title_size }}px; line-height: 1.1; font-weight: 400; margin: 0; color: var(--bs-fg);
   }
-
-  /* ═══════════════════════════════════════
-     SLIDER STRUCTURE - CRÍTICO
-  ═══════════════════════════════════════ */
-  
-  /* Viewport: contiene todo y oculta el overflow */
-  .blog-slider__viewport-{{ block.id }} {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
+  #bs-{{ bid }} .bs__view-all {
+    font-size: 14px; color: var(--bs-fg); text-decoration: none; white-space: nowrap;
+    border-bottom: 1px solid var(--bs-border); padding-bottom: 2px; transition: border-color .3s ease;
   }
+  #bs-{{ bid }} .bs__view-all:hover { border-color: var(--bs-fg); }
 
-  /* Track: contenedor flex que se desplaza */
-  .blog-slider__track-{{ block.id }} {
+  /* ── Track (scroll-snap nativo: swipe real, sin librerías) ── */
+  #bs-{{ bid }} .bs__track {
     display: flex;
-    width: 100%;
-    transition: transform 0.6s cubic-bezier(0.83, 0, 0.17, 1);
-    will-change: transform;
+    gap: var(--bs-gap);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
+  #bs-{{ bid }} .bs__track::-webkit-scrollbar { display: none; }
+  #bs-{{ bid }} .bs__track:focus-visible { outline: 2px solid var(--bs-accent); outline-offset: 4px; }
 
-  /* Cada slide ocupa 100% del ancho */
-  .blog-slider__slide-{{ block.id }} {
-    flex: 0 0 100%;
+  #bs-{{ bid }} .bs__slide {
+    flex: 0 0 calc((100% - (var(--bs-per) - 1) * var(--bs-gap)) / var(--bs-per));
     min-width: 0;
-    width: 100%;
+    scroll-snap-align: start;
+  }
+
+  /* ── Tarjeta ────────────────────────────── */
+  #bs-{{ bid }} .bs__card {
+    position: relative;
+    height: 100%;
     display: grid;
+    border-radius: var(--bs-radius);
+    overflow: hidden;
+    background: var(--bs-card);
+  }
+  #bs-{{ bid }} .bs__card--split {
     grid-template-columns: 1fr 1fr;
-    gap: {{ block.settings.gap_between }}px;
     align-items: stretch;
+    {%- if block.settings.split_gap > 0 %}
+    gap: {{ block.settings.split_gap }}px;
+    background: transparent;
+    overflow: visible;
+    {%- endif %}
   }
+  #bs-{{ bid }} .bs__card--cards { grid-template-rows: auto 1fr; }
 
-  /* ═══════════════════════════════════════
-     COLUMNA IZQUIERDA - CONTENIDO
-  ═══════════════════════════════════════ */
-  .blog-slider__content-{{ block.id }} {
-    background-color: var(--color-background-1);
+  #bs-{{ bid }} .bs__media {
+    position: relative;
+    overflow: hidden;
+    background: var(--bs-img-bg);
+    aspect-ratio: {{ block.settings.image_ratio }};
+    {%- if block.settings.split_gap > 0 and layout == 'split' %} border-radius: var(--bs-radius);{% endif %}
+  }
+  #bs-{{ bid }} .bs__card--split .bs__media {
+    order: {% if block.settings.image_position == 'left' %}-1{% else %}2{% endif %};
+  }
+  #bs-{{ bid }} .bs__media img,
+  #bs-{{ bid }} .bs__media .bs__ph {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .8s var(--bs-ease);
+  }
+  #bs-{{ bid }} .bs__ph { display: flex; align-items: center; justify-content: center; }
+  #bs-{{ bid }} .bs__ph svg { width: 40%; height: 40%; max-width: 150px; opacity: .3; }
+  #bs-{{ bid }} .bs__card:hover .bs__media img { transform: scale(1.04); }
+
+  #bs-{{ bid }} .bs__content {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-radius: 16px;
-    padding: {{ block.settings.content_padding }}px;
-    position: relative;
-    aspect-ratio: {{ block.settings.content_aspect_ratio }};
-    min-height: 0;
-  }
-
-  .blog-slider__content-inner-{{ block.id }} {
-    display: flex;
-    flex-direction: column;
     gap: {{ block.settings.content_spacing }}px;
-    align-items: {{ block.settings.content_alignment }};
+    padding: {{ block.settings.content_padding }}px;
     text-align: {{ block.settings.text_alignment }};
+    align-items: {% case block.settings.text_alignment %}{% when 'center' %}center{% when 'right' %}flex-end{% else %}flex-start{% endcase %};
+    background: var(--bs-card);
+    {%- if block.settings.split_gap > 0 and layout == 'split' %} border-radius: var(--bs-radius);{% endif %}
+  }
+  #bs-{{ bid }} .bs__card--cards .bs__content {
+    justify-content: flex-start;
+    padding: {{ block.settings.content_padding | times: 0.55 | round }}px;
   }
 
-  .blog-slider__article-eyebrow-{{ block.id }} {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-eyebrow);
-    font-weight: 500;
+  #bs-{{ bid }} .bs__meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+    font-size: 11px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--bs-eyebrow);
+  }
+  #bs-{{ bid }} .bs__meta-sep { opacity: .5; }
+
+  #bs-{{ bid }} .bs__title {
+    font-size: {{ block.settings.article_title_size }}px; line-height: 1.2; font-weight: 400; margin: 0; color: var(--bs-fg);
+  }
+  #bs-{{ bid }} .bs__card--cards .bs__title { font-size: {{ block.settings.article_title_size | times: 0.72 | round }}px; }
+  #bs-{{ bid }} .bs__title a { color: inherit; text-decoration: none; }
+  /* Toda la tarjeta es clicable sin anidar enlaces */
+  #bs-{{ bid }} .bs__title a::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+
+  #bs-{{ bid }} .bs__excerpt {
+    font-size: {{ block.settings.description_size }}px; line-height: 1.7; opacity: .8; margin: 0;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: {{ block.settings.excerpt_lines }}; overflow: hidden;
   }
 
-  .blog-slider__article-title-{{ block.id }} {
-    font-size: {{ block.settings.article_title_size }}px;
-    color: var(--color-foreground);
-    margin: 0;
-    line-height: 1.2;
-    font-weight: 400;
+  /* ── Botón flecha animada ── */
+  #bs-{{ bid }} .bs__foot { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 8px; }
+  #bs-{{ bid }} .bs__card--split .bs__foot { margin-top: 8px; }
+  #bs-{{ bid }} .bs__arrow-btn { position: relative; width: 64px; height: 32px; overflow: hidden; flex-shrink: 0; }
+  #bs-{{ bid }} .bs__arrow-btn svg { position: absolute; }
+  #bs-{{ bid }} .bs__pill { inset: 0; width: 100%; height: 100%; }
+  #bs-{{ bid }} .bs__pill-bg { fill: none; stroke: var(--bs-border); stroke-width: 1; }
+  #bs-{{ bid }} .bs__pill-fill {
+    fill: none; stroke: var(--bs-accent); stroke-width: 1.5;
+    stroke-dasharray: 118; stroke-dashoffset: 118; transition: stroke-dashoffset .6s var(--bs-ease);
   }
+  #bs-{{ bid }} .bs__arr { top: 50%; left: 50%; color: var(--bs-fg); transition: transform .4s var(--bs-ease), opacity .4s ease; }
+  #bs-{{ bid }} .bs__arr--1 { transform: translate(-50%, -50%); }
+  #bs-{{ bid }} .bs__arr--2 { transform: translate(-150%, -50%); opacity: 0; }
+  #bs-{{ bid }} .bs__card:hover .bs__pill-fill { stroke-dashoffset: 0; }
+  #bs-{{ bid }} .bs__card:hover .bs__arr--1 { transform: translate(50%, -50%); opacity: 0; }
+  #bs-{{ bid }} .bs__card:hover .bs__arr--2 { transform: translate(-50%, -50%); opacity: 1; }
+  #bs-{{ bid }} .bs__read-time { font-size: 13px; opacity: .7; }
 
-  .blog-slider__article-title-{{ block.id }} a {
-    color: inherit;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-  }
-
-  .blog-slider__article-title-{{ block.id }} a:hover {
-    opacity: 0.7;
-  }
-
-  .blog-slider__description-{{ block.id }} {
-    font-size: {{ block.settings.description_size }}px;
-    color: var(--color-foreground);
-    line-height: 1.7;
-    opacity: 0.8;
-    margin: 0;
-  }
-
-  /* ═══════════════════════════════════════
-     BOTÓN CON FLECHA ANIMADA
-  ═══════════════════════════════════════ */
-  .blog-slider__button-wrapper-{{ block.id }} {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-top: 8px;
-  }
-
-  .icon-arrow-animated-{{ block.id }} {
-    position: relative;
-    width: 64px;
-    height: 32px;
-    overflow: hidden;
-    flex-shrink: 0;
-    cursor: pointer;
-    text-decoration: none;
-    display: block;
-  }
-
-  .icon-arrow-animated-svg-{{ block.id }} {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .icon-arrow-animated-bg-{{ block.id }} {
-    fill: none;
-    stroke: var(--color-border);
-    stroke-width: 1;
-  }
-
-  .icon-arrow-animated-fill-{{ block.id }} {
-    fill: none;
-    stroke: var(--color-accent);
-    stroke-width: 1.5;
-    stroke-dasharray: 118;
-    stroke-dashoffset: 118;
-    transition: stroke-dashoffset 0.6s cubic-bezier(0.83, 0, 0.17, 1);
-  }
-
-  .icon-arrow-animated-{{ block.id }}:hover .icon-arrow-animated-fill-{{ block.id }} {
-    stroke-dashoffset: 0;
-  }
-
-  .icon-arrow-animated-item-{{ block.id }} {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transition: transform 0.4s cubic-bezier(0.83, 0, 0.17, 1), opacity 0.4s ease;
-    color: var(--color-foreground);
-  }
-
-  .icon-arrow-animated-item--1-{{ block.id }} {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-
-  .icon-arrow-animated-item--2-{{ block.id }} {
-    transform: translate(-150%, -50%);
-    opacity: 0;
-  }
-
-  .icon-arrow-animated-{{ block.id }}:hover .icon-arrow-animated-item--1-{{ block.id }} {
-    transform: translate(50%, -50%);
-    opacity: 0;
-  }
-
-  .icon-arrow-animated-{{ block.id }}:hover .icon-arrow-animated-item--2-{{ block.id }} {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-
-  .blog-slider__read-time-{{ block.id }} {
-    font-size: 13px;
-    color: var(--color-foreground);
-    opacity: 0.7;
-  }
-
-  /* ═══════════════════════════════════════
-     COLUMNA DERECHA - IMAGEN
-  ═══════════════════════════════════════ */
-  .blog-slider__media-{{ block.id }} {
-    position: relative;
-    overflow: hidden;
-    background-color: {{ block.settings.image_background }};
-    aspect-ratio: {{ block.settings.content_aspect_ratio }};
-    border-radius: 16px;
-    min-height: 0;
-  }
-
-  .blog-slider__media-link-{{ block.id }} {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .blog-slider__image-{{ block.id }} {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.83, 0, 0.17, 1);
-  }
-
-  .blog-slider__slide-{{ block.id }}:hover .blog-slider__image-{{ block.id }} {
-    transform: scale(1.03);
-  }
-
-  .blog-slider__image-placeholder-{{ block.id }} {
-    width: 100%;
-    height: 100%;
-    background-color: var(--color-background-1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .blog-slider__image-placeholder-{{ block.id }} svg {
-    width: 40%;
-    height: 40%;
-    max-width: 150px;
-    opacity: 0.3;
-  }
-
-  /* ═══════════════════════════════════════
-     CONTROLES DEL SLIDER
-  ═══════════════════════════════════════ */
-  .blog-slider__controls-{{ block.id }} {
-    display: flex;
+  /* ── Controles ─────────────────────────── */
+  #bs-{{ bid }} .bs__controls {
+    display: flex; align-items: center; gap: 20px;
     justify-content: {{ block.settings.controls_alignment }};
-    align-items: center;
-    gap: 20px;
     margin-top: {{ block.settings.controls_spacing }}px;
   }
+  #bs-{{ bid }} .bs__nav { display: flex; gap: 12px; }
+  #bs-{{ bid }} .bs__nav-btn {
+    width: 48px; height: 48px; padding: 0; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--bs-fg); border: 1px solid var(--bs-border);
+    cursor: pointer; transition: background-color .3s var(--bs-ease), color .3s var(--bs-ease), border-color .3s var(--bs-ease), opacity .3s ease;
+  }
+  #bs-{{ bid }} .bs__nav-btn svg { width: 20px; height: 20px; }
+  #bs-{{ bid }} .bs__nav-btn:hover:not(:disabled) { background: var(--bs-fg); color: var(--bs-card); border-color: var(--bs-fg); }
+  #bs-{{ bid }} .bs__nav-btn:disabled { opacity: .3; cursor: default; }
+  #bs-{{ bid }} .bs__dots { display: flex; gap: 4px; align-items: center; }
+  #bs-{{ bid }} .bs__dot {
+    width: 20px; height: 20px; padding: 0; border: 0; background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #bs-{{ bid }} .bs__dot::before {
+    content: ''; width: 6px; height: 6px; border-radius: 6px; background: var(--bs-fg); opacity: .3;
+    transition: width .35s var(--bs-ease), opacity .3s ease;
+  }
+  #bs-{{ bid }} .bs__dot.is-active::before { width: 20px; opacity: 1; }
+  #bs-{{ bid }} .bs__dot[hidden] { display: none; }
+  #bs-{{ bid }} .bs__counter { font-size: 13px; font-weight: 500; letter-spacing: .05em; font-variant-numeric: tabular-nums; }
+  #bs-{{ bid }} .bs__counter-total { opacity: .5; }
 
-  .blog-slider__nav-{{ block.id }} {
-    display: flex;
-    gap: 12px;
+  #bs-{{ bid }} .bs__empty {
+    text-align: center; padding: 80px 40px; font-size: 16px; background: var(--bs-card); border-radius: var(--bs-radius); opacity: .8;
   }
 
-  .blog-slider__arrow-{{ block.id }} {
-    background-color: transparent;
-    color: var(--color-foreground);
-    border: 1px solid var(--color-border);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
-    padding: 0;
-  }
-
-  .blog-slider__arrow-{{ block.id }}:hover:not(:disabled) {
-    background-color: var(--color-foreground);
-    color: var(--color-background-1);
-    border-color: var(--color-foreground);
-  }
-
-  .blog-slider__arrow-{{ block.id }}:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  .blog-slider__arrow-{{ block.id }} svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .blog-slider__dots-{{ block.id }} {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .blog-slider__dot-{{ block.id }} {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: var(--color-foreground);
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.83, 0, 0.17, 1);
-    opacity: 0.3;
-    padding: 0;
-  }
-
-  .blog-slider__dot-{{ block.id }}.active {
-    opacity: 1;
-    transform: scale(1.4);
-  }
-
-  .blog-slider__dot-{{ block.id }}:hover:not(.active) {
-    opacity: 0.6;
-  }
-
-  /* Contador */
-  .blog-slider__counter-{{ block.id }} {
-    font-size: 13px;
-    color: var(--color-foreground);
-    font-weight: 500;
-    letter-spacing: 0.05em;
-  }
-
-  .blog-slider__counter-total-{{ block.id }} {
-    opacity: 0.5;
-  }
-
-  /* Estado vacío */
-  .blog-slider__empty-{{ block.id }} {
-    text-align: center;
-    padding: 80px 40px;
-    color: var(--color-foreground);
-    font-size: 16px;
-    background-color: var(--color-background-1);
-    opacity: 0.7;
-  }
-
-  /* ═══════════════════════════════════════
-     RESPONSIVE
-  ═══════════════════════════════════════ */
+  /* ── Responsive ────────────────────────── */
   @media screen and (max-width: 990px) {
-    .blog-slider__slide-{{ block.id }} {
-      grid-template-columns: 1fr;
-      gap: 0;
-    }
-
-    .blog-slider__content-{{ block.id }} {
-      order: 2;
-      aspect-ratio: auto;
-      padding: {{ block.settings.content_padding | times: 0.75 | round }}px;
-    }
-
-    .blog-slider__media-{{ block.id }} {
-      order: 1;
-      aspect-ratio: 4 / 3;
-    }
-
-    .blog-slider__article-title-{{ block.id }} {
-      font-size: {{ block.settings.article_title_size | times: 0.85 | round }}px;
-    }
+    #bs-{{ bid }} { --bs-per: {{ per_view_tablet }}; }
+    #bs-{{ bid }} .bs__card--split { grid-template-columns: 1fr; gap: 0; }
+    #bs-{{ bid }} .bs__card--split .bs__media { order: -1; aspect-ratio: 4 / 3; border-radius: 0; }
+    #bs-{{ bid }} .bs__card--split .bs__content { border-radius: 0; padding: {{ block.settings.content_padding | times: 0.7 | round }}px; }
+    #bs-{{ bid }} .bs__card--split { background: var(--bs-card); overflow: hidden; }
+    #bs-{{ bid }} .bs__title { font-size: {{ block.settings.article_title_size | times: 0.85 | round }}px; }
   }
 
   @media screen and (max-width: 749px) {
-    .blog-slider-{{ block.id }} {
+    #bs-{{ bid }} {
+      --bs-per: {{ per_view_mobile }};
+      --bs-gap: {{ block.settings.slide_gap | at_most: 16 }}px;
       padding: {{ block.settings.padding_top | times: 0.6 | round }}px 0 {{ block.settings.padding_bottom | times: 0.6 | round }}px;
     }
-
-    .blog-slider__container-{{ block.id }} {
-      padding: 0 20px;
-    }
-
-    .blog-slider__header-{{ block.id }} {
-      margin-bottom: {{ block.settings.header_spacing | times: 0.7 | round }}px;
-    }
-
-    .blog-slider__section-title-{{ block.id }} {
-      font-size: {{ block.settings.title_size | times: 0.75 | round }}px;
-    }
-
-    .blog-slider__content-{{ block.id }} {
-      padding: 28px;
-    }
-
-    .blog-slider__article-title-{{ block.id }} {
-      font-size: {{ block.settings.article_title_size | times: 0.7 | round }}px;
-    }
-
-    .blog-slider__description-{{ block.id }} {
-      font-size: {{ block.settings.description_size | times: 0.9 | round }}px;
-    }
-
-    .blog-slider__controls-{{ block.id }} {
-      justify-content: center;
-    }
-
-    .blog-slider__arrow-{{ block.id }} {
-      width: 42px;
-      height: 42px;
-    }
+    #bs-{{ bid }} .bs__container { padding: 0 20px; }
+    #bs-{{ bid }} .bs__header { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: {{ block.settings.header_spacing | times: 0.7 | round }}px; }
+    #bs-{{ bid }} .bs__section-title { font-size: {{ block.settings.title_size | times: 0.75 | round }}px; }
+    #bs-{{ bid }} .bs__card--split .bs__content,
+    #bs-{{ bid }} .bs__card--cards .bs__content { padding: 24px; }
+    #bs-{{ bid }} .bs__title,
+    #bs-{{ bid }} .bs__card--cards .bs__title { font-size: {{ block.settings.article_title_size | times: 0.7 | round }}px; }
+    #bs-{{ bid }} .bs__excerpt { font-size: {{ block.settings.description_size | times: 0.9 | round }}px; }
+    #bs-{{ bid }} .bs__controls { justify-content: center; }
+    #bs-{{ bid }} .bs__nav-btn { width: 42px; height: 42px; }
+    #bs-{{ bid }} .bs__view-all { align-self: flex-start; }
   }
 
-  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .blog-slider__track-{{ block.id }},
-    .blog-slider__image-{{ block.id }},
-    .icon-arrow-animated-fill-{{ block.id }},
-    .icon-arrow-animated-item-{{ block.id }} {
-      transition: none;
-    }
-
-    .blog-slider__slide-{{ block.id }}:hover .blog-slider__image-{{ block.id }} {
-      transform: none;
-    }
+    #bs-{{ bid }} .bs__track { scroll-behavior: auto; }
+    #bs-{{ bid }} *, #bs-{{ bid }} *::before { transition: none !important; }
+    #bs-{{ bid }} .bs__card:hover .bs__media img { transform: none; }
   }
 {%- endstyle -%}
 
-<div class="blog-slider-{{ block.id }}" data-blog-slider="{{ block.id }}" {{ block.shopify_attributes }}>
-  <div class="blog-slider__container-{{ block.id }}">
-    
-    {%- if block.settings.section_eyebrow != blank or block.settings.section_title != blank -%}
-      <div class="blog-slider__header-{{ block.id }}">
-        {%- if block.settings.section_eyebrow != blank -%}
-          <span class="blog-slider__eyebrow-{{ block.id }}">{{ block.settings.section_eyebrow | escape }}</span>
-        {%- endif -%}
-        {%- if block.settings.section_title != blank -%}
-          <h2 class="blog-slider__section-title-{{ block.id }}">{{ block.settings.section_title | escape }}</h2>
+<div
+  id="bs-{{ bid }}"
+  class="bs"
+  data-blog-slider
+  data-loop="{{ block.settings.enable_loop }}"
+  data-autoplay="{% if block.settings.autoplay and total > per_view %}{{ autoplay_ms }}{% else %}0{% endif %}"
+  {{ block.shopify_attributes }}
+>
+  <div class="bs__container">
+    {%- if block.settings.section_eyebrow != blank or block.settings.section_title != blank or block.settings.show_view_all -%}
+      <div class="bs__header">
+        <div class="bs__header-text">
+          {%- if block.settings.section_eyebrow != blank -%}
+            <span class="bs__eyebrow">{{ block.settings.section_eyebrow | escape }}</span>
+          {%- endif -%}
+          {%- if block.settings.section_title != blank -%}
+            <h2 class="bs__section-title" id="bs-title-{{ bid }}">{{ block.settings.section_title | escape }}</h2>
+          {%- endif -%}
+        </div>
+        {%- if block.settings.show_view_all and blog != blank -%}
+          <a href="{{ blog.url }}" class="bs__view-all">{{ block.settings.view_all_text | escape }}</a>
         {%- endif -%}
       </div>
     {%- endif -%}
 
-    {%- assign blog = block.settings.blog -%}
-    {%- if blog != blank and blog.articles_count > 0 -%}
-      {%- assign articles_limit = block.settings.articles_limit | at_most: blog.articles_count -%}
-      
-      {%- comment -%} ══════ SLIDER VIEWPORT ══════ {%- endcomment -%}
-      <div class="blog-slider__viewport-{{ block.id }}">
-        <div class="blog-slider__track-{{ block.id }}" data-slider-track>
-          
-          {%- for article in blog.articles limit: articles_limit -%}
-            <div class="blog-slider__slide-{{ block.id }}" data-slide="{{ forloop.index0 }}">
-              
-              {%- comment -%} COLUMNA IZQUIERDA: CONTENIDO {%- endcomment -%}
-              <div class="blog-slider__content-{{ block.id }}">
-                <div class="blog-slider__content-inner-{{ block.id }}">
-                  
-                  {%- if block.settings.show_eyebrow -%}
-                    {%- if article.tags.size > 0 -%}
-                      <div class="blog-slider__article-eyebrow-{{ block.id }}">{{ article.tags.first }}</div>
-                    {%- elsif block.settings.custom_eyebrow != blank -%}
-                      <div class="blog-slider__article-eyebrow-{{ block.id }}">{{ block.settings.custom_eyebrow }}</div>
+    {%- if total > 0 -%}
+      <ul
+        class="bs__track"
+        data-track
+        tabindex="0"
+        role="region"
+        aria-roledescription="carousel"
+        {% if block.settings.section_title != blank %}aria-labelledby="bs-title-{{ bid }}"{% else %}aria-label="{{ blog.title | escape }}"{% endif %}
+      >
+        {%- assign rendered = 0 -%}
+        {%- for post in blog.articles limit: fetch_limit -%}
+          {%- if post.id == skip_id -%}{%- continue -%}{%- endif -%}
+          {%- if rendered >= max_articles -%}{%- break -%}{%- endif -%}
+          {%- assign rendered = rendered | plus: 1 -%}
+
+          <li
+            class="bs__slide"
+            data-slide
+            aria-roledescription="slide"
+            aria-label="{{ rendered }} / {{ total }}"
+          >
+            <article class="bs__card bs__card--{{ layout }}">
+              <div class="bs__media">
+                {%- if post.image -%}
+                  {%- liquid
+                    assign img_alt = post.image.alt | default: post.title | escape
+                    if layout == 'split'
+                      assign img_sizes = '(max-width: 990px) 100vw, 50vw'
+                    else
+                      assign img_sizes = '(max-width: 749px) 90vw, (max-width: 990px) 50vw, 33vw'
+                    endif
+                    if rendered == 1
+                      assign img_loading = 'eager'
+                    else
+                      assign img_loading = 'lazy'
+                    endif
+                  -%}
+                  {{
+                    post.image
+                    | image_url: width: 1400
+                    | image_tag:
+                      widths: '400, 600, 800, 1000, 1200, 1400',
+                      sizes: img_sizes,
+                      loading: img_loading,
+                      alt: img_alt
+                  }}
+                {%- else -%}
+                  <div class="bs__ph">{{ 'image' | placeholder_svg_tag }}</div>
+                {%- endif -%}
+              </div>
+
+              <div class="bs__content">
+                {%- liquid
+                  assign eyebrow = ''
+                  if block.settings.show_eyebrow
+                    if post.tags.size > 0
+                      assign eyebrow = post.tags.first
+                    elsif block.settings.custom_eyebrow != blank
+                      assign eyebrow = block.settings.custom_eyebrow
+                    endif
+                  endif
+                -%}
+                {%- if eyebrow != blank or block.settings.show_date -%}
+                  <div class="bs__meta">
+                    {%- if eyebrow != blank -%}<span>{{ eyebrow | escape }}</span>{%- endif -%}
+                    {%- if eyebrow != blank and block.settings.show_date -%}<span class="bs__meta-sep" aria-hidden="true">·</span>{%- endif -%}
+                    {%- if block.settings.show_date -%}{{ post.published_at | time_tag: format: 'date' }}{%- endif -%}
+                  </div>
+                {%- endif -%}
+
+                <h3 class="bs__title">
+                  <a href="{{ post.url }}">{{ post.title | escape }}</a>
+                </h3>
+
+                {%- if block.settings.show_description -%}
+                  {%- liquid
+                    if post.excerpt != blank
+                      assign excerpt = post.excerpt
+                    else
+                      assign excerpt = post.content
+                    endif
+                  -%}
+                  <p class="bs__excerpt">{{ excerpt | strip_html | strip_newlines | truncate: block.settings.description_length }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.show_button or block.settings.show_read_time -%}
+                  <div class="bs__foot">
+                    {%- if block.settings.show_button -%}
+                      <span class="bs__arrow-btn" aria-hidden="true">
+                        <svg class="bs__pill" width="64" height="32" viewBox="0 0 64 32" fill="none">
+                          <path class="bs__pill-bg" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
+                          <path class="bs__pill-fill" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
+                        </svg>
+                        <svg class="bs__arr bs__arr--1" width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5h10M11 5 6.7 1M11 5 6.7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>
+                        <svg class="bs__arr bs__arr--2" width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5h10M11 5 6.7 1M11 5 6.7 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>
+                      </span>
                     {%- endif -%}
-                  {%- endif -%}
-
-                  <h3 class="blog-slider__article-title-{{ block.id }}">
-                    <a href="{{ article.url }}">{{ article.title | escape }}</a>
-                  </h3>
-
-                  {%- if block.settings.show_description -%}
-                    <p class="blog-slider__description-{{ block.id }}">
-                      {%- if article.excerpt != blank -%}
-                        {{ article.excerpt | strip_html | truncate: block.settings.description_length }}
-                      {%- else -%}
-                        {{ article.content | strip_html | truncate: block.settings.description_length }}
-                      {%- endif -%}
-                    </p>
-                  {%- endif -%}
-
-                  {%- if block.settings.show_button -%}
-                    <div class="blog-slider__button-wrapper-{{ block.id }}">
-                      <a href="{{ article.url }}" class="icon-arrow-animated-{{ block.id }}" aria-label="{{ block.settings.button_text | default: 'Read article' }}">
-                        <svg class="icon-arrow-animated-svg-{{ block.id }}" width="64" height="32" viewBox="0 0 64 32" fill="none">
-                          <path class="icon-arrow-animated-bg-{{ block.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
-                          <path class="icon-arrow-animated-fill-{{ block.id }}" d="M16 1h32a15 15 0 0 1 0 30H16a15 15 0 0 1 0-30z"/>
-                        </svg>
-                        <svg class="icon-arrow-animated-item-{{ block.id }} icon-arrow-animated-item--1-{{ block.id }}" width="12" height="10" viewBox="0 0 12 10" fill="none">
-                          <path d="M1 5L11 5M11 5L6.71429 1M11 5L6.71429 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/>
-                        </svg>
-                        <svg class="icon-arrow-animated-item-{{ block.id }} icon-arrow-animated-item--2-{{ block.id }}" width="12" height="10" viewBox="0 0 12 10" fill="none">
-                          <path d="M1 5L11 5M11 5L6.71429 1M11 5L6.71429 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/>
-                        </svg>
-                      </a>
-                      
-                      {%- if block.settings.show_read_time -%}
-                        {%- assign words = article.content | strip_html | split: ' ' | size -%}
-                        {%- assign read_time = words | divided_by: 200 | at_least: 1 -%}
-                        <span class="blog-slider__read-time-{{ block.id }}">{{ read_time }} min read</span>
-                      {%- endif -%}
-                    </div>
-                  {%- endif -%}
-
-                </div>
+                    {%- if block.settings.show_read_time -%}
+                      {%- assign words = post.content | strip_html | split: ' ' | size -%}
+                      {%- assign read_time = words | divided_by: 200 | at_least: 1 -%}
+                      <span class="bs__read-time">{{ read_time }} {{ block.settings.read_time_label | escape }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
               </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      </ul>
 
-              {%- comment -%} COLUMNA DERECHA: IMAGEN {%- endcomment -%}
-              <div class="blog-slider__media-{{ block.id }}">
-                <a href="{{ article.url }}" class="blog-slider__media-link-{{ block.id }}" aria-label="{{ article.title | escape }}">
-                  {%- if article.image -%}
-                    <img
-                      src="{{ article.image | image_url: width: 1200 }}"
-                      srcset="{{ article.image | image_url: width: 400 }} 400w,
-                              {{ article.image | image_url: width: 600 }} 600w,
-                              {{ article.image | image_url: width: 800 }} 800w,
-                              {{ article.image | image_url: width: 1000 }} 1000w,
-                              {{ article.image | image_url: width: 1200 }} 1200w"
-                      sizes="(max-width: 990px) 100vw, 50vw"
-                      alt="{{ article.image.alt | escape | default: article.title | escape }}"
-                      class="blog-slider__image-{{ block.id }}"
-                      loading="lazy"
-                      width="{{ article.image.width }}"
-                      height="{{ article.image.height }}"
-                    >
-                  {%- else -%}
-                    <div class="blog-slider__image-placeholder-{{ block.id }}">
-                      {{ 'image' | placeholder_svg_tag }}
-                    </div>
-                  {%- endif -%}
-                </a>
-              </div>
-
-            </div>
-          {%- endfor -%}
-          
-        </div>
-      </div>
-
-      {%- comment -%} ══════ CONTROLES ══════ {%- endcomment -%}
-      {%- if articles_limit > 1 and block.settings.show_controls -%}
-        <div class="blog-slider__controls-{{ block.id }}">
-          
+      {%- if total > per_view and block.settings.show_controls -%}
+        <div class="bs__controls">
           {%- if block.settings.show_arrows -%}
-            <div class="blog-slider__nav-{{ block.id }}">
-              <button class="blog-slider__arrow-{{ block.id }}" data-slider-prev aria-label="Previous article">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="15 18 9 12 15 6"/>
-                </svg>
+            <div class="bs__nav">
+              <button type="button" class="bs__nav-btn" data-prev aria-label="Artículo anterior">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
               </button>
-              <button class="blog-slider__arrow-{{ block.id }}" data-slider-next aria-label="Next article">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
+              <button type="button" class="bs__nav-btn" data-next aria-label="Artículo siguiente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             </div>
           {%- endif -%}
 
           {%- if block.settings.show_counter -%}
-            <div class="blog-slider__counter-{{ block.id }}">
-              <span data-slider-current>01</span>
-              <span class="blog-slider__counter-total-{{ block.id }}"> / {{ articles_limit | prepend: '00' | slice: -2, 2 }}</span>
+            <div class="bs__counter" aria-live="polite">
+              <span data-current>01</span><span class="bs__counter-total"> / {{ total | prepend: '0' | slice: -2, 2 }}</span>
             </div>
           {%- endif -%}
 
           {%- if block.settings.show_dots -%}
-            <div class="blog-slider__dots-{{ block.id }}">
-              {%- for i in (1..articles_limit) -%}
-                <button 
-                  class="blog-slider__dot-{{ block.id }}{% if forloop.first %} active{% endif %}" 
-                  data-slider-dot="{{ forloop.index0 }}"
-                  aria-label="Go to article {{ forloop.index }}"
+            <div class="bs__dots">
+              {%- for i in (1..total) -%}
+                <button
+                  type="button"
+                  class="bs__dot{% if forloop.first %} is-active{% endif %}"
+                  data-dot="{{ forloop.index0 }}"
+                  aria-label="Ir al artículo {{ forloop.index }}"
                 ></button>
               {%- endfor -%}
             </div>
           {%- endif -%}
-
         </div>
       {%- endif -%}
 
     {%- else -%}
-      <div class="blog-slider__empty-{{ block.id }}">
+      <div class="bs__empty">
         <p>{{ block.settings.empty_message | escape }}</p>
-        {%- if blog == blank -%}
-          <p style="margin-top: 10px; font-size: 14px;">Please select a blog in the block settings</p>
+        {%- if blog == blank and request.design_mode -%}
+          <p style="margin-top:10px;font-size:14px;">Selecciona un blog en la configuración del bloque.</p>
         {%- endif -%}
       </div>
     {%- endif -%}
-
   </div>
 </div>
 
 <script>
-(function() {
-  const BLOCK_ID = '{{ block.id }}';
-  const container = document.querySelector(`[data-blog-slider="${BLOCK_ID}"]`);
-  if (!container) return;
+  (function () {
+    function initBlogSlider(root) {
+      if (!root || root.dataset.bsReady) return;
+      const track = root.querySelector('[data-track]');
+      if (!track) return;
+      const slides = Array.from(track.querySelectorAll('[data-slide]'));
+      if (slides.length < 2) return;
+      root.dataset.bsReady = '1';
 
-  const track = container.querySelector('[data-slider-track]');
-  if (!track) return;
+      const prev = root.querySelector('[data-prev]');
+      const next = root.querySelector('[data-next]');
+      const dots = Array.from(root.querySelectorAll('[data-dot]'));
+      const current = root.querySelector('[data-current]');
+      const loop = root.dataset.loop === 'true';
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const autoplayMs = reduced ? 0 : parseInt(root.dataset.autoplay, 10) || 0;
+      const isEditor = !!(window.Shopify && window.Shopify.designMode);
 
-  const slides = container.querySelectorAll('[data-slide]');
-  const totalSlides = slides.length;
-  
-  // Exit if only one slide
-  if (totalSlides <= 1) return;
+      /* Índice del último slide al que se puede llegar (según slides por vista) */
+      function maxIndex() {
+        const w = slides[0].getBoundingClientRect().width;
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        const perView = Math.max(1, Math.round((track.clientWidth + gap) / (w + gap)));
+        return Math.max(0, slides.length - perView);
+      }
 
-  const prevBtn = container.querySelector('[data-slider-prev]');
-  const nextBtn = container.querySelector('[data-slider-next]');
-  const dots = container.querySelectorAll('[data-slider-dot]');
-  const counterCurrent = container.querySelector('[data-slider-current]');
+      function activeIndex() {
+        const left = track.scrollLeft;
+        let best = 0, bestDist = Infinity;
+        slides.forEach((s, i) => {
+          const d = Math.abs(s.offsetLeft - track.offsetLeft - left);
+          if (d < bestDist) { bestDist = d; best = i; }
+        });
+        return Math.min(best, maxIndex());
+      }
 
-  let currentSlide = 0;
-  const enableLoop = {{ block.settings.enable_loop | default: true }};
-  const autoplay = {{ block.settings.autoplay | default: false }};
-  const autoplayDelay = {{ block.settings.autoplay_delay | default: 5000 }};
-  let autoplayInterval = null;
+      function goTo(i) {
+        const max = maxIndex();
+        if (loop) {
+          if (i > max) i = 0;
+          if (i < 0) i = max;
+        } else {
+          i = Math.max(0, Math.min(i, max));
+        }
+        track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: reduced ? 'auto' : 'smooth' });
+      }
 
-  function updateSlider() {
-    // Move track
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+      function update() {
+        const i = activeIndex();
+        const max = maxIndex();
+        dots.forEach((d, idx) => {
+          d.hidden = idx > max;
+          const on = idx === i;
+          d.classList.toggle('is-active', on);
+          d.setAttribute('aria-current', on ? 'true' : 'false');
+        });
+        if (current) current.textContent = String(i + 1).padStart(2, '0');
+        if (!loop) {
+          if (prev) prev.disabled = i <= 0;
+          if (next) next.disabled = i >= max;
+        }
+      }
 
-    // Update dots
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentSlide);
-    });
+      prev && prev.addEventListener('click', () => { stop(); goTo(activeIndex() - 1); });
+      next && next.addEventListener('click', () => { stop(); goTo(activeIndex() + 1); });
+      dots.forEach((d) => d.addEventListener('click', () => { stop(); goTo(parseInt(d.dataset.dot, 10)); }));
 
-    // Update counter
-    if (counterCurrent) {
-      counterCurrent.textContent = String(currentSlide + 1).padStart(2, '0');
+      track.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); stop(); goTo(activeIndex() + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); stop(); goTo(activeIndex() - 1); }
+      });
+
+      let raf;
+      track.addEventListener('scroll', () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(update);
+      }, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+
+      /* Autoplay: se pausa con hover, foco, toque, pestaña oculta o fuera de pantalla */
+      let timer = null, inView = true, userStopped = false;
+      function start() {
+        if (!autoplayMs || isEditor || userStopped || !inView || document.hidden) return;
+        clearInterval(timer);
+        timer = setInterval(() => goTo(activeIndex() + 1), autoplayMs);
+      }
+      function pause() { clearInterval(timer); timer = null; }
+      function stop() { userStopped = true; pause(); }
+
+      if (autoplayMs) {
+        root.addEventListener('mouseenter', pause);
+        root.addEventListener('mouseleave', start);
+        root.addEventListener('focusin', pause);
+        root.addEventListener('focusout', start);
+        track.addEventListener('touchstart', stop, { passive: true });
+        document.addEventListener('visibilitychange', () => (document.hidden ? pause() : start()));
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver((entries) => {
+            inView = entries[0].isIntersecting;
+            inView ? start() : pause();
+          }, { threshold: 0.25 }).observe(root);
+        }
+      }
+
+      update();
+      start();
     }
 
-    // Update arrow states when loop is disabled
-    if (!enableLoop) {
-      if (prevBtn) prevBtn.disabled = currentSlide === 0;
-      if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
-    }
-  }
-
-  function goToSlide(index) {
-    if (enableLoop) {
-      currentSlide = (index % totalSlides + totalSlides) % totalSlides;
-    } else {
-      currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
-    }
-    updateSlider();
-  }
-
-  function nextSlide() {
-    goToSlide(currentSlide + 1);
-  }
-
-  function prevSlide() {
-    goToSlide(currentSlide - 1);
-  }
-
-  function startAutoplay() {
-    if (!autoplay || autoplayDelay < 2000) return;
-    stopAutoplay();
-    autoplayInterval = setInterval(nextSlide, autoplayDelay);
-  }
-
-  function stopAutoplay() {
-    if (autoplayInterval) {
-      clearInterval(autoplayInterval);
-      autoplayInterval = null;
-    }
-  }
-
-  // Arrow buttons
-  if (prevBtn) {
-    prevBtn.addEventListener('click', function() {
-      stopAutoplay();
-      prevSlide();
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', function() {
-      stopAutoplay();
-      nextSlide();
-    });
-  }
-
-  // Dot buttons
-  dots.forEach(function(dot) {
-    dot.addEventListener('click', function() {
-      stopAutoplay();
-      const index = parseInt(this.dataset.sliderDot, 10);
-      goToSlide(index);
-    });
-  });
-
-  // Touch/Swipe support
-  let touchStartX = 0;
-  let touchEndX = 0;
-
-  track.addEventListener('touchstart', function(e) {
-    touchStartX = e.changedTouches[0].screenX;
-    stopAutoplay();
-  }, { passive: true });
-
-  track.addEventListener('touchend', function(e) {
-    touchEndX = e.changedTouches[0].screenX;
-    const diff = touchStartX - touchEndX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) nextSlide();
-      else prevSlide();
-    }
-  }, { passive: true });
-
-  // Keyboard navigation
-  container.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowLeft') {
-      stopAutoplay();
-      prevSlide();
-    } else if (e.key === 'ArrowRight') {
-      stopAutoplay();
-      nextSlide();
-    }
-  });
-
-  // Make focusable for keyboard
-  container.setAttribute('tabindex', '0');
-
-  // Pause autoplay on hover
-  container.addEventListener('mouseenter', stopAutoplay);
-  container.addEventListener('mouseleave', startAutoplay);
-
-  // Initialize
-  updateSlider();
-  startAutoplay();
-})();
+    initBlogSlider(document.getElementById('bs-{{ bid }}'));
+    document.addEventListener('shopify:section:load', () => initBlogSlider(document.getElementById('bs-{{ bid }}')));
+  })();
 </script>
 
 {% schema %}
 {
   "name": "Blog Slider",
   "settings": [
-    {
-      "type": "header",
-      "content": "📰 Blog"
-    },
-    {
-      "type": "blog",
-      "id": "blog",
-      "label": "Blog"
-    },
+    { "type": "header", "content": "Blog" },
+    { "type": "blog", "id": "blog", "label": "Blog" },
     {
       "type": "range",
       "id": "articles_limit",
       "min": 1,
       "max": 12,
       "step": 1,
-      "label": "Maximum articles",
-      "default": 5
+      "label": "Latest articles to show",
+      "default": 5,
+      "info": "Newest published first. On an article page, the current article is skipped."
     },
-    {
-      "type": "header",
-      "content": "📝 Section Header"
-    },
-    {
-      "type": "text",
-      "id": "section_eyebrow",
-      "label": "Section eyebrow",
-      "default": "FROM THE BLOG"
-    },
-    {
-      "type": "text",
-      "id": "section_title",
-      "label": "Section title",
-      "default": "Insights & Stories"
-    },
-    {
-      "type": "range",
-      "id": "title_size",
-      "min": 24,
-      "max": 56,
-      "step": 2,
-      "unit": "px",
-      "label": "Section title size",
-      "default": 36
-    },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show 'View all' link", "default": true },
+    { "type": "text", "id": "view_all_text", "label": "'View all' text", "default": "View all articles" },
+
+    { "type": "header", "content": "Section header" },
+    { "type": "text", "id": "section_eyebrow", "label": "Eyebrow", "default": "FROM THE BLOG" },
+    { "type": "text", "id": "section_title", "label": "Title", "default": "Insights & Stories" },
+    { "type": "range", "id": "title_size", "min": 24, "max": 56, "step": 2, "unit": "px", "label": "Title size", "default": 36 },
     {
       "type": "select",
       "id": "header_alignment",
@@ -796,74 +607,68 @@
       ],
       "default": "left"
     },
+    { "type": "range", "id": "header_spacing", "min": 20, "max": 80, "step": 4, "unit": "px", "label": "Header bottom spacing", "default": 40 },
+
+    { "type": "header", "content": "Layout" },
     {
-      "type": "range",
-      "id": "header_spacing",
-      "min": 20,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Header bottom spacing",
-      "default": 40
+      "type": "select",
+      "id": "layout",
+      "label": "Slide style",
+      "options": [
+        { "value": "split", "label": "Featured (1 article: text + image)" },
+        { "value": "cards", "label": "Cards (several per view)" }
+      ],
+      "default": "split"
     },
     {
-      "type": "header",
-      "content": "🎨 Layout"
+      "type": "range",
+      "id": "cards_per_view",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Cards per view (desktop)",
+      "default": 3,
+      "info": "Cards style only."
     },
     {
       "type": "select",
-      "id": "content_aspect_ratio",
-      "label": "Columns aspect ratio",
+      "id": "cards_per_view_mobile",
+      "label": "Cards per view (mobile)",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "1.15", "label": "1 + peek of next" },
+        { "value": "1.6", "label": "1.5" }
+      ],
+      "default": "1.15",
+      "info": "A peek of the next card tells users they can swipe."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position (featured style)",
+      "options": [
+        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
       "options": [
         { "value": "1 / 1", "label": "Square (1:1)" },
         { "value": "4 / 3", "label": "Landscape (4:3)" },
         { "value": "3 / 4", "label": "Portrait (3:4)" },
         { "value": "16 / 9", "label": "Wide (16:9)" }
       ],
-      "default": "1 / 1",
-      "info": "Both columns will have the same height"
+      "default": "1 / 1"
     },
-    {
-      "type": "range",
-      "id": "gap_between",
-      "min": 0,
-      "max": 60,
-      "step": 4,
-      "unit": "px",
-      "label": "Gap between columns",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "content_padding",
-      "min": 24,
-      "max": 80,
-      "step": 4,
-      "unit": "px",
-      "label": "Content padding",
-      "default": 48
-    },
-    {
-      "type": "range",
-      "id": "content_spacing",
-      "min": 12,
-      "max": 40,
-      "step": 4,
-      "unit": "px",
-      "label": "Content inner spacing",
-      "default": 20
-    },
-    {
-      "type": "select",
-      "id": "content_alignment",
-      "label": "Content alignment",
-      "options": [
-        { "value": "flex-start", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "flex-end", "label": "Right" }
-      ],
-      "default": "flex-start"
-    },
+    { "type": "range", "id": "slide_gap", "min": 0, "max": 40, "step": 4, "unit": "px", "label": "Gap between slides", "default": 24 },
+    { "type": "range", "id": "split_gap", "min": 0, "max": 60, "step": 4, "unit": "px", "label": "Gap between text and image (featured)", "default": 0 },
+    { "type": "range", "id": "radius", "min": 0, "max": 32, "step": 2, "unit": "px", "label": "Corner radius", "default": 16 },
+    { "type": "range", "id": "content_padding", "min": 24, "max": 80, "step": 4, "unit": "px", "label": "Content padding", "default": 48 },
+    { "type": "range", "id": "content_spacing", "min": 8, "max": 40, "step": 4, "unit": "px", "label": "Content inner spacing", "default": 20 },
     {
       "type": "select",
       "id": "text_alignment",
@@ -875,154 +680,34 @@
       ],
       "default": "left"
     },
-    {
-      "type": "header",
-      "content": "✏️ Article Content"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_eyebrow",
-      "label": "Show eyebrow (tag)",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "custom_eyebrow",
-      "label": "Custom eyebrow",
-      "info": "Used if article has no tags"
-    },
-    {
-      "type": "range",
-      "id": "article_title_size",
-      "min": 20,
-      "max": 48,
-      "step": 2,
-      "unit": "px",
-      "label": "Article title size",
-      "default": 28
-    },
-    {
-      "type": "checkbox",
-      "id": "show_description",
-      "label": "Show description",
-      "default": true
-    },
-    {
-      "type": "range",
-      "id": "description_length",
-      "min": 80,
-      "max": 400,
-      "step": 10,
-      "label": "Description max characters",
-      "default": 180,
-      "info": "Adjust to balance content height"
-    },
-    {
-      "type": "range",
-      "id": "description_size",
-      "min": 14,
-      "max": 20,
-      "step": 1,
-      "unit": "px",
-      "label": "Description size",
-      "default": 16
-    },
-    {
-      "type": "header",
-      "content": "🔘 Button"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_button",
-      "label": "Show button",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "button_text",
-      "label": "Button aria label",
-      "default": "Read article"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_read_time",
-      "label": "Show read time",
-      "default": true
-    },
-    {
-      "type": "header",
-      "content": "🎨 Colors"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "Section background",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "content_background_color",
-      "label": "Content background",
-      "default": "#f5f3ef"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color",
-      "default": "#2c2416"
-    },
-    {
-      "type": "color",
-      "id": "eyebrow_color",
-      "label": "Eyebrow color",
-      "default": "#8b7355"
-    },
-    {
-      "type": "color",
-      "id": "accent_color",
-      "label": "Accent color",
-      "default": "#c4a574"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "Border color",
-      "default": "#e5e1da"
-    },
-    {
-      "type": "color",
-      "id": "image_background",
-      "label": "Image placeholder background",
-      "default": "#fff0bb"
-    },
-    {
-      "type": "header",
-      "content": "◀️ Navigation"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_controls",
-      "label": "Show controls",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_arrows",
-      "label": "Show arrows",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_dots",
-      "label": "Show dots",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_counter",
-      "label": "Show counter",
-      "default": false
-    },
+
+    { "type": "header", "content": "Article content" },
+    { "type": "checkbox", "id": "show_eyebrow", "label": "Show first tag", "default": true },
+    { "type": "text", "id": "custom_eyebrow", "label": "Fallback eyebrow", "info": "Used when an article has no tags." },
+    { "type": "checkbox", "id": "show_date", "label": "Show publish date", "default": false },
+    { "type": "range", "id": "article_title_size", "min": 20, "max": 48, "step": 2, "unit": "px", "label": "Article title size", "default": 28 },
+    { "type": "checkbox", "id": "show_description", "label": "Show excerpt", "default": true },
+    { "type": "range", "id": "description_length", "min": 80, "max": 400, "step": 10, "label": "Excerpt max characters", "default": 180 },
+    { "type": "range", "id": "excerpt_lines", "min": 2, "max": 6, "step": 1, "label": "Excerpt max lines", "default": 4, "info": "Keeps every slide the same height." },
+    { "type": "range", "id": "description_size", "min": 14, "max": 20, "step": 1, "unit": "px", "label": "Excerpt size", "default": 16 },
+    { "type": "checkbox", "id": "show_button", "label": "Show arrow button", "default": true },
+    { "type": "checkbox", "id": "show_read_time", "label": "Show read time", "default": true },
+    { "type": "text", "id": "read_time_label", "label": "Read time label", "default": "min read" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "background_color", "label": "Section background", "default": "#ffffff" },
+    { "type": "color", "id": "content_background_color", "label": "Card background", "default": "#f5f3ef" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#2c2416" },
+    { "type": "color", "id": "eyebrow_color", "label": "Eyebrow / meta", "default": "#8b7355" },
+    { "type": "color", "id": "accent_color", "label": "Accent", "default": "#c4a574" },
+    { "type": "color", "id": "border_color", "label": "Borders", "default": "#e5e1da" },
+    { "type": "color", "id": "image_background", "label": "Image placeholder background", "default": "#fff0bb" },
+
+    { "type": "header", "content": "Navigation" },
+    { "type": "checkbox", "id": "show_controls", "label": "Show controls", "default": true },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": true },
+    { "type": "checkbox", "id": "show_counter", "label": "Show counter", "default": false },
     {
       "type": "select",
       "id": "controls_alignment",
@@ -1035,92 +720,23 @@
       ],
       "default": "center"
     },
-    {
-      "type": "range",
-      "id": "controls_spacing",
-      "min": 20,
-      "max": 60,
-      "step": 4,
-      "unit": "px",
-      "label": "Controls top spacing",
-      "default": 32
-    },
-    {
-      "type": "header",
-      "content": "⚙️ Behavior"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_loop",
-      "label": "Enable infinite loop",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "autoplay",
-      "label": "Autoplay",
-      "default": false
-    },
-    {
-      "type": "range",
-      "id": "autoplay_delay",
-      "min": 0,
-      "max": 2000,
-      "step": 50,
-      "unit": "ms",
-      "label": "Autoplay delay",
-      "default": 350
-    },
-    {
-      "type": "header",
-      "content": "📐 Spacing"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Top padding",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Bottom padding",
-      "default": 60
-    },
-    {
-      "type": "range",
-      "id": "horizontal_padding",
-      "min": 16,
-      "max": 60,
-      "step": 4,
-      "unit": "px",
-      "label": "Horizontal padding",
-      "default": 24
-    },
-    {
-      "type": "header",
-      "content": "📝 Empty State"
-    },
-    {
-      "type": "text",
-      "id": "empty_message",
-      "label": "Empty message",
-      "default": "No articles found"
-    }
+    { "type": "range", "id": "controls_spacing", "min": 20, "max": 60, "step": 4, "unit": "px", "label": "Controls top spacing", "default": 32 },
+
+    { "type": "header", "content": "Behavior" },
+    { "type": "checkbox", "id": "enable_loop", "label": "Loop back to start", "default": true },
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay", "default": false, "info": "Pauses on hover, touch and when off-screen. Disabled in the theme editor." },
+    { "type": "range", "id": "autoplay_seconds", "min": 3, "max": 12, "step": 1, "unit": "s", "label": "Autoplay interval", "default": 6 },
+
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 60 },
+    { "type": "range", "id": "horizontal_padding", "min": 16, "max": 60, "step": 4, "unit": "px", "label": "Horizontal padding", "default": 24 },
+
+    { "type": "header", "content": "Empty state" },
+    { "type": "text", "id": "empty_message", "label": "Empty message", "default": "No articles found" }
   ],
   "presets": [
-    {
-      "name": "Blog Slider",
-      "category": "Blog"
-    }
+    { "name": "Blog Slider", "category": "Blog" }
   ]
 }
 {% endschema %}
