@@ -16,6 +16,56 @@
   # ---- IDs del form nativo ----
   assign form_id = 'fpv2-form-' | append: section_id
   assign form_class = 'fpv2__buy-' | append: section_id
+
+  # ---- Alineación: resuelve "inherit" contra la alineación general ----
+  assign align_g = section.settings.text_align | default: 'left'
+  assign align_title = section.settings.title_align
+  if align_title == blank or align_title == 'inherit'
+    assign align_title = align_g
+  endif
+  assign align_price = section.settings.price_align
+  if align_price == blank or align_price == 'inherit'
+    assign align_price = align_g
+  endif
+  assign align_desc = section.settings.description_text_align
+  if align_desc == blank or align_desc == 'inherit'
+    assign align_desc = align_g
+  endif
+  assign align_promo = section.settings.promo_align
+  if align_promo == blank or align_promo == 'inherit'
+    assign align_promo = align_g
+  endif
+  assign align_badges = section.settings.badges_align
+  if align_badges == blank or align_badges == 'inherit'
+    assign align_badges = align_g
+  endif
+  assign align_tabs = section.settings.tab_content_align | default: 'left'
+  assign align_m = section.settings.text_align_mobile | default: 'inherit'
+
+  # ---- Fechas: se interpretan en la zona horaria de la tienda ----
+  assign shop_offset = 'now' | date: '%z'
+  assign now_ts = 'now' | date: '%s' | plus: 0
+
+  # Fin del countdown -> timestamp (segundos)
+  assign cd_end_ts = 0
+  if section.settings.countdown_enabled
+    assign cd_mo = section.settings.cd_month | prepend: '0' | slice: -2, 2
+    assign cd_d = section.settings.cd_day | prepend: '0' | slice: -2, 2
+    assign cd_h = section.settings.cd_hour | prepend: '0' | slice: -2, 2
+    assign cd_mi = section.settings.cd_minute | prepend: '0' | slice: -2, 2
+    assign cd_raw = section.settings.cd_year | append: '-' | append: cd_mo | append: '-' | append: cd_d | append: ' ' | append: cd_h | append: ':' | append: cd_mi | append: ' ' | append: shop_offset
+    assign cd_parsed = cd_raw | date: '%s'
+    if cd_parsed != cd_raw
+      assign cd_end_ts = cd_parsed | plus: 0
+    endif
+  endif
+
+  assign promo_expired_now = false
+  if section.settings.promo_hide_on_expiry and cd_end_ts > 0 and now_ts >= cd_end_ts
+    assign promo_expired_now = true
+  endif
+
+  assign code_blocks = section.blocks | where: 'type', 'discount_code'
 %}
 
 {% style %}
@@ -132,8 +182,32 @@
     display: flex;
     flex-direction: column;
     gap: {{ section.settings.details_gap }}px;
-    text-align: {{ section.settings.text_align }};
-    align-items: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+    align-items: stretch;
+  }
+
+  /* ===== Sistema de alineación (data-align → variables) ===== */
+  .fpv2__details-{{ section_id }} [data-align],
+  .fpv2__details-{{ section_id }}[data-align] {
+    text-align: var(--fpv2-ta);
+  }
+  .fpv2__details-{{ section_id }} [data-align="left"],
+  .fpv2__details-{{ section_id }}[data-align="left"] {
+    --fpv2-ta: left; --fpv2-jc: flex-start; --fpv2-as: flex-start; --fpv2-mi: 0 auto;
+  }
+  .fpv2__details-{{ section_id }} [data-align="center"],
+  .fpv2__details-{{ section_id }}[data-align="center"] {
+    --fpv2-ta: center; --fpv2-jc: center; --fpv2-as: center; --fpv2-mi: auto;
+  }
+  .fpv2__details-{{ section_id }} [data-align="right"],
+  .fpv2__details-{{ section_id }}[data-align="right"] {
+    --fpv2-ta: right; --fpv2-jc: flex-end; --fpv2-as: flex-end; --fpv2-mi: auto 0;
+  }
+  .fpv2__details-{{ section_id }} [data-align="justify"] {
+    --fpv2-ta: justify; --fpv2-jc: flex-start; --fpv2-as: flex-start; --fpv2-mi: 0 auto;
+    text-align-last: left;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-wrap: pretty;
   }
 
   .fpv2__title-{{ section_id }} {
@@ -153,8 +227,8 @@
     color: {{ section.settings.description_color }};
     margin: 0;
     max-width: {{ section.settings.description_max_width }}px;
-    text-align: {{ section.settings.description_text_align }};
-    {% if section.settings.text_align == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+    width: 100%;
+    margin-inline: var(--fpv2-mi, 0 auto);
   }
   .fpv2__description-{{ section_id }} p { margin: 0 0 0.7em; }
   .fpv2__description-{{ section_id }} p:last-child { margin-bottom: 0; }
@@ -166,7 +240,7 @@
 
   .fpv2__price-{{ section_id }} {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    justify-content: {{ section.settings.text_align }};
+    justify-content: var(--fpv2-jc, flex-start);
     margin: 0;
   }
   .fpv2__price-current-{{ section_id }} {
@@ -198,7 +272,7 @@
     box-sizing: border-box;
     box-shadow: 0 4px 24px rgba(0,0,0,0.05);
   }
-  .fpv2__promo-head-{{ section_id }} { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .fpv2__promo-head-{{ section_id }} { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: var(--fpv2-jc, flex-start); }
   .fpv2__promo-badge-{{ section_id }} {
     font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
     color: {{ section.settings.promo_badge_color }};
@@ -209,7 +283,8 @@
     font-size: 14px; color: {{ section.settings.promo_text_color }}; margin: 0;
   }
   .fpv2__countdown-{{ section_id }} {
-    display: flex; gap: 8px; align-items: flex-end;
+    display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap;
+    justify-content: var(--fpv2-jc, flex-start);
   }
   .fpv2__cd-unit-{{ section_id }} {
     display: flex; flex-direction: column; align-items: center; min-width: 46px;
@@ -232,9 +307,28 @@
     margin-top: 4px;
     display: flex;
     flex-direction: row;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 8px 12px;
     align-items: center;
+    justify-content: var(--fpv2-jc, flex-start);
+    transition: opacity .4s ease, transform .4s ease;
   }
+  .fpv2__promo-code-{{ section_id }}[hidden] { display: none; }
+  .fpv2__promo-code-{{ section_id }}.is-leaving { opacity: 0; transform: translateY(-6px); }
+  .fpv2__promo-codes-{{ section_id }} { display: flex; flex-direction: column; gap: 10px; }
+  .fpv2__promo-code-meta-{{ section_id }} {
+    flex-basis: 100%;
+    font-size: 12px;
+    color: {{ section.settings.promo_text_color }};
+    opacity: 0.85;
+    margin: 0;
+  }
+  .fpv2__promo-code-flag-{{ section_id }} {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 2px 8px; border-radius: 100px; background: #fdecea; color: #b3261e;
+  }
+  .fpv2__promo-code-flag-{{ section_id }}.is-scheduled { background: #e8f0fe; color: #1a56db; }
+  .fpv2__promo-code-{{ section_id }}.is-expired-preview .fpv2__promo-code-box-{{ section_id }} { opacity: .45; }
   .fpv2__promo-code-label-{{ section_id }} {
     font-size: 11px;
     text-transform: uppercase;
@@ -369,13 +463,13 @@
     {% if section.settings.freeship_width == '100' %}
       width: 100%;
     {% elsif section.settings.freeship_width == '80' %}
-      width: 80%;
+      width: 80%; align-self: var(--fpv2-as, flex-start);
     {% elsif section.settings.freeship_width == '60' %}
-      width: 60%;
+      width: 60%; align-self: var(--fpv2-as, flex-start);
     {% else %}
       width: auto;
-      min-width: 380px;
-      align-self: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+      min-width: min(380px, 100%);
+      align-self: var(--fpv2-as, flex-start);
     {% endif %}
   }
   .fpv2__freeship-{{ section_id }}:hover { color: {{ section.settings.freeship_color_hover }}; background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
@@ -393,7 +487,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 16px 22px;
-    justify-content: {% if section.settings.text_align == 'center' %}center{% elsif section.settings.text_align == 'right' %}flex-end{% else %}flex-start{% endif %};
+    justify-content: var(--fpv2-jc, flex-start);
     width: 100%;
   }
   .fpv2__badge-{{ section_id }} {
@@ -621,7 +715,24 @@
       padding: 7px 14px;
       font-size: 12px;
     }
-    .fpv2__badges-{{ section_id }} { justify-content: center; gap: 14px 18px; }
+    .fpv2__badges-{{ section_id }} { gap: 14px 18px; }
+    {%- if align_m == 'inherit' %}
+    .fpv2__badges-{{ section_id }} { justify-content: center; }
+    {%- else %}
+    .fpv2__details-{{ section_id }} [data-align],
+    .fpv2__details-{{ section_id }}[data-align] {
+      {%- case align_m -%}
+        {%- when 'center' %} --fpv2-ta: center; --fpv2-jc: center; --fpv2-as: center; --fpv2-mi: auto;
+        {%- when 'right' %} --fpv2-ta: right; --fpv2-jc: flex-end; --fpv2-as: flex-end; --fpv2-mi: auto 0;
+        {%- else %} --fpv2-ta: left; --fpv2-jc: flex-start; --fpv2-as: flex-start; --fpv2-mi: 0 auto;
+      {%- endcase %}
+    }
+    {%- endif %}
+    {%- if section.settings.justify_on_mobile %}
+    .fpv2__details-{{ section_id }} [data-align="justify"] { --fpv2-ta: justify; }
+    {%- else %}
+    .fpv2__details-{{ section_id }} [data-align="justify"] { text-align: {% if align_m == 'inherit' %}left{% else %}{{ align_m }}{% endif %}; hyphens: manual; }
+    {%- endif %}
     .fpv2__tab-btn-{{ section_id }} { font-size: 12px; padding: 10px 12px; min-width: 88px; }
     .fpv2__badge-icon-{{ section_id }} {
       width: {{ section.settings.badge_icon_size_mobile }}px;
@@ -694,9 +805,9 @@
       </div>
 
       {%- comment -%} ================= DETAILS (right) ================= {%- endcomment -%}
-      <div class="fpv2__details-{{ section_id }}">
+      <div class="fpv2__details-{{ section_id }}" data-align="{{ align_g }}">
         {%- comment -%} Title {%- endcomment -%}
-        <h2 class="fpv2__title-{{ section_id }}">
+        <h2 class="fpv2__title-{{ section_id }}" data-align="{{ align_title }}">
           <a href="{{ product.url }}">
             {% if section.settings.custom_title != blank -%}
               {{- section.settings.custom_title -}}
@@ -707,7 +818,7 @@
         </h2>
 
         {%- comment -%} Price {%- endcomment -%}
-        <div class="fpv2__price-{{ section_id }}">
+        <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}">
           <span class="fpv2__price-current-{{ section_id }}">{{ v.price | money }}</span>
           {% if v.compare_at_price > v.price %}
             <span class="fpv2__price-compare-{{ section_id }}">{{ v.compare_at_price | money }}</span>
@@ -752,7 +863,7 @@
           endif
         -%}
         {% if desc != blank %}
-          <div class="fpv2__description-{{ section_id }}">{{ desc }}</div>
+          <div class="fpv2__description-{{ section_id }}" data-align="{{ align_desc }}">{{ desc }}</div>
         {% endif %}
 
         {%- comment -%} Discount + Countdown + Coupon Code {%- endcomment -%}
@@ -760,9 +871,10 @@
           <div
             class="fpv2__promo-{{ section_id }}"
             data-fpv2-promo
-            {% if section.settings.promo_hide_on_expiry %}
-              data-hide-on-expiry
-            {% endif %}
+            data-align="{{ align_promo }}"
+            {% if section.settings.promo_hide_on_expiry %}data-hide-on-expiry{% endif %}
+            {% if section.settings.promo_hide_when_no_codes %}data-hide-when-no-codes{% endif %}
+            {% if promo_expired_now and request.design_mode == false %}hidden style="display:none"{% endif %}
           >
             <div class="fpv2__promo-head-{{ section_id }}">
               {% if section.settings.promo_badge != blank %}
@@ -776,11 +888,7 @@
               <div
                 class="fpv2__countdown-{{ section_id }}"
                 data-fpv2-countdown
-                data-year="{{ section.settings.cd_year }}"
-                data-month="{{ section.settings.cd_month }}"
-                data-day="{{ section.settings.cd_day }}"
-                data-hour="{{ section.settings.cd_hour }}"
-                data-minute="{{ section.settings.cd_minute }}"
+                data-end="{{ cd_end_ts }}"
               >
                 <div class="fpv2__cd-unit-{{ section_id }}">
                   <span class="fpv2__cd-num-{{ section_id }}" data-cd-days>00</span
@@ -800,27 +908,129 @@
                 </div>
               </div>
             {% endif %}
-            {% if section.settings.promo_code != blank %}
-              <div class="fpv2__promo-code-{{ section_id }}">
-                <span class="fpv2__promo-code-label-{{ section_id }}">{{ section.settings.promo_code_label }}</span>
-                <div class="fpv2__promo-code-box-{{ section_id }}">
-                  <code class="fpv2__promo-code-value-{{ section_id }}">{{ section.settings.promo_code }}</code>
-                  {% if section.settings.promo_code_copyable %}
-                    <button
-                      type="button"
-                      class="fpv2__promo-code-copy-{{ section_id }}"
-                      data-promo-code="{{ section.settings.promo_code }}"
-                      aria-label="Copiar código de descuento"
-                    >
-                      <span class="fpv2__promo-code-copy-text-{{ section_id }}">
-                        {{- section.settings.promo_code_copy_text -}}
-                      </span>
-                      <span class="fpv2__promo-code-copied-text-{{ section_id }}">
-                        {{- section.settings.promo_code_copied_text -}}
-                      </span>
-                    </button>
-                  {% endif %}
-                </div>
+            {%- comment -%}
+              Códigos de descuento. Cada uno (bloque "Discount code" o el código legacy)
+              puede tener fecha de inicio y de vencimiento. Vencidos → no se renderizan;
+              si la página estaba en caché, el JS los retira en el segundo exacto.
+            {%- endcomment -%}
+            {%- liquid
+              assign has_legacy_code = false
+              if section.settings.promo_code != blank
+                assign has_legacy_code = true
+              endif
+              assign total_codes = code_blocks.size
+              if has_legacy_code
+                assign total_codes = total_codes | plus: 1
+              endif
+            -%}
+            {% if total_codes > 0 %}
+              <div class="fpv2__promo-codes-{{ section_id }}" data-fpv2-codes>
+                {%- for i in (0..code_blocks.size) -%}
+                  {%- liquid
+                    if forloop.first
+                      unless has_legacy_code
+                        continue
+                      endunless
+                      assign c_code = section.settings.promo_code | strip
+                      assign c_label = section.settings.promo_code_label
+                      assign c_note = section.settings.promo_code_note
+                      assign c_start_raw = ''
+                      assign c_end_raw = section.settings.promo_code_ends_at | strip
+                      assign c_attrs = ''
+                    else
+                      assign b_index = forloop.index0 | minus: 1
+                      assign blk = code_blocks[b_index]
+                      assign c_code = blk.settings.code | strip
+                      assign c_label = blk.settings.label | default: section.settings.promo_code_label
+                      assign c_note = blk.settings.note
+                      assign c_start_raw = blk.settings.starts_at | strip
+                      assign c_end_raw = blk.settings.ends_at | strip
+                      assign c_attrs = blk.shopify_attributes
+                    endif
+                    if c_code == blank
+                      continue
+                    endif
+
+                    assign c_start = 0
+                    if c_start_raw != blank
+                      assign tmp = c_start_raw | append: ' ' | append: shop_offset
+                      assign tmp_p = tmp | date: '%s'
+                      if tmp_p != tmp
+                        assign c_start = tmp_p | plus: 0
+                      endif
+                    endif
+                    assign c_end = 0
+                    if c_end_raw != blank
+                      assign tmp = c_end_raw | append: ' ' | append: shop_offset
+                      assign tmp_p = tmp | date: '%s'
+                      if tmp_p != tmp
+                        assign c_end = tmp_p | plus: 0
+                      endif
+                    endif
+
+                    assign c_state = 'active'
+                    if c_start > 0 and now_ts < c_start
+                      assign c_state = 'scheduled'
+                    endif
+                    if c_end > 0 and now_ts >= c_end
+                      assign c_state = 'expired'
+                    endif
+                  -%}
+                  {%- if c_state == 'expired' and request.design_mode == false -%}{%- continue -%}{%- endif -%}
+                  <div
+                    class="fpv2__promo-code-{{ section_id }}{% if c_state == 'expired' %} is-expired-preview{% endif %}"
+                    data-fpv2-code
+                    data-start="{{ c_start }}"
+                    data-end="{{ c_end }}"
+                    {% if c_state == 'scheduled' and request.design_mode == false %}hidden{% endif %}
+                    {{ c_attrs }}
+                  >
+                    {% if c_label != blank %}
+                      <span class="fpv2__promo-code-label-{{ section_id }}">{{ c_label }}</span>
+                    {% endif %}
+                    <div class="fpv2__promo-code-box-{{ section_id }}">
+                      <code class="fpv2__promo-code-value-{{ section_id }}">{{ c_code | escape }}</code>
+                      {% if section.settings.promo_code_copyable %}
+                        <button
+                          type="button"
+                          class="fpv2__promo-code-copy-{{ section_id }}"
+                          data-promo-code="{{ c_code | escape }}"
+                          aria-label="Copiar código de descuento {{ c_code | escape }}"
+                        >
+                          <span class="fpv2__promo-code-copy-text-{{ section_id }}">
+                            {{- section.settings.promo_code_copy_text -}}
+                          </span>
+                          <span class="fpv2__promo-code-copied-text-{{ section_id }}">
+                            {{- section.settings.promo_code_copied_text -}}
+                          </span>
+                        </button>
+                      {% endif %}
+                    </div>
+                    {% if request.design_mode and c_state == 'expired' %}
+                      <span class="fpv2__promo-code-flag-{{ section_id }}">Vencido · oculto en la tienda</span>
+                    {% elsif request.design_mode and c_state == 'scheduled' %}
+                      <span class="fpv2__promo-code-flag-{{ section_id }} is-scheduled">Programado</span>
+                    {% endif %}
+                    {%- liquid
+                      assign show_meta = false
+                      if c_note != blank
+                        assign show_meta = true
+                      endif
+                      if section.settings.promo_code_show_expiry and c_end > 0
+                        assign show_meta = true
+                      endif
+                    -%}
+                    {% if show_meta %}
+                      <p class="fpv2__promo-code-meta-{{ section_id }}">
+                        {{- c_note -}}
+                        {%- if section.settings.promo_code_show_expiry and c_end > 0 -%}
+                          {%- if c_note != blank %} · {% endif -%}
+                          {{- section.settings.promo_code_expiry_prefix }} {{ c_end | date: section.settings.promo_code_expiry_format -}}
+                        {%- endif -%}
+                      </p>
+                    {% endif %}
+                  </div>
+                {%- endfor -%}
               </div>
             {% endif %}
           </div>
@@ -886,7 +1096,7 @@
         {% if section.settings.show_badges %}
           {% assign badge_blocks = section.blocks | where: 'type', 'badge' %}
           {% if badge_blocks.size > 0 %}
-            <div class="fpv2__badges-{{ section_id }}">
+            <div class="fpv2__badges-{{ section_id }}" data-align="{{ align_badges }}">
               {% for block in badge_blocks %}
                 <div class="fpv2__badge-{{ section_id }}" {{ block.shopify_attributes }}>
                   {% if block.settings.icon_svg != blank %}
@@ -936,6 +1146,7 @@
                 <div
                   class="fpv2__tab-panel-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
                   data-tab-panel="{{ forloop.index0 }}"
+                  data-align="{{ align_tabs }}"
                   role="tabpanel"
                 >
                   {{ block.settings.content }}
@@ -951,7 +1162,8 @@
 
         {%- comment -%} ================= RECIPES (manual blocks) ================= {%- endcomment -%}
         {% if section.settings.show_recipes %}
-          {% if section.blocks.size > 0 %}
+          {% assign recipe_blocks = section.blocks | where: 'type', 'recipe' %}
+          {% if recipe_blocks.size > 0 %}
             <div class="fpv2__recipes-{{ section_id }}" data-fpv2-recipes>
               <div class="fpv2__recipes-head-{{ section_id }}">
                 <h3 class="fpv2__recipes-title-{{ section_id }}">{{ section.settings.recipes_title }}</h3>
@@ -1087,62 +1299,99 @@
       setActive(0);
     })();
 
-    /* ===== Countdown ===== */
-    (function initCountdown() {
-      const cd = section.querySelector('[data-fpv2-countdown]');
-      if (!cd) return;
-      const end = new Date(
-        parseInt(cd.dataset.year, 10),
-        parseInt(cd.dataset.month, 10) - 1,
-        parseInt(cd.dataset.day, 10),
-        parseInt(cd.dataset.hour, 10),
-        parseInt(cd.dataset.minute, 10), 0
-      ).getTime();
-
-      const elD = cd.querySelector('[data-cd-days]');
-      const elH = cd.querySelector('[data-cd-hours]');
-      const elM = cd.querySelector('[data-cd-mins]');
-      const elS = cd.querySelector('[data-cd-secs]');
-      const pad = (n) => (n < 10 ? '0' + n : '' + n);
+    /* ===== Countdown + caducidad automática de códigos ===== */
+    (function initPromoTimers() {
       const promo = section.querySelector('[data-fpv2-promo]');
+      if (!promo) return;
+      const isEditor = !!(window.Shopify && window.Shopify.designMode);
+      const cd = promo.querySelector('[data-fpv2-countdown]');
+      const codesWrap = promo.querySelector('[data-fpv2-codes]');
+      const hadCodes = !!(codesWrap && codesWrap.querySelector('[data-fpv2-code]'));
+      const pad = (n) => (n < 10 ? '0' + n : '' + n);
 
-      function tick() {
-        const dist = end - Date.now();
+      const cdEnd = cd ? parseInt(cd.dataset.end, 10) * 1000 : 0;
+      const els = cd ? {
+        d: cd.querySelector('[data-cd-days]'), h: cd.querySelector('[data-cd-hours]'),
+        m: cd.querySelector('[data-cd-mins]'), s: cd.querySelector('[data-cd-secs]')
+      } : null;
+
+      function hidePromo() {
+        if (isEditor) return;
+        promo.style.display = 'none';
+      }
+
+      function tickCountdown(now) {
+        if (!cd || !cdEnd) return false;
+        const dist = cdEnd - now;
         if (dist <= 0) {
-          elD.textContent = elH.textContent = elM.textContent = elS.textContent = '00';
-          clearInterval(timer);
-          if (promo && promo.hasAttribute('data-hide-on-expiry')) promo.style.display = 'none';
-          return;
+          els.d.textContent = els.h.textContent = els.m.textContent = els.s.textContent = '00';
+          if (promo.hasAttribute('data-hide-on-expiry')) hidePromo();
+          return true;
         }
-        elD.textContent = pad(Math.floor(dist / 86400000));
-        elH.textContent = pad(Math.floor((dist % 86400000) / 3600000));
-        elM.textContent = pad(Math.floor((dist % 3600000) / 60000));
-        elS.textContent = pad(Math.floor((dist % 60000) / 1000));
+        els.d.textContent = pad(Math.floor(dist / 86400000));
+        els.h.textContent = pad(Math.floor((dist % 86400000) / 3600000));
+        els.m.textContent = pad(Math.floor((dist % 3600000) / 60000));
+        els.s.textContent = pad(Math.floor((dist % 60000) / 1000));
+        return false;
+      }
+
+      function tickCodes(now) {
+        if (!codesWrap || isEditor) return;
+        codesWrap.querySelectorAll('[data-fpv2-code]').forEach((el) => {
+          const start = parseInt(el.dataset.start, 10) * 1000 || 0;
+          const end = parseInt(el.dataset.end, 10) * 1000 || 0;
+          if (end && now >= end) {
+            if (el.classList.contains('is-leaving')) return;
+            el.classList.add('is-leaving');
+            setTimeout(() => el.remove(), prefersReduced ? 0 : 400);
+            return;
+          }
+          if (start && now >= start && el.hidden) el.hidden = false;
+        });
+        if (hadCodes && promo.hasAttribute('data-hide-when-no-codes')) {
+          const alive = codesWrap.querySelectorAll('[data-fpv2-code]:not(.is-leaving):not([hidden])').length;
+          const pending = codesWrap.querySelectorAll('[data-fpv2-code][hidden]').length;
+          if (!alive && !pending) setTimeout(hidePromo, prefersReduced ? 0 : 400);
+        }
+      }
+
+      let timer;
+      function tick() {
+        const now = Date.now();
+        const cdDone = tickCountdown(now);
+        tickCodes(now);
+        const codesLeft = codesWrap ? codesWrap.querySelectorAll('[data-fpv2-code]').length : 0;
+        if ((cdDone || !cdEnd) && !codesLeft && timer) clearInterval(timer);
       }
       tick();
-      const timer = setInterval(tick, 1000);
+      timer = setInterval(tick, 1000);
     })();
 
     /* ===== Promo code copy ===== */
     (function initPromoCode() {
-      const btn = section.querySelector('[data-promo-code]');
-      if (!btn) return;
-      btn.addEventListener('click', async function() {
-        const code = this.dataset.promoCode;
-        try {
-          await navigator.clipboard.writeText(code);
-          this.classList.add('is-copied');
-          setTimeout(() => this.classList.remove('is-copied'), 2000);
-        } catch (err) {
-          const ta = document.createElement('textarea');
-          ta.value = code;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          this.classList.add('is-copied');
-          setTimeout(() => this.classList.remove('is-copied'), 2000);
-        }
+      section.querySelectorAll('[data-promo-code]').forEach((btn) => {
+        btn.addEventListener('click', async function () {
+          const code = this.dataset.promoCode;
+          const done = () => {
+            this.classList.add('is-copied');
+            setTimeout(() => this.classList.remove('is-copied'), 2000);
+          };
+          try {
+            await navigator.clipboard.writeText(code);
+            done();
+          } catch (err) {
+            const ta = document.createElement('textarea');
+            ta.value = code;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            done();
+          }
+        });
       });
     })();
 
@@ -1567,6 +1816,13 @@
     { "type": "checkbox", "id": "countdown_enabled", "label": "Show countdown", "default": true },
     { "type": "checkbox", "id": "promo_hide_on_expiry", "label": "Hide block when countdown ends", "default": true },
     {
+      "type": "checkbox",
+      "id": "promo_hide_when_no_codes",
+      "label": "Hide block when all codes expire",
+      "default": true,
+      "info": "Only applies if the block had at least one discount code."
+    },
+    {
       "type": "range",
       "id": "promo_padding",
       "min": 8,
@@ -1605,12 +1861,34 @@
       "type": "text",
       "id": "promo_code",
       "label": "Discount code",
-      "info": "Optional coupon code users can copy. Leave empty to hide."
+      "info": "Optional coupon code users can copy. Leave empty to hide. For more codes, add 'Discount code' blocks."
     },
+    {
+      "type": "text",
+      "id": "promo_code_ends_at",
+      "label": "Code expires at (optional)",
+      "placeholder": "2026-12-31 23:59",
+      "info": "Format YYYY-MM-DD HH:MM, store time zone. The code disappears automatically at that moment."
+    },
+    { "type": "text", "id": "promo_code_note", "label": "Code note (optional)", "placeholder": "15% off your first order" },
     { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
     { "type": "text", "id": "promo_code_label", "label": "Code label", "default": "Your code:" },
     { "type": "text", "id": "promo_code_copy_text", "label": "Copy button text", "default": "Copy" },
     { "type": "text", "id": "promo_code_copied_text", "label": "Copied feedback text", "default": "Copied!" },
+    { "type": "checkbox", "id": "promo_code_show_expiry", "label": "Show expiry date under each code", "default": false },
+    { "type": "text", "id": "promo_code_expiry_prefix", "label": "Expiry prefix", "default": "Valid until" },
+    {
+      "type": "select",
+      "id": "promo_code_expiry_format",
+      "label": "Expiry date format",
+      "options": [
+        { "value": "%b %d", "label": "Dec 31" },
+        { "value": "%b %d, %H:%M", "label": "Dec 31, 23:59" },
+        { "value": "%d/%m/%Y", "label": "31/12/2026" },
+        { "value": "%m/%d/%Y", "label": "12/31/2026" }
+      ],
+      "default": "%b %d"
+    },
 
     { "type": "header", "content": "Buy Buttons" },
     { "type": "text", "id": "atc_text", "label": "Add to cart text", "default": "Add to Cart" },
@@ -1801,7 +2079,64 @@
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
       ],
+      "default": "left",
+      "info": "Base alignment. Each element below can override it."
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Text alignment (mobile)",
+      "options": [
+        { "value": "inherit", "label": "Same as desktop" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "inherit",
+      "info": "Overrides every element on screens under 750px."
+    },
+    { "type": "select", "id": "title_align", "label": "Title alignment", "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ], "default": "inherit" },
+    { "type": "select", "id": "price_align", "label": "Price alignment", "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ], "default": "inherit" },
+    { "type": "select", "id": "promo_align", "label": "Discount block alignment", "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ], "default": "inherit" },
+    { "type": "select", "id": "badges_align", "label": "Badges alignment", "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ], "default": "inherit" },
+    {
+      "type": "select",
+      "id": "tab_content_align",
+      "label": "Tab content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "justify", "label": "Justified" }
+      ],
       "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "justify_on_mobile",
+      "label": "Keep justified text on mobile",
+      "default": false,
+      "info": "Justified text in narrow columns creates big gaps between words. Recommended off."
     },
     {
       "type": "range",
@@ -1859,8 +2194,9 @@
     {
       "type": "select",
       "id": "description_text_align",
-      "label": "Description text align",
+      "label": "Description alignment",
       "options": [
+        { "value": "inherit", "label": "Same as general" },
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" },
@@ -1936,6 +2272,29 @@
     }
   ],
   "blocks": [
+    {
+      "type": "discount_code",
+      "name": "Discount code",
+      "settings": [
+        { "type": "text", "id": "code", "label": "Code", "default": "WELCOME15" },
+        { "type": "text", "id": "label", "label": "Label (optional)", "info": "Leave empty to use the section's code label." },
+        { "type": "text", "id": "note", "label": "Note (optional)", "placeholder": "15% off your first order" },
+        {
+          "type": "text",
+          "id": "starts_at",
+          "label": "Show from (optional)",
+          "placeholder": "2026-11-27 00:00",
+          "info": "YYYY-MM-DD HH:MM, store time zone. Empty = visible now."
+        },
+        {
+          "type": "text",
+          "id": "ends_at",
+          "label": "Expires at (optional)",
+          "placeholder": "2026-12-01 23:59",
+          "info": "YYYY-MM-DD HH:MM, store time zone. Removed automatically when it expires."
+        }
+      ]
+    },
     {
       "type": "recipe",
       "name": "Recipe",
