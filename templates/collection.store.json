@@ -700,7 +700,7 @@
         "product": "chocho-pure-ingredient",
         "variant_id": "",
         "custom_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
-        "description": "<p>The foundation of <strong>PRONTO CHOCHO</strong>. Made from a single ingredient, 100% Andean Chocho, an ancient<br/>legume regeneratively grown high in the Andes. This minimally processed whole-food powder naturally<br/>provides complete plant protein, fiber, healthy fats, and naturally occurring nutrients. No gums, fillers,<br/>isolates, sweeteners, or unnecessary additives.</p>",
+        "description": "<p>The foundation of <strong>PRONTO CHOCHO</strong>. <br/>Made from a single ingredient, 100% Andean Chocho, an ancient legume regeneratively grown high in the Andes. This minimally processed whole-food powder naturally provides complete plant protein, fiber, healthy fats, and naturally occurring nutrients. No gums, fillers,<br/>isolates, sweeteners, or unnecessary additives.</p>",
         "use_product_description": true,
         "media_text_ratio": "3fr 2fr",
         "column_gap": 52,
