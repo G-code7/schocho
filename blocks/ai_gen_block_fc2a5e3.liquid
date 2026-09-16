@@ -1,46 +1,483 @@
 {% doc %}
-  @prompt
-    el  footer que tenía no sé por que desapareció puedes hacerlo de nuevo?  este es el copy :
-    
-    Get the Scoop
-    form - Email
-    form - cta Subscribe
-    
-    en la misma columna 
-    Be part of our story
-    los iconos de las redes ... 
-    
-    y del lado derecho  dos columnas la primera  titulada 
-    FROM THE ROOTS
-    Our Story - enlace 
-    Products - enlace 
-    Contact us - enlace 
-    
-    segunda  columna  más a la derecha 
-    FUEL YOUR CURIOSITY
-    Recipes - enlace 
-    Blog -  enlace 
-    FAQ -enlace 
-    
-    justo de bajo de estas tres columnas 
-    un texto pequeño que dice 
-    © 2026 PRONTO CHOCHO. PRONTO CHOCHO™ is a registered trademark of Andean Pacha, LLC. All rights reserved.
-    
-    
-    un divider  para por ultimo mostrar enlaces pertinentes. 
-    
-    Accessibility Statement
-    Terms & Conditions
-    Cookie Policy
-    Shipping Policy
-    Return Policy 
-    
-    puedes usar los widgets  ya creados de shopify solo hay que  crear la nueva sección en el footer sección persolanizada que contenag widgets internos y pueda  mostrar toda la info correspondiente 
-    
+  Footer Pronto Chocho — newsletter minimalista, redes, 2 columnas de enlaces,
+  copyright y enlaces legales. Las columnas pueden leer menús de Shopify
+  (Online Store → Navigation); si no eliges menú, usa los enlaces de respaldo.
 {% enddoc %}
-{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{%- liquid
+  assign fid = block.id | replace: '_', '' | downcase
+  assign form_id = 'pc-footer-form-' | append: fid
+  assign current_year = 'now' | date: '%Y'
+-%}
+
 {% style %}
-.ai-footer-{{ ai_gen_id }}{display:block;width:{{ block.settings.desktop_width_percent }}%;max-width:100%;margin:0 auto;padding:56px 5% 24px;background:{{ block.settings.background_color }};color:{{ block.settings.text_color }};font-family:{{ settings.type_body_font.family }}}.ai-footer-{{ ai_gen_id }}__main{display:grid;grid-template-columns:minmax(240px,1fr) 2fr;gap:64px;max-width:1280px;margin:0 auto}.ai-footer-{{ ai_gen_id }}__title{margin:0 0 18px;color:{{ block.settings.heading_color }};font-family:{{ settings.type_heading_font.family }};font-size:20px;line-height:1.2;letter-spacing:.04em}.ai-footer-{{ ai_gen_id }}__intro{margin:0 0 24px}.ai-footer-{{ ai_gen_id }}__form{display:flex;gap:8px;margin-bottom:28px}.ai-footer-{{ ai_gen_id }}__input{min-width:0;flex:1;padding:13px 14px;border:1px solid {{ block.settings.border_color }};border-radius:{{ block.settings.input_radius }}px;background:{{ block.settings.input_background }};color:{{ block.settings.input_text_color }};font:inherit}.ai-footer-{{ ai_gen_id }}__button{padding:13px 18px;border:0;border-radius:{{ block.settings.button_radius }}px;background:{{ block.settings.button_background }};color:{{ block.settings.button_text_color }};font:inherit;font-weight:700;cursor:pointer}.ai-footer-{{ ai_gen_id }}__link,.ai-footer-{{ ai_gen_id }}__social{color:{{ block.settings.link_color }};text-decoration:none}.ai-footer-{{ ai_gen_id }}__link:hover,.ai-footer-{{ ai_gen_id }}__social:hover{text-decoration:underline}.ai-footer-{{ ai_gen_id }}__socials{display:flex;gap:14px;flex-wrap:wrap}.ai-footer-{{ ai_gen_id }}__nav{display:grid;grid-template-columns:repeat(2,minmax(150px,1fr));gap:40px}.ai-footer-{{ ai_gen_id }}__list{display:grid;gap:12px;margin:0;padding:0;list-style:none}.ai-footer-{{ ai_gen_id }}__legal{max-width:1280px;margin:48px auto 0;padding-top:20px;border-top:1px solid {{ block.settings.border_color }}}.ai-footer-{{ ai_gen_id }}__copyright{margin:0 0 20px;color:{{ block.settings.muted_color }};font-size:12px;line-height:1.6}.ai-footer-{{ ai_gen_id }}__policies{display:flex;flex-wrap:wrap;gap:12px 24px}.ai-footer-{{ ai_gen_id }}__policies .ai-footer-{{ ai_gen_id }}__link{font-size:13px}.ai-footer-{{ ai_gen_id }}__input:focus-visible,.ai-footer-{{ ai_gen_id }}__button:focus-visible,.ai-footer-{{ ai_gen_id }}__link:focus-visible{outline:3px solid {{ block.settings.focus_color }};outline-offset:3px}@media(max-width:749px){.ai-footer-{{ ai_gen_id }}{padding:40px 20px 20px}.ai-footer-{{ ai_gen_id }}__main,.ai-footer-{{ ai_gen_id }}__nav{grid-template-columns:1fr;gap:36px}.ai-footer-{{ ai_gen_id }}__form{flex-direction:column}}
+  .pcf-{{ fid }} {
+    --pcf-bg: {{ block.settings.background_color }};
+    --pcf-fg: {{ block.settings.text_color }};
+    --pcf-muted: {{ block.settings.muted_color }};
+    --pcf-line: {{ block.settings.border_color }};
+    --pcf-accent: {{ block.settings.accent_color }};
+    --pcf-btn-bg: {{ block.settings.button_background }};
+    --pcf-btn-fg: {{ block.settings.button_text_color }};
+    --pcf-focus: {{ block.settings.focus_color }};
+    --pcf-ease: cubic-bezier(.22, 1, .36, 1);
+
+    display: block;
+    width: 100%;
+    background: var(--pcf-bg);
+    color: var(--pcf-fg);
+    font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .pcf-{{ fid }} *, .pcf-{{ fid }} *::before, .pcf-{{ fid }} *::after { box-sizing: border-box; }
+
+  .pcf-{{ fid }} .pcf__inner {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ── Grid principal ── */
+  .pcf-{{ fid }} .pcf__main {
+    display: grid;
+    grid-template-columns: minmax(280px, 5fr) 7fr;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .pcf-{{ fid }} .pcf__logo { display: block; margin-bottom: 32px; }
+  .pcf-{{ fid }} .pcf__logo img { display: block; width: {{ block.settings.logo_width }}px; height: auto; max-width: 100%; }
+
+  .pcf-{{ fid }} .pcf__heading {
+    margin: 0 0 20px;
+    color: var(--pcf-fg);
+    font-family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    font-size: {{ block.settings.signup_heading_size }}px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -.01em;
+  }
+  .pcf-{{ fid }} .pcf__label {
+    margin: 0 0 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--pcf-muted);
+    line-height: 1.3;
+  }
+
+  /* ── Newsletter minimalista ── */
+  .pcf-{{ fid }} .pcf__form { max-width: 440px; margin: 0 0 48px; }
+  .pcf-{{ fid }} .pcf__field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    {%- if block.settings.form_style == 'underline' %}
+    border-bottom: 1px solid var(--pcf-line);
+    transition: border-color .35s var(--pcf-ease);
+    {%- else %}
+    border: 1px solid var(--pcf-line);
+    border-radius: 999px;
+    padding: 5px 5px 5px 22px;
+    transition: border-color .35s var(--pcf-ease), background-color .35s var(--pcf-ease);
+    {%- endif %}
+  }
+  .pcf-{{ fid }} .pcf__field:focus-within { border-color: var(--pcf-fg); }
+  {%- if block.settings.form_style == 'pill' %}
+  .pcf-{{ fid }} .pcf__field:focus-within { background: rgba(255,255,255,.06); }
+  {%- endif %}
+
+  .pcf-{{ fid }} .pcf__input {
+    flex: 1;
+    min-width: 0;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--pcf-fg);
+    font: inherit;
+    font-size: 16px; /* evita zoom en iOS */
+    outline: none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .pcf-{{ fid }} .pcf__input::placeholder { color: var(--pcf-fg); opacity: .6; }
+  .pcf-{{ fid }} .pcf__input:-webkit-autofill {
+    -webkit-text-fill-color: var(--pcf-fg);
+    transition: background-color 9999s ease-out 0s;
+  }
+
+  .pcf-{{ fid }} .pcf__button {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background-color .3s var(--pcf-ease), color .3s var(--pcf-ease), gap .3s var(--pcf-ease);
+    {%- if block.settings.form_style == 'underline' %}
+    padding: 0;
+    height: 52px;
+    background: transparent;
+    color: var(--pcf-fg);
+    {%- else %}
+    padding: 0 22px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--pcf-btn-bg);
+    color: var(--pcf-btn-fg);
+    {%- endif %}
+  }
+  .pcf-{{ fid }} .pcf__button svg { width: 16px; height: 16px; transition: transform .35s var(--pcf-ease); }
+  .pcf-{{ fid }} .pcf__button:hover svg { transform: translateX(4px); }
+  {%- if block.settings.form_style == 'underline' %}
+  .pcf-{{ fid }} .pcf__button:hover { color: var(--pcf-accent); }
+  {%- else %}
+  .pcf-{{ fid }} .pcf__button:hover { filter: brightness(1.08); }
+  {%- endif %}
+
+  .pcf-{{ fid }} .pcf__consent { margin: 12px 0 0; font-size: 12px; line-height: 1.5; color: var(--pcf-muted); }
+  .pcf-{{ fid }} .pcf__consent a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .pcf-{{ fid }} .pcf__message {
+    display: flex; align-items: center; gap: 8px;
+    margin: 12px 0 0; font-size: 14px; line-height: 1.4;
+  }
+  .pcf-{{ fid }} .pcf__message--ok { color: var(--pcf-accent); }
+  .pcf-{{ fid }} .pcf__message--error { color: #ffb4a2; }
+  .pcf-{{ fid }} .pcf__message svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* ── Redes ── */
+  .pcf-{{ fid }} .pcf__socials { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .pcf-{{ fid }} .pcf__social {
+    width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    border: 1px solid var(--pcf-line);
+    color: var(--pcf-fg);
+    transition: background-color .3s var(--pcf-ease), color .3s var(--pcf-ease), border-color .3s var(--pcf-ease), transform .3s var(--pcf-ease);
+  }
+  .pcf-{{ fid }} .pcf__social svg { width: 18px; height: 18px; fill: currentColor; }
+  .pcf-{{ fid }} .pcf__social:hover {
+    background: var(--pcf-fg); color: var(--pcf-bg); border-color: var(--pcf-fg); transform: translateY(-2px);
+  }
+
+  /* ── Columnas de enlaces ── */
+  .pcf-{{ fid }} .pcf__nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px;
+    justify-self: end;
+    width: 100%;
+    max-width: 520px;
+  }
+  .pcf-{{ fid }} .pcf__list { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+  .pcf-{{ fid }} .pcf__link {
+    position: relative;
+    display: inline-block;
+    color: var(--pcf-fg);
+    text-decoration: none;
+    font-size: {{ block.settings.link_size }}px;
+    line-height: 1.35;
+    transition: color .3s var(--pcf-ease);
+  }
+  .pcf-{{ fid }} .pcf__link::after {
+    content: '';
+    position: absolute; left: 0; right: 0; bottom: -3px;
+    height: 1px; background: currentColor;
+    transform: scaleX(0); transform-origin: right;
+    transition: transform .45s var(--pcf-ease);
+  }
+  .pcf-{{ fid }} .pcf__link:hover { color: var(--pcf-accent); }
+  .pcf-{{ fid }} .pcf__link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  /* ── Parte inferior ── */
+  .pcf-{{ fid }} .pcf__bottom { margin-top: {{ block.settings.bottom_spacing }}px; }
+  .pcf-{{ fid }} .pcf__copyright {
+    margin: 0 0 20px; font-size: 12px; line-height: 1.6; color: var(--pcf-muted); max-width: 720px;
+  }
+  .pcf-{{ fid }} .pcf__divider { height: 1px; border: 0; margin: 0 0 20px; background: var(--pcf-line); opacity: .5; }
+  .pcf-{{ fid }} .pcf__legal { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 0; padding: 0; list-style: none; }
+  .pcf-{{ fid }} .pcf__legal .pcf__link { font-size: 13px; color: var(--pcf-muted); }
+  .pcf-{{ fid }} .pcf__legal .pcf__link:hover { color: var(--pcf-fg); }
+
+  /* ── Accesibilidad ── */
+  .pcf-{{ fid }} .pcf__sr {
+    position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .pcf-{{ fid }} a:focus-visible,
+  .pcf-{{ fid }} button:focus-visible,
+  .pcf-{{ fid }} .pcf__field:has(.pcf__input:focus-visible) {
+    outline: 2px solid var(--pcf-focus); outline-offset: 4px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 990px) {
+    .pcf-{{ fid }} .pcf__main { grid-template-columns: 1fr; gap: 56px; }
+    .pcf-{{ fid }} .pcf__nav { justify-self: stretch; max-width: none; }
+  }
+  @media (max-width: 749px) {
+    .pcf-{{ fid }} { padding: {{ block.settings.padding_top | times: 0.7 | round }}px 0 {{ block.settings.padding_bottom | times: 0.7 | round }}px; }
+    .pcf-{{ fid }} .pcf__inner { padding: 0 22px; }
+    .pcf-{{ fid }} .pcf__heading { font-size: {{ block.settings.signup_heading_size | times: 0.8 | round }}px; }
+    .pcf-{{ fid }} .pcf__form { max-width: none; margin-bottom: 40px; }
+    .pcf-{{ fid }} .pcf__nav { gap: 24px; }
+    .pcf-{{ fid }} .pcf__bottom { margin-top: {{ block.settings.bottom_spacing | times: 0.6 | round }}px; }
+    .pcf-{{ fid }} .pcf__legal { gap: 10px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pcf-{{ fid }} *, .pcf-{{ fid }} *::after { transition: none !important; }
+  }
 {% endstyle %}
-<footer class="ai-footer-{{ ai_gen_id }}" {{ block.shopify_attributes }}><div class="ai-footer-{{ ai_gen_id }}__main"><div><h2 class="ai-footer-{{ ai_gen_id }}__title">{{ block.settings.signup_heading }}</h2><p class="ai-footer-{{ ai_gen_id }}__intro">{{ block.settings.signup_intro }}</p>{% form 'customer' %}<div class="ai-footer-{{ ai_gen_id }}__form"><input type="hidden" name="contact[tags]" value="newsletter"><label for="ai-footer-email-{{ ai_gen_id }}" class="visually-hidden">{{ block.settings.email_label }}</label><input id="ai-footer-email-{{ ai_gen_id }}" class="ai-footer-{{ ai_gen_id }}__input" type="email" name="contact[email]" autocomplete="email" placeholder="{{ block.settings.email_placeholder }}" required><button class="ai-footer-{{ ai_gen_id }}__button" type="submit">{{ block.settings.subscribe_label }}</button></div>{% if form.posted_successfully? %}<p>{{ block.settings.success_message }}</p>{% endif %}{% endform %}<h2 class="ai-footer-{{ ai_gen_id }}__title">{{ block.settings.story_heading }}</h2><div class="ai-footer-{{ ai_gen_id }}__socials">{% if block.settings.instagram_url != blank %}<a class="ai-footer-{{ ai_gen_id }}__social" href="{{ block.settings.instagram_url }}">Instagram</a>{% endif %}{% if block.settings.facebook_url != blank %}<a class="ai-footer-{{ ai_gen_id }}__social" href="{{ block.settings.facebook_url }}">Facebook</a>{% endif %}{% if block.settings.tiktok_url != blank %}<a class="ai-footer-{{ ai_gen_id }}__social" href="{{ block.settings.tiktok_url }}">TikTok</a>{% endif %}</div></div><nav class="ai-footer-{{ ai_gen_id }}__nav" aria-label="Footer navigation"><div><h2 class="ai-footer-{{ ai_gen_id }}__title">FROM THE ROOTS</h2><ul class="ai-footer-{{ ai_gen_id }}__list"><li><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.story_url }}">Our Story</a></li><li><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.products_url }}">Products</a></li><li><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.contact_url }}">Contact us</a></li></ul></div><div><h2 class="ai-footer-{{ ai_gen_id }}__title">FUEL YOUR CURIOSITY</h2><ul class="ai-footer-{{ ai_gen_id }}__list"><li><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.recipes_url }}">Recipes</a></li><li><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.blog_url }}">Blog</a></li><li><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.faq_url }}">FAQ</a></li></ul></div></nav></div><div class="ai-footer-{{ ai_gen_id }}__legal"><p class="ai-footer-{{ ai_gen_id }}__copyright">{{ block.settings.copyright }}</p><nav class="ai-footer-{{ ai_gen_id }}__policies" aria-label="Legal links"><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.accessibility_url }}">Accessibility Statement</a><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.terms_url }}">Terms &amp; Conditions</a><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.cookie_url }}">Cookie Policy</a><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.shipping_url }}">Shipping Policy</a><a class="ai-footer-{{ ai_gen_id }}__link" href="{{ block.settings.returns_url }}">Return Policy</a></nav></div></footer>
-{% schema %}{"name":"Footer newsletter","settings":[{"type":"text","id":"signup_heading","label":"Heading","default":"Get the Scoop"},{"type":"text","id":"signup_intro","label":"Intro","default":"Be part of our story"},{"type":"text","id":"email_label","label":"Email label","default":"Email"},{"type":"text","id":"email_placeholder","label":"Email placeholder","default":"Email"},{"type":"text","id":"subscribe_label","label":"Button label","default":"Subscribe"},{"type":"text","id":"success_message","label":"Success message","default":"Thanks for subscribing."},{"type":"text","id":"story_heading","label":"Social heading","default":"Be part of our story"},{"type":"url","id":"instagram_url","label":"Instagram"},{"type":"url","id":"facebook_url","label":"Facebook"},{"type":"url","id":"tiktok_url","label":"TikTok"},{"type":"url","id":"story_url","label":"Our Story"},{"type":"url","id":"products_url","label":"Products"},{"type":"url","id":"contact_url","label":"Contact us"},{"type":"url","id":"recipes_url","label":"Recipes"},{"type":"url","id":"blog_url","label":"Blog"},{"type":"url","id":"faq_url","label":"FAQ"},{"type":"textarea","id":"copyright","label":"Copyright","default":"© 2026 PRONTO CHOCHO. PRONTO CHOCHO™ is a registered trademark of Andean Pacha, LLC. All rights reserved."},{"type":"url","id":"accessibility_url","label":"Accessibility"},{"type":"url","id":"terms_url","label":"Terms"},{"type":"url","id":"cookie_url","label":"Cookie policy"},{"type":"url","id":"shipping_url","label":"Shipping policy"},{"type":"url","id":"returns_url","label":"Return policy"},{"type":"range","id":"desktop_width_percent","label":"Desktop width","min":50,"max":100,"step":5,"unit":"%","default":100},{"type":"range","id":"input_radius","label":"Input radius","min":0,"max":30,"step":2,"unit":"px","default":0},{"type":"range","id":"button_radius","label":"Button radius","min":0,"max":30,"step":2,"unit":"px","default":0},{"type":"color","id":"background_color","label":"Background","default":"#3e2563"},{"type":"color","id":"heading_color","label":"Headings","default":"#ffffff"},{"type":"color","id":"text_color","label":"Text","default":"#ffffff"},{"type":"color","id":"link_color","label":"Links","default":"#ffffff"},{"type":"color","id":"muted_color","label":"Muted text","default":"#e2c8f3"},{"type":"color","id":"border_color","label":"Borders","default":"#e2c8f3"},{"type":"color","id":"input_background","label":"Input background","default":"#ffffff"},{"type":"color","id":"input_text_color","label":"Input text","default":"#3e2563"},{"type":"color","id":"button_background","label":"Button background","default":"#ff4315"},{"type":"color","id":"button_text_color","label":"Button text","default":"#ffffff"},{"type":"color","id":"focus_color","label":"Focus outline","default":"#fedd94"}],"presets":[{"name":"Footer newsletter"}],"tag":null,"class":"footer-newsletter-block"}{% endschema %}
+
+<div class="pcf-{{ fid }}" {{ block.shopify_attributes }}>
+  <div class="pcf__inner">
+    <div class="pcf__main">
+
+      {%- comment -%} ===== Columna izquierda: newsletter + redes ===== {%- endcomment -%}
+      <div class="pcf__brand">
+        {%- if block.settings.logo != blank -%}
+          <a href="{{ routes.root_url }}" class="pcf__logo" aria-label="{{ shop.name | escape }}">
+            {{ block.settings.logo | image_url: width: 600 | image_tag: loading: 'lazy', alt: shop.name, widths: '200, 400, 600' }}
+          </a>
+        {%- endif -%}
+
+        {%- if block.settings.signup_heading != blank -%}
+          <h2 class="pcf__heading">{{ block.settings.signup_heading | escape }}</h2>
+        {%- endif -%}
+
+        {%- form 'customer', id: form_id, class: 'pcf__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="pcf__field">
+            <label for="pcf-email-{{ fid }}" class="pcf__sr">{{ block.settings.email_label | escape }}</label>
+            <input
+              id="pcf-email-{{ fid }}"
+              class="pcf__input"
+              type="email"
+              name="contact[email]"
+              autocomplete="email"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="{{ block.settings.email_placeholder | escape }}"
+              required
+              {% if form.errors %}aria-invalid="true" aria-describedby="pcf-msg-{{ fid }}"{% endif %}
+            >
+            <button class="pcf__button" type="submit">
+              <span>{{ block.settings.subscribe_label | escape }}</span>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <div id="pcf-msg-{{ fid }}" aria-live="polite">
+            {%- if form.posted_successfully? -%}
+              <p class="pcf__message pcf__message--ok">
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {{ block.settings.success_message | escape }}
+              </p>
+            {%- elsif form.errors -%}
+              <p class="pcf__message pcf__message--error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+            {%- endif -%}
+          </div>
+
+          {%- if block.settings.consent_text != blank -%}
+            <p class="pcf__consent">{{ block.settings.consent_text }}</p>
+          {%- endif -%}
+        {%- endform -%}
+
+        {%- liquid
+          assign has_social = false
+          if block.settings.instagram_url != blank or block.settings.facebook_url != blank or block.settings.tiktok_url != blank or block.settings.youtube_url != blank or block.settings.pinterest_url != blank
+            assign has_social = true
+          endif
+        -%}
+        {%- if has_social or request.design_mode -%}
+          {%- if block.settings.story_heading != blank -%}
+            <p class="pcf__label">{{ block.settings.story_heading | escape }}</p>
+          {%- endif -%}
+          <ul class="pcf__socials">
+            {%- if block.settings.instagram_url != blank -%}
+              <li><a class="pcf__social" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1.1.4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1.1.4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1.1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1.1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.1 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1C2.6 9.9 2.6 10.3 2.6 12s0 2.1.1 3.3c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.6.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.6.1-3.3s0-2.1-.1-3.3c-.1-1.1-.2-1.7-.4-2.1-.2-.5-.4-.9-.8-1.3-.4-.4-.8-.6-1.3-.8-.4-.2-1-.3-2.1-.4-1.2-.1-1.6-.1-4.7-.1zm0 3.1a4.9 4.9 0 110 9.8 4.9 4.9 0 010-9.8zm0 8a3.1 3.1 0 100-6.2 3.1 3.1 0 000 6.2zm6.2-8.2a1.1 1.1 0 11-2.3 0 1.1 1.1 0 012.3 0z"/></svg>
+              </a></li>
+            {%- endif -%}
+            {%- if block.settings.tiktok_url != blank -%}
+              <li><a class="pcf__social" href="{{ block.settings.tiktok_url }}" target="_blank" rel="noopener" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 2h-3.3v13.4a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9.2a6.2 6.2 0 105.3 6.2V8.6a7.9 7.9 0 004.6 1.5V6.8a4.6 4.6 0 01-4.6-4.8z"/></svg>
+              </a></li>
+            {%- endif -%}
+            {%- if block.settings.facebook_url != blank -%}
+              <li><a class="pcf__social" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg>
+              </a></li>
+            {%- endif -%}
+            {%- if block.settings.youtube_url != blank -%}
+              <li><a class="pcf__social" href="{{ block.settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.5 7.2a2.8 2.8 0 00-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 00-2 2A29 29 0 001.1 12a29 29 0 00.4 4.8 2.8 2.8 0 002 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 002-2 29 29 0 00.4-4.8 29 29 0 00-.4-4.8zM9.8 15.1V8.9l5.7 3.1-5.7 3.1z"/></svg>
+              </a></li>
+            {%- endif -%}
+            {%- if block.settings.pinterest_url != blank -%}
+              <li><a class="pcf__social" href="{{ block.settings.pinterest_url }}" target="_blank" rel="noopener" aria-label="Pinterest">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 00-3.6 19.3c-.1-.8-.2-2 0-2.9l1.3-5.4s-.3-.7-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.4-.2 1 .5 1.9 1.5 1.9 1.8 0 3.2-1.9 3.2-4.7 0-2.4-1.8-4.1-4.3-4.1-2.9 0-4.6 2.2-4.6 4.4 0 .9.3 1.8.8 2.3.1.1.1.2.1.3l-.3 1.2c0 .2-.2.2-.4.1-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2.1-.6-2.4-1.2l-.7 2.5c-.2.9-.9 2.1-1.3 2.8A10 10 0 1012 2z"/></svg>
+              </a></li>
+            {%- endif -%}
+          </ul>
+          {%- if has_social == false and request.design_mode -%}
+            <p class="pcf__consent">Añade las URLs de tus redes en la configuración del bloque.</p>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} ===== Columnas de enlaces ===== {%- endcomment -%}
+      <nav class="pcf__nav" aria-label="{{ block.settings.nav_aria | escape }}">
+        <div>
+          <p class="pcf__label">{{ block.settings.col1_heading | escape }}</p>
+          <ul class="pcf__list">
+            {%- assign menu1 = linklists[block.settings.col1_menu] -%}
+            {%- if menu1.links.size > 0 -%}
+              {%- for link in menu1.links -%}
+                <li><a class="pcf__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            {%- else -%}
+              <li><a class="pcf__link" href="{{ block.settings.story_url | default: '#' }}">Our Story</a></li>
+              <li><a class="pcf__link" href="{{ block.settings.products_url | default: routes.all_products_collection_url }}">Products</a></li>
+              <li><a class="pcf__link" href="{{ block.settings.contact_url | default: '#' }}">Contact us</a></li>
+            {%- endif -%}
+          </ul>
+        </div>
+        <div>
+          <p class="pcf__label">{{ block.settings.col2_heading | escape }}</p>
+          <ul class="pcf__list">
+            {%- assign menu2 = linklists[block.settings.col2_menu] -%}
+            {%- if menu2.links.size > 0 -%}
+              {%- for link in menu2.links -%}
+                <li><a class="pcf__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a></li>
+              {%- endfor -%}
+            {%- else -%}
+              <li><a class="pcf__link" href="{{ block.settings.recipes_url | default: '#' }}">Recipes</a></li>
+              <li><a class="pcf__link" href="{{ block.settings.blog_url | default: '#' }}">Blog</a></li>
+              <li><a class="pcf__link" href="{{ block.settings.faq_url | default: '#' }}">FAQ</a></li>
+            {%- endif -%}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    {%- comment -%} ===== Copyright + legales ===== {%- endcomment -%}
+    <div class="pcf__bottom">
+      {%- if block.settings.copyright != blank -%}
+        <p class="pcf__copyright">{{ block.settings.copyright | replace: '[year]', current_year | escape }}</p>
+      {%- endif -%}
+      <hr class="pcf__divider">
+      <ul class="pcf__legal" aria-label="Legal">
+        {%- assign menu3 = linklists[block.settings.legal_menu] -%}
+        {%- if menu3.links.size > 0 -%}
+          {%- for link in menu3.links -%}
+            <li><a class="pcf__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+          {%- endfor -%}
+        {%- else -%}
+          <li><a class="pcf__link" href="{{ block.settings.accessibility_url | default: '#' }}">Accessibility Statement</a></li>
+          <li><a class="pcf__link" href="{{ block.settings.terms_url | default: shop.terms_of_service.url | default: '#' }}">Terms &amp; Conditions</a></li>
+          <li><a class="pcf__link" href="{{ block.settings.cookie_url | default: '#' }}">Cookie Policy</a></li>
+          <li><a class="pcf__link" href="{{ block.settings.shipping_url | default: shop.shipping_policy.url | default: '#' }}">Shipping Policy</a></li>
+          <li><a class="pcf__link" href="{{ block.settings.returns_url | default: shop.refund_policy.url | default: '#' }}">Return Policy</a></li>
+        {%- endif -%}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Footer Pronto Chocho",
+  "tag": null,
+  "class": "footer-newsletter-block",
+  "settings": [
+    { "type": "header", "content": "Newsletter" },
+    { "type": "image_picker", "id": "logo", "label": "Logo (optional)" },
+    { "type": "range", "id": "logo_width", "min": 80, "max": 320, "step": 10, "unit": "px", "label": "Logo width", "default": 160 },
+    { "type": "text", "id": "signup_heading", "label": "Heading", "default": "Get the Scoop" },
+    { "type": "range", "id": "signup_heading_size", "min": 20, "max": 64, "step": 2, "unit": "px", "label": "Heading size", "default": 40 },
+    {
+      "type": "select",
+      "id": "form_style",
+      "label": "Form style",
+      "options": [
+        { "value": "underline", "label": "Minimal underline" },
+        { "value": "pill", "label": "Pill with button" }
+      ],
+      "default": "underline"
+    },
+    { "type": "text", "id": "email_label", "label": "Email label (screen readers)", "default": "Email" },
+    { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "Your email" },
+    { "type": "text", "id": "subscribe_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "You're in! Welcome to the family." },
+    { "type": "inline_richtext", "id": "consent_text", "label": "Small print under the form (optional)" },
+
+    { "type": "header", "content": "Social" },
+    { "type": "text", "id": "story_heading", "label": "Social heading", "default": "Be part of our story" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram" },
+    { "type": "url", "id": "tiktok_url", "label": "TikTok" },
+    { "type": "url", "id": "facebook_url", "label": "Facebook" },
+    { "type": "url", "id": "youtube_url", "label": "YouTube" },
+    { "type": "url", "id": "pinterest_url", "label": "Pinterest" },
+
+    { "type": "header", "content": "Column 1" },
+    { "type": "text", "id": "col1_heading", "label": "Heading", "default": "FROM THE ROOTS" },
+    { "type": "link_list", "id": "col1_menu", "label": "Menu", "info": "Recommended. Edit links in Online Store → Navigation. Leave empty to use the links below." },
+    { "type": "url", "id": "story_url", "label": "Our Story" },
+    { "type": "url", "id": "products_url", "label": "Products" },
+    { "type": "url", "id": "contact_url", "label": "Contact us" },
+
+    { "type": "header", "content": "Column 2" },
+    { "type": "text", "id": "col2_heading", "label": "Heading", "default": "FUEL YOUR CURIOSITY" },
+    { "type": "link_list", "id": "col2_menu", "label": "Menu", "info": "Leave empty to use the links below." },
+    { "type": "url", "id": "recipes_url", "label": "Recipes" },
+    { "type": "url", "id": "blog_url", "label": "Blog" },
+    { "type": "url", "id": "faq_url", "label": "FAQ" },
+
+    { "type": "header", "content": "Legal" },
+    {
+      "type": "textarea",
+      "id": "copyright",
+      "label": "Copyright",
+      "info": "Write [year] to update the year automatically.",
+      "default": "© 2026 PRONTO CHOCHO. PRONTO CHOCHO™ is a registered trademark of Andean Pacha, LLC. All rights reserved."
+    },
+    { "type": "link_list", "id": "legal_menu", "label": "Legal menu", "info": "Leave empty to use the links below (Shopify policies are used as fallback)." },
+    { "type": "url", "id": "accessibility_url", "label": "Accessibility Statement" },
+    { "type": "url", "id": "terms_url", "label": "Terms & Conditions" },
+    { "type": "url", "id": "cookie_url", "label": "Cookie Policy" },
+    { "type": "url", "id": "shipping_url", "label": "Shipping Policy" },
+    { "type": "url", "id": "returns_url", "label": "Return Policy" },
+    { "type": "text", "id": "nav_aria", "label": "Navigation label (screen readers)", "default": "Footer" },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#3e2563" },
+    { "type": "color", "id": "text_color", "label": "Text & links", "default": "#ffffff" },
+    { "type": "color", "id": "muted_color", "label": "Labels & small text", "default": "#e2c8f3" },
+    { "type": "color", "id": "border_color", "label": "Lines & borders", "default": "#b9a3d6" },
+    { "type": "color", "id": "accent_color", "label": "Hover accent", "default": "#fedd94" },
+    { "type": "color", "id": "button_background", "label": "Button background (pill style)", "default": "#ff4315" },
+    { "type": "color", "id": "button_text_color", "label": "Button text (pill style)", "default": "#ffffff" },
+    { "type": "color", "id": "focus_color", "label": "Keyboard focus outline", "default": "#fedd94" },
+
+    { "type": "header", "content": "Size & spacing" },
+    { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "unit": "px", "label": "Content max width", "default": 1280 },
+    { "type": "range", "id": "link_size", "min": 14, "max": 22, "step": 1, "unit": "px", "label": "Link size", "default": 16 },
+    { "type": "range", "id": "padding_top", "min": 24, "max": 140, "step": 4, "unit": "px", "label": "Top padding", "default": 88 },
+    { "type": "range", "id": "padding_bottom", "min": 16, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 32 },
+    { "type": "range", "id": "bottom_spacing", "min": 32, "max": 140, "step": 4, "unit": "px", "label": "Space above copyright", "default": 88 }
+  ],
+  "presets": [{ "name": "Footer Pronto Chocho" }]
+}
+{% endschema %}
