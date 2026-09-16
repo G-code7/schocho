@@ -296,7 +296,7 @@
 
         {%- liquid
           assign has_social = false
-          if block.settings.instagram_url != blank or block.settings.facebook_url != blank or block.settings.tiktok_url != blank or block.settings.youtube_url != blank or block.settings.pinterest_url != blank
+          if block.settings.instagram_url != blank or block.settings.facebook_url  or block.settings.whatsapp_url != blank or block.settings.tiktok_url != blank or block.settings.youtube_url != blank or block.settings.pinterest_url != blank
             assign has_social = true
           endif
         -%}
@@ -317,6 +317,11 @@
             {%- endif -%}
             {%- if block.settings.facebook_url != blank -%}
               <li><a class="pcf__social" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg>
+              </a></li>
+            {%- endif -%}
+            {%- if block.settings.whatsapp_url != blank -%}
+              <li><a class="pcf__social" href="{{ block.settings.whatsapp_url }}" target="_blank" rel="noopener" aria-label="whatsapp">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg>
               </a></li>
             {%- endif -%}
