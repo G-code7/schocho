@@ -1,6 +1,18 @@
 {%- liquid
   assign bid = block.id
+  # Fuente del blog: el handle manual tiene prioridad sobre el selector
+  assign blog_source = 'picker'
   assign blog = block.settings.blog
+  assign blog_handle_input = block.settings.blog_handle | strip | handleize
+  if blog_handle_input != blank
+    assign blog_by_handle = blogs[blog_handle_input]
+    if blog_by_handle.handle != blank
+      assign blog = blog_by_handle
+      assign blog_source = 'handle'
+    else
+      assign blog_source = 'handle-not-found'
+    endif
+  endif
   assign max_articles = block.settings.articles_limit | default: 5
   assign layout = block.settings.layout | default: 'split'
 
@@ -39,6 +51,13 @@
       assign per_view_tablet = per_view
     endif
     assign per_view_mobile = block.settings.cards_per_view_mobile | default: 1.15
+  endif
+
+  assign arrows_pos = block.settings.arrows_position | default: 'sides'
+  assign arrows_mobile = block.settings.arrows_mobile | default: 'below'
+  assign has_nav = false
+  if total > per_view and block.settings.show_controls
+    assign has_nav = true
   endif
 
   assign autoplay_ms = block.settings.autoplay_seconds | default: 6 | times: 1000
@@ -102,9 +121,11 @@
     overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    flex-wrap: nowrap !important;
   }
   #bs-{{ bid }} .bs__track::-webkit-scrollbar { display: none; }
   #bs-{{ bid }} .bs__track:focus-visible { outline: 2px solid var(--bs-accent); outline-offset: 4px; }
@@ -112,8 +133,13 @@
   #bs-{{ bid }} .bs__slide {
     flex: 0 0 calc((100% - (var(--bs-per) - 1) * var(--bs-gap)) / var(--bs-per));
     min-width: 0;
+    max-width: none;
+    margin: 0 !important;
+    padding: 0 !important;
     scroll-snap-align: start;
   }
+  #bs-{{ bid }} .bs__slide::before,
+  #bs-{{ bid }} .bs__slide::marker { content: none; }
 
   /* ── Tarjeta ────────────────────────────── */
   #bs-{{ bid }} .bs__card {
@@ -215,26 +241,62 @@
     justify-content: {{ block.settings.controls_alignment }};
     margin-top: {{ block.settings.controls_spacing }}px;
   }
+  #bs-{{ bid }} {
+    --bs-arrow-size: {{ block.settings.arrow_size }}px;
+    --bs-arrow-color: {{ block.settings.arrow_color }};
+    --bs-arrow-bg: {{ block.settings.arrow_bg }};
+    --bs-arrow-border: {{ block.settings.arrow_border }};
+    --bs-arrow-color-hover: {{ block.settings.arrow_color_hover }};
+    --bs-arrow-bg-hover: {{ block.settings.arrow_bg_hover }};
+    --bs-arrow-offset: {{ block.settings.arrows_offset }}px;
+    --bs-dot: {{ block.settings.dot_color }};
+    --bs-dot-active: {{ block.settings.dot_active_color }};
+  }
+
+  #bs-{{ bid }} .bs__viewport { position: relative; }
+
   #bs-{{ bid }} .bs__nav { display: flex; gap: 12px; }
   #bs-{{ bid }} .bs__nav-btn {
-    width: 48px; height: 48px; padding: 0; border-radius: 50%;
+    width: var(--bs-arrow-size); height: var(--bs-arrow-size); padding: 0; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    background: transparent; color: var(--bs-fg); border: 1px solid var(--bs-border);
-    cursor: pointer; transition: background-color .3s var(--bs-ease), color .3s var(--bs-ease), border-color .3s var(--bs-ease), opacity .3s ease;
+    background: var(--bs-arrow-bg); color: var(--bs-arrow-color); border: 1px solid var(--bs-arrow-border);
+    cursor: pointer;
+    {%- if block.settings.arrow_shadow %} box-shadow: 0 6px 20px -6px rgba(0,0,0,.25);{% endif %}
+    transition: background-color .3s var(--bs-ease), color .3s var(--bs-ease), border-color .3s var(--bs-ease), opacity .3s ease, transform .3s var(--bs-ease);
   }
-  #bs-{{ bid }} .bs__nav-btn svg { width: 20px; height: 20px; }
-  #bs-{{ bid }} .bs__nav-btn:hover:not(:disabled) { background: var(--bs-fg); color: var(--bs-card); border-color: var(--bs-fg); }
+  #bs-{{ bid }} .bs__nav-btn svg { width: 42%; height: 42%; }
+  #bs-{{ bid }} .bs__nav-btn:hover:not(:disabled) {
+    background: var(--bs-arrow-bg-hover); color: var(--bs-arrow-color-hover); border-color: var(--bs-arrow-bg-hover);
+  }
+  #bs-{{ bid }} .bs__nav-btn:focus-visible { outline: 2px solid var(--bs-accent); outline-offset: 3px; }
   #bs-{{ bid }} .bs__nav-btn:disabled { opacity: .3; cursor: default; }
+
+  /* Flechas a los lados, centradas verticalmente sobre el slider */
+  #bs-{{ bid }} .bs__nav--sides { display: contents; }
+  #bs-{{ bid }} .bs__nav--sides .bs__nav-btn {
+    position: absolute;
+    top: {% if layout == 'cards' and block.settings.arrows_center_on == 'image' %}calc(var(--bs-media-h, 50%) / 2){% else %}50%{% endif %};
+    z-index: 3;
+    transform: translateY(-50%);
+  }
+  #bs-{{ bid }} .bs__nav--sides [data-prev] { left: var(--bs-arrow-offset); }
+  #bs-{{ bid }} .bs__nav--sides [data-next] { right: var(--bs-arrow-offset); }
+  #bs-{{ bid }} .bs__nav--sides .bs__nav-btn:hover:not(:disabled) { transform: translateY(-50%) scale(1.06); }
+  #bs-{{ bid }} .bs__nav--sides .bs__nav-btn:disabled {
+    {%- if block.settings.hide_disabled_arrows %} opacity: 0; pointer-events: none;{% endif %}
+  }
+  #bs-{{ bid }} .bs__nav--below-mobile { display: none; }
   #bs-{{ bid }} .bs__dots { display: flex; gap: 4px; align-items: center; }
   #bs-{{ bid }} .bs__dot {
     width: 20px; height: 20px; padding: 0; border: 0; background: transparent; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
   }
   #bs-{{ bid }} .bs__dot::before {
-    content: ''; width: 6px; height: 6px; border-radius: 6px; background: var(--bs-fg); opacity: .3;
-    transition: width .35s var(--bs-ease), opacity .3s ease;
+    content: ''; width: 6px; height: 6px; border-radius: 6px; background: var(--bs-dot);
+    transition: width .35s var(--bs-ease), background-color .3s ease;
   }
-  #bs-{{ bid }} .bs__dot.is-active::before { width: 20px; opacity: 1; }
+  #bs-{{ bid }} .bs__dot:hover::before { background: var(--bs-dot-active); opacity: .6; }
+  #bs-{{ bid }} .bs__dot.is-active::before { width: 20px; background: var(--bs-dot-active); opacity: 1; }
   #bs-{{ bid }} .bs__dot[hidden] { display: none; }
   #bs-{{ bid }} .bs__counter { font-size: 13px; font-weight: 500; letter-spacing: .05em; font-variant-numeric: tabular-nums; }
   #bs-{{ bid }} .bs__counter-total { opacity: .5; }
@@ -268,7 +330,20 @@
     #bs-{{ bid }} .bs__card--cards .bs__title { font-size: {{ block.settings.article_title_size | times: 0.7 | round }}px; }
     #bs-{{ bid }} .bs__excerpt { font-size: {{ block.settings.description_size | times: 0.9 | round }}px; }
     #bs-{{ bid }} .bs__controls { justify-content: center; }
-    #bs-{{ bid }} .bs__nav-btn { width: 42px; height: 42px; }
+    #bs-{{ bid }} .bs__nav-btn { width: calc(var(--bs-arrow-size) * .85); height: calc(var(--bs-arrow-size) * .85); }
+    {%- if arrows_pos == 'sides' %}
+      {%- if arrows_mobile == 'sides' %}
+    #bs-{{ bid }} .bs__nav--sides [data-prev] { left: 8px; }
+    #bs-{{ bid }} .bs__nav--sides [data-next] { right: 8px; }
+      {%- else %}
+    #bs-{{ bid }} .bs__nav--sides { display: none; }
+        {%- if arrows_mobile == 'below' %}
+    #bs-{{ bid }} .bs__nav--below-mobile { display: flex; }
+        {%- endif %}
+      {%- endif %}
+    {%- elsif arrows_mobile == 'hide' %}
+    #bs-{{ bid }} .bs__controls .bs__nav { display: none; }
+    {%- endif %}
     #bs-{{ bid }} .bs__view-all { align-self: flex-start; }
   }
 
@@ -304,7 +379,24 @@
       </div>
     {%- endif -%}
 
+    {%- if request.design_mode and block.settings.show_debug -%}
+      <div style="font:12px/1.6 ui-monospace,Menlo,monospace;background:#1f2937;color:#e5e7eb;padding:14px 16px;border-radius:10px;margin-bottom:20px;text-align:left;">
+        <strong style="color:#fbbf24;">Diagnóstico Blog Slider (solo visible en el editor)</strong><br>
+        Fuente: {{ blog_source }}{% if blog_source == 'handle-not-found' %} → no existe un blog con handle "{{ blog_handle_input }}", se usa el selector{% endif %}<br>
+        Blog: {% if blog != blank %}{{ blog.title }} (handle: <b>{{ blog.handle }}</b>){% else %}<span style="color:#f87171;">ninguno</span>{% endif %}<br>
+        Artículos publicados en el blog: {{ blog.articles_count | default: 0 }}<br>
+        Límite configurado: {{ max_articles }} · Renderizados: <b>{{ total }}</b><br>
+        Estilo: {{ layout }} · Por vista desktop: {{ per_view }} · Controles: {% if total > per_view and block.settings.show_controls %}sí{% else %}no{% endif %}<br>
+        {%- if skip_id != 0 %}Se omite el artículo actual (id {{ skip_id }})<br>{% endif -%}
+        {%- if blog != blank %}
+        Primeros artículos: {% for post in blog.articles limit: fetch_limit %}{{ post.handle }}{% unless forloop.last %}, {% endunless %}{% endfor %}<br>
+        {%- endif %}
+        Blogs de la tienda: {% for b in blogs %}{{ b.handle }} ({{ b.articles_count }}){% unless forloop.last %}, {% endunless %}{% endfor %}
+      </div>
+    {%- endif -%}
+
     {%- if total > 0 -%}
+      <div class="bs__viewport">
       <ul
         class="bs__track"
         data-track
@@ -414,15 +506,50 @@
         {%- endfor -%}
       </ul>
 
-      {%- if total > per_view and block.settings.show_controls -%}
-        <div class="bs__controls">
-          {%- if block.settings.show_arrows -%}
-            <div class="bs__nav">
+        {%- if has_nav and block.settings.show_arrows and arrows_pos == 'sides' -%}
+            <div class="bs__nav bs__nav--sides">
               <button type="button" class="bs__nav-btn" data-prev aria-label="Artículo anterior">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
               </button>
               <button type="button" class="bs__nav-btn" data-next aria-label="Artículo siguiente">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+        {%- endif -%}
+      </div>
+
+      {%- liquid
+        assign show_controls_row = false
+        if has_nav
+          if block.settings.show_dots or block.settings.show_counter
+            assign show_controls_row = true
+          endif
+          if block.settings.show_arrows and arrows_pos == 'below'
+            assign show_controls_row = true
+          endif
+          if block.settings.show_arrows and arrows_pos == 'sides' and arrows_mobile == 'below'
+            assign show_controls_row = true
+          endif
+        endif
+      -%}
+      {%- if show_controls_row -%}
+        <div class="bs__controls">
+          {%- if block.settings.show_arrows and arrows_pos == 'below' -%}
+            <div class="bs__nav">
+              <button type="button" class="bs__nav-btn" data-prev aria-label="Artículo anterior">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button type="button" class="bs__nav-btn" data-next aria-label="Artículo siguiente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          {%- elsif block.settings.show_arrows and arrows_pos == 'sides' and arrows_mobile == 'below' -%}
+            <div class="bs__nav bs__nav--below-mobile">
+              <button type="button" class="bs__nav-btn" data-prev aria-label="Artículo anterior">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <button type="button" class="bs__nav-btn" data-next aria-label="Artículo siguiente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
             </div>
           {%- endif -%}
@@ -469,8 +596,8 @@
       if (slides.length < 2) return;
       root.dataset.bsReady = '1';
 
-      const prev = root.querySelector('[data-prev]');
-      const next = root.querySelector('[data-next]');
+      const prevs = Array.from(root.querySelectorAll('[data-prev]'));
+      const nexts = Array.from(root.querySelectorAll('[data-next]'));
       const dots = Array.from(root.querySelectorAll('[data-dot]'));
       const current = root.querySelector('[data-current]');
       const loop = root.dataset.loop === 'true';
@@ -486,13 +613,18 @@
         return Math.max(0, slides.length - perView);
       }
 
+      function slideLeft(s) {
+        return s.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+      }
+
       function activeIndex() {
         const left = track.scrollLeft;
         let best = 0, bestDist = Infinity;
         slides.forEach((s, i) => {
-          const d = Math.abs(s.offsetLeft - track.offsetLeft - left);
+          const d = Math.abs(slideLeft(s) - left);
           if (d < bestDist) { bestDist = d; best = i; }
         });
+        if (left >= track.scrollWidth - track.clientWidth - 2) return maxIndex();
         return Math.min(best, maxIndex());
       }
 
@@ -504,7 +636,7 @@
         } else {
           i = Math.max(0, Math.min(i, max));
         }
-        track.scrollTo({ left: slides[i].offsetLeft - track.offsetLeft, behavior: reduced ? 'auto' : 'smooth' });
+        track.scrollTo({ left: slideLeft(slides[i]), behavior: reduced ? 'auto' : 'smooth' });
       }
 
       function update() {
@@ -518,13 +650,21 @@
         });
         if (current) current.textContent = String(i + 1).padStart(2, '0');
         if (!loop) {
-          if (prev) prev.disabled = i <= 0;
-          if (next) next.disabled = i >= max;
+          prevs.forEach((b) => (b.disabled = i <= 0));
+          nexts.forEach((b) => (b.disabled = i >= max));
         }
       }
 
-      prev && prev.addEventListener('click', () => { stop(); goTo(activeIndex() - 1); });
-      next && next.addEventListener('click', () => { stop(); goTo(activeIndex() + 1); });
+      prevs.forEach((b) => b.addEventListener('click', () => { stop(); goTo(activeIndex() - 1); }));
+      nexts.forEach((b) => b.addEventListener('click', () => { stop(); goTo(activeIndex() + 1); }));
+
+      /* En estilo cards, las flechas se centran sobre la imagen */
+      const firstMedia = track.querySelector('.bs__card--cards .bs__media');
+      function syncArrowTop() {
+        if (firstMedia) root.style.setProperty('--bs-media-h', firstMedia.getBoundingClientRect().height + 'px');
+      }
+      syncArrowTop();
+      window.addEventListener('resize', syncArrowTop, { passive: true });
       dots.forEach((d) => d.addEventListener('click', () => { stop(); goTo(parseInt(d.dataset.dot, 10)); }));
 
       track.addEventListener('keydown', (e) => {
@@ -579,6 +719,13 @@
   "settings": [
     { "type": "header", "content": "Blog" },
     { "type": "blog", "id": "blog", "label": "Blog" },
+    {
+      "type": "text",
+      "id": "blog_handle",
+      "label": "Blog handle (optional)",
+      "placeholder": "news",
+      "info": "Overrides the picker. Find it in the blog URL: /blogs/HANDLE. Use it to lock this slider to the 'Blog' and never to 'Recipes'."
+    },
     {
       "type": "range",
       "id": "articles_limit",
@@ -706,6 +853,58 @@
     { "type": "header", "content": "Navigation" },
     { "type": "checkbox", "id": "show_controls", "label": "Show controls", "default": true },
     { "type": "checkbox", "id": "show_arrows", "label": "Show arrows", "default": true },
+    {
+      "type": "select",
+      "id": "arrows_position",
+      "label": "Arrows position",
+      "options": [
+        { "value": "sides", "label": "Sides (over the slider)" },
+        { "value": "below", "label": "Below, with dots" }
+      ],
+      "default": "sides"
+    },
+    {
+      "type": "range",
+      "id": "arrows_offset",
+      "min": -40,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Side arrows offset",
+      "default": 16,
+      "info": "Positive = inside the slider. Negative = pushed outside the edges."
+    },
+    {
+      "type": "select",
+      "id": "arrows_center_on",
+      "label": "Center side arrows on (cards style)",
+      "options": [
+        { "value": "image", "label": "Image" },
+        { "value": "card", "label": "Whole card" }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "select",
+      "id": "arrows_mobile",
+      "label": "Side arrows on mobile",
+      "options": [
+        { "value": "below", "label": "Move below, with dots" },
+        { "value": "sides", "label": "Keep on the sides" },
+        { "value": "hide", "label": "Hide (swipe only)" }
+      ],
+      "default": "below"
+    },
+    { "type": "checkbox", "id": "hide_disabled_arrows", "label": "Hide side arrow at start/end", "default": true, "info": "Only when loop is off." },
+    { "type": "range", "id": "arrow_size", "min": 32, "max": 64, "step": 2, "unit": "px", "label": "Arrow size", "default": 48 },
+    { "type": "checkbox", "id": "arrow_shadow", "label": "Arrow shadow", "default": true },
+    { "type": "color", "id": "arrow_color", "label": "Arrow icon", "default": "#2c2416" },
+    { "type": "color_background", "id": "arrow_bg", "label": "Arrow background", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_border", "label": "Arrow border", "default": "#e5e1da" },
+    { "type": "color", "id": "arrow_color_hover", "label": "Arrow icon (hover)", "default": "#ffffff" },
+    { "type": "color", "id": "arrow_bg_hover", "label": "Arrow background (hover)", "default": "#2c2416" },
+    { "type": "color", "id": "dot_color", "label": "Dot color", "default": "#d6cfc4" },
+    { "type": "color", "id": "dot_active_color", "label": "Active dot color", "default": "#2c2416" },
     { "type": "checkbox", "id": "show_dots", "label": "Show dots", "default": true },
     { "type": "checkbox", "id": "show_counter", "label": "Show counter", "default": false },
     {
@@ -731,6 +930,9 @@
     { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 60 },
     { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 60 },
     { "type": "range", "id": "horizontal_padding", "min": 16, "max": 60, "step": 4, "unit": "px", "label": "Horizontal padding", "default": 24 },
+
+    { "type": "header", "content": "Debug" },
+    { "type": "checkbox", "id": "show_debug", "label": "Show diagnostic panel (theme editor only)", "default": true },
 
     { "type": "header", "content": "Empty state" },
     { "type": "text", "id": "empty_message", "label": "Empty message", "default": "No articles found" }
