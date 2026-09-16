@@ -243,12 +243,15 @@
 <div class="pcf-{{ fid }}" {{ block.shopify_attributes }}>
   <div class="pcf__inner">
     <div class="pcf__main">
-
       {%- comment -%} ===== Columna izquierda: newsletter + redes ===== {%- endcomment -%}
       <div class="pcf__brand">
         {%- if block.settings.logo != blank -%}
           <a href="{{ routes.root_url }}" class="pcf__logo" aria-label="{{ shop.name | escape }}">
-            {{ block.settings.logo | image_url: width: 600 | image_tag: loading: 'lazy', alt: shop.name, widths: '200, 400, 600' }}
+            {{
+              block.settings.logo
+              | image_url: width: 600
+              | image_tag: loading: 'lazy', alt: shop.name, widths: '200, 400, 600'
+            }}
           </a>
         {%- endif -%}
 
@@ -270,22 +273,31 @@
               spellcheck="false"
               placeholder="{{ block.settings.email_placeholder | escape }}"
               required
-              {% if form.errors %}aria-invalid="true" aria-describedby="pcf-msg-{{ fid }}"{% endif %}
+              {% if form.errors %}
+                aria-invalid="true" aria-describedby="pcf-msg-{{ fid }}"
+              {% endif %}
             >
             <button class="pcf__button" type="submit">
               <span>{{ block.settings.subscribe_label | escape }}</span>
-              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M1 8h13M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M1 8h13M9 3l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </button>
           </div>
 
           <div id="pcf-msg-{{ fid }}" aria-live="polite">
             {%- if form.posted_successfully? -%}
               <p class="pcf__message pcf__message--ok">
-                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
                 {{ block.settings.success_message | escape }}
               </p>
             {%- elsif form.errors -%}
-              <p class="pcf__message pcf__message--error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+              <p class="pcf__message pcf__message--error">
+                {{ form.errors.translated_fields.email | capitalize }}
+                {{ form.errors.messages.email }}
+              </p>
             {%- endif -%}
           </div>
 
@@ -296,7 +308,7 @@
 
         {%- liquid
           assign has_social = false
-          if block.settings.instagram_url != blank or block.settings.facebook_url  or block.settings.whatsapp_url != blank or block.settings.tiktok_url != blank or block.settings.youtube_url != blank or block.settings.pinterest_url != blank
+          if block.settings.instagram_url != blank or block.settings.facebook_url or block.settings.whatsapp_url != blank or block.settings.tiktok_url != blank or block.settings.youtube_url != blank or block.settings.pinterest_url != blank
             assign has_social = true
           endif
         -%}
@@ -306,46 +318,110 @@
           {%- endif -%}
           <ul class="pcf__socials">
             {%- if block.settings.instagram_url != blank -%}
-              <li><a class="pcf__social" href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
-                <svg fill="#000000" width="800px" height="800px" viewBox="0 0 32 32" id="Camada_1" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <li>
+                <a
+                  class="pcf__social"
+                  href="{{ block.settings.instagram_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Instagram"
+                >
+                  <svg
+                    width="800px"
+                    height="800px"
+                    viewBox="0 0 32 32"
+                    xml:space="preserve"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                  >
+                    <g>
 
-<g>
+                    <path d="M22.3,8.4c-0.8,0-1.4,0.6-1.4,1.4c0,0.8,0.6,1.4,1.4,1.4c0.8,0,1.4-0.6,1.4-1.4C23.7,9,23.1,8.4,22.3,8.4z"/>
 
-<path d="M22.3,8.4c-0.8,0-1.4,0.6-1.4,1.4c0,0.8,0.6,1.4,1.4,1.4c0.8,0,1.4-0.6,1.4-1.4C23.7,9,23.1,8.4,22.3,8.4z"/>
+                    <path d="M16,10.2c-3.3,0-5.9,2.7-5.9,5.9s2.7,5.9,5.9,5.9s5.9-2.7,5.9-5.9S19.3,10.2,16,10.2z M16,19.9c-2.1,0-3.8-1.7-3.8-3.8   c0-2.1,1.7-3.8,3.8-3.8c2.1,0,3.8,1.7,3.8,3.8C19.8,18.2,18.1,19.9,16,19.9z"/>
 
-<path d="M16,10.2c-3.3,0-5.9,2.7-5.9,5.9s2.7,5.9,5.9,5.9s5.9-2.7,5.9-5.9S19.3,10.2,16,10.2z M16,19.9c-2.1,0-3.8-1.7-3.8-3.8   c0-2.1,1.7-3.8,3.8-3.8c2.1,0,3.8,1.7,3.8,3.8C19.8,18.2,18.1,19.9,16,19.9z"/>
+                    <path d="M20.8,4h-9.5C7.2,4,4,7.2,4,11.2v9.5c0,4,3.2,7.2,7.2,7.2h9.5c4,0,7.2-3.2,7.2-7.2v-9.5C28,7.2,24.8,4,20.8,4z M25.7,20.8   c0,2.7-2.2,5-5,5h-9.5c-2.7,0-5-2.2-5-5v-9.5c0-2.7,2.2-5,5-5h9.5c2.7,0,5,2.2,5,5V20.8z"/>
 
-<path d="M20.8,4h-9.5C7.2,4,4,7.2,4,11.2v9.5c0,4,3.2,7.2,7.2,7.2h9.5c4,0,7.2-3.2,7.2-7.2v-9.5C28,7.2,24.8,4,20.8,4z M25.7,20.8   c0,2.7-2.2,5-5,5h-9.5c-2.7,0-5-2.2-5-5v-9.5c0-2.7,2.2-5,5-5h9.5c2.7,0,5,2.2,5,5V20.8z"/>
-
-</g>
-
-</svg>
-              </a></li>
+                    </g>
+                  </svg>
+                </a>
+              </li>
             {%- endif -%}
             {%- if block.settings.tiktok_url != blank -%}
-              <li><a class="pcf__social" href="{{ block.settings.tiktok_url }}" target="_blank" rel="noopener" aria-label="TikTok">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 2h-3.3v13.4a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9.2a6.2 6.2 0 105.3 6.2V8.6a7.9 7.9 0 004.6 1.5V6.8a4.6 4.6 0 01-4.6-4.8z"/></svg>
-              </a></li>
+              <li>
+                <a
+                  class="pcf__social"
+                  href="{{ block.settings.tiktok_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="TikTok"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16.6 2h-3.3v13.4a2.9 2.9 0 11-2.9-2.9c.3 0 .6 0 .9.1V9.2a6.2 6.2 0 105.3 6.2V8.6a7.9 7.9 0 004.6 1.5V6.8a4.6 4.6 0 01-4.6-4.8z"/>
+                  </svg>
+                </a>
+              </li>
             {%- endif -%}
             {%- if block.settings.facebook_url != blank -%}
-              <li><a class="pcf__social" href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg>
-              </a></li>
+              <li>
+                <a
+                  class="pcf__social"
+                  href="{{ block.settings.facebook_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Facebook"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/>
+                  </svg>
+                </a>
+              </li>
             {%- endif -%}
             {%- if block.settings.whatsapp_url != blank -%}
-              <li><a class="pcf__social" href="{{ block.settings.whatsapp_url }}" target="_blank" rel="noopener" aria-label="whatsapp">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.5c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.3v3.2h2.8V22h3.4z"/></svg>
-              </a></li>
+              <li>
+                <a
+                  class="pcf__social"
+                  href="{{ block.settings.whatsapp_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="whatsapp"
+                >
+                  <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6.014 8.00613C6.12827 7.1024 7.30277 5.87414 8.23488 6.01043L8.23339 6.00894C9.14051 6.18132 9.85859 7.74261 10.2635 8.44465C10.5504 8.95402 10.3641 9.4701 10.0965 9.68787C9.7355 9.97883 9.17099 10.3803 9.28943 10.7834C9.5 11.5 12 14 13.2296 14.7107C13.695 14.9797 14.0325 14.2702 14.3207 13.9067C14.5301 13.6271 15.0466 13.46 15.5548 13.736C16.3138 14.178 17.0288 14.6917 17.69 15.27C18.0202 15.546 18.0977 15.9539 17.8689 16.385C17.4659 17.1443 16.3003 18.1456 15.4542 17.9421C13.9764 17.5868 8 15.27 6.08033 8.55801C5.97237 8.24048 5.99955 8.12044 6.014 8.00613Z" fill="#0F0F0F"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 23C10.7764 23 10.0994 22.8687 9 22.5L6.89443 23.5528C5.56462 24.2177 4 23.2507 4 21.7639V19.5C1.84655 17.492 1 15.1767 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12C23 18.0751 18.0751 23 12 23ZM6 18.6303L5.36395 18.0372C3.69087 16.4772 3 14.7331 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C11.0143 21 10.552 20.911 9.63595 20.6038L8.84847 20.3397L6 21.7639V18.6303Z" fill="#0F0F0F"/>
+                  </svg>
+                </a>
+              </li>
             {%- endif -%}
             {%- if block.settings.youtube_url != blank -%}
-              <li><a class="pcf__social" href="{{ block.settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.5 7.2a2.8 2.8 0 00-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 00-2 2A29 29 0 001.1 12a29 29 0 00.4 4.8 2.8 2.8 0 002 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 002-2 29 29 0 00.4-4.8 29 29 0 00-.4-4.8zM9.8 15.1V8.9l5.7 3.1-5.7 3.1z"/></svg>
-              </a></li>
+              <li>
+                <a
+                  class="pcf__social"
+                  href="{{ block.settings.youtube_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="YouTube"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M22.5 7.2a2.8 2.8 0 00-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 00-2 2A29 29 0 001.1 12a29 29 0 00.4 4.8 2.8 2.8 0 002 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 002-2 29 29 0 00.4-4.8 29 29 0 00-.4-4.8zM9.8 15.1V8.9l5.7 3.1-5.7 3.1z"/>
+                  </svg>
+                </a>
+              </li>
             {%- endif -%}
             {%- if block.settings.pinterest_url != blank -%}
-              <li><a class="pcf__social" href="{{ block.settings.pinterest_url }}" target="_blank" rel="noopener" aria-label="Pinterest">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 00-3.6 19.3c-.1-.8-.2-2 0-2.9l1.3-5.4s-.3-.7-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.4-.2 1 .5 1.9 1.5 1.9 1.8 0 3.2-1.9 3.2-4.7 0-2.4-1.8-4.1-4.3-4.1-2.9 0-4.6 2.2-4.6 4.4 0 .9.3 1.8.8 2.3.1.1.1.2.1.3l-.3 1.2c0 .2-.2.2-.4.1-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2.1-.6-2.4-1.2l-.7 2.5c-.2.9-.9 2.1-1.3 2.8A10 10 0 1012 2z"/></svg>
-              </a></li>
+              <li>
+                <a
+                  class="pcf__social"
+                  href="{{ block.settings.pinterest_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Pinterest"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2a10 10 0 00-3.6 19.3c-.1-.8-.2-2 0-2.9l1.3-5.4s-.3-.7-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.2-.9 3.4-.2 1 .5 1.9 1.5 1.9 1.8 0 3.2-1.9 3.2-4.7 0-2.4-1.8-4.1-4.3-4.1-2.9 0-4.6 2.2-4.6 4.4 0 .9.3 1.8.8 2.3.1.1.1.2.1.3l-.3 1.2c0 .2-.2.2-.4.1-1.3-.6-2.1-2.5-2.1-4 0-3.3 2.4-6.3 6.9-6.3 3.6 0 6.4 2.6 6.4 6 0 3.6-2.3 6.5-5.4 6.5-1.1 0-2.1-.6-2.4-1.2l-.7 2.5c-.2.9-.9 2.1-1.3 2.8A10 10 0 1012 2z"/>
+                  </svg>
+                </a>
+              </li>
             {%- endif -%}
           </ul>
           {%- if has_social == false and request.design_mode -%}
@@ -362,11 +438,27 @@
             {%- assign menu1 = linklists[block.settings.col1_menu] -%}
             {%- if menu1.links.size > 0 -%}
               {%- for link in menu1.links -%}
-                <li><a class="pcf__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a></li>
+                <li>
+                  <a
+                    class="pcf__link"
+                    href="{{ link.url }}"
+                    {% if link.current %}
+                      aria-current="page"
+                    {% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </a>
+                </li>
               {%- endfor -%}
             {%- else -%}
               <li><a class="pcf__link" href="{{ block.settings.story_url | default: '#' }}">Our Story</a></li>
-              <li><a class="pcf__link" href="{{ block.settings.products_url | default: routes.all_products_collection_url }}">Products</a></li>
+              <li>
+                <a
+                  class="pcf__link"
+                  href="{{ block.settings.products_url | default: routes.all_products_collection_url }}"
+                  >Products</a
+                >
+              </li>
               <li><a class="pcf__link" href="{{ block.settings.contact_url | default: '#' }}">Contact us</a></li>
             {%- endif -%}
           </ul>
@@ -377,7 +469,17 @@
             {%- assign menu2 = linklists[block.settings.col2_menu] -%}
             {%- if menu2.links.size > 0 -%}
               {%- for link in menu2.links -%}
-                <li><a class="pcf__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a></li>
+                <li>
+                  <a
+                    class="pcf__link"
+                    href="{{ link.url }}"
+                    {% if link.current %}
+                      aria-current="page"
+                    {% endif %}
+                  >
+                    {{- link.title | escape -}}
+                  </a>
+                </li>
               {%- endfor -%}
             {%- else -%}
               <li><a class="pcf__link" href="{{ block.settings.recipes_url | default: '#' }}">Recipes</a></li>
@@ -399,14 +501,38 @@
         {%- assign menu3 = linklists[block.settings.legal_menu] -%}
         {%- if menu3.links.size > 0 -%}
           {%- for link in menu3.links -%}
-            <li><a class="pcf__link" href="{{ link.url }}">{{ link.title | escape }}</a></li>
+            <li>
+              <a class="pcf__link" href="{{ link.url }}">{{ link.title | escape }}</a>
+            </li>
           {%- endfor -%}
         {%- else -%}
-          <li><a class="pcf__link" href="{{ block.settings.accessibility_url | default: '#' }}">Accessibility Statement</a></li>
-          <li><a class="pcf__link" href="{{ block.settings.terms_url | default: shop.terms_of_service.url | default: '#' }}">Terms &amp; Conditions</a></li>
+          <li>
+            <a class="pcf__link" href="{{ block.settings.accessibility_url | default: '#' }}"
+              >Accessibility Statement</a
+            >
+          </li>
+          <li>
+            <a
+              class="pcf__link"
+              href="{{ block.settings.terms_url | default: shop.terms_of_service.url | default: '#' }}"
+              >Terms &amp; Conditions</a
+            >
+          </li>
           <li><a class="pcf__link" href="{{ block.settings.cookie_url | default: '#' }}">Cookie Policy</a></li>
-          <li><a class="pcf__link" href="{{ block.settings.shipping_url | default: shop.shipping_policy.url | default: '#' }}">Shipping Policy</a></li>
-          <li><a class="pcf__link" href="{{ block.settings.returns_url | default: shop.refund_policy.url | default: '#' }}">Return Policy</a></li>
+          <li>
+            <a
+              class="pcf__link"
+              href="{{ block.settings.shipping_url | default: shop.shipping_policy.url | default: '#' }}"
+              >Shipping Policy</a
+            >
+          </li>
+          <li>
+            <a
+              class="pcf__link"
+              href="{{ block.settings.returns_url | default: shop.refund_policy.url | default: '#' }}"
+              >Return Policy</a
+            >
+          </li>
         {%- endif -%}
       </ul>
     </div>
@@ -421,9 +547,27 @@
   "settings": [
     { "type": "header", "content": "Newsletter" },
     { "type": "image_picker", "id": "logo", "label": "Logo (optional)" },
-    { "type": "range", "id": "logo_width", "min": 80, "max": 320, "step": 10, "unit": "px", "label": "Logo width", "default": 160 },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 80,
+      "max": 320,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 160
+    },
     { "type": "text", "id": "signup_heading", "label": "Heading", "default": "Get the Scoop" },
-    { "type": "range", "id": "signup_heading_size", "min": 20, "max": 64, "step": 2, "unit": "px", "label": "Heading size", "default": 40 },
+    {
+      "type": "range",
+      "id": "signup_heading_size",
+      "min": 20,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 40
+    },
     {
       "type": "select",
       "id": "form_style",
@@ -437,7 +581,12 @@
     { "type": "text", "id": "email_label", "label": "Email label (screen readers)", "default": "Email" },
     { "type": "text", "id": "email_placeholder", "label": "Email placeholder", "default": "Your email" },
     { "type": "text", "id": "subscribe_label", "label": "Button label", "default": "Subscribe" },
-    { "type": "text", "id": "success_message", "label": "Success message", "default": "You're in! Welcome to the family." },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "You're in! Welcome to the family."
+    },
     { "type": "inline_richtext", "id": "consent_text", "label": "Small print under the form (optional)" },
 
     { "type": "header", "content": "Social" },
@@ -451,7 +600,12 @@
 
     { "type": "header", "content": "Column 1" },
     { "type": "text", "id": "col1_heading", "label": "Heading", "default": "FROM THE ROOTS" },
-    { "type": "link_list", "id": "col1_menu", "label": "Menu", "info": "Recommended. Edit links in Online Store → Navigation. Leave empty to use the links below." },
+    {
+      "type": "link_list",
+      "id": "col1_menu",
+      "label": "Menu",
+      "info": "Recommended. Edit links in Online Store → Navigation. Leave empty to use the links below."
+    },
     { "type": "url", "id": "story_url", "label": "Our Story" },
     { "type": "url", "id": "products_url", "label": "Products" },
     { "type": "url", "id": "contact_url", "label": "Contact us" },
@@ -471,7 +625,12 @@
       "info": "Write [year] to update the year automatically.",
       "default": "© 2026 PRONTO CHOCHO. PRONTO CHOCHO™ is a registered trademark of Andean Pacha, LLC. All rights reserved."
     },
-    { "type": "link_list", "id": "legal_menu", "label": "Legal menu", "info": "Leave empty to use the links below (Shopify policies are used as fallback)." },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Legal menu",
+      "info": "Leave empty to use the links below (Shopify policies are used as fallback)."
+    },
     { "type": "url", "id": "accessibility_url", "label": "Accessibility Statement" },
     { "type": "url", "id": "terms_url", "label": "Terms & Conditions" },
     { "type": "url", "id": "cookie_url", "label": "Cookie Policy" },
@@ -490,11 +649,56 @@
     { "type": "color", "id": "focus_color", "label": "Keyboard focus outline", "default": "#fedd94" },
 
     { "type": "header", "content": "Size & spacing" },
-    { "type": "range", "id": "max_width", "min": 960, "max": 1600, "step": 20, "unit": "px", "label": "Content max width", "default": 1280 },
-    { "type": "range", "id": "link_size", "min": 14, "max": 22, "step": 1, "unit": "px", "label": "Link size", "default": 16 },
-    { "type": "range", "id": "padding_top", "min": 24, "max": 140, "step": 4, "unit": "px", "label": "Top padding", "default": 88 },
-    { "type": "range", "id": "padding_bottom", "min": 16, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 32 },
-    { "type": "range", "id": "bottom_spacing", "min": 32, "max": 140, "step": 4, "unit": "px", "label": "Space above copyright", "default": 88 }
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 960,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 1280
+    },
+    {
+      "type": "range",
+      "id": "link_size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Link size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 24,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 16,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "bottom_spacing",
+      "min": 32,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Space above copyright",
+      "default": 88
+    }
   ],
   "presets": [{ "name": "Footer Pronto Chocho" }]
 }
