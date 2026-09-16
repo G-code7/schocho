@@ -379,22 +379,6 @@
       </div>
     {%- endif -%}
 
-    {%- if request.design_mode and block.settings.show_debug -%}
-      <div style="font:12px/1.6 ui-monospace,Menlo,monospace;background:#1f2937;color:#e5e7eb;padding:14px 16px;border-radius:10px;margin-bottom:20px;text-align:left;">
-        <strong style="color:#fbbf24;">Diagnóstico Blog Slider (solo visible en el editor)</strong><br>
-        Fuente: {{ blog_source }}{% if blog_source == 'handle-not-found' %} → no existe un blog con handle "{{ blog_handle_input }}", se usa el selector{% endif %}<br>
-        Blog: {% if blog != blank %}{{ blog.title }} (handle: <b>{{ blog.handle }}</b>){% else %}<span style="color:#f87171;">ninguno</span>{% endif %}<br>
-        Artículos publicados en el blog: {{ blog.articles_count | default: 0 }}<br>
-        Límite configurado: {{ max_articles }} · Renderizados: <b>{{ total }}</b><br>
-        Estilo: {{ layout }} · Por vista desktop: {{ per_view }} · Controles: {% if total > per_view and block.settings.show_controls %}sí{% else %}no{% endif %}<br>
-        {%- if skip_id != 0 %}Se omite el artículo actual (id {{ skip_id }})<br>{% endif -%}
-        {%- if blog != blank %}
-        Primeros artículos: {% for post in blog.articles limit: fetch_limit %}{{ post.handle }}{% unless forloop.last %}, {% endunless %}{% endfor %}<br>
-        {%- endif %}
-        Blogs de la tienda: {% for b in blogs %}{{ b.handle }} ({{ b.articles_count }}){% unless forloop.last %}, {% endunless %}{% endfor %}
-      </div>
-    {%- endif -%}
-
     {%- if total > 0 -%}
       <div class="bs__viewport">
       <ul
