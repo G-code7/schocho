@@ -989,7 +989,7 @@
                       <span class="fpv2__promo-code-label-{{ section_id }}">{{ c_label }}</span>
                     {% endif %}
                     <div class="fpv2__promo-code-box-{{ section_id }}">
-                      <code class="fpv2__promo-code-value-{{ section_id }}">{{ c_code | escape }}</code>
+                      <code class="fpv2__promo-code-value-{{ section_id }}"><span class="fpv2__promo-code-status-{{ section_id }}" data-fpv2-code-status aria-live="polite"></span>{{ c_code | escape }}</code>
                       {% if section.settings.promo_code_copyable %}
                         <button
                           type="button"
