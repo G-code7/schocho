@@ -739,6 +739,11 @@
       height: {{ section.settings.badge_icon_size_mobile }}px;
     }
   }
+
+  .fpv2__promo-code-status-{{ section_id }} { font-size: 12px; opacity: .8; }
+  [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-status-{{ section_id }} { color: #0a7d32; }
+  [data-fpv2-code][data-fpv2-state="not-applicable"] .fpv2__promo-code-status-{{ section_id }} { color: #a33; }
+  [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-copy-{{ section_id }} { display: none; }
 {% endstyle %}
 
 <section
@@ -1543,6 +1548,22 @@
             body: JSON.stringify(body)
           });
           const data = await res.json();
+          // Aplica los cupones automáticos ya con el carrito poblado.
+          let discountResult = null;
+          if (window.fpv2Discounts) {
+            discountResult = await window.fpv2Discounts.applyAll({ requireCart: true });
+          }
+
+          // Los totales cambiaron: re-render de las secciones de carrito DESPUÉS de aplicar.
+          if (discountResult && discountResult.applied.length) {
+            const ids = getCartSectionIds().join(',');
+            if (ids) {
+              const r = await fetch(`${window.location.pathname}?sections=${ids}`, { headers: { Accept: 'application/json' } });
+              if (r.ok) refreshCartSections(await r.json());
+            }
+          } else if (data.sections) {
+            refreshCartSections(data.sections);
+          }
           if (!res.ok) throw new Error(data.description || data.message || 'Error');
 
           if (data.sections) refreshCartSections(data.sections);
