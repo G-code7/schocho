@@ -1,0 +1,327 @@
+{%- comment -%}
+  snippets/fpv2-discounts.liquid
+  Motor de aplicación automática de códigos de descuento (multi-código) para featured-product-v2.
+
+  Uso desde la sección (una sola vez, dentro del contenedor .fpv2-{{ section_id }}):
+
+    {% render 'fpv2-discounts',
+       section: section,
+       section_id: section_id,
+       now_ts: now_ts,
+       shop_offset: shop_offset %}
+
+  Requisitos en Shopify Admin (sin esto NO se apilan, sin importar el código):
+   - Cada código debe tener configuradas sus "Combinaciones" (Discounts → editar → Combinations).
+   - Máximo 5 códigos de producto/pedido + 1 de envío por orden.
+   - Los descuentos automáticos NO combinan con códigos.
+{%- endcomment -%}
+
+{%- liquid
+  assign code_blocks = section.blocks | where: 'type', 'discount_code'
+  assign auto_mode = section.settings.auto_apply_mode | default: 'on_atc'
+-%}
+
+{%- capture fpv2_codes_json -%}
+  {%- assign is_first = true -%}
+
+  {%- comment -%} Código legacy de la sección (se trata como "order") {%- endcomment -%}
+  {%- if section.settings.promo_code != blank and section.settings.promo_auto_apply -%}
+    {%- liquid
+      assign lc_end = 0
+      if section.settings.promo_code_ends_at != blank
+        assign tmp = section.settings.promo_code_ends_at | strip | append: ' ' | append: shop_offset
+        assign tmp_p = tmp | date: '%s'
+        if tmp_p != tmp
+          assign lc_end = tmp_p | plus: 0
+        endif
+      endif
+      assign lc_valid = true
+      if lc_end > 0 and now_ts >= lc_end
+        assign lc_valid = false
+      endif
+    -%}
+    {%- if lc_valid -%}
+      {%- assign is_first = false -%}
+      {"code": {{ section.settings.promo_code | strip | json }}, "kind": "order", "priority": 0}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- for blk in code_blocks -%}
+    {%- liquid
+      assign c_code = blk.settings.code | strip
+      assign c_auto = blk.settings.auto_apply
+      assign c_kind = blk.settings.kind | default: 'order'
+      assign c_prio = blk.settings.priority | default: 10
+
+      assign c_start = 0
+      if blk.settings.starts_at != blank
+        assign tmp = blk.settings.starts_at | strip | append: ' ' | append: shop_offset
+        assign tmp_p = tmp | date: '%s'
+        if tmp_p != tmp
+          assign c_start = tmp_p | plus: 0
+        endif
+      endif
+
+      assign c_end = 0
+      if blk.settings.ends_at != blank
+        assign tmp = blk.settings.ends_at | strip | append: ' ' | append: shop_offset
+        assign tmp_p = tmp | date: '%s'
+        if tmp_p != tmp
+          assign c_end = tmp_p | plus: 0
+        endif
+      endif
+    -%}
+    {%- unless c_code == blank or c_auto == false -%}
+      {%- unless c_end > 0 and now_ts >= c_end -%}
+        {%- unless is_first -%},{%- endunless -%}
+        {%- assign is_first = false -%}
+        {"code": {{ c_code | json }}, "kind": {{ c_kind | json }}, "priority": {{ c_prio }}, "startsAt": {{ c_start }}, "endsAt": {{ c_end }}}
+      {%- endunless -%}
+    {%- endunless -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<script type="application/json" data-fpv2-discounts-config>
+  {
+    "sectionId": {{ section_id | json }},
+    "enabled": {% if section.settings.auto_apply_enabled %}true{% else %}false{% endif %},
+    "mode": {{ auto_mode | json }},
+    "root": {{ routes.root_url | json }},
+    "cartUrl": {{ routes.cart_url | json }},
+    "nowTs": {{ now_ts }},
+    "texts": {
+      "applied": {{ section.settings.code_applied_text | default: 'Aplicado' | json }},
+      "notApplicable": {{ section.settings.code_na_text | default: 'No aplicable a este carrito' | json }},
+      "applying": {{ section.settings.code_applying_text | default: 'Aplicando…' | json }}
+    },
+    "codes": [{{ fpv2_codes_json }}]
+  }
+</script>
+
+<script>
+  /* ============================================================
+     FPV2 Discount Engine — aplicación automática y apilada de códigos
+     ------------------------------------------------------------
+     Estrategia:
+       1) GET {root}discount/<CODE>?redirect={root}cart.js  →  Shopify registra el
+          código en la sesión/carrito y nos devuelve el carrito en JSON.
+       2) Se aplican de forma SECUENCIAL (Shopify acumula; product/order primero,
+          shipping al final).
+       3) Se verifica contra cart.discount_codes[].applicable para pintar el estado
+          real en la UI (no se asume éxito).
+       4) Para navegaciones duras (Free-shipping CTA / botón checkout) se construye
+          una cadena /discount/A?redirect=/discount/B?redirect=/checkout como
+          garantía server-side si el fetch falló o fue bloqueado.
+     ============================================================ */
+  (function () {
+    if (window.FPV2DiscountEngine) return;
+
+    const MAX_STACKABLE = 5; // límite Shopify: 5 product/order + 1 shipping
+
+    class FPV2DiscountEngine {
+      constructor(config) {
+        this.config = config;
+        this.root = (config.root || '/').replace(/\/$/, '') + '/';
+        this.inFlight = null;
+      }
+
+      /* ---------- helpers ---------- */
+
+      get codes() {
+        const list = (this.config.codes || []).filter((c) => {
+          if (!c || !c.code) return false;
+          const now = Math.floor(Date.now() / 1000);
+          if (c.startsAt && now < c.startsAt) return false;
+          if (c.endsAt && now >= c.endsAt) return false;
+          return true;
+        });
+
+        // product/order por prioridad, shipping SIEMPRE al final (Shopify lo evalúa último)
+        const stackable = list
+          .filter((c) => c.kind !== 'shipping')
+          .sort((a, b) => (a.priority || 0) - (b.priority || 0))
+          .slice(0, MAX_STACKABLE);
+        const shipping = list.filter((c) => c.kind === 'shipping').slice(0, 1);
+
+        return [...stackable, ...shipping];
+      }
+
+      get codeStrings() {
+        return this.codes.map((c) => c.code);
+      }
+
+      discountUrl(code, redirectTo) {
+        return (
+          this.root +
+          'discount/' +
+          encodeURIComponent(code) +
+          '?redirect=' +
+          encodeURIComponent(redirectTo)
+        );
+      }
+
+      /** URL encadenada para navegación dura: aplica todos los códigos y aterriza en `destination`. */
+      chainUrl(destination) {
+        const dest = destination || this.root + 'checkout';
+        const list = this.codeStrings;
+        if (!list.length) return dest;
+        return list.reduceRight((acc, code) => this.discountUrl(code, acc), dest);
+      }
+
+      async getCart() {
+        const res = await fetch(this.root + 'cart.js', {
+          credentials: 'same-origin',
+          headers: { Accept: 'application/json' }
+        });
+        return res.ok ? res.json() : null;
+      }
+
+      /** Códigos ya presentes en el carrito (normalizados a mayúsculas). */
+      static cartCodes(cart) {
+        return ((cart && cart.discount_codes) || []).reduce((map, d) => {
+          map[String(d.code).toUpperCase()] = d.applicable !== false;
+          return map;
+        }, {});
+      }
+
+      async applyOne(code) {
+        // El redirect a cart.js nos devuelve el estado del carrito en la misma request.
+        try {
+          const res = await fetch(this.discountUrl(code, this.root + 'cart.js'), {
+            credentials: 'same-origin',
+            headers: { Accept: 'application/json' }
+          });
+          if (!res.ok) return null;
+          const text = await res.text();
+          try {
+            return JSON.parse(text);
+          } catch (_) {
+            // El store no honró el redirect a .js → el código igual quedó en sesión.
+            return this.getCart();
+          }
+        } catch (err) {
+          console.warn('[fpv2-discounts] fallo aplicando', code, err);
+          return null;
+        }
+      }
+
+        /**
+        * Aplica todos los códigos configurados que falten en el carrito.
+        * @param { {requireCart?: boolean, silent?: boolean} } opts
+        * @returns {Promise<{cart: object|null, applied: string[], rejected: string[]}>}
+        */
+      applyAll(opts) {
+        if (this.inFlight) return this.inFlight;
+        this.inFlight = this._applyAll(opts || {}).finally(() => {
+          this.inFlight = null;
+        });
+        return this.inFlight;
+      }
+
+      async _applyAll({ requireCart = true, silent = false } = {}) {
+        const result = { cart: null, applied: [], rejected: [] };
+        if (!this.config.enabled) return result;
+
+        const wanted = this.codes;
+        if (!wanted.length) return result;
+
+        let cart = await this.getCart();
+        result.cart = cart;
+
+        // Sin items, Shopify no puede evaluar aplicabilidad de product/order discounts.
+        if (requireCart && (!cart || cart.item_count === 0)) return result;
+
+        const present = FPV2DiscountEngine.cartCodes(cart);
+        const missing = wanted.filter((c) => !(c.code.toUpperCase() in present));
+
+        if (!silent) this.setUiState(wanted.map((c) => c.code), 'applying');
+
+        for (const entry of missing) {
+          const updated = await this.applyOne(entry.code);
+          if (updated) cart = updated;
+        }
+
+        if (missing.length) cart = cart || (await this.getCart());
+        result.cart = cart;
+
+        const final = FPV2DiscountEngine.cartCodes(cart);
+        wanted.forEach((c) => {
+          const key = c.code.toUpperCase();
+          if (final[key] === true) result.applied.push(c.code);
+          else result.rejected.push(c.code);
+        });
+
+        if (!silent) {
+          this.setUiState(result.applied, 'applied');
+          this.setUiState(result.rejected, 'not-applicable');
+        }
+
+        document.dispatchEvent(
+          new CustomEvent('fpv2:discounts:applied', {
+            bubbles: true,
+            detail: { ...result, sectionId: this.config.sectionId }
+          })
+        );
+
+        return result;
+      }
+
+      /* ---------- UI ---------- */
+
+      setUiState(codes, state) {
+        if (!codes || !codes.length) return;
+        const upper = codes.map((c) => String(c).toUpperCase());
+        document.querySelectorAll('[data-fpv2-code]').forEach((el) => {
+          const value = el.querySelector('[class*="promo-code-value"]');
+          const code = (value ? value.textContent : '').trim().toUpperCase();
+          if (!code || upper.indexOf(code) === -1) return;
+
+          el.dataset.fpv2State = state;
+          const status = el.querySelector('[data-fpv2-code-status]');
+          if (!status) return;
+
+          if (state === 'applying') status.textContent = this.config.texts.applying;
+          else if (state === 'applied') status.textContent = this.config.texts.applied;
+          else if (state === 'not-applicable') status.textContent = this.config.texts.notApplicable;
+        });
+      }
+    }
+
+    window.FPV2DiscountEngine = FPV2DiscountEngine;
+  })();
+
+  /* Bootstrap por sección */
+  (function () {
+    const host = document.currentScript.closest('[data-fpv2-container], .shopify-section') || document;
+    const node = host.querySelector('[data-fpv2-discounts-config]');
+    if (!node) return;
+
+    let config;
+    try {
+      config = JSON.parse(node.textContent);
+    } catch (e) {
+      return console.warn('[fpv2-discounts] config inválida', e);
+    }
+
+    const engine = new window.FPV2DiscountEngine(config);
+    window.fpv2Discounts = engine; // acceso desde el JS de la sección
+
+    if (!config.enabled) return;
+
+    if (config.mode === 'on_load') {
+      // Registra los códigos en sesión aunque el carrito esté vacío (útil para Buy it Now).
+      const run = () => engine.applyAll({ requireCart: false, silent: true });
+      if ('requestIdleCallback' in window) requestIdleCallback(run, { timeout: 3000 });
+      else setTimeout(run, 1200);
+    }
+
+    // Re-verifica cuando el tema actualiza el carrito desde otro componente.
+    ['cart:update', 'cart:refresh'].forEach((evt) => {
+      document.addEventListener(evt, (e) => {
+        if (e.detail && e.detail.source === 'fpv2-discounts') return;
+        if (config.mode === 'on_checkout') return;
+        engine.applyAll({ requireCart: true, silent: true });
+      });
+    });
+  })();
+</script>
