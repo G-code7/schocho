@@ -1302,6 +1302,12 @@
     /* ===== Countdown + caducidad automática de códigos ===== */
     (function initPromoTimers() {
       const promo = section.querySelector('[data-fpv2-promo]');
+      {% render 'fpv2-discounts',
+        section: section,
+        section_id: section_id,
+        now_ts: now_ts,
+        shop_offset: shop_offset
+      %}
       if (!promo) return;
       const isEditor = !!(window.Shopify && window.Shopify.designMode);
       const cd = promo.querySelector('[data-fpv2-countdown]');
@@ -1365,6 +1371,7 @@
       }
       tick();
       timer = setInterval(tick, 1000);
+
     })();
 
     /* ===== Promo code copy ===== */
