@@ -877,9 +877,15 @@
             class="fpv2__promo-{{ section_id }}"
             data-fpv2-promo
             data-align="{{ align_promo }}"
-            {% if section.settings.promo_hide_on_expiry %}data-hide-on-expiry{% endif %}
-            {% if section.settings.promo_hide_when_no_codes %}data-hide-when-no-codes{% endif %}
-            {% if promo_expired_now and request.design_mode == false %}hidden style="display:none"{% endif %}
+            {% if section.settings.promo_hide_on_expiry %}
+              data-hide-on-expiry
+            {% endif %}
+            {% if section.settings.promo_hide_when_no_codes %}
+              data-hide-when-no-codes
+            {% endif %}
+            {% if promo_expired_now and request.design_mode == false %}
+              hidden style="display:none"
+            {% endif %}
           >
             <div class="fpv2__promo-head-{{ section_id }}">
               {% if section.settings.promo_badge != blank %}
@@ -987,14 +993,23 @@
                     data-fpv2-code
                     data-start="{{ c_start }}"
                     data-end="{{ c_end }}"
-                    {% if c_state == 'scheduled' and request.design_mode == false %}hidden{% endif %}
+                    {% if c_state == 'scheduled' and request.design_mode == false %}
+                      hidden
+                    {% endif %}
                     {{ c_attrs }}
                   >
                     {% if c_label != blank %}
                       <span class="fpv2__promo-code-label-{{ section_id }}">{{ c_label }}</span>
                     {% endif %}
                     <div class="fpv2__promo-code-box-{{ section_id }}">
-                      <code class="fpv2__promo-code-value-{{ section_id }}"><span class="fpv2__promo-code-status-{{ section_id }}" data-fpv2-code-status aria-live="polite"></span>{{ c_code | escape }}</code>
+                      <code class="fpv2__promo-code-value-{{ section_id }}"
+                        ><span
+                          class="fpv2__promo-code-status-{{ section_id }}"
+                          data-fpv2-code-status
+                          aria-live="polite"
+                        ></span>
+                        {{- c_code | escape -}}
+                      </code>
                       {% if section.settings.promo_code_copyable %}
                         <button
                           type="button"
@@ -1030,7 +1045,8 @@
                         {{- c_note -}}
                         {%- if section.settings.promo_code_show_expiry and c_end > 0 -%}
                           {%- if c_note != blank %} · {% endif -%}
-                          {{- section.settings.promo_code_expiry_prefix }} {{ c_end | date: section.settings.promo_code_expiry_format -}}
+                          {{- section.settings.promo_code_expiry_prefix }}
+                          {{ c_end | date: section.settings.promo_code_expiry_format -}}
                         {%- endif -%}
                       </p>
                     {% endif %}
@@ -1566,8 +1582,8 @@
           }
           if (!res.ok) throw new Error(data.description || data.message || 'Error');
 
-          if (data.sections) refreshCartSections(data.sections);
-          const itemCount = data.items?.reduce((s, it) => s + it.quantity, 0) || quantity;
+          {% comment %} if (data.sections) refreshCartSections(data.sections);
+          const itemCount = data.items?.reduce((s, it) => s + it.quantity, 0) || quantity; {% endcomment %}
 
           if (window.CartAddEvent) {
             document.dispatchEvent(new CartAddEvent(data, 'fpv2-' + sectionId, {
@@ -1628,7 +1644,11 @@
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.description || data.message || 'Error');
-          window.location.href = '/checkout';
+          // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
+          const dest = (window.Shopify?.routes?.root || '/') + 'checkout';
+          window.location.href = window.fpv2Discounts
+            ? window.fpv2Discounts.chainUrl(dest)
+            : dest;
         } catch (err) {
           console.error('Featured Product V2 - Free shipping CTA error:', err);
           alert(err.message || 'Error adding to cart.');
@@ -1898,12 +1918,22 @@
       "placeholder": "2026-12-31 23:59",
       "info": "Format YYYY-MM-DD HH:MM, store time zone. The code disappears automatically at that moment."
     },
-    { "type": "text", "id": "promo_code_note", "label": "Code note (optional)", "placeholder": "15% off your first order" },
+    {
+      "type": "text",
+      "id": "promo_code_note",
+      "label": "Code note (optional)",
+      "placeholder": "15% off your first order"
+    },
     { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
     { "type": "text", "id": "promo_code_label", "label": "Code label", "default": "Your code:" },
     { "type": "text", "id": "promo_code_copy_text", "label": "Copy button text", "default": "Copy" },
     { "type": "text", "id": "promo_code_copied_text", "label": "Copied feedback text", "default": "Copied!" },
-    { "type": "checkbox", "id": "promo_code_show_expiry", "label": "Show expiry date under each code", "default": false },
+    {
+      "type": "checkbox",
+      "id": "promo_code_show_expiry",
+      "label": "Show expiry date under each code",
+      "default": false
+    },
     { "type": "text", "id": "promo_code_expiry_prefix", "label": "Expiry prefix", "default": "Valid until" },
     {
       "type": "select",
@@ -2123,30 +2153,54 @@
       "default": "inherit",
       "info": "Overrides every element on screens under 750px."
     },
-    { "type": "select", "id": "title_align", "label": "Title alignment", "options": [
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Title alignment",
+      "options": [
         { "value": "inherit", "label": "Same as general" },
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
-      ], "default": "inherit" },
-    { "type": "select", "id": "price_align", "label": "Price alignment", "options": [
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "price_align",
+      "label": "Price alignment",
+      "options": [
         { "value": "inherit", "label": "Same as general" },
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
-      ], "default": "inherit" },
-    { "type": "select", "id": "promo_align", "label": "Discount block alignment", "options": [
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "promo_align",
+      "label": "Discount block alignment",
+      "options": [
         { "value": "inherit", "label": "Same as general" },
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
-      ], "default": "inherit" },
-    { "type": "select", "id": "badges_align", "label": "Badges alignment", "options": [
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "badges_align",
+      "label": "Badges alignment",
+      "options": [
         { "value": "inherit", "label": "Same as general" },
         { "value": "left", "label": "Left" },
         { "value": "center", "label": "Center" },
         { "value": "right", "label": "Right" }
-      ], "default": "inherit" },
+      ],
+      "default": "inherit"
+    },
     {
       "type": "select",
       "id": "tab_content_align",
@@ -2305,7 +2359,12 @@
       "name": "Discount code",
       "settings": [
         { "type": "text", "id": "code", "label": "Code", "default": "WELCOME15" },
-        { "type": "text", "id": "label", "label": "Label (optional)", "info": "Leave empty to use the section's code label." },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label (optional)",
+          "info": "Leave empty to use the section's code label."
+        },
         { "type": "text", "id": "note", "label": "Note (optional)", "placeholder": "15% off your first order" },
         {
           "type": "text",
