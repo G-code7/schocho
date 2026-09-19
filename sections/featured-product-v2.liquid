@@ -1103,7 +1103,13 @@
               </button>
             </div>
 
-            {% if section.settings.show_buy_now %}
+            {%- liquid
+              assign fpv2_show_buy_now = section.settings.show_buy_now
+              if section.settings.buy_now_hide_with_codes and section.settings.auto_apply_enabled and code_blocks.size > 0
+                assign fpv2_show_buy_now = false
+              endif
+            -%}
+            {% if fpv2_show_buy_now %}
               <div class="fpv2__dynamic-{{ section_id }}">
                 {{ form | payment_button }}
               </div>
@@ -1270,6 +1276,14 @@
   {% endif %}
 </section>
 
+{%- comment -%} Motor de cupones automaticos (multi-codigo). Debe ir a nivel HTML, nunca dentro de <script>. {%- endcomment -%}
+{% render 'fpv2-discounts',
+  section: section,
+  section_id: section_id,
+  now_ts: now_ts,
+  shop_offset: shop_offset
+%}
+
 <script>
   (function () {
     const section = document.getElementById('{{ section_id }}');
@@ -1323,12 +1337,6 @@
     /* ===== Countdown + caducidad automática de códigos ===== */
     (function initPromoTimers() {
       const promo = section.querySelector('[data-fpv2-promo]');
-      {% render 'fpv2-discounts',
-        section: section,
-        section_id: section_id,
-        now_ts: now_ts,
-        shop_offset: shop_offset
-      %}
       if (!promo) return;
       const isEditor = !!(window.Shopify && window.Shopify.designMode);
       const cd = promo.querySelector('[data-fpv2-countdown]');
@@ -1564,7 +1572,11 @@
             body: JSON.stringify(body)
           });
           const data = await res.json();
-          // Aplica los cupones automáticos ya con el carrito poblado.
+          if (!res.ok) throw new Error(data.description || data.message || 'Error');
+
+          const itemCount = data.items?.reduce((s, it) => s + it.quantity, 0) || quantity;
+
+          // Cupones automáticos: ya hay items en el carrito, Shopify puede evaluar aplicabilidad.
           let discountResult = null;
           if (window.fpv2Discounts) {
             discountResult = await window.fpv2Discounts.applyAll({ requireCart: true });
@@ -1580,10 +1592,6 @@
           } else if (data.sections) {
             refreshCartSections(data.sections);
           }
-          if (!res.ok) throw new Error(data.description || data.message || 'Error');
-
-          {% comment %} if (data.sections) refreshCartSections(data.sections);
-          const itemCount = data.items?.reduce((s, it) => s + it.quantity, 0) || quantity; {% endcomment %}
 
           if (window.CartAddEvent) {
             document.dispatchEvent(new CartAddEvent(data, 'fpv2-' + sectionId, {
@@ -1925,6 +1933,46 @@
       "placeholder": "15% off your first order"
     },
     { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
+
+    { "type": "header", "content": "Cupones automáticos" },
+    {
+      "type": "paragraph",
+      "content": "Requiere que cada código tenga habilitadas las Combinaciones en Shopify Admin → Discounts. Máximo 5 códigos de producto/pedido + 1 de envío por orden. Los descuentos automáticos no combinan con códigos."
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_apply_enabled",
+      "label": "Aplicar cupones automáticamente",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "auto_apply_mode",
+      "label": "Cuándo aplicarlos",
+      "options": [
+        { "value": "on_load", "label": "Al cargar la página (cubre Buy it Now)" },
+        { "value": "on_atc", "label": "Al agregar al carrito (recomendado)" },
+        { "value": "on_checkout", "label": "Solo al ir al checkout" }
+      ],
+      "default": "on_atc"
+    },
+    {
+      "type": "checkbox",
+      "id": "promo_auto_apply",
+      "label": "Incluir también el código legacy de la sección",
+      "default": true,
+      "info": "Se refiere al campo 'Discount code' de arriba, no a los bloques."
+    },
+    {
+      "type": "checkbox",
+      "id": "buy_now_hide_with_codes",
+      "label": "Ocultar Buy it Now cuando hay cupones activos",
+      "default": false,
+      "info": "El checkout dinámico se salta el carrito y puede perder los cupones apilados."
+    },
+    { "type": "text", "id": "code_applied_text", "label": "Texto: aplicado", "default": "Aplicado ✓" },
+    { "type": "text", "id": "code_applying_text", "label": "Texto: aplicando", "default": "Aplicando…" },
+    { "type": "text", "id": "code_na_text", "label": "Texto: no aplicable", "default": "No aplica a este carrito" },
     { "type": "text", "id": "promo_code_label", "label": "Code label", "default": "Your code:" },
     { "type": "text", "id": "promo_code_copy_text", "label": "Copy button text", "default": "Copy" },
     { "type": "text", "id": "promo_code_copied_text", "label": "Copied feedback text", "default": "Copied!" },
@@ -2359,6 +2407,29 @@
       "name": "Discount code",
       "settings": [
         { "type": "text", "id": "code", "label": "Code", "default": "WELCOME15" },
+        { "type": "checkbox", "id": "auto_apply", "label": "Aplicar automáticamente", "default": true },
+        {
+          "type": "select",
+          "id": "kind",
+          "label": "Tipo de descuento",
+          "options": [
+            { "value": "product", "label": "Producto (% o monto sobre ítems)" },
+            { "value": "order", "label": "Pedido (% o monto sobre el total)" },
+            { "value": "shipping", "label": "Envío gratis" }
+          ],
+          "default": "order",
+          "info": "Define el orden de aplicación. Los de envío siempre van al final."
+        },
+        {
+          "type": "range",
+          "id": "priority",
+          "label": "Prioridad",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "default": 10,
+          "info": "Menor número = se aplica antes."
+        },
         {
           "type": "text",
           "id": "label",
