@@ -1704,9 +1704,9 @@
           // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
           const root = window.Shopify?.routes?.root || '/';
           const dest = root + 'checkout';
-          window.location.href = fpv2BuildChain(root, freeship.dataset.discountCodes, dest);
+          window.location.href = window.fpv2Discounts
             ? window.fpv2Discounts.chainUrl(dest)               // motor: prioridad + límites
-            : fpv2BuildChain(root, freeship.dataset.discountCodes, dest);
+            : fpv2BuildChain(root, freeship.dataset.discountCodes, dest); // fallback por atributo
         } catch (err) {
           console.error('Featured Product V2 - Free shipping CTA error:', err);
           alert(err.message || 'Error adding to cart.');
