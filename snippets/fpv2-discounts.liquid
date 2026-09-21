@@ -42,7 +42,7 @@
     -%}
     {%- if lc_valid -%}
       {%- assign is_first = false -%}
-      {"code": {{ section.settings.promo_code | strip | json }}, "kind": "order", "priority": 0}
+      {"code": {{ section.settings.promo_code | strip | json }}, "kind": {{ section.settings.promo_code_kind | default: 'order' | json }}, "priority": 0}
     {%- endif -%}
   {%- endif -%}
 
