@@ -742,7 +742,7 @@
         "promo_code_note": "",
         "promo_code_copyable": true,
         "auto_apply_enabled": true,
-        "auto_apply_mode": "on_atc",
+        "auto_apply_mode": "on_load",
         "promo_auto_apply": true,
         "buy_now_hide_with_codes": false,
         "code_applied_text": "Aplicado ✓",
