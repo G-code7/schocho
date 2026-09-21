@@ -1702,10 +1702,11 @@
           const data = await res.json();
           if (!res.ok) throw new Error(data.description || data.message || 'Error');
           // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
-          const dest = (window.Shopify?.routes?.root || '/') + 'checkout';
+          const root = window.Shopify?.routes?.root || '/';
+          const dest = root + 'checkout';
           window.location.href = window.fpv2Discounts
-            ? window.fpv2Discounts.chainUrl(dest)
-            : dest;
+            ? window.fpv2Discounts.chainUrl(dest)               // motor: prioridad + límites
+            : fpv2BuildChain(root, freeship.dataset.discountCodes, dest);
         } catch (err) {
           console.error('Featured Product V2 - Free shipping CTA error:', err);
           alert(err.message || 'Error adding to cart.');
