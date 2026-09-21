@@ -1659,6 +1659,20 @@
       });
     }
 
+    /* Cadena de cupones desde atributo (fallback si el motor no está cargado). */
+    function fpv2BuildChain(root, codesRaw, dest) {
+      const codes = (codesRaw || '')
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+      if (!codes.length) return dest;
+      // /discount/A?redirect=/discount/B?redirect=/checkout  (redirects anidados y codificados)
+      return codes.reduceRight(
+        (acc, code) =>
+          root + 'discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(acc),
+        dest
+      );
+    }
     /* ===== Free-shipping CTA: add N units (+ optional extra) → checkout ===== */
     const freeship = section.querySelector('[data-fpv2-freeship]');
     if (freeship) {
