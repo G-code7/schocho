@@ -66,7 +66,41 @@
   endif
 
   assign code_blocks = section.blocks | where: 'type', 'discount_code'
+
+
+  # ---- Multi-código: cadena para el CTA de checkout directo ----
+  # Nota: shipping SIEMPRE al final (Shopify lo evalúa último). El orden
+  # entre product/order aquí es el de los bloques; si necesitas prioridad
+  # real usa el motor fpv2Discounts (ver JS).
+  assign fpv2_chain_arr = ''
+  assign fpv2_ship_arr = ''
+  for blk in code_blocks
+    assign _code = blk.settings.code | strip
+    assign _auto = blk.settings.auto_apply
+    assign _kind = blk.settings.kind | default: 'order'
+
+    assign _end = 0
+    if blk.settings.ends_at != blank
+      assign _tmp = blk.settings.ends_at | strip | append: ' ' | append: shop_offset
+      assign _tmp_p = _tmp | date: '%s'
+      if _tmp_p != _tmp
+        assign _end = _tmp_p | plus: 0
+      endif
+    endif
+
+    if _code != blank and _auto != false
+      unless _end > 0 and now_ts >= _end
+        if _kind == 'shipping'
+          assign fpv2_ship_arr = fpv2_ship_arr | append: ',' | append: _code
+        else
+          assign fpv2_chain_arr = fpv2_chain_arr | append: ',' | append: _code
+        endif
+      endunless
+    endif
+  endfor
+  assign fpv2_chain_codes = fpv2_chain_arr | append: fpv2_ship_arr | remove_first: ','
 %}
+
 
 {% style %}
   .fpv2-{{ section_id }} {
