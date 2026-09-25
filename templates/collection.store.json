@@ -822,6 +822,14 @@
         "atc_bg": "#3f2459",
         "atc_color": "#ffffff",
         "atc_bg_hover": "#6b4097",
+        "enable_subscription": true,
+        "selling_plan_id": "",
+        "subscription_discount": 20,
+        "sub_title": "Subscribe & Save",
+        "sub_subtitle": "15 servings per bag",
+        "sub_badge_text": "Most Popular",
+        "onetime_title": "One-time purchase",
+        "onetime_subtitle": "Standard delivery",
         "padding_top": 80,
         "padding_bottom": 80
       }
@@ -1046,6 +1054,14 @@
         "atc_bg": "#709089",
         "atc_color": "#ffffff",
         "atc_bg_hover": "#5a4a3f",
+        "enable_subscription": true,
+        "selling_plan_id": "",
+        "subscription_discount": 15,
+        "sub_title": "Subscribe & Save",
+        "sub_subtitle": "15 servings per bag",
+        "sub_badge_text": "Most Popular",
+        "onetime_title": "One-time purchase",
+        "onetime_subtitle": "Standard delivery",
         "padding_top": 80,
         "padding_bottom": 80
       }
@@ -1270,6 +1286,14 @@
         "atc_bg": "#c85b42",
         "atc_color": "#ffffff",
         "atc_bg_hover": "#693c20",
+        "enable_subscription": true,
+        "selling_plan_id": "",
+        "subscription_discount": 15,
+        "sub_title": "Subscribe & Save",
+        "sub_subtitle": "15 servings per bag",
+        "sub_badge_text": "Most Popular",
+        "onetime_title": "One-time purchase",
+        "onetime_subtitle": "Standard delivery",
         "padding_top": 60,
         "padding_bottom": 60
       }
