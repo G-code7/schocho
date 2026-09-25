@@ -778,6 +778,133 @@
   [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-status-{{ section_id }} { color: #0a7d32; }
   [data-fpv2-code][data-fpv2-state="not-applicable"] .fpv2__promo-code-status-{{ section_id }} { color: #a33; }
   [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-copy-{{ section_id }} { display: none; }
+  /* ===== Purchase options (Subscribe & Save / One-time) ===== */
+  .fpv2__po-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .fpv2__po-option-{{ section_id }} {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid {{ section.settings.qty_border }};
+    border-radius: {{ section.settings.button_radius }}px;
+    background: {{ section.settings.qty_bg }};
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fpv2__po-option-{{ section_id }}:hover { border-color: {{ section.settings.accent_color }}; }
+  .fpv2__po-option-{{ section_id }}.is-active {
+    border-color: {{ section.settings.accent_color }};
+    background: {{ section.settings.accent_soft }};
+  }
+  /* Floating "Most Popular" badge (subscription option) */
+  .fpv2__po-option-{{ section_id }}[data-po-type="subscription"][data-badge]::before {
+    content: attr(data-badge);
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: {{ section.settings.accent_color }};
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    line-height: 1.4;
+  }
+  /* Native radio kept for a11y, visually hidden */
+  .fpv2__po-radio-input-{{ section_id }} {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  /* Custom radio */
+  .fpv2__po-radio-{{ section_id }} {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    border: 2px solid {{ section.settings.qty_border }};
+    border-radius: 50%;
+    background: {{ section.settings.qty_bg }};
+    position: relative;
+    transition: border-color .2s ease;
+  }
+  .fpv2__po-option-{{ section_id }}.is-active .fpv2__po-radio-{{ section_id }} {
+    border-color: {{ section.settings.accent_color }};
+  }
+  .fpv2__po-option-{{ section_id }}.is-active .fpv2__po-radio-{{ section_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: {{ section.settings.accent_color }};
+  }
+  .fpv2__po-radio-input-{{ section_id }}:focus-visible ~ .fpv2__po-radio-{{ section_id }} {
+    box-shadow: 0 0 0 3px {{ section.settings.accent_soft }};
+  }
+  .fpv2__po-body-{{ section_id }} { flex: 1; min-width: 0; }
+  .fpv2__po-head-{{ section_id }} {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .fpv2__po-titles-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .fpv2__po-title-{{ section_id }} {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: {{ section.settings.title_color }};
+  }
+  .fpv2__po-subtitle-{{ section_id }} {
+    font-size: 13px;
+    line-height: 1.3;
+    color: {{ section.settings.description_color }};
+  }
+  .fpv2__po-prices-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .fpv2__po-price-{{ section_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: {{ section.settings.accent_color }};
+  }
+  .fpv2__po-compare-{{ section_id }} {
+    font-size: 13px;
+    line-height: 1.2;
+    color: {{ section.settings.price_color }};
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  /* Safeguard: hidden price parts stay hidden inside the flex price row */
+  .fpv2__price-compare-{{ section_id }}[hidden],
+  .fpv2__price-save-{{ section_id }}[hidden] { display: none; }
+
 {% endstyle %}
 
 <section
@@ -857,18 +984,38 @@
         </h2>
 
         {%- comment -%} Price {%- endcomment -%}
-        <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}">
-          <span class="fpv2__price-current-{{ section_id }}">{{ v.price | money }}</span>
-          {% if v.compare_at_price > v.price %}
-            <span class="fpv2__price-compare-{{ section_id }}">{{ v.compare_at_price | money }}</span>
-            {% assign pct = v.compare_at_price
-              | minus: v.price
-              | times: 100.0
-              | divided_by: v.compare_at_price
-              | round
-            %}
-            <span class="fpv2__price-save-{{ section_id }}">-{{ pct }}%</span>
-          {% endif %}
+        {%- liquid
+          assign fpv2_sub_enabled = section.settings.enable_subscription
+          assign fpv2_sub_discount = section.settings.subscription_discount | default: 15
+          assign fpv2_sub_keep = 100 | minus: fpv2_sub_discount
+          assign fpv2_sub_price = v.price | times: fpv2_sub_keep | divided_by: 100
+
+          assign fpv2_has_compare = false
+          if v.compare_at_price > v.price
+            assign fpv2_has_compare = true
+          endif
+
+          assign pct = 0
+          if fpv2_has_compare
+            assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
+          endif
+        -%}
+        <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}" data-fpv2-price>
+          {%- if fpv2_sub_enabled -%}
+            {%- comment -%} Default active option is subscription → render its price server-side {%- endcomment -%}
+            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ fpv2_sub_price | money }}</span>
+            <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.price | money }}</span>
+            <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ fpv2_sub_discount }}%</span>
+          {%- else -%}
+            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ v.price | money }}</span>
+            {%- if fpv2_has_compare -%}
+              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.compare_at_price | money }}</span>
+              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ pct }}%</span>
+            {%- else -%}
+              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare hidden></span>
+              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save hidden></span>
+            {%- endif -%}
+          {%- endif -%}
         </div>
 
         {%- comment -%} Free-shipping CTA (adds N units → checkout) {%- endcomment -%}
@@ -1097,6 +1244,80 @@
           {% form 'product', product, id: form_id, class: form_class, novalidate: 'novalidate' %}
             <input type="hidden" name="id" value="{{ v.id }}" data-fpv2-variant>
 
+            {%- comment -%} ============ Purchase options (Subscribe & Save / One-time) ============ {%- endcomment -%}
+            {%- if section.settings.enable_subscription -%}
+              {%- liquid
+                assign po_discount = section.settings.subscription_discount | default: 15
+                assign po_keep = 100 | minus: po_discount
+                assign po_sub_price = v.price | times: po_keep | divided_by: 100
+
+                assign po_has_compare = false
+                if v.compare_at_price > v.price
+                  assign po_has_compare = true
+                endif
+                assign po_orig_pct = 0
+                if po_has_compare
+                  assign po_orig_pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
+                endif
+              -%}
+              <div
+                class="fpv2__po-{{ section_id }}"
+                data-fpv2-po
+                data-regular-price="{{ v.price | money }}"
+                data-sub-price="{{ po_sub_price | money }}"
+                data-compare-price="{{ v.compare_at_price | money }}"
+                data-has-compare="{{ po_has_compare }}"
+                data-sub-pct="{{ po_discount }}"
+                data-orig-pct="{{ po_orig_pct }}"
+                data-plan="{{ section.settings.selling_plan_id | strip }}"
+              >
+                {%- comment -%} Option 1: Subscription (active by default) {%- endcomment -%}
+                <label
+                  class="fpv2__po-option-{{ section_id }} is-active"
+                  data-po-type="subscription"
+                  {%- if section.settings.sub_badge_text != blank %} data-badge="{{ section.settings.sub_badge_text }}"{% endif -%}
+                >
+                  <input type="radio" name="fpv2_po_{{ section_id }}" value="subscription" class="fpv2__po-radio-input-{{ section_id }}" checked>
+                  <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
+                  <span class="fpv2__po-body-{{ section_id }}">
+                    <span class="fpv2__po-head-{{ section_id }}">
+                      <span class="fpv2__po-titles-{{ section_id }}">
+                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.sub_title | default: 'Subscribe & Save' }}</span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.sub_subtitle | default: '15 servings per bag' }}</span>
+                      </span>
+                      <span class="fpv2__po-prices-{{ section_id }}">
+                        <s class="fpv2__po-compare-{{ section_id }}">{{ v.price | money }}</s>
+                        <span class="fpv2__po-price-{{ section_id }}">{{ po_sub_price | money }}</span>
+                      </span>
+                    </span>
+                  </span>
+                </label>
+
+                {%- comment -%} Option 2: One-time purchase {%- endcomment -%}
+                <label
+                  class="fpv2__po-option-{{ section_id }}"
+                  data-po-type="onetime"
+                >
+                  <input type="radio" name="fpv2_po_{{ section_id }}" value="onetime" class="fpv2__po-radio-input-{{ section_id }}">
+                  <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
+                  <span class="fpv2__po-body-{{ section_id }}">
+                    <span class="fpv2__po-head-{{ section_id }}">
+                      <span class="fpv2__po-titles-{{ section_id }}">
+                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.onetime_title | default: 'One-time purchase' }}</span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.onetime_subtitle | default: 'Standard delivery' }}</span>
+                      </span>
+                      <span class="fpv2__po-prices-{{ section_id }}">
+                        <span class="fpv2__po-price-{{ section_id }}">{{ v.price | money }}</span>
+                      </span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              {%- comment -%} Selling plan pre-set to subscription (default active) {%- endcomment -%}
+              <input type="hidden" name="selling_plan" value="{{ section.settings.selling_plan_id | strip }}" data-fpv2-selling-plan>
+            {%- endif -%}
+
             <div class="fpv2__qty-row-{{ section_id }}">
               <div class="fpv2__qty-{{ section_id }}">
                 <button
@@ -1145,7 +1366,7 @@
               endif
             -%}
             {% if fpv2_show_buy_now %}
-              <div class="fpv2__dynamic-{{ section_id }}">
+              <div class="fpv2__dynamic-{{ section_id }}"{% if section.settings.enable_subscription %} style="display:none;"{% endif %}>
                 {{ form | payment_button }}
               </div>
             {% endif %}
@@ -1543,6 +1764,73 @@
       input.addEventListener('change', () => { let val = parseInt(input.value) || 1; if (val < 1) val = 1; input.value = val; });
     })();
 
+    /* ===== Purchase options: Subscribe & Save / One-time ===== */
+    (function initPurchaseOptions() {
+      const root = section.querySelector('[data-fpv2-po]');
+      if (!root) return;
+
+      const options      = Array.from(root.querySelectorAll('[data-po-type]'));
+      const planInput    = section.querySelector('[data-fpv2-selling-plan]');
+      const dynamic      = section.querySelector('.fpv2__dynamic-' + sectionId);
+      const priceCurrent = section.querySelector('[data-fpv2-price-current]');
+      const priceCompare = section.querySelector('[data-fpv2-price-compare]');
+      const priceSave    = section.querySelector('[data-fpv2-price-save]');
+
+      const data = {
+        regular   : root.dataset.regularPrice || '',
+        sub       : root.dataset.subPrice || '',
+        compare   : root.dataset.comparePrice || '',
+        hasCompare: root.dataset.hasCompare === 'true',
+        subPct    : root.dataset.subPct || '',
+        origPct   : root.dataset.origPct || '',
+        plan      : (root.dataset.plan || '').trim()
+      };
+
+      function toggleHidden(el, show) {
+        if (!el) return;
+        if (show) el.removeAttribute('hidden');
+        else el.setAttribute('hidden', '');
+      }
+
+      function setOption(type) {
+        const isSub = type === 'subscription';
+
+        options.forEach((o) => {
+          const on = o.dataset.poType === type;
+          o.classList.toggle('is-active', on);
+          const radio = o.querySelector('input[type="radio"]');
+          if (radio) radio.checked = on;
+        });
+
+        // Selling plan: set on subscription, clear on one-time
+        if (planInput) planInput.value = isSub ? data.plan : '';
+
+        // Main section price
+        if (isSub) {
+          if (priceCurrent) priceCurrent.textContent = data.sub;
+          if (priceCompare) { priceCompare.textContent = data.regular; toggleHidden(priceCompare, !!data.regular); }
+          if (priceSave)    { priceSave.textContent = '-' + data.subPct + '%'; toggleHidden(priceSave, !!data.subPct); }
+        } else {
+          if (priceCurrent) priceCurrent.textContent = data.regular;
+          if (priceCompare) { priceCompare.textContent = data.compare; toggleHidden(priceCompare, data.hasCompare); }
+          if (priceSave)    { priceSave.textContent = '-' + data.origPct + '%'; toggleHidden(priceSave, data.hasCompare); }
+        }
+
+        // Native dynamic checkout can't carry a selling plan → hide it on subscription
+        if (dynamic) dynamic.style.display = isSub ? 'none' : '';
+      }
+
+      options.forEach((o) => {
+        o.addEventListener('click', () => setOption(o.dataset.poType));
+        const radio = o.querySelector('input[type="radio"]');
+        if (radio) radio.addEventListener('change', () => { if (radio.checked) setOption(o.dataset.poType); });
+      });
+
+      // Initial sync (subscription is active by default)
+      const active = options.find((o) => o.classList.contains('is-active')) || options[0];
+      if (active) setOption(active.dataset.poType);
+    })();
+
     /* ===== Cart sections + drawer (reused, proven) ===== */
     function getCartSectionIds() {
       const ids = new Set();
@@ -1596,8 +1884,17 @@
 
         try {
           const sectionIds = getCartSectionIds();
+
+          // Subscription: attach selling_plan when the subscription option is active.
+          const item = { id: parseInt(variantId, 10), quantity };
+          const planInput = section.querySelector('[data-fpv2-selling-plan]');
+          const sellingPlan = planInput && planInput.value ? parseInt(planInput.value, 10) : null;
+          if (sellingPlan && Number.isFinite(sellingPlan)) {
+            item.selling_plan = sellingPlan;
+          }
+
           const body = {
-            items: [{ id: parseInt(variantId, 10), quantity }],
+            items: [item],
             sections: sectionIds.join(','),
             sections_url: window.location.pathname
           };
@@ -2428,6 +2725,36 @@
     { "type": "color", "id": "atc_bg", "label": "Add to cart background", "default": "#370c07" },
     { "type": "color", "id": "atc_color", "label": "Add to cart text", "default": "#ffffff" },
     { "type": "color", "id": "atc_bg_hover", "label": "Add to cart hover", "default": "#54130b" },
+
+    { "type": "header", "content": "Subscription (Purchase Options)" },
+    {
+      "type": "checkbox",
+      "id": "enable_subscription",
+      "label": "Enable subscription selector",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "selling_plan_id",
+      "label": "Selling Plan ID",
+      "info": "Numeric Shopify Selling Plan ID (e.g. 3233841344). Leave empty to add as one-time only."
+    },
+    {
+      "type": "range",
+      "id": "subscription_discount",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "label": "Subscription discount (visual)",
+      "default": 15,
+      "info": "Used for the on-page price calculation only. The real discount comes from the Selling Plan."
+    },
+    { "type": "text", "id": "sub_title", "label": "Subscription title", "default": "Subscribe & Save" },
+    { "type": "text", "id": "sub_subtitle", "label": "Subscription subtitle", "default": "15 servings per bag" },
+    { "type": "text", "id": "sub_badge_text", "label": "Subscription badge", "default": "Most Popular" },
+    { "type": "text", "id": "onetime_title", "label": "One-time title", "default": "One-time purchase" },
+    { "type": "text", "id": "onetime_subtitle", "label": "One-time subtitle", "default": "Standard delivery" },
 
     { "type": "header", "content": "Section Spacing" },
     {
