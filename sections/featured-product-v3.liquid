@@ -1,0 +1,2925 @@
+{%- comment -%}
+  Featured Product V3
+  ------------------------------------------------------------------
+  Changes from V2:
+  - Purchase options selector: Subscribe & Save / One-time purchase
+    (schema group "Subscription (Purchase Options)").
+  - Hidden `selling_plan` input inside the product form, synced by JS.
+  - /cart/add.js sends `selling_plan` on the item when a subscription
+    is selected. Coupon engine, cart sections and drawer untouched.
+  - Dynamic checkout (Buy it Now) is hidden while a subscription is
+    active: native payment buttons don't carry selling plans.
+  - Headline price is hidden when the selector is on, so the price is
+    shown once, inside the option cards. Toggle to restore it.
+  - Responsive pass for the selector on the existing 749px breakpoint.
+
+  CSS naming stays `fpv2__*` on purpose: renaming would break any
+  existing custom CSS targeting this section.
+{%- endcomment -%}
+{% liquid
+  assign section_id = section.id
+  assign product = section.settings.product
+
+  # ---- Resolver variante fija (override por schema o primera disponible) ----
+  assign v = product.selected_or_first_available_variant
+  if section.settings.variant_id != blank
+    for variant in product.variants
+      if variant.id == section.settings.variant_id
+        assign v = variant
+        break
+      endif
+    endfor
+  endif
+
+  # ---- IDs del form nativo ----
+  assign form_id = 'fpv2-form-' | append: section_id
+  assign form_class = 'fpv2__buy-' | append: section_id
+
+  # ---- Alineación: resuelve "inherit" contra la alineación general ----
+  assign align_g = section.settings.text_align | default: 'left'
+  assign align_title = section.settings.title_align
+  if align_title == blank or align_title == 'inherit'
+    assign align_title = align_g
+  endif
+  assign align_price = section.settings.price_align
+  if align_price == blank or align_price == 'inherit'
+    assign align_price = align_g
+  endif
+  assign align_desc = section.settings.description_text_align
+  if align_desc == blank or align_desc == 'inherit'
+    assign align_desc = align_g
+  endif
+  assign align_promo = section.settings.promo_align
+  if align_promo == blank or align_promo == 'inherit'
+    assign align_promo = align_g
+  endif
+  assign align_badges = section.settings.badges_align
+  if align_badges == blank or align_badges == 'inherit'
+    assign align_badges = align_g
+  endif
+  assign align_tabs = section.settings.tab_content_align | default: 'left'
+  assign align_m = section.settings.text_align_mobile | default: 'inherit'
+
+  # ---- Fechas: se interpretan en la zona horaria de la tienda ----
+  assign shop_offset = 'now' | date: '%z'
+  assign now_ts = 'now' | date: '%s' | plus: 0
+
+  # Fin del countdown -> timestamp (segundos)
+  assign cd_end_ts = 0
+  if section.settings.countdown_enabled
+    assign cd_mo = section.settings.cd_month | prepend: '0' | slice: -2, 2
+    assign cd_d = section.settings.cd_day | prepend: '0' | slice: -2, 2
+    assign cd_h = section.settings.cd_hour | prepend: '0' | slice: -2, 2
+    assign cd_mi = section.settings.cd_minute | prepend: '0' | slice: -2, 2
+    assign cd_raw = section.settings.cd_year | append: '-' | append: cd_mo | append: '-' | append: cd_d | append: ' ' | append: cd_h | append: ':' | append: cd_mi | append: ' ' | append: shop_offset
+    assign cd_parsed = cd_raw | date: '%s'
+    if cd_parsed != cd_raw
+      assign cd_end_ts = cd_parsed | plus: 0
+    endif
+  endif
+
+  assign promo_expired_now = false
+  if section.settings.promo_hide_on_expiry and cd_end_ts > 0 and now_ts >= cd_end_ts
+    assign promo_expired_now = true
+  endif
+
+  assign code_blocks = section.blocks | where: 'type', 'discount_code'
+
+
+  # ---- Multi-código: cadena para el CTA de checkout directo ----
+  # Nota: shipping SIEMPRE al final (Shopify lo evalúa último). El orden
+  # entre product/order aquí es el de los bloques; si necesitas prioridad
+  # real usa el motor fpv2Discounts (ver JS).
+  assign fpv2_chain_arr = ''
+  assign fpv2_ship_arr = ''
+  for blk in code_blocks
+    assign _code = blk.settings.code | strip
+    assign _auto = blk.settings.auto_apply
+    assign _kind = blk.settings.kind | default: 'order'
+
+    assign _end = 0
+    if blk.settings.ends_at != blank
+      assign _tmp = blk.settings.ends_at | strip | append: ' ' | append: shop_offset
+      assign _tmp_p = _tmp | date: '%s'
+      if _tmp_p != _tmp
+        assign _end = _tmp_p | plus: 0
+      endif
+    endif
+
+    if _code != blank and _auto != false
+      unless _end > 0 and now_ts >= _end
+        if _kind == 'shipping'
+          assign fpv2_ship_arr = fpv2_ship_arr | append: ',' | append: _code
+        else
+          assign fpv2_chain_arr = fpv2_chain_arr | append: ',' | append: _code
+        endif
+      endunless
+    endif
+  endfor
+  assign fpv2_chain_codes = fpv2_chain_arr | append: fpv2_ship_arr | remove_first: ','
+%}
+
+
+{% style %}
+  .fpv2-{{ section_id }} {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.section_bg }};
+    border-bottom: {{ section.settings.section_border_bottom_width }}px solid {{ section.settings.section_border_bottom_color }};
+  }
+
+  .fpv2__container-{{ section_id }} {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: {{ section.settings.media_text_ratio }};
+    gap: {{ section.settings.column_gap }}px;
+    align-items: {{ section.settings.vertical_align }};
+  }
+
+  /* ===== Media (left) ===== */
+  .fpv2__media-{{ section_id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ section.settings.image_max_width }}px;
+    margin: 0 auto;
+    {% if section.settings.sticky_media %}position: sticky; top: {{ section.settings.sticky_offset }}px;{% endif %}
+  }
+
+  /* Wrapper: thumbs (izquierda) + track (derecha) */
+  .fpv2__media-wrapper-{{ section_id }} {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .fpv2__track-{{ section_id }} {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    aspect-ratio: {{ section.settings.image_aspect_ratio }};
+    border-radius: {{ section.settings.media_border_radius }}px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    background-color: {{ section.settings.image_bg }};
+    {% if section.settings.media_shadow %}box-shadow: 0 22px 48px -22px rgba(0,0,0,0.30);{% endif %}
+  }
+  .fpv2__track-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .fpv2__slide-{{ section_id }} {
+    position: relative;
+    flex: 0 0 100%;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+    display: block;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .fpv2__slide-img-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: {{ section.settings.image_fit }};
+    display: block;
+  }
+
+  .fpv2__dots-{{ section_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .fpv2__dot-{{ section_id }} {
+    width: 9px; height: 9px; padding: 0; border: none; border-radius: 50%;
+    cursor: pointer; background-color: {{ section.settings.dot_color }};
+    opacity: 0.3; transition: opacity .3s ease, transform .3s ease;
+  }
+  .fpv2__dot-{{ section_id }}:hover { opacity: .6; }
+  .fpv2__dot-{{ section_id }}.is-active { opacity: 1; transform: scale(1.25); }
+
+  /* Thumbnails VERTICAL (columna a la izquierda de la imagen) */
+  .fpv2__thumbs-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    width: {{ section.settings.thumb_size }}px;
+    max-height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    order: -1;
+  }
+  .fpv2__thumbs-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .fpv2__thumb-{{ section_id }} {
+    width: 100%;
+    height: {{ section.settings.thumb_size }}px;
+    border-radius: 8px; overflow: hidden; padding: 0; cursor: pointer;
+    border: 2px solid transparent; background: {{ section.settings.image_bg }};
+    transition: border-color .25s ease, transform .2s ease;
+    flex-shrink: 0;
+  }
+  .fpv2__thumb-{{ section_id }}:hover { transform: scale(1.04); }
+  .fpv2__thumb-{{ section_id }}.is-active { border-color: {{ section.settings.accent_color }}; }
+  .fpv2__thumb-{{ section_id }} img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ===== Details (right) ===== */
+  .fpv2__details-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.details_gap }}px;
+    align-items: stretch;
+  }
+
+  /* ===== Sistema de alineación (data-align → variables) ===== */
+  .fpv2__details-{{ section_id }} [data-align],
+  .fpv2__details-{{ section_id }}[data-align] {
+    text-align: var(--fpv2-ta);
+  }
+  .fpv2__details-{{ section_id }} [data-align="left"],
+  .fpv2__details-{{ section_id }}[data-align="left"] {
+    --fpv2-ta: left; --fpv2-jc: flex-start; --fpv2-as: flex-start; --fpv2-mi: 0 auto;
+  }
+  .fpv2__details-{{ section_id }} [data-align="center"],
+  .fpv2__details-{{ section_id }}[data-align="center"] {
+    --fpv2-ta: center; --fpv2-jc: center; --fpv2-as: center; --fpv2-mi: auto;
+  }
+  .fpv2__details-{{ section_id }} [data-align="right"],
+  .fpv2__details-{{ section_id }}[data-align="right"] {
+    --fpv2-ta: right; --fpv2-jc: flex-end; --fpv2-as: flex-end; --fpv2-mi: auto 0;
+  }
+  .fpv2__details-{{ section_id }} [data-align="justify"] {
+    --fpv2-ta: justify; --fpv2-jc: flex-start; --fpv2-as: flex-start; --fpv2-mi: 0 auto;
+    text-align-last: left;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    text-wrap: pretty;
+  }
+
+  .fpv2__title-{{ section_id }} {
+    font-size: {{ section.settings.title_size }}px;
+    font-weight: {{ section.settings.title_weight }};
+    color: {{ section.settings.title_color }};
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+  .fpv2__title-{{ section_id }} a { color: inherit; text-decoration: none; }
+  .fpv2__title-{{ section_id }} sup, .fpv2__title-{{ section_id }} sub { font-size: 0.55em; }
+
+  .fpv2__description-{{ section_id }} {
+    font-size: {{ section.settings.description_size }}px;
+    line-height: 1.65;
+    color: {{ section.settings.description_color }};
+    margin: 0;
+    max-width: {{ section.settings.description_max_width }}px;
+    width: 100%;
+    margin-inline: var(--fpv2-mi, 0 auto);
+  }
+  .fpv2__description-{{ section_id }} p { margin: 0 0 0.7em; }
+  .fpv2__description-{{ section_id }} p:last-child { margin-bottom: 0; }
+  .fpv2__description-{{ section_id }} a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+  .fpv2__description-{{ section_id }} strong { font-weight: 600; }
+  .fpv2__description-{{ section_id }} em { font-style: italic; }
+  .fpv2__description-{{ section_id }} ul,
+  .fpv2__description-{{ section_id }} ol { margin: 0.4em 0; padding-left: 1.2em; }
+
+  .fpv2__price-{{ section_id }} {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    justify-content: var(--fpv2-jc, flex-start);
+    margin: 0;
+  }
+  .fpv2__price-current-{{ section_id }} {
+    font-size: {{ section.settings.price_size }}px;
+    font-weight: {{ section.settings.price_weight }};
+    color: {{ section.settings.price_color }};
+  }
+  .fpv2__price-compare-{{ section_id }} {
+    font-size: {{ section.settings.price_size | times: 0.7 | round }}px;
+    text-decoration: line-through;
+    color: {{ section.settings.price_color }};
+    opacity: 0.5;
+  }
+  .fpv2__price-save-{{ section_id }} {
+    font-size: 13px; font-weight: 600;
+    color: {{ section.settings.accent_color }};
+    background: {{ section.settings.accent_soft }};
+    padding: 3px 10px; border-radius: 100px;
+  }
+
+  /* Discount + Countdown + Coupon */
+  .fpv2__promo-{{ section_id }} {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: {{ section.settings.promo_padding }}px;
+    border-radius: {{ section.settings.promo_radius }}px;
+    background: {{ section.settings.promo_bg }};
+    border: 1px solid {{ section.settings.promo_border }};
+    width: 100%;
+    box-sizing: border-box;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  }
+  .fpv2__promo-head-{{ section_id }} { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: var(--fpv2-jc, flex-start); }
+  .fpv2__promo-badge-{{ section_id }} {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+    color: {{ section.settings.promo_badge_color }};
+    background: {{ section.settings.accent_color }};
+    padding: 4px 12px; border-radius: 100px; text-transform: uppercase;
+  }
+  .fpv2__promo-text-{{ section_id }} {
+    font-size: 14px; color: {{ section.settings.promo_text_color }}; margin: 0;
+  }
+  .fpv2__countdown-{{ section_id }} {
+    display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap;
+    justify-content: var(--fpv2-jc, flex-start);
+  }
+  .fpv2__cd-unit-{{ section_id }} {
+    display: flex; flex-direction: column; align-items: center; min-width: 46px;
+    background: {{ section.settings.cd_box_bg }};
+    border-radius: 8px; padding: 6px 4px;
+    border: 1px solid {{ section.settings.promo_border }};
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .fpv2__cd-num-{{ section_id }} {
+    font-size: 20px; font-weight: 700; line-height: 1; color: {{ section.settings.cd_num_color }};
+    font-variant-numeric: tabular-nums;
+  }
+  .fpv2__cd-label-{{ section_id }} {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: {{ section.settings.cd_label_color }}; margin-top: 4px;
+  }
+
+  /* Promo code copy */
+  .fpv2__promo-code-{{ section_id }} {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    justify-content: var(--fpv2-jc, flex-start);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .fpv2__promo-code-{{ section_id }}[hidden] { display: none; }
+  .fpv2__promo-code-{{ section_id }}.is-leaving { opacity: 0; transform: translateY(-6px); }
+  .fpv2__promo-codes-{{ section_id }} { display: flex; flex-direction: column; gap: 10px; }
+  .fpv2__promo-code-meta-{{ section_id }} {
+    flex-basis: 100%;
+    font-size: 12px;
+    color: {{ section.settings.promo_text_color }};
+    opacity: 0.85;
+    margin: 0;
+  }
+  .fpv2__promo-code-flag-{{ section_id }} {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    padding: 2px 8px; border-radius: 100px; background: #fdecea; color: #b3261e;
+  }
+  .fpv2__promo-code-flag-{{ section_id }}.is-scheduled { background: #e8f0fe; color: #1a56db; }
+  .fpv2__promo-code-{{ section_id }}.is-expired-preview .fpv2__promo-code-box-{{ section_id }} { opacity: .45; }
+  .fpv2__promo-code-label-{{ section_id }} {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: {{ section.settings.promo_text_color }};
+    opacity: 0.75;
+    font-weight: 700;
+  }
+  .fpv2__promo-code-box-{{ section_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: {{ section.settings.cd_box_bg }};
+    border: 2px dashed {{ section.settings.accent_color }};
+    border-radius: 10px;
+    padding: 3px 3px 3px 16px;
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .fpv2__promo-code-box-{{ section_id }}:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .fpv2__promo-code-value-{{ section_id }} {
+    font-family: 'SF Mono', Monaco, Inconsolata, monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: {{ section.settings.cd_num_color }};
+    letter-spacing: 0.06em;
+  }
+  .fpv2__promo-code-copy-{{ section_id }} {
+    margin-left: 12px;
+    padding: 8px 18px;
+    border: none;
+    background: {{ section.settings.accent_color }};
+    color: {{ section.settings.promo_badge_color }};
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .2s ease;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .fpv2__promo-code-copy-{{ section_id }}:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.12);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .fpv2__promo-code-copy-{{ section_id }}:active { transform: scale(0.96); }
+  .fpv2__promo-code-copied-text-{{ section_id }} { display: none; }
+  .fpv2__promo-code-copy-{{ section_id }}.is-copied .fpv2__promo-code-copy-text-{{ section_id }} { display: none; }
+  .fpv2__promo-code-copy-{{ section_id }}.is-copied .fpv2__promo-code-copied-text-{{ section_id }} { display: inline; }
+
+  /* Quantity + Buttons */
+  .fpv2__buy-{{ section_id }} { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .fpv2__qty-row-{{ section_id }} { display: flex; gap: 12px; align-items: stretch; }
+
+  .fpv2__qty-{{ section_id }} {
+    display: inline-flex; align-items: center;
+    border: 1px solid {{ section.settings.qty_border }};
+    border-radius: {{ section.settings.button_radius }}px;
+    background: {{ section.settings.qty_bg }};
+    overflow: hidden;
+  }
+  .fpv2__qty-btn-{{ section_id }} {
+    width: 44px; height: 100%; min-height: 48px; border: none; background: transparent;
+    font-size: 18px; cursor: pointer; color: {{ section.settings.qty_color }};
+    display: flex; align-items: center; justify-content: center; user-select: none;
+  }
+  .fpv2__qty-btn-{{ section_id }}:hover { background: rgba(0,0,0,0.05); }
+  .fpv2__qty-input-{{ section_id }} {
+    width: 44px; border: none; background: transparent; text-align: center;
+    font-size: 15px; font-weight: 600; color: {{ section.settings.qty_color }};
+    -moz-appearance: textfield;
+  }
+  .fpv2__qty-input-{{ section_id }}::-webkit-outer-spin-button,
+  .fpv2__qty-input-{{ section_id }}::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .fpv2__qty-input-{{ section_id }}:focus { outline: none; }
+
+  .fpv2__atc-{{ section_id }} {
+    flex: 1;
+    min-height: 48px;
+    padding: 0 24px;
+    background: {{ section.settings.atc_bg }};
+    color: {{ section.settings.atc_color }};
+    border: 1px solid {{ section.settings.atc_bg }};
+    border-radius: {{ section.settings.button_radius }}px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    text-transform: {{ section.settings.button_text_transform }};
+    letter-spacing: {{ section.settings.button_letter_spacing }}em;
+    transition: background .25s ease, color .25s ease, opacity .25s ease;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .fpv2__atc-{{ section_id }}:hover { background: {{ section.settings.atc_bg_hover }}; border-color: {{ section.settings.atc_bg_hover }}; }
+  .fpv2__atc-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
+  .fpv2__atc-{{ section_id }}.is-loading .fpv2__atc-text-{{ section_id }} { visibility: hidden; }
+  .fpv2__atc-{{ section_id }}.is-loading .fpv2__spinner-{{ section_id }} { display: block; }
+  .fpv2__atc-{{ section_id }}.is-added { background: #2e7d32; border-color: #2e7d32; color: #fff; }
+
+  .fpv2__spinner-{{ section_id }} {
+    display: none; position: absolute;
+    width: 18px; height: 18px; border: 2px solid transparent; border-top-color: currentColor;
+    border-radius: 50%; animation: fpv2-spin-{{ section_id }} .8s linear infinite;
+  }
+  @keyframes fpv2-spin-{{ section_id }} { to { transform: rotate(360deg); } }
+
+  /* Buy it now native dynamic checkout */
+  .fpv2__dynamic-{{ section_id }} { width: 100%; }
+  .fpv2__dynamic-{{ section_id }} .shopify-payment-button__button {
+    min-height: 48px !important;
+    border-radius: {{ section.settings.button_radius }}px !important;
+  }
+
+  .fpv2__soldout-{{ section_id }} {
+    min-height: 48px; display: flex; align-items: center; justify-content: center;
+    border-radius: {{ section.settings.button_radius }}px;
+    background: #e6e6e6; color: #777; font-weight: 600; width: 100%;
+  }
+
+  /* ===== Free-shipping CTA ===== */
+  .fpv2__freeship-{{ section_id }} {
+    position: relative;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 52px; padding: 8px 20px;
+    border-radius: {{ section.settings.button_radius }}px;
+    background: {{ section.settings.freeship_bg }};
+    color: {{ section.settings.freeship_color }};
+    border: 1px solid {{ section.settings.freeship_border }};
+    cursor: pointer; text-align: center;
+    transition: background .25s ease, color .25s ease, opacity .25s ease, transform .1s ease;
+    {% if section.settings.freeship_width == '100' %}
+      width: 100%;
+    {% elsif section.settings.freeship_width == '80' %}
+      width: 80%; align-self: var(--fpv2-as, flex-start);
+    {% elsif section.settings.freeship_width == '60' %}
+      width: 60%; align-self: var(--fpv2-as, flex-start);
+    {% else %}
+      width: auto;
+      min-width: min(380px, 100%);
+      align-self: var(--fpv2-as, flex-start);
+    {% endif %}
+  }
+  .fpv2__freeship-{{ section_id }}:hover { color: {{ section.settings.freeship_color_hover }}; background: {{ section.settings.freeship_bg_hover }}; border-color: {{ section.settings.freeship_bg_hover }}; }
+  .fpv2__freeship-{{ section_id }}:active { transform: scale(0.99); }
+  .fpv2__freeship-{{ section_id }}:disabled { opacity: 0.5; cursor: not-allowed; }
+  .fpv2__freeship-main-{{ section_id }} { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.25; }
+  .fpv2__freeship-text-{{ section_id }} { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
+  .fpv2__freeship-ico-{{ section_id }} { margin-right: 4px; }
+  .fpv2__freeship-sub-{{ section_id }} { font-size: 12px; font-weight: 500; opacity: 0.85; }
+  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__freeship-main-{{ section_id }} { visibility: hidden; }
+  .fpv2__freeship-{{ section_id }}.is-loading .fpv2__spinner-{{ section_id }} { display: block; }
+
+  /* ===== Badges (icon row) ===== */
+  .fpv2__badges-{{ section_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 22px;
+    justify-content: var(--fpv2-jc, flex-start);
+    width: 100%;
+  }
+  .fpv2__badge-{{ section_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: {{ section.settings.description_color }};
+  }
+  .fpv2__badge-icon-{{ section_id }} {
+    width: {{ section.settings.badge_icon_size }}px;
+    height: {{ section.settings.badge_icon_size }}px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: {{ section.settings.accent_color }};
+  }
+  .fpv2__badge-icon-{{ section_id }} svg,
+  .fpv2__badge-icon-{{ section_id }} img { width: 100%; height: 100%; object-fit: contain; }
+
+  /* ===== Tabs ===== */
+  .fpv2__tabs-{{ section_id }} {
+    width: 100%;
+    border: 1px solid {{ section.settings.promo_border }};
+    border-radius: {{ section.settings.promo_radius }}px;
+    overflow: hidden;
+    background: {{ section.settings.promo_bg }};
+  }
+  .fpv2__tabs-nav-{{ section_id }} {
+    display: flex;
+    border-bottom: 1px solid {{ section.settings.promo_border }};
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .fpv2__tabs-nav-{{ section_id }}::-webkit-scrollbar { display: none; }
+  .fpv2__tab-btn-{{ section_id }} {
+    flex: 1;
+    min-width: 100px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: {{ section.settings.description_color }};
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: background .2s ease, color .2s ease;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+  }
+  .fpv2__tab-btn-{{ section_id }}:hover { background: rgba(0,0,0,0.02); color: {{ section.settings.title_color }}; }
+  .fpv2__tab-btn-{{ section_id }}.is-active {
+    color: {{ section.settings.accent_color }};
+    border-bottom-color: {{ section.settings.accent_color }};
+    background: {{ section.settings.cd_box_bg }};
+  }
+  .fpv2__tab-panel-{{ section_id }} {
+    display: none;
+    padding: 18px 20px;
+    font-size: {{ section.settings.description_size }}px;
+    line-height: 1.65;
+    color: {{ section.settings.description_color }};
+  }
+  .fpv2__tab-panel-{{ section_id }}.is-active { display: block; }
+  .fpv2__tab-panel-{{ section_id }} p { margin: 0 0 0.7em; }
+  .fpv2__tab-panel-{{ section_id }} p:last-child { margin-bottom: 0; }
+  .fpv2__tab-panel-{{ section_id }} ul,
+  .fpv2__tab-panel-{{ section_id }} ol { margin: 0.4em 0; padding-left: 1.2em; }
+  .fpv2__tab-panel-{{ section_id }} strong { font-weight: 600; }
+
+  /* ===== Recipes ===== */
+  .fpv2__recipes-{{ section_id }} { width: 100%; margin-top: 4px; }
+  .fpv2__recipes-head-{{ section_id }} {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 12px;
+  }
+  .fpv2__recipes-title-{{ section_id }} {
+    font-size: {{ section.settings.recipes_title_size }}px;
+    font-weight: 600; color: {{ section.settings.title_color }}; margin: 0;
+  }
+  .fpv2__recipes-nav-{{ section_id }} { display: flex; gap: 8px; }
+  .fpv2__recipes-arrow-{{ section_id }} {
+    width: 34px; height: 34px; border-radius: 50%; cursor: pointer;
+    border: 1px solid {{ section.settings.qty_border }}; background: {{ section.settings.qty_bg }};
+    display: flex; align-items: center; justify-content: center; color: {{ section.settings.title_color }};
+    transition: opacity .2s ease;
+  }
+  .fpv2__recipes-arrow-{{ section_id }}:disabled { opacity: 0.3; cursor: default; }
+
+  .fpv2__recipes-track-{{ section_id }} {
+    --fpv2-rgap: 14px;
+    --fpv2-rper: {{ section.settings.recipes_per_view }};
+    display: flex; gap: var(--fpv2-rgap); overflow-x: auto;
+    scroll-snap-type: x mandatory; scroll-behavior: smooth;
+    scrollbar-width: none; -ms-overflow-style: none;
+    overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .fpv2__recipes-track-{{ section_id }}::-webkit-scrollbar { display: none; }
+
+  .fpv2__recipe-{{ section_id }} {
+    flex: 0 0 calc((100% - (var(--fpv2-rper) - 1) * var(--fpv2-rgap)) / var(--fpv2-rper));
+    scroll-snap-align: start;
+    text-decoration: none; color: inherit;
+    display: block;
+    position: relative;
+    cursor: default;
+    border-radius: 10px;
+  }
+  .fpv2__recipe--linked-{{ section_id }} { cursor: pointer; }
+
+  .fpv2__recipe-media-{{ section_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    aspect-ratio: {{ section.settings.recipe_aspect_ratio }};
+    background: {{ section.settings.image_bg }};
+  }
+  .fpv2__recipe-img-{{ section_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .6s cubic-bezier(.22,1,.36,1);
+  }
+  .fpv2__recipe--linked-{{ section_id }}:hover .fpv2__recipe-img-{{ section_id }} { transform: scale(1.06); }
+  .fpv2__recipe-ph-{{ section_id }} {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .fpv2__recipe-ph-{{ section_id }} svg { width: 40%; height: 40%; opacity: 0.35; }
+
+  .fpv2__recipe-overlay-{{ section_id }} {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.20) 45%, transparent 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px 12px;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    border-radius: 10px;
+    pointer-events: none;
+  }
+  .fpv2__recipe-{{ section_id }}:hover .fpv2__recipe-overlay-{{ section_id }} {
+    opacity: 1;
+  }
+  .fpv2__recipe-name-{{ section_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.35;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+    transform: translateY(10px);
+    transition: transform 0.45s cubic-bezier(.22,1,.36,1);
+  }
+  .fpv2__recipe-{{ section_id }}:hover .fpv2__recipe-name-{{ section_id }} {
+    transform: translateY(0);
+  }
+  .fpv2__recipes-empty-{{ section_id }} {
+    width: 100%; padding: 14px 16px; border: 1px dashed {{ section.settings.qty_border }};
+    border-radius: 10px; color: {{ section.settings.description_color }}; font-size: 14px; margin: 4px 0 0;
+  }
+
+  /* Entry animation */
+  .fpv2__container-{{ section_id }}.fpv2-anim .fpv2__media-{{ section_id }},
+  .fpv2__container-{{ section_id }}.fpv2-anim .fpv2__details-{{ section_id }} {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+  }
+  .fpv2__container-{{ section_id }}.fpv2-anim.is-visible .fpv2__media-{{ section_id }} { opacity: 1; transform: none; }
+  .fpv2__container-{{ section_id }}.fpv2-anim.is-visible .fpv2__details-{{ section_id }} { opacity: 1; transform: none; transition-delay: .1s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fpv2__container-{{ section_id }}.fpv2-anim .fpv2__media-{{ section_id }},
+    .fpv2__container-{{ section_id }}.fpv2-anim .fpv2__details-{{ section_id }} {
+      opacity: 1 !important; transform: none !important; transition: none !important;
+    }
+    .fpv2__recipe-img-{{ section_id }} { transition: none; }
+    .fpv2__recipe-overlay-{{ section_id }} { transition: none; opacity: 1; }
+    .fpv2__recipe-name-{{ section_id }} { transform: none; }
+  }
+
+  /* ===== Responsive ===== */
+  @media screen and (max-width: 749px) {
+    .fpv2__container-{{ section_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ section.settings.column_gap | at_most: 28 }}px;
+    }
+    .fpv2__media-{{ section_id }} { position: relative; top: auto; max-width: 100%; }
+    .fpv2__media-wrapper-{{ section_id }} { flex-direction: column; gap: 12px; }
+    .fpv2__thumbs-{{ section_id }} {
+      flex-direction: row;
+      order: 1;
+      width: 100%;
+      max-height: none;
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+    .fpv2__thumb-{{ section_id }} {
+      width: {{ section.settings.thumb_size }}px;
+      height: {{ section.settings.thumb_size }}px;
+      flex-shrink: 0;
+    }
+    .fpv2__title-{{ section_id }} { font-size: {{ section.settings.title_size | times: 0.78 | round }}px; }
+    .fpv2__atc-{{ section_id }} { width: 100%; }
+    .fpv2__recipes-track-{{ section_id }} { --fpv2-rper: {{ section.settings.recipes_per_view_mobile }}; }
+    .fpv2__freeship-{{ section_id }} {
+      width: 100%;
+      align-self: stretch;
+    }
+    .fpv2__promo-code-box-{{ section_id }} {
+      padding: 3px 3px 3px 12px;
+    }
+    .fpv2__promo-code-value-{{ section_id }} {
+      font-size: 14px;
+    }
+    .fpv2__promo-code-copy-{{ section_id }} {
+      padding: 7px 14px;
+      font-size: 12px;
+    }
+    .fpv2__badges-{{ section_id }} { gap: 14px 18px; }
+    {%- if align_m == 'inherit' %}
+    .fpv2__badges-{{ section_id }} { justify-content: center; }
+    {%- else %}
+    .fpv2__details-{{ section_id }} [data-align],
+    .fpv2__details-{{ section_id }}[data-align] {
+      {%- case align_m -%}
+        {%- when 'center' %} --fpv2-ta: center; --fpv2-jc: center; --fpv2-as: center; --fpv2-mi: auto;
+        {%- when 'right' %} --fpv2-ta: right; --fpv2-jc: flex-end; --fpv2-as: flex-end; --fpv2-mi: auto 0;
+        {%- else %} --fpv2-ta: left; --fpv2-jc: flex-start; --fpv2-as: flex-start; --fpv2-mi: 0 auto;
+      {%- endcase %}
+    }
+    {%- endif %}
+    {%- if section.settings.justify_on_mobile %}
+    .fpv2__details-{{ section_id }} [data-align="justify"] { --fpv2-ta: justify; }
+    {%- else %}
+    .fpv2__details-{{ section_id }} [data-align="justify"] { text-align: {% if align_m == 'inherit' %}left{% else %}{{ align_m }}{% endif %}; hyphens: manual; }
+    {%- endif %}
+    .fpv2__tab-btn-{{ section_id }} { font-size: 12px; padding: 10px 12px; min-width: 88px; }
+    .fpv2__badge-icon-{{ section_id }} {
+      width: {{ section.settings.badge_icon_size_mobile }}px;
+      height: {{ section.settings.badge_icon_size_mobile }}px;
+    }
+
+    /* Purchase options: tighten spacing/type on small screens, keep the row layout */
+    .fpv2__po-option-{{ section_id }} { padding: 14px 12px; gap: 10px; }
+    .fpv2__po-option-{{ section_id }}[data-po-type="subscription"][data-badge]::before { left: 12px; }
+    .fpv2__po-head-{{ section_id }} { gap: 10px; }
+    .fpv2__po-title-{{ section_id }} { font-size: 14px; }
+    .fpv2__po-subtitle-{{ section_id }} { font-size: 12px; }
+    .fpv2__po-price-{{ section_id }} { font-size: 15px; }
+    .fpv2__po-compare-{{ section_id }} { font-size: 12px; }
+    .fpv2__po-radio-{{ section_id }} { width: 18px; height: 18px; }
+  }
+
+  .fpv2__promo-code-status-{{ section_id }} { font-size: 12px; opacity: .8; }
+  [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-status-{{ section_id }} { color: #0a7d32; }
+  [data-fpv2-code][data-fpv2-state="not-applicable"] .fpv2__promo-code-status-{{ section_id }} { color: #a33; }
+  [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-copy-{{ section_id }} { display: none; }
+  /* ===== Purchase options (Subscribe & Save / One-time) ===== */
+  .fpv2__po-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  .fpv2__po-option-{{ section_id }} {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid {{ section.settings.qty_border }};
+    border-radius: {{ section.settings.button_radius }}px;
+    background: {{ section.settings.qty_bg }};
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fpv2__po-option-{{ section_id }}:hover { border-color: {{ section.settings.accent_color }}; }
+  .fpv2__po-option-{{ section_id }}.is-active {
+    border-color: {{ section.settings.accent_color }};
+    background: {{ section.settings.accent_soft }};
+  }
+  /* Floating "Most Popular" badge (subscription option) */
+  .fpv2__po-option-{{ section_id }}[data-po-type="subscription"][data-badge]::before {
+    content: attr(data-badge);
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: {{ section.settings.accent_color }};
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    line-height: 1.4;
+  }
+  /* Native radio kept for a11y, visually hidden */
+  .fpv2__po-radio-input-{{ section_id }} {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  /* Custom radio */
+  .fpv2__po-radio-{{ section_id }} {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    border: 2px solid {{ section.settings.qty_border }};
+    border-radius: 50%;
+    background: {{ section.settings.qty_bg }};
+    position: relative;
+    transition: border-color .2s ease;
+  }
+  .fpv2__po-option-{{ section_id }}.is-active .fpv2__po-radio-{{ section_id }} {
+    border-color: {{ section.settings.accent_color }};
+  }
+  .fpv2__po-option-{{ section_id }}.is-active .fpv2__po-radio-{{ section_id }}::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: {{ section.settings.accent_color }};
+  }
+  .fpv2__po-radio-input-{{ section_id }}:focus-visible ~ .fpv2__po-radio-{{ section_id }} {
+    box-shadow: 0 0 0 3px {{ section.settings.accent_soft }};
+  }
+  .fpv2__po-body-{{ section_id }} { flex: 1; min-width: 0; }
+  .fpv2__po-head-{{ section_id }} {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .fpv2__po-titles-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .fpv2__po-title-{{ section_id }} {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: {{ section.settings.title_color }};
+  }
+  .fpv2__po-subtitle-{{ section_id }} {
+    font-size: 13px;
+    line-height: 1.3;
+    color: {{ section.settings.description_color }};
+  }
+  .fpv2__po-prices-{{ section_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .fpv2__po-price-{{ section_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: {{ section.settings.accent_color }};
+  }
+  .fpv2__po-compare-{{ section_id }} {
+    font-size: 13px;
+    line-height: 1.2;
+    color: {{ section.settings.price_color }};
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  /* Safeguard: hidden price parts stay hidden inside the flex price row */
+  .fpv2__price-compare-{{ section_id }}[hidden],
+  .fpv2__price-save-{{ section_id }}[hidden] { display: none; }
+
+{% endstyle %}
+
+<section
+  id="{{ section_id }}"
+  class="fpv2-{{ section_id }}"
+  data-section-id="{{ section_id }}"
+  {{ section.shopify_attributes }}
+>
+  {% if product != blank %}
+    <div class="fpv2__container-{{ section_id }}" data-fpv2-container>
+      {%- comment -%} ================= MEDIA (left) ================= {%- endcomment -%}
+      <div class="fpv2__media-{{ section_id }}">
+        <div class="fpv2__media-wrapper-{{ section_id }}">
+          <div class="fpv2__track-{{ section_id }}" data-fpv2-track>
+            {% if product.images.size > 0 %}
+              {% for img in product.images %}
+                {%- assign r = img.aspect_ratio | default: 1 -%}
+                <div class="fpv2__slide-{{ section_id }}" data-slide="{{ forloop.index0 }}">
+                  <img
+                    src="{{ img | image_url: width: 1200 }}"
+                    alt="{{ img.alt | default: product.title | escape }}"
+                    class="fpv2__slide-img-{{ section_id }}"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    width="1200"
+                    height="{{ 1200 | divided_by: r | round }}"
+                  >
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="fpv2__slide-{{ section_id }}" data-slide="0">
+                {{ 'product-1' | placeholder_svg_tag: 'fpv2__slide-img-placeholder' }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if product.images.size > 1 and section.settings.gallery_nav == 'thumbnails' %}
+            <div class="fpv2__thumbs-{{ section_id }}" data-fpv2-thumbs>
+              {% for img in product.images %}
+                <button
+                  type="button"
+                  class="fpv2__thumb-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                  data-thumb="{{ forloop.index0 }}"
+                  aria-label="Ver imagen {{ forloop.index }}"
+                >
+                  <img src="{{ img | image_url: width: 200 }}" alt="" loading="lazy">
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        {% if product.images.size > 1 and section.settings.gallery_nav != 'thumbnails' %}
+          <div class="fpv2__dots-{{ section_id }}" data-fpv2-dots>
+            {% for img in product.images %}
+              <button
+                type="button"
+                class="fpv2__dot-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                data-dot="{{ forloop.index0 }}"
+                aria-label="Ver imagen {{ forloop.index }}"
+              ></button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      {%- comment -%} ================= DETAILS (right) ================= {%- endcomment -%}
+      <div class="fpv2__details-{{ section_id }}" data-align="{{ align_g }}">
+        {%- comment -%} Title {%- endcomment -%}
+        <h2 class="fpv2__title-{{ section_id }}" data-align="{{ align_title }}">
+          <a href="{{ product.url }}">
+            {% if section.settings.custom_title != blank -%}
+              {{- section.settings.custom_title -}}
+            {%- else -%}
+              {{- product.title -}}
+            {%- endif %}
+          </a>
+        </h2>
+
+        {%- comment -%} Price {%- endcomment -%}
+        {%- liquid
+          assign fpv2_sub_enabled = section.settings.enable_subscription
+          assign fpv2_sub_discount = section.settings.subscription_discount | default: 15
+          assign fpv2_sub_keep = 100 | minus: fpv2_sub_discount
+          assign fpv2_sub_price = v.price | times: fpv2_sub_keep | divided_by: 100
+
+          assign fpv2_has_compare = false
+          if v.compare_at_price > v.price
+            assign fpv2_has_compare = true
+          endif
+
+          assign pct = 0
+          if fpv2_has_compare
+            assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
+          endif
+
+          assign fpv2_show_price = true
+          if fpv2_sub_enabled and section.settings.show_price_when_subscription == false
+            assign fpv2_show_price = false
+          endif
+        -%}
+        {%- if fpv2_show_price -%}
+        <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}" data-fpv2-price>
+          {%- if fpv2_sub_enabled -%}
+            {%- comment -%} Default active option is subscription → render its price server-side {%- endcomment -%}
+            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ fpv2_sub_price | money }}</span>
+            <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.price | money }}</span>
+            <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ fpv2_sub_discount }}%</span>
+          {%- else -%}
+            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ v.price | money }}</span>
+            {%- if fpv2_has_compare -%}
+              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.compare_at_price | money }}</span>
+              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ pct }}%</span>
+            {%- else -%}
+              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare hidden></span>
+              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save hidden></span>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+
+        {%- comment -%} Free-shipping CTA (adds N units → checkout) {%- endcomment -%}
+        {% if section.settings.show_freeship and v != blank and v.available %}
+          <button
+            type="button"
+            class="fpv2__freeship-{{ section_id }}"
+            data-fpv2-freeship
+            data-variant-id="{{ v.id }}"
+            data-qty="{{ section.settings.freeship_qty }}"
+            data-extra-id="{{ section.settings.freeship_extra_variant }}"
+            data-extra-qty="{{ section.settings.freeship_extra_qty }}"
+            data-discount-codes="{{ fpv2_chain_codes | escape }}"
+          >
+            <span class="fpv2__freeship-main-{{ section_id }}">
+              <span class="fpv2__freeship-text-{{ section_id }}">
+                {{ section.settings.freeship_text }}
+              </span>
+              {% if section.settings.freeship_subtext != blank %}
+                <span class="fpv2__freeship-sub-{{ section_id }}">{{ section.settings.freeship_subtext }}</span>
+              {% endif %}
+            </span>
+            <span class="fpv2__spinner-{{ section_id }}"></span>
+          </button>
+        {% endif %}
+
+        {%- comment -%} Description {%- endcomment -%}
+        {%- liquid
+          assign desc = section.settings.description
+          if desc == blank and section.settings.use_product_description
+            assign desc = product.description
+          endif
+        -%}
+        {% if desc != blank %}
+          <div class="fpv2__description-{{ section_id }}" data-align="{{ align_desc }}">{{ desc }}</div>
+        {% endif %}
+
+        {%- comment -%} Discount + Countdown + Coupon Code {%- endcomment -%}
+        {% if section.settings.show_promo %}
+          <div
+            class="fpv2__promo-{{ section_id }}"
+            data-fpv2-promo
+            data-align="{{ align_promo }}"
+            {% if section.settings.promo_hide_on_expiry %}
+              data-hide-on-expiry
+            {% endif %}
+            {% if section.settings.promo_hide_when_no_codes %}
+              data-hide-when-no-codes
+            {% endif %}
+            {% if promo_expired_now and request.design_mode == false %}
+              hidden style="display:none"
+            {% endif %}
+          >
+            <div class="fpv2__promo-head-{{ section_id }}">
+              {% if section.settings.promo_badge != blank %}
+                <span class="fpv2__promo-badge-{{ section_id }}">{{ section.settings.promo_badge }}</span>
+              {% endif %}
+              {% if section.settings.promo_text != blank %}
+                <p class="fpv2__promo-text-{{ section_id }}">{{ section.settings.promo_text }}</p>
+              {% endif %}
+            </div>
+            {% if section.settings.countdown_enabled %}
+              <div
+                class="fpv2__countdown-{{ section_id }}"
+                data-fpv2-countdown
+                data-end="{{ cd_end_ts }}"
+              >
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-days>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_days_label }}</span>
+                </div>
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-hours>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_hours_label }}</span>
+                </div>
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-mins>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_mins_label }}</span>
+                </div>
+                <div class="fpv2__cd-unit-{{ section_id }}">
+                  <span class="fpv2__cd-num-{{ section_id }}" data-cd-secs>00</span
+                  ><span class="fpv2__cd-label-{{ section_id }}">{{ section.settings.cd_secs_label }}</span>
+                </div>
+              </div>
+            {% endif %}
+            {%- comment -%}
+              Códigos de descuento. Cada uno (bloque "Discount code" o el código legacy)
+              puede tener fecha de inicio y de vencimiento. Vencidos → no se renderizan;
+              si la página estaba en caché, el JS los retira en el segundo exacto.
+            {%- endcomment -%}
+            {%- liquid
+              assign has_legacy_code = false
+              if section.settings.promo_code != blank
+                assign has_legacy_code = true
+              endif
+              assign total_codes = code_blocks.size
+              if has_legacy_code
+                assign total_codes = total_codes | plus: 1
+              endif
+            -%}
+            {% if total_codes > 0 %}
+              <div class="fpv2__promo-codes-{{ section_id }}" data-fpv2-codes>
+                {%- for i in (0..code_blocks.size) -%}
+                  {%- liquid
+                    if forloop.first
+                      unless has_legacy_code
+                        continue
+                      endunless
+                      assign c_code = section.settings.promo_code | strip
+                      assign c_label = section.settings.promo_code_label
+                      assign c_note = section.settings.promo_code_note
+                      assign c_start_raw = ''
+                      assign c_end_raw = section.settings.promo_code_ends_at | strip
+                      assign c_attrs = ''
+                    else
+                      assign b_index = forloop.index0 | minus: 1
+                      assign blk = code_blocks[b_index]
+                      assign c_code = blk.settings.code | strip
+                      assign c_label = blk.settings.label | default: section.settings.promo_code_label
+                      assign c_note = blk.settings.note
+                      assign c_start_raw = blk.settings.starts_at | strip
+                      assign c_end_raw = blk.settings.ends_at | strip
+                      assign c_attrs = blk.shopify_attributes
+                    endif
+                    if c_code == blank
+                      continue
+                    endif
+
+                    assign c_start = 0
+                    if c_start_raw != blank
+                      assign tmp = c_start_raw | append: ' ' | append: shop_offset
+                      assign tmp_p = tmp | date: '%s'
+                      if tmp_p != tmp
+                        assign c_start = tmp_p | plus: 0
+                      endif
+                    endif
+                    assign c_end = 0
+                    if c_end_raw != blank
+                      assign tmp = c_end_raw | append: ' ' | append: shop_offset
+                      assign tmp_p = tmp | date: '%s'
+                      if tmp_p != tmp
+                        assign c_end = tmp_p | plus: 0
+                      endif
+                    endif
+
+                    assign c_state = 'active'
+                    if c_start > 0 and now_ts < c_start
+                      assign c_state = 'scheduled'
+                    endif
+                    if c_end > 0 and now_ts >= c_end
+                      assign c_state = 'expired'
+                    endif
+                  -%}
+                  {%- if c_state == 'expired' and request.design_mode == false -%}{%- continue -%}{%- endif -%}
+                  <div
+                    class="fpv2__promo-code-{{ section_id }}{% if c_state == 'expired' %} is-expired-preview{% endif %}"
+                    data-fpv2-code
+                    data-start="{{ c_start }}"
+                    data-end="{{ c_end }}"
+                    {% if c_state == 'scheduled' and request.design_mode == false %}
+                      hidden
+                    {% endif %}
+                    {{ c_attrs }}
+                  >
+                    {% if c_label != blank %}
+                      <span class="fpv2__promo-code-label-{{ section_id }}">{{ c_label }}</span>
+                    {% endif %}
+                    <div class="fpv2__promo-code-box-{{ section_id }}">
+                      <code class="fpv2__promo-code-value-{{ section_id }}"
+                        ><span
+                          class="fpv2__promo-code-status-{{ section_id }}"
+                          data-fpv2-code-status
+                          aria-live="polite"
+                        ></span>
+                        {{- c_code | escape -}}
+                      </code>
+                      {% if section.settings.promo_code_copyable %}
+                        <button
+                          type="button"
+                          class="fpv2__promo-code-copy-{{ section_id }}"
+                          data-promo-code="{{ c_code | escape }}"
+                          aria-label="Copiar código de descuento {{ c_code | escape }}"
+                        >
+                          <span class="fpv2__promo-code-copy-text-{{ section_id }}">
+                            {{- section.settings.promo_code_copy_text -}}
+                          </span>
+                          <span class="fpv2__promo-code-copied-text-{{ section_id }}">
+                            {{- section.settings.promo_code_copied_text -}}
+                          </span>
+                        </button>
+                      {% endif %}
+                    </div>
+                    {% if request.design_mode and c_state == 'expired' %}
+                      <span class="fpv2__promo-code-flag-{{ section_id }}">Vencido · oculto en la tienda</span>
+                    {% elsif request.design_mode and c_state == 'scheduled' %}
+                      <span class="fpv2__promo-code-flag-{{ section_id }} is-scheduled">Programado</span>
+                    {% endif %}
+                    {%- liquid
+                      assign show_meta = false
+                      if c_note != blank
+                        assign show_meta = true
+                      endif
+                      if section.settings.promo_code_show_expiry and c_end > 0
+                        assign show_meta = true
+                      endif
+                    -%}
+                    {% if show_meta %}
+                      <p class="fpv2__promo-code-meta-{{ section_id }}">
+                        {{- c_note -}}
+                        {%- if section.settings.promo_code_show_expiry and c_end > 0 -%}
+                          {%- if c_note != blank %} · {% endif -%}
+                          {{- section.settings.promo_code_expiry_prefix }}
+                          {{ c_end | date: section.settings.promo_code_expiry_format -}}
+                        {%- endif -%}
+                      </p>
+                    {% endif %}
+                  </div>
+                {%- endfor -%}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {%- comment -%} Buy buttons: form nativo (Buy Now) + Add to Cart por fetch {%- endcomment -%}
+        {% if v != blank and v.available %}
+          {% form 'product', product, id: form_id, class: form_class, novalidate: 'novalidate' %}
+            <input type="hidden" name="id" value="{{ v.id }}" data-fpv2-variant>
+
+            {%- comment -%} ============ Purchase options (Subscribe & Save / One-time) ============ {%- endcomment -%}
+            {%- if section.settings.enable_subscription -%}
+              {%- liquid
+                assign po_discount = section.settings.subscription_discount | default: 15
+                assign po_keep = 100 | minus: po_discount
+                assign po_sub_price = v.price | times: po_keep | divided_by: 100
+
+                assign po_has_compare = false
+                if v.compare_at_price > v.price
+                  assign po_has_compare = true
+                endif
+                assign po_orig_pct = 0
+                if po_has_compare
+                  assign po_orig_pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
+                endif
+              -%}
+              <div
+                class="fpv2__po-{{ section_id }}"
+                data-fpv2-po
+                data-regular-price="{{ v.price | money }}"
+                data-sub-price="{{ po_sub_price | money }}"
+                data-compare-price="{{ v.compare_at_price | money }}"
+                data-has-compare="{{ po_has_compare }}"
+                data-sub-pct="{{ po_discount }}"
+                data-orig-pct="{{ po_orig_pct }}"
+                data-plan="{{ section.settings.selling_plan_id | strip }}"
+              >
+                {%- comment -%} Option 1: Subscription (active by default) {%- endcomment -%}
+                <label
+                  class="fpv2__po-option-{{ section_id }} is-active"
+                  data-po-type="subscription"
+                  {%- if section.settings.sub_badge_text != blank %} data-badge="{{ section.settings.sub_badge_text }}"{% endif -%}
+                >
+                  <input type="radio" name="fpv2_po_{{ section_id }}" value="subscription" class="fpv2__po-radio-input-{{ section_id }}" checked>
+                  <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
+                  <span class="fpv2__po-body-{{ section_id }}">
+                    <span class="fpv2__po-head-{{ section_id }}">
+                      <span class="fpv2__po-titles-{{ section_id }}">
+                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.sub_title | default: 'Subscribe & Save' }}</span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.sub_subtitle | default: '15 servings per bag' }}</span>
+                      </span>
+                      <span class="fpv2__po-prices-{{ section_id }}">
+                        <s class="fpv2__po-compare-{{ section_id }}">{{ v.price | money }}</s>
+                        <span class="fpv2__po-price-{{ section_id }}">{{ po_sub_price | money }}</span>
+                      </span>
+                    </span>
+                  </span>
+                </label>
+
+                {%- comment -%} Option 2: One-time purchase {%- endcomment -%}
+                <label
+                  class="fpv2__po-option-{{ section_id }}"
+                  data-po-type="onetime"
+                >
+                  <input type="radio" name="fpv2_po_{{ section_id }}" value="onetime" class="fpv2__po-radio-input-{{ section_id }}">
+                  <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
+                  <span class="fpv2__po-body-{{ section_id }}">
+                    <span class="fpv2__po-head-{{ section_id }}">
+                      <span class="fpv2__po-titles-{{ section_id }}">
+                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.onetime_title | default: 'One-time purchase' }}</span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.onetime_subtitle | default: 'Standard delivery' }}</span>
+                      </span>
+                      <span class="fpv2__po-prices-{{ section_id }}">
+                        <span class="fpv2__po-price-{{ section_id }}">{{ v.price | money }}</span>
+                      </span>
+                    </span>
+                  </span>
+                </label>
+              </div>
+
+              {%- comment -%} Selling plan pre-set to subscription (default active) {%- endcomment -%}
+              <input type="hidden" name="selling_plan" value="{{ section.settings.selling_plan_id | strip }}" data-fpv2-selling-plan>
+            {%- endif -%}
+
+            <div class="fpv2__qty-row-{{ section_id }}">
+              <div class="fpv2__qty-{{ section_id }}">
+                <button
+                  type="button"
+                  class="fpv2__qty-btn-{{ section_id }}"
+                  data-qty-decrease
+                  aria-label="Disminuir cantidad"
+                >
+                  −
+                </button>
+                <input
+                  type="number"
+                  class="fpv2__qty-input-{{ section_id }}"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  data-qty-input
+                  aria-label="Cantidad"
+                >
+                <button
+                  type="button"
+                  class="fpv2__qty-btn-{{ section_id }}"
+                  data-qty-increase
+                  aria-label="Aumentar cantidad"
+                >
+                  +
+                </button>
+              </div>
+
+              <button
+                type="button"
+                class="fpv2__atc-{{ section_id }}"
+                data-fpv2-atc
+                data-variant-id="{{ v.id }}"
+                style="position: relative;"
+              >
+                <span class="fpv2__atc-text-{{ section_id }}">{{ section.settings.atc_text }}</span>
+                <span class="fpv2__spinner-{{ section_id }}"></span>
+              </button>
+            </div>
+
+            {%- liquid
+              assign fpv2_show_buy_now = section.settings.show_buy_now
+              if section.settings.buy_now_hide_with_codes and section.settings.auto_apply_enabled and code_blocks.size > 0
+                assign fpv2_show_buy_now = false
+              endif
+            -%}
+            {% if fpv2_show_buy_now %}
+              <div class="fpv2__dynamic-{{ section_id }}"{% if section.settings.enable_subscription %} style="display:none;"{% endif %}>
+                {{ form | payment_button }}
+              </div>
+            {% endif %}
+          {% endform %}
+        {% else %}
+          <div class="fpv2__soldout-{{ section_id }}">{{ section.settings.sold_out_text }}</div>
+        {% endif %}
+
+        {%- comment -%} ================= BADGES (icon row) ================= {%- endcomment -%}
+        {% if section.settings.show_badges %}
+          {% assign badge_blocks = section.blocks | where: 'type', 'badge' %}
+          {% if badge_blocks.size > 0 %}
+            <div class="fpv2__badges-{{ section_id }}" data-align="{{ align_badges }}">
+              {% for block in badge_blocks %}
+                <div class="fpv2__badge-{{ section_id }}" {{ block.shopify_attributes }}>
+                  {% if block.settings.icon_svg != blank %}
+                    <span class="fpv2__badge-icon-{{ section_id }}">{{ block.settings.icon_svg }}</span>
+                  {% elsif block.settings.icon_image != blank %}
+                    <span class="fpv2__badge-icon-{{ section_id }}">
+                      <img
+                        src="{{ block.settings.icon_image | image_url: width: 80 }}"
+                        alt="{{ block.settings.text | escape }}"
+                        loading="lazy"
+                      >
+                    </span>
+                  {% endif %}
+                  {% if block.settings.text != blank -%}
+                    <span>{{ block.settings.text }}</span>
+                  {%- endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% elsif request.design_mode %}
+            <p class="fpv2__recipes-empty-{{ section_id }}">
+              Usa <strong>“Agregar bloque → Badge”</strong> para mostrar iconos o beneficios en fila.
+            </p>
+          {% endif %}
+        {% endif %}
+
+        {%- comment -%} ================= TABS ================= {%- endcomment -%}
+        {% if section.settings.show_tabs %}
+          {% assign tab_blocks = section.blocks | where: 'type', 'tab' %}
+          {% if tab_blocks.size > 0 %}
+            <div class="fpv2__tabs-{{ section_id }}" data-fpv2-tabs>
+              <div class="fpv2__tabs-nav-{{ section_id }}" role="tablist">
+                {% for block in tab_blocks %}
+                  <button
+                    type="button"
+                    class="fpv2__tab-btn-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                    data-tab-btn="{{ forloop.index0 }}"
+                    role="tab"
+                    aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{ block.settings.title }}
+                  </button>
+                {% endfor %}
+              </div>
+              {% for block in tab_blocks %}
+                <div
+                  class="fpv2__tab-panel-{{ section_id }}{% if forloop.first %} is-active{% endif %}"
+                  data-tab-panel="{{ forloop.index0 }}"
+                  data-align="{{ align_tabs }}"
+                  role="tabpanel"
+                >
+                  {{ block.settings.content }}
+                </div>
+              {% endfor %}
+            </div>
+          {% elsif request.design_mode %}
+            <p class="fpv2__recipes-empty-{{ section_id }}">
+              Usa <strong>“Agregar bloque → Tab”</strong> para mostrar info en pestañas (Shipping, Flavor, Servings…).
+            </p>
+          {% endif %}
+        {% endif %}
+
+        {%- comment -%} ================= RECIPES (manual blocks) ================= {%- endcomment -%}
+        {% if section.settings.show_recipes %}
+          {% assign recipe_blocks = section.blocks | where: 'type', 'recipe' %}
+          {% if recipe_blocks.size > 0 %}
+            <div class="fpv2__recipes-{{ section_id }}" data-fpv2-recipes>
+              <div class="fpv2__recipes-head-{{ section_id }}">
+                <h3 class="fpv2__recipes-title-{{ section_id }}">{{ section.settings.recipes_title }}</h3>
+                <div class="fpv2__recipes-nav-{{ section_id }}">
+                  <button
+                    type="button"
+                    class="fpv2__recipes-arrow-{{ section_id }}"
+                    data-recipes-prev
+                    aria-label="Anterior"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    class="fpv2__recipes-arrow-{{ section_id }}"
+                    data-recipes-next
+                    aria-label="Siguiente"
+                  >
+                    ›
+                  </button>
+                </div>
+              </div>
+              <div class="fpv2__recipes-track-{{ section_id }}" data-recipes-track>
+                {% for block in section.blocks %}
+                  {% if block.type == 'recipe' %}
+                    {%- liquid
+                      assign r_img = block.settings.image
+                      assign r_name = block.settings.name
+                      assign r_url = block.settings.link
+                      assign has_link = false
+                      if r_url != blank
+                        assign has_link = true
+                      endif
+                    -%}
+                    {% if has_link %}
+                      <a
+                        href="{{ r_url }}"
+                        class="fpv2__recipe-{{ section_id }} fpv2__recipe--linked-{{ section_id }}"
+                        {{ block.shopify_attributes }}
+                      >
+                    {% else %}
+                      <div class="fpv2__recipe-{{ section_id }}" {{ block.shopify_attributes }}>
+                    {% endif %}
+                    <div class="fpv2__recipe-media-{{ section_id }}">
+                      {% if r_img != blank %}
+                        <img
+                          src="{{ r_img | image_url: width: 500 }}"
+                          alt="{{ r_img.alt | default: r_name | escape }}"
+                          class="fpv2__recipe-img-{{ section_id }}"
+                          width="500"
+                          height="{{ 500 | divided_by: r_img.aspect_ratio | round }}"
+                          loading="lazy"
+                        >
+                      {% else %}
+                        <div class="fpv2__recipe-img-{{ section_id }} fpv2__recipe-ph-{{ section_id }}">
+                          {{ 'image' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                      {% if section.settings.recipes_show_name and r_name != blank %}
+                        <div class="fpv2__recipe-overlay-{{ section_id }}">
+                          <p class="fpv2__recipe-name-{{ section_id }}">{{ r_name }}</p>
+                        </div>
+                      {% endif %}
+                    </div>
+                    {% if has_link %}</a>{% else %}</div>{% endif %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% elsif request.design_mode %}
+            <p class="fpv2__recipes-empty-{{ section_id }}">
+              {{ section.settings.recipes_title }} — usa <strong>“Agregar bloque → Recipe”</strong> para añadir recetas
+              (imagen, nombre y link).
+            </p>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  {% else %}
+    <div class="fpv2__container-{{ section_id }}" style="display:block;text-align:center;color:#999;">
+      Selecciona un producto en el editor de temas.
+    </div>
+  {% endif %}
+</section>
+
+{%- comment -%} Motor de cupones automaticos (multi-codigo). Debe ir a nivel HTML, nunca dentro de <script>. {%- endcomment -%}
+{% render 'fpv2-discounts',
+  section: section,
+  section_id: section_id,
+  now_ts: now_ts,
+  shop_offset: shop_offset
+%}
+
+<script>
+  (function () {
+    const section = document.getElementById('{{ section_id }}');
+    if (!section) return;
+    const sectionId = '{{ section_id }}';
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ThemeEvents = window.ThemeEvents || (window.theme && window.theme.events) || null;
+
+    function dispatchThemeEvent(name, detail) {
+      if (ThemeEvents && typeof ThemeEvents.publish === 'function') { ThemeEvents.publish(name, detail); return; }
+      document.dispatchEvent(new CustomEvent(name, { bubbles: true, detail }));
+    }
+
+    /* ===== Main gallery: dots/thumbs + swipe sync ===== */
+    (function initGallery() {
+      const track = section.querySelector('[data-fpv2-track]');
+      if (!track) return;
+      const slides = Array.from(track.querySelectorAll('[data-slide]'));
+      const dots = Array.from(section.querySelectorAll('[data-dot]'));
+      const thumbs = Array.from(section.querySelectorAll('[data-thumb]'));
+      if (slides.length <= 1) return;
+      let active = 0;
+
+      function setActive(i) {
+        active = i;
+        dots.forEach((d, idx) => d.classList.toggle('is-active', idx === i));
+        thumbs.forEach((t, idx) => t.classList.toggle('is-active', idx === i));
+      }
+      function scrollTo(i) {
+        track.scrollTo({ left: slides[i].offsetLeft, behavior: prefersReduced ? 'auto' : 'smooth' });
+      }
+      dots.forEach((d, i) => d.addEventListener('click', () => scrollTo(i)));
+      thumbs.forEach((t, i) => t.addEventListener('click', () => scrollTo(i)));
+
+      let st;
+      track.addEventListener('scroll', () => {
+        clearTimeout(st);
+        st = setTimeout(() => {
+          const c = track.scrollLeft + track.clientWidth / 2;
+          let best = 0, bd = Infinity;
+          slides.forEach((s, idx) => {
+            const sc = s.offsetLeft + s.clientWidth / 2, dd = Math.abs(c - sc);
+            if (dd < bd) { bd = dd; best = idx; }
+          });
+          if (best !== active) setActive(best);
+        }, 60);
+      }, { passive: true });
+      setActive(0);
+    })();
+
+    /* ===== Countdown + caducidad automática de códigos ===== */
+    (function initPromoTimers() {
+      const promo = section.querySelector('[data-fpv2-promo]');
+      if (!promo) return;
+      const isEditor = !!(window.Shopify && window.Shopify.designMode);
+      const cd = promo.querySelector('[data-fpv2-countdown]');
+      const codesWrap = promo.querySelector('[data-fpv2-codes]');
+      const hadCodes = !!(codesWrap && codesWrap.querySelector('[data-fpv2-code]'));
+      const pad = (n) => (n < 10 ? '0' + n : '' + n);
+
+      const cdEnd = cd ? parseInt(cd.dataset.end, 10) * 1000 : 0;
+      const els = cd ? {
+        d: cd.querySelector('[data-cd-days]'), h: cd.querySelector('[data-cd-hours]'),
+        m: cd.querySelector('[data-cd-mins]'), s: cd.querySelector('[data-cd-secs]')
+      } : null;
+
+      function hidePromo() {
+        if (isEditor) return;
+        promo.style.display = 'none';
+      }
+
+      function tickCountdown(now) {
+        if (!cd || !cdEnd) return false;
+        const dist = cdEnd - now;
+        if (dist <= 0) {
+          els.d.textContent = els.h.textContent = els.m.textContent = els.s.textContent = '00';
+          if (promo.hasAttribute('data-hide-on-expiry')) hidePromo();
+          return true;
+        }
+        els.d.textContent = pad(Math.floor(dist / 86400000));
+        els.h.textContent = pad(Math.floor((dist % 86400000) / 3600000));
+        els.m.textContent = pad(Math.floor((dist % 3600000) / 60000));
+        els.s.textContent = pad(Math.floor((dist % 60000) / 1000));
+        return false;
+      }
+
+      function tickCodes(now) {
+        if (!codesWrap || isEditor) return;
+        codesWrap.querySelectorAll('[data-fpv2-code]').forEach((el) => {
+          const start = parseInt(el.dataset.start, 10) * 1000 || 0;
+          const end = parseInt(el.dataset.end, 10) * 1000 || 0;
+          if (end && now >= end) {
+            if (el.classList.contains('is-leaving')) return;
+            el.classList.add('is-leaving');
+            setTimeout(() => el.remove(), prefersReduced ? 0 : 400);
+            return;
+          }
+          if (start && now >= start && el.hidden) el.hidden = false;
+        });
+        if (hadCodes && promo.hasAttribute('data-hide-when-no-codes')) {
+          const alive = codesWrap.querySelectorAll('[data-fpv2-code]:not(.is-leaving):not([hidden])').length;
+          const pending = codesWrap.querySelectorAll('[data-fpv2-code][hidden]').length;
+          if (!alive && !pending) setTimeout(hidePromo, prefersReduced ? 0 : 400);
+        }
+      }
+
+      let timer;
+      function tick() {
+        const now = Date.now();
+        const cdDone = tickCountdown(now);
+        tickCodes(now);
+        const codesLeft = codesWrap ? codesWrap.querySelectorAll('[data-fpv2-code]').length : 0;
+        if ((cdDone || !cdEnd) && !codesLeft && timer) clearInterval(timer);
+      }
+      tick();
+      timer = setInterval(tick, 1000);
+
+    })();
+
+    /* ===== Promo code copy ===== */
+    (function initPromoCode() {
+      section.querySelectorAll('[data-promo-code]').forEach((btn) => {
+        btn.addEventListener('click', async function () {
+          const code = this.dataset.promoCode;
+          const done = () => {
+            this.classList.add('is-copied');
+            setTimeout(() => this.classList.remove('is-copied'), 2000);
+          };
+          try {
+            await navigator.clipboard.writeText(code);
+            done();
+          } catch (err) {
+            const ta = document.createElement('textarea');
+            ta.value = code;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            done();
+          }
+        });
+      });
+    })();
+
+    /* ===== Tabs ===== */
+    (function initTabs() {
+      const tabsWrap = section.querySelector('[data-fpv2-tabs]');
+      if (!tabsWrap) return;
+      const btns = Array.from(tabsWrap.querySelectorAll('[data-tab-btn]'));
+      const panels = Array.from(tabsWrap.querySelectorAll('[data-tab-panel]'));
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const idx = btn.dataset.tabBtn;
+          btns.forEach(b => {
+            const on = b === btn;
+            b.classList.toggle('is-active', on);
+            b.setAttribute('aria-selected', on ? 'true' : 'false');
+          });
+          panels.forEach(p => p.classList.toggle('is-active', p.dataset.tabPanel === idx));
+        });
+      });
+    })();
+
+    /* ===== Recipes carousel arrows + autoplay ===== */
+    (function initRecipes() {
+      const wrap = section.querySelector('[data-fpv2-recipes]');
+      if (!wrap) return;
+      const track = wrap.querySelector('[data-recipes-track]');
+      const prev = wrap.querySelector('[data-recipes-prev]');
+      const next = wrap.querySelector('[data-recipes-next]');
+      if (!track) return;
+
+      function step() {
+        const first = track.querySelector('.fpv2__recipe-' + sectionId);
+        if (!first) return track.clientWidth * 0.8;
+        const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || 14) || 14;
+        return first.offsetWidth + gap;
+      }
+      function update() {
+        const max = track.scrollWidth - track.clientWidth - 2;
+        if (prev) prev.disabled = track.scrollLeft <= 2;
+        if (next) next.disabled = track.scrollLeft >= max;
+      }
+      prev && prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+      next && next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+      track.addEventListener('scroll', () => { clearTimeout(track._t); track._t = setTimeout(update, 60); }, { passive: true });
+      update();
+
+      {% if section.settings.recipes_autoplay %}
+      let autoplayInterval;
+      function startAutoplay() {
+        autoplayInterval = setInterval(() => {
+          const maxScroll = track.scrollWidth - track.clientWidth - 2;
+          if (track.scrollLeft >= maxScroll) {
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            track.scrollBy({ left: step(), behavior: 'smooth' });
+          }
+        }, {{ section.settings.recipes_autoplay_speed }});
+      }
+      function stopAutoplay() {
+        clearInterval(autoplayInterval);
+      }
+      startAutoplay();
+      wrap.addEventListener('mouseenter', stopAutoplay);
+      wrap.addEventListener('mouseleave', startAutoplay);
+      wrap.addEventListener('touchstart', stopAutoplay, { passive: true });
+      {% endif %}
+    })();
+
+    /* ===== Quantity ===== */
+    (function initQty() {
+      const input = section.querySelector('[data-qty-input]');
+      if (!input) return;
+      const dec = section.querySelector('[data-qty-decrease]');
+      const inc = section.querySelector('[data-qty-increase]');
+      dec && dec.addEventListener('click', () => { let val = parseInt(input.value) || 1; if (val > 1) input.value = val - 1; });
+      inc && inc.addEventListener('click', () => { let val = parseInt(input.value) || 1; input.value = val + 1; });
+      input.addEventListener('change', () => { let val = parseInt(input.value) || 1; if (val < 1) val = 1; input.value = val; });
+    })();
+
+    /* ===== Purchase options: Subscribe & Save / One-time ===== */
+    (function initPurchaseOptions() {
+      const root = section.querySelector('[data-fpv2-po]');
+      if (!root) return;
+
+      const options      = Array.from(root.querySelectorAll('[data-po-type]'));
+      const planInput    = section.querySelector('[data-fpv2-selling-plan]');
+      const dynamic      = section.querySelector('.fpv2__dynamic-' + sectionId);
+      const priceCurrent = section.querySelector('[data-fpv2-price-current]');
+      const priceCompare = section.querySelector('[data-fpv2-price-compare]');
+      const priceSave    = section.querySelector('[data-fpv2-price-save]');
+
+      const data = {
+        regular   : root.dataset.regularPrice || '',
+        sub       : root.dataset.subPrice || '',
+        compare   : root.dataset.comparePrice || '',
+        hasCompare: root.dataset.hasCompare === 'true',
+        subPct    : root.dataset.subPct || '',
+        origPct   : root.dataset.origPct || '',
+        plan      : (root.dataset.plan || '').trim()
+      };
+
+      function toggleHidden(el, show) {
+        if (!el) return;
+        if (show) el.removeAttribute('hidden');
+        else el.setAttribute('hidden', '');
+      }
+
+      function setOption(type) {
+        const isSub = type === 'subscription';
+
+        options.forEach((o) => {
+          const on = o.dataset.poType === type;
+          o.classList.toggle('is-active', on);
+          const radio = o.querySelector('input[type="radio"]');
+          if (radio) radio.checked = on;
+        });
+
+        // Selling plan: set on subscription, clear on one-time
+        if (planInput) planInput.value = isSub ? data.plan : '';
+
+        // Main section price
+        if (isSub) {
+          if (priceCurrent) priceCurrent.textContent = data.sub;
+          if (priceCompare) { priceCompare.textContent = data.regular; toggleHidden(priceCompare, !!data.regular); }
+          if (priceSave)    { priceSave.textContent = '-' + data.subPct + '%'; toggleHidden(priceSave, !!data.subPct); }
+        } else {
+          if (priceCurrent) priceCurrent.textContent = data.regular;
+          if (priceCompare) { priceCompare.textContent = data.compare; toggleHidden(priceCompare, data.hasCompare); }
+          if (priceSave)    { priceSave.textContent = '-' + data.origPct + '%'; toggleHidden(priceSave, data.hasCompare); }
+        }
+
+        // Native dynamic checkout can't carry a selling plan → hide it on subscription
+        if (dynamic) dynamic.style.display = isSub ? 'none' : '';
+      }
+
+      options.forEach((o) => {
+        o.addEventListener('click', () => setOption(o.dataset.poType));
+        const radio = o.querySelector('input[type="radio"]');
+        if (radio) radio.addEventListener('change', () => { if (radio.checked) setOption(o.dataset.poType); });
+      });
+
+      // Initial sync (subscription is active by default)
+      const active = options.find((o) => o.classList.contains('is-active')) || options[0];
+      if (active) setOption(active.dataset.poType);
+    })();
+
+    /* ===== Cart sections + drawer (reused, proven) ===== */
+    function getCartSectionIds() {
+      const ids = new Set();
+      document.querySelectorAll('cart-items-component').forEach(c => { if (c.dataset.sectionId) ids.add(c.dataset.sectionId); });
+      return Array.from(ids);
+    }
+    function refreshCartSections(sections) {
+      if (!sections) return;
+      const sr = window.theme?.sectionRenderer || window.sectionRenderer;
+      if (sr && typeof sr.renderSection === 'function') {
+        Object.keys(sections).forEach(id => { try { sr.renderSection(id, { cache: false }); } catch (e) {} });
+        return;
+      }
+      const ms = window.theme?.morphSection || window.morphSection;
+      if (ms && typeof ms === 'function') {
+        Object.keys(sections).forEach(id => { try { ms(id, sections[id]); } catch (e) {} });
+        return;
+      }
+      Object.keys(sections).forEach(id => {
+        const html = sections[id]; if (!html) return;
+        const target = document.querySelector(`[data-section-id="${id}"]`);
+        if (target && target.tagName.toLowerCase() === 'cart-items-component') {
+          const t = document.createElement('div'); t.innerHTML = html;
+          const nc = t.querySelector('cart-items-component') || t.firstElementChild;
+          if (nc) target.innerHTML = nc.innerHTML;
+        }
+      });
+    }
+    function openCartDrawer() {
+      const drawer = document.querySelector('cart-drawer-component');
+      if (!drawer) return;
+      if (typeof drawer.open === 'function') return drawer.open();
+      if (typeof drawer.showDialog === 'function') return drawer.showDialog();
+      if (!drawer.hasAttribute('open')) drawer.setAttribute('open', '');
+    }
+
+    /* ===== Add to Cart (fetch) ===== */
+    const atc = section.querySelector('[data-fpv2-atc]');
+    if (atc) {
+      atc.addEventListener('click', async function (e) {
+        e.preventDefault();
+        if (atc.disabled) return;
+
+        const variantInput = section.querySelector('[data-fpv2-variant]');
+        const variantId = variantInput ? variantInput.value : atc.dataset.variantId;
+        const qtyInput = section.querySelector('[data-qty-input]');
+        const quantity = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+
+        atc.classList.add('is-loading');
+        atc.disabled = true;
+
+        try {
+          const sectionIds = getCartSectionIds();
+
+          // Subscription: attach selling_plan when the subscription option is active.
+          const item = { id: parseInt(variantId, 10), quantity };
+          const planInput = section.querySelector('[data-fpv2-selling-plan]');
+          const sellingPlan = planInput && planInput.value ? parseInt(planInput.value, 10) : null;
+          if (sellingPlan && Number.isFinite(sellingPlan)) {
+            item.selling_plan = sellingPlan;
+          }
+
+          const body = {
+            items: [item],
+            sections: sectionIds.join(','),
+            sections_url: window.location.pathname
+          };
+          const res = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify(body)
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.description || data.message || 'Error');
+
+          const itemCount = data.items?.reduce((s, it) => s + it.quantity, 0) || quantity;
+
+          // Cupones automáticos: ya hay items en el carrito, Shopify puede evaluar aplicabilidad.
+          let discountResult = null;
+          if (window.fpv2Discounts) {
+            discountResult = await window.fpv2Discounts.applyAll({ requireCart: true });
+          }
+
+          // Los totales cambiaron: re-render de las secciones de carrito DESPUÉS de aplicar.
+          if (discountResult && discountResult.applied.length) {
+            const ids = getCartSectionIds().join(',');
+            if (ids) {
+              const r = await fetch(`${window.location.pathname}?sections=${ids}`, { headers: { Accept: 'application/json' } });
+              if (r.ok) refreshCartSections(await r.json());
+            }
+          } else if (data.sections) {
+            refreshCartSections(data.sections);
+          }
+
+          if (window.CartAddEvent) {
+            document.dispatchEvent(new CartAddEvent(data, 'fpv2-' + sectionId, {
+              source: 'featured-product-v2', itemCount, sections: data.sections, didError: false
+            }));
+          }
+          dispatchThemeEvent('cart:add', { cart: data, items: data.items, source: 'featured-product-v2', sections: data.sections, itemCount });
+          document.dispatchEvent(new CustomEvent('cart:update', {
+            bubbles: true, detail: { data: { sections: data.sections }, source: 'featured-product-v2', itemCount }
+          }));
+          document.dispatchEvent(new CustomEvent('cart:refresh', {
+            bubbles: true, detail: { source: 'featured-product-v2', sections: data.sections }
+          }));
+
+          openCartDrawer();
+
+          const txt = atc.querySelector('[class*="atc-text"]');
+          atc.classList.add('is-added');
+          if (txt) {
+            const orig = txt.textContent;
+            txt.textContent = '{{ section.settings.added_text }}';
+            setTimeout(() => { txt.textContent = orig; atc.classList.remove('is-added'); }, 2000);
+          }
+        } catch (err) {
+          console.error('Featured Product V2 - Error:', err);
+          alert(err.message || 'Error adding to cart.');
+        } finally {
+          setTimeout(() => { atc.classList.remove('is-loading'); atc.disabled = false; }, 2000);
+        }
+      });
+    }
+
+    /* Cadena de cupones desde atributo (fallback si el motor no está cargado). */
+    function fpv2BuildChain(root, codesRaw, dest) {
+      const codes = (codesRaw || '')
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean);
+      if (!codes.length) return dest;
+      // /discount/A?redirect=/discount/B?redirect=/checkout  (redirects anidados y codificados)
+      return codes.reduceRight(
+        (acc, code) =>
+          root + 'discount/' + encodeURIComponent(code) + '?redirect=' + encodeURIComponent(acc),
+        dest
+      );
+    }
+    /* ===== Free-shipping CTA: add N units (+ optional extra) → checkout ===== */
+    const freeship = section.querySelector('[data-fpv2-freeship]');
+    if (freeship) {
+      freeship.addEventListener('click', async function (e) {
+        e.preventDefault();
+        if (freeship.disabled) return;
+
+        const mainId = parseInt(freeship.dataset.variantId, 10);
+        const mainQty = Math.max(1, parseInt(freeship.dataset.qty, 10) || 2);
+        const extraId = parseInt(freeship.dataset.extraId, 10);
+        const extraQty = Math.max(1, parseInt(freeship.dataset.extraQty, 10) || 1);
+
+        const items = [{ id: mainId, quantity: mainQty }];
+        if (extraId && !Number.isNaN(extraId) && extraId !== mainId) {
+          items.push({ id: extraId, quantity: extraQty });
+        }
+
+        freeship.classList.add('is-loading');
+        freeship.disabled = true;
+
+        try {
+          const res = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ items })
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.description || data.message || 'Error');
+          // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
+          const root = window.Shopify?.routes?.root || '/';
+          const dest = root + 'checkout';
+          window.location.href = window.fpv2Discounts
+            ? window.fpv2Discounts.chainUrl(dest)               // motor: prioridad + límites
+            : fpv2BuildChain(root, freeship.dataset.discountCodes, dest); // fallback por atributo
+        } catch (err) {
+          console.error('Featured Product V2 - Free shipping CTA error:', err);
+          alert(err.message || 'Error adding to cart.');
+          freeship.classList.remove('is-loading');
+          freeship.disabled = false;
+        }
+      });
+    }
+
+    /* ===== Entry animation ===== */
+    {% if section.settings.enable_animation %}
+    (function initAnim() {
+      const container = section.querySelector('[data-fpv2-container]');
+      if (!container) return;
+      container.classList.add('fpv2-anim');
+      if (prefersReduced || !('IntersectionObserver' in window)) { container.classList.add('is-visible'); return; }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); } });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+      io.observe(container);
+    })();
+    {% endif %}
+
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Featured Product V3",
+  "tag": "section",
+  "class": "featured-product-v2-section",
+  "settings": [
+    { "type": "header", "content": "Product" },
+    { "type": "product", "id": "product", "label": "Product" },
+    {
+      "type": "text",
+      "id": "variant_id",
+      "label": "Variant ID (optional)",
+      "info": "Pin a specific variant for this block (e.g. 500g). Leave empty to use the first available variant."
+    },
+    {
+      "type": "html",
+      "id": "custom_title",
+      "label": "Custom title (HTML, optional)",
+      "info": "Leave empty to use the product's title."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Short description",
+      "info": "Shown under the price. Leave empty to fall back to the product description (if enabled below)."
+    },
+    {
+      "type": "checkbox",
+      "id": "use_product_description",
+      "label": "Fall back to product description",
+      "default": false
+    },
+
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "select",
+      "id": "media_text_ratio",
+      "label": "Image / details split (desktop)",
+      "options": [
+        { "value": "1fr 1fr", "label": "50 / 50" },
+        { "value": "55fr 45fr", "label": "55 / 45" },
+        { "value": "45fr 55fr", "label": "45 / 55" },
+        { "value": "3fr 2fr", "label": "60 / 40" },
+        { "value": "2fr 3fr", "label": "40 / 60" }
+      ],
+      "default": "55fr 45fr"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between columns",
+      "default": 56
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Vertical alignment",
+      "options": [
+        { "value": "start", "label": "Top" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "start"
+    },
+    { "type": "checkbox", "id": "sticky_media", "label": "Sticky image on scroll (desktop)", "default": false },
+    {
+      "type": "range",
+      "id": "sticky_offset",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "label": "Sticky offset from top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 800,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Section max width",
+      "default": 1200
+    },
+    { "type": "checkbox", "id": "enable_animation", "label": "Fade-in on scroll", "default": true },
+
+    { "type": "header", "content": "Section Separator" },
+    {
+      "type": "range",
+      "id": "section_border_bottom_width",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom separator height",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "section_border_bottom_color",
+      "label": "Bottom separator color",
+      "default": "#ece3d7"
+    },
+
+    { "type": "header", "content": "Image Gallery" },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "min": 300,
+      "max": 900,
+      "step": 20,
+      "unit": "px",
+      "label": "Image container max width",
+      "default": 600,
+      "info": "Controls the overall image size. Combine with the 60/40 split to fine-tune the layout."
+    },
+    {
+      "type": "select",
+      "id": "gallery_nav",
+      "label": "Gallery navigation",
+      "options": [
+        { "value": "dots", "label": "Dots (below)" },
+        { "value": "thumbnails", "label": "Thumbnails (left column)" }
+      ],
+      "default": "thumbnails"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "3/4", "label": "Portrait (3:4)" },
+        { "value": "4/3", "label": "Landscape (4:3)" }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        { "value": "cover", "label": "Cover" },
+        { "value": "contain", "label": "Contain" }
+      ],
+      "default": "cover"
+    },
+    { "type": "color", "id": "image_bg", "label": "Image background", "default": "#f2efe9" },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 16
+    },
+    { "type": "checkbox", "id": "media_shadow", "label": "Soft shadow under image", "default": true },
+    {
+      "type": "range",
+      "id": "thumb_size",
+      "min": 48,
+      "max": 96,
+      "step": 4,
+      "unit": "px",
+      "label": "Thumbnail size",
+      "default": 64
+    },
+    { "type": "color", "id": "dot_color", "label": "Dot color", "default": "#370c07" },
+
+    { "type": "header", "content": "Discount & Countdown" },
+    { "type": "checkbox", "id": "show_promo", "label": "Show discount block", "default": true },
+    {
+      "type": "text",
+      "id": "promo_badge",
+      "label": "Discount badge",
+      "default": "20% OFF",
+      "info": "Short label, e.g. 20% OFF"
+    },
+    { "type": "text", "id": "promo_text", "label": "Discount text", "default": "Limited-time launch offer" },
+    { "type": "checkbox", "id": "countdown_enabled", "label": "Show countdown", "default": true },
+    { "type": "checkbox", "id": "promo_hide_on_expiry", "label": "Hide block when countdown ends", "default": true },
+    {
+      "type": "checkbox",
+      "id": "promo_hide_when_no_codes",
+      "label": "Hide block when all codes expire",
+      "default": true,
+      "info": "Only applies if the block had at least one discount code."
+    },
+    {
+      "type": "range",
+      "id": "promo_padding",
+      "min": 8,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Discount block padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "promo_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Discount block radius",
+      "default": 12
+    },
+    {
+      "type": "paragraph",
+      "content": "Set the end date/time below (store local time)."
+    },
+    { "type": "range", "id": "cd_year", "min": 2025, "max": 2030, "step": 1, "label": "End year", "default": 2026 },
+    { "type": "range", "id": "cd_month", "min": 1, "max": 12, "step": 1, "label": "End month", "default": 12 },
+    { "type": "range", "id": "cd_day", "min": 1, "max": 31, "step": 1, "label": "End day", "default": 31 },
+    { "type": "range", "id": "cd_hour", "min": 0, "max": 23, "step": 1, "label": "End hour (24h)", "default": 23 },
+    { "type": "range", "id": "cd_minute", "min": 0, "max": 59, "step": 1, "label": "End minute", "default": 59 },
+    { "type": "text", "id": "cd_days_label", "label": "Days label", "default": "Days" },
+    { "type": "text", "id": "cd_hours_label", "label": "Hours label", "default": "Hrs" },
+    { "type": "text", "id": "cd_mins_label", "label": "Minutes label", "default": "Min" },
+    { "type": "text", "id": "cd_secs_label", "label": "Seconds label", "default": "Sec" },
+
+    { "type": "header", "content": "Discount Code (Copy to Clipboard)" },
+    {
+      "type": "text",
+      "id": "promo_code",
+      "label": "Discount code",
+      "info": "Optional coupon code users can copy. Leave empty to hide. For more codes, add 'Discount code' blocks."
+    },
+    {
+      "type": "text",
+      "id": "promo_code_ends_at",
+      "label": "Code expires at (optional)",
+      "placeholder": "2026-12-31 23:59",
+      "info": "Format YYYY-MM-DD HH:MM, store time zone. The code disappears automatically at that moment."
+    },
+    {
+      "type": "text",
+      "id": "promo_code_note",
+      "label": "Code note (optional)",
+      "placeholder": "15% off your first order"
+    },
+    { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
+
+    { "type": "header", "content": "Cupones automáticos" },
+    {
+      "type": "paragraph",
+      "content": "Requiere que cada código tenga habilitadas las Combinaciones en Shopify Admin → Discounts. Máximo 5 códigos de producto/pedido + 1 de envío por orden. Los descuentos automáticos no combinan con códigos."
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_apply_enabled",
+      "label": "Aplicar cupones automáticamente",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "auto_apply_mode",
+      "label": "Cuándo aplicarlos",
+      "options": [
+        { "value": "on_load", "label": "Al cargar la página (cubre Buy it Now)" },
+        { "value": "on_atc", "label": "Al agregar al carrito (recomendado)" },
+        { "value": "on_checkout", "label": "Solo al ir al checkout" }
+      ],
+      "default": "on_atc"
+    },
+    {
+      "type": "checkbox",
+      "id": "promo_auto_apply",
+      "label": "Incluir también el código legacy de la sección",
+      "default": true,
+      "info": "Se refiere al campo 'Discount code' de arriba, no a los bloques."
+    },
+    {
+      "type": "checkbox",
+      "id": "buy_now_hide_with_codes",
+      "label": "Ocultar Buy it Now cuando hay cupones activos",
+      "default": false,
+      "info": "El checkout dinámico se salta el carrito y puede perder los cupones apilados."
+    },
+    { "type": "text", "id": "code_applied_text", "label": "Texto: aplicado", "default": "Aplicado ✓" },
+    { "type": "text", "id": "code_applying_text", "label": "Texto: aplicando", "default": "Aplicando…" },
+    { "type": "text", "id": "code_na_text", "label": "Texto: no aplicable", "default": "No aplica a este carrito" },
+    { "type": "text", "id": "promo_code_label", "label": "Code label", "default": "Your code:" },
+    { "type": "text", "id": "promo_code_copy_text", "label": "Copy button text", "default": "Copy" },
+    { "type": "text", "id": "promo_code_copied_text", "label": "Copied feedback text", "default": "Copied!" },
+    {
+      "type": "checkbox",
+      "id": "promo_code_show_expiry",
+      "label": "Show expiry date under each code",
+      "default": false
+    },
+    { "type": "text", "id": "promo_code_expiry_prefix", "label": "Expiry prefix", "default": "Valid until" },
+    {
+      "type": "select",
+      "id": "promo_code_expiry_format",
+      "label": "Expiry date format",
+      "options": [
+        { "value": "%b %d", "label": "Dec 31" },
+        { "value": "%b %d, %H:%M", "label": "Dec 31, 23:59" },
+        { "value": "%d/%m/%Y", "label": "31/12/2026" },
+        { "value": "%m/%d/%Y", "label": "12/31/2026" }
+      ],
+      "default": "%b %d"
+    },
+
+    { "type": "header", "content": "Buy Buttons" },
+    { "type": "text", "id": "atc_text", "label": "Add to cart text", "default": "Add to Cart" },
+    { "type": "text", "id": "added_text", "label": "Added text", "default": "Added!" },
+    { "type": "text", "id": "sold_out_text", "label": "Sold out text", "default": "Sold Out" },
+    { "type": "checkbox", "id": "show_buy_now", "label": "Show Buy it Now (dynamic checkout)", "default": true },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button radius",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "button_text_transform",
+      "label": "Button text transform",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "uppercase", "label": "Uppercase" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "range",
+      "id": "button_letter_spacing",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "label": "Button letter spacing",
+      "default": 0
+    },
+
+    { "type": "header", "content": "Free-shipping CTA" },
+    {
+      "type": "paragraph",
+      "content": "Adds the units below to the cart and goes straight to checkout (for a 2+ items free-shipping offer)."
+    },
+    { "type": "checkbox", "id": "show_freeship", "label": "Show free-shipping CTA", "default": false },
+    {
+      "type": "select",
+      "id": "freeship_width",
+      "label": "CTA width",
+      "options": [
+        { "value": "100", "label": "Full width (100%)" },
+        { "value": "80", "label": "Full width (80%)" },
+        { "value": "60", "label": "Full width (60%)" },
+        { "value": "auto", "label": "Auto width (aligned)" }
+      ],
+      "default": "100"
+    },
+    { "type": "text", "id": "freeship_text", "label": "CTA text", "default": "Buy 2 & get FREE shipping" },
+    { "type": "text", "id": "freeship_subtext", "label": "CTA sub-text (optional)", "default": "Straight to checkout" },
+    { "type": "checkbox", "id": "freeship_icon", "label": "Show truck icon", "default": true },
+    {
+      "type": "range",
+      "id": "freeship_qty",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Units of this product to add",
+      "default": 2
+    },
+    {
+      "type": "text",
+      "id": "freeship_extra_variant",
+      "label": "Extra variant ID (optional)",
+      "info": "Add a different product too. Leave empty to only add this product."
+    },
+    {
+      "type": "range",
+      "id": "freeship_extra_qty",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Units of the extra product",
+      "default": 1
+    },
+    { "type": "color", "id": "freeship_bg", "label": "CTA background", "default": "#2e7d32" },
+    { "type": "color", "id": "freeship_color", "label": "CTA text color", "default": "#ffffff" },
+    { "type": "color", "id": "freeship_color_hover", "label": "CTA hover color", "default": "#256628" },
+    { "type": "color", "id": "freeship_bg_hover", "label": "CTA hover background", "default": "#256628" },
+    { "type": "color", "id": "freeship_border", "label": "CTA border", "default": "#2e7d32" },
+
+    { "type": "header", "content": "Badges (add Badge blocks below)" },
+    { "type": "checkbox", "id": "show_badges", "label": "Show badges row", "default": true },
+    {
+      "type": "paragraph",
+      "content": "Add each badge as a Badge block at the bottom of this section (icon + text). Shows in a row after the buy buttons."
+    },
+    {
+      "type": "range",
+      "id": "badge_icon_size",
+      "min": 40,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge icon size",
+      "default": 78
+    },
+    {
+      "type": "range",
+      "id": "badge_icon_size_mobile",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Badge icon size (mobile)",
+      "default": 58
+    },
+
+    { "type": "header", "content": "Tabs (add Tab blocks below)" },
+    { "type": "checkbox", "id": "show_tabs", "label": "Show info tabs", "default": true },
+    {
+      "type": "paragraph",
+      "content": "Add each tab as a Tab block (title + content), e.g. Shipping, Flavor, Servings."
+    },
+
+    { "type": "header", "content": "Recipes (add manually below)" },
+    { "type": "checkbox", "id": "show_recipes", "label": "Show recipes carousel", "default": true },
+    { "type": "text", "id": "recipes_title", "label": "Recipes heading", "default": "Recipes with this product" },
+    { "type": "checkbox", "id": "recipes_show_name", "label": "Show recipe name", "default": true },
+    {
+      "type": "paragraph",
+      "content": "Add each recipe as a block at the bottom of this section (image, name, link). Extra recipes stay reachable via the slider."
+    },
+    {
+      "type": "range",
+      "id": "recipes_per_view",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Recipes per view (desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "recipes_per_view_mobile",
+      "min": 1,
+      "max": 2.5,
+      "step": 0.5,
+      "label": "Recipes per view (mobile)",
+      "default": 1.5
+    },
+    {
+      "type": "select",
+      "id": "recipe_aspect_ratio",
+      "label": "Recipe image ratio",
+      "options": [
+        { "value": "1/1", "label": "Square (1:1)" },
+        { "value": "4/5", "label": "Portrait (4:5)" },
+        { "value": "4/3", "label": "Landscape (4:3)" }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "range",
+      "id": "recipes_title_size",
+      "min": 14,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "label": "Recipes heading size",
+      "default": 18
+    },
+    { "type": "checkbox", "id": "recipes_autoplay", "label": "Autoplay recipes carousel", "default": true },
+    {
+      "type": "range",
+      "id": "recipes_autoplay_speed",
+      "min": 2000,
+      "max": 8000,
+      "step": 500,
+      "unit": "ms",
+      "label": "Autoplay interval",
+      "default": 4000
+    },
+
+    { "type": "header", "content": "Details Typography & Spacing" },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "info": "Base alignment. Each element below can override it."
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Text alignment (mobile)",
+      "options": [
+        { "value": "inherit", "label": "Same as desktop" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "inherit",
+      "info": "Overrides every element on screens under 750px."
+    },
+    {
+      "type": "select",
+      "id": "title_align",
+      "label": "Title alignment",
+      "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "price_align",
+      "label": "Price alignment",
+      "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "promo_align",
+      "label": "Discount block alignment",
+      "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "badges_align",
+      "label": "Badges alignment",
+      "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "select",
+      "id": "tab_content_align",
+      "label": "Tab content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "justify", "label": "Justified" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "justify_on_mobile",
+      "label": "Keep justified text on mobile",
+      "default": false,
+      "info": "Justified text in narrow columns creates big gaps between words. Recommended off."
+    },
+    {
+      "type": "range",
+      "id": "details_gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Spacing between blocks",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 20,
+      "max": 64,
+      "step": 1,
+      "unit": "px",
+      "label": "Title size",
+      "default": 36
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Title weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 16
+    },
+    { "type": "color", "id": "description_color", "label": "Description color", "default": "#5a4a3a" },
+    {
+      "type": "range",
+      "id": "description_max_width",
+      "min": 280,
+      "max": 680,
+      "step": 10,
+      "unit": "px",
+      "label": "Description max width",
+      "default": 460
+    },
+    {
+      "type": "select",
+      "id": "description_text_align",
+      "label": "Description alignment",
+      "options": [
+        { "value": "inherit", "label": "Same as general" },
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" },
+        { "value": "justify", "label": "Justified" }
+      ],
+      "default": "justify"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "price_weight",
+      "label": "Price weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi Bold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "default": "600"
+    },
+
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#ffffff" },
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#370c07" },
+    { "type": "color", "id": "price_color", "label": "Price color", "default": "#370c07" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#6c4d6e" },
+    { "type": "color", "id": "accent_soft", "label": "Accent soft (save pill bg)", "default": "#efe7f0" },
+
+    { "type": "color", "id": "promo_bg", "label": "Discount block background", "default": "#faf6f0" },
+    { "type": "color", "id": "promo_border", "label": "Discount block border", "default": "#ece3d7" },
+    { "type": "color", "id": "promo_text_color", "label": "Discount text color", "default": "#5a4a3a" },
+    { "type": "color", "id": "promo_badge_color", "label": "Badge text color", "default": "#ffffff" },
+    { "type": "color", "id": "cd_box_bg", "label": "Countdown box background", "default": "#ffffff" },
+    { "type": "color", "id": "cd_num_color", "label": "Countdown number color", "default": "#370c07" },
+    { "type": "color", "id": "cd_label_color", "label": "Countdown label color", "default": "#8a7a6a" },
+
+    { "type": "color", "id": "qty_bg", "label": "Quantity background", "default": "#ffffff" },
+    { "type": "color", "id": "qty_border", "label": "Quantity / arrow border", "default": "#d8d2c8" },
+    { "type": "color", "id": "qty_color", "label": "Quantity text color", "default": "#370c07" },
+    { "type": "color", "id": "atc_bg", "label": "Add to cart background", "default": "#370c07" },
+    { "type": "color", "id": "atc_color", "label": "Add to cart text", "default": "#ffffff" },
+    { "type": "color", "id": "atc_bg_hover", "label": "Add to cart hover", "default": "#54130b" },
+
+    { "type": "header", "content": "Subscription (Purchase Options)" },
+    {
+      "type": "checkbox",
+      "id": "enable_subscription",
+      "label": "Enable subscription selector",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "selling_plan_id",
+      "label": "Selling Plan ID",
+      "info": "Numeric Shopify Selling Plan ID (e.g. 3233841344). Leave empty to add as one-time only."
+    },
+    {
+      "type": "range",
+      "id": "subscription_discount",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "label": "Subscription discount (visual)",
+      "default": 15,
+      "info": "Used for the on-page price calculation only. The real discount comes from the Selling Plan."
+    },
+    { "type": "text", "id": "sub_title", "label": "Subscription title", "default": "Subscribe & Save" },
+    { "type": "text", "id": "sub_subtitle", "label": "Subscription subtitle", "default": "15 servings per bag" },
+    { "type": "text", "id": "sub_badge_text", "label": "Subscription badge", "default": "Most Popular" },
+    { "type": "text", "id": "onetime_title", "label": "One-time title", "default": "One-time purchase" },
+    { "type": "text", "id": "onetime_subtitle", "label": "One-time subtitle", "default": "Standard delivery" },
+    {
+      "type": "checkbox",
+      "id": "show_price_when_subscription",
+      "label": "Also show the headline price above",
+      "default": false,
+      "info": "Off by default: with the selector on, the price lives in the option cards to avoid showing it twice."
+    },
+
+    { "type": "header", "content": "Section Spacing" },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "discount_code",
+      "name": "Discount code",
+      "settings": [
+        { "type": "text", "id": "code", "label": "Code", "default": "WELCOME15" },
+        { "type": "checkbox", "id": "auto_apply", "label": "Aplicar automáticamente", "default": true },
+        {
+          "type": "select",
+          "id": "kind",
+          "label": "Tipo de descuento",
+          "options": [
+            { "value": "product", "label": "Producto (% o monto sobre ítems)" },
+            { "value": "order", "label": "Pedido (% o monto sobre el total)" },
+            { "value": "shipping", "label": "Envío gratis" }
+          ],
+          "default": "order",
+          "info": "Define el orden de aplicación. Los de envío siempre van al final."
+        },
+        {
+          "type": "range",
+          "id": "priority",
+          "label": "Prioridad",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "default": 10,
+          "info": "Menor número = se aplica antes."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label (optional)",
+          "info": "Leave empty to use the section's code label."
+        },
+        { "type": "text", "id": "note", "label": "Note (optional)", "placeholder": "15% off your first order" },
+        {
+          "type": "text",
+          "id": "starts_at",
+          "label": "Show from (optional)",
+          "placeholder": "2026-11-27 00:00",
+          "info": "YYYY-MM-DD HH:MM, store time zone. Empty = visible now."
+        },
+        {
+          "type": "text",
+          "id": "ends_at",
+          "label": "Expires at (optional)",
+          "placeholder": "2026-12-01 23:59",
+          "info": "YYYY-MM-DD HH:MM, store time zone. Removed automatically when it expires."
+        }
+      ]
+    },
+    {
+      "type": "recipe",
+      "name": "Recipe",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Recipe image" },
+        { "type": "text", "id": "name", "label": "Recipe name" },
+        { "type": "url", "id": "link", "label": "Recipe link (optional)" }
+      ]
+    },
+    {
+      "type": "badge",
+      "name": "Badge",
+      "settings": [
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Icon (SVG code)",
+          "info": "Paste inline SVG. Takes priority over the image below."
+        },
+        { "type": "image_picker", "id": "icon_image", "label": "Icon image (fallback)" },
+        { "type": "text", "id": "text", "label": "Badge text", "default": "Free shipping 2+" }
+      ]
+    },
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Tab title", "default": "Shipping" },
+        { "type": "richtext", "id": "content", "label": "Tab content", "default": "<p>Add your info here.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 30,
+  "presets": [
+    {
+      "name": "Featured Product V3",
+      "blocks": [
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "badge" },
+        { "type": "tab" },
+        { "type": "tab" },
+        { "type": "tab" },
+        { "type": "recipe" },
+        { "type": "recipe" },
+        { "type": "recipe" }
+      ]
+    }
+  ]
+}
+{% endschema %}
