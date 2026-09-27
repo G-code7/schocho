@@ -85,7 +85,6 @@
 
   assign code_blocks = section.blocks | where: 'type', 'discount_code'
 
-
   # ---- Multi-código: cadena para el CTA de checkout directo ----
   # Nota: shipping SIEMPRE al final (Shopify lo evalúa último). El orden
   # entre product/order aquí es el de los bloques; si necesitas prioridad
@@ -118,7 +117,6 @@
   endfor
   assign fpv2_chain_codes = fpv2_chain_arr | append: fpv2_ship_arr | remove_first: ','
 %}
-
 
 {% style %}
   .fpv2-{{ section_id }} {
@@ -932,7 +930,6 @@
   /* Safeguard: hidden price parts stay hidden inside the flex price row */
   .fpv2__price-compare-{{ section_id }}[hidden],
   .fpv2__price-save-{{ section_id }}[hidden] { display: none; }
-
 {% endstyle %}
 
 <section
@@ -1034,23 +1031,27 @@
           endif
         -%}
         {%- if fpv2_show_price -%}
-        <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}" data-fpv2-price>
-          {%- if fpv2_sub_enabled -%}
-            {%- comment -%} Default active option is subscription → render its price server-side {%- endcomment -%}
-            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ fpv2_sub_price | money }}</span>
-            <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.price | money }}</span>
-            <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ fpv2_sub_discount }}%</span>
-          {%- else -%}
-            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ v.price | money }}</span>
-            {%- if fpv2_has_compare -%}
-              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.compare_at_price | money }}</span>
-              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ pct }}%</span>
+          <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}" data-fpv2-price>
+            {%- if fpv2_sub_enabled -%}
+              {%- comment -%} Default active option is subscription → render its price server-side {%- endcomment -%}
+              <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>
+                {{- fpv2_sub_price | money -}}
+              </span>
+              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.price | money }}</span>
+              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ fpv2_sub_discount }}%</span>
             {%- else -%}
-              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare hidden></span>
-              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save hidden></span>
+              <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ v.price | money }}</span>
+              {%- if fpv2_has_compare -%}
+                <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>
+                  {{- v.compare_at_price | money -}}
+                </span>
+                <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ pct }}%</span>
+              {%- else -%}
+                <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare hidden></span>
+                <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save hidden></span>
+              {%- endif -%}
             {%- endif -%}
-          {%- endif -%}
-        </div>
+          </div>
         {%- endif -%}
 
         {%- comment -%} Free-shipping CTA (adds N units → checkout) {%- endcomment -%}
@@ -1165,6 +1166,7 @@
                       assign c_start_raw = ''
                       assign c_end_raw = section.settings.promo_code_ends_at | strip
                       assign c_attrs = ''
+                      assign c_hidden = false
                     else
                       assign b_index = forloop.index0 | minus: 1
                       assign blk = code_blocks[b_index]
@@ -1174,10 +1176,18 @@
                       assign c_start_raw = blk.settings.starts_at | strip
                       assign c_end_raw = blk.settings.ends_at | strip
                       assign c_attrs = blk.shopify_attributes
+                      assign c_hidden = blk.settings.is_hidden
                     endif
+
                     if c_code == blank
                       continue
                     endif
+
+                    if c_hidden
+                      continue
+                    endif
+
+                    assign c_start = 0
 
                     assign c_start = 0
                     if c_start_raw != blank
@@ -1310,15 +1320,27 @@
                 <label
                   class="fpv2__po-option-{{ section_id }} is-active"
                   data-po-type="subscription"
-                  {%- if section.settings.sub_badge_text != blank %} data-badge="{{ section.settings.sub_badge_text }}"{% endif -%}
+                  {%- if section.settings.sub_badge_text != blank %}
+                    data-badge="{{ section.settings.sub_badge_text }}"
+                  {% endif -%}
                 >
-                  <input type="radio" name="fpv2_po_{{ section_id }}" value="subscription" class="fpv2__po-radio-input-{{ section_id }}" checked>
+                  <input
+                    type="radio"
+                    name="fpv2_po_{{ section_id }}"
+                    value="subscription"
+                    class="fpv2__po-radio-input-{{ section_id }}"
+                    checked
+                  >
                   <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
                   <span class="fpv2__po-body-{{ section_id }}">
                     <span class="fpv2__po-head-{{ section_id }}">
                       <span class="fpv2__po-titles-{{ section_id }}">
-                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.sub_title | default: 'Subscribe & Save' }}</span>
-                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.sub_subtitle | default: '15 servings per bag' }}</span>
+                        <span class="fpv2__po-title-{{ section_id }}">
+                          {{- section.settings.sub_title | default: 'Subscribe & Save' -}}
+                        </span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">
+                          {{- section.settings.sub_subtitle | default: '15 servings per bag' -}}
+                        </span>
                       </span>
                       <span class="fpv2__po-prices-{{ section_id }}">
                         <s class="fpv2__po-compare-{{ section_id }}">{{ v.price | money }}</s>
@@ -1333,13 +1355,22 @@
                   class="fpv2__po-option-{{ section_id }}"
                   data-po-type="onetime"
                 >
-                  <input type="radio" name="fpv2_po_{{ section_id }}" value="onetime" class="fpv2__po-radio-input-{{ section_id }}">
+                  <input
+                    type="radio"
+                    name="fpv2_po_{{ section_id }}"
+                    value="onetime"
+                    class="fpv2__po-radio-input-{{ section_id }}"
+                  >
                   <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
                   <span class="fpv2__po-body-{{ section_id }}">
                     <span class="fpv2__po-head-{{ section_id }}">
                       <span class="fpv2__po-titles-{{ section_id }}">
-                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.onetime_title | default: 'One-time purchase' }}</span>
-                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.onetime_subtitle | default: 'Standard delivery' }}</span>
+                        <span class="fpv2__po-title-{{ section_id }}">
+                          {{- section.settings.onetime_title | default: 'One-time purchase' -}}
+                        </span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">
+                          {{- section.settings.onetime_subtitle | default: 'Standard delivery' -}}
+                        </span>
                       </span>
                       <span class="fpv2__po-prices-{{ section_id }}">
                         <span class="fpv2__po-price-{{ section_id }}">{{ v.price | money }}</span>
@@ -1350,7 +1381,12 @@
               </div>
 
               {%- comment -%} Selling plan pre-set to subscription (default active) {%- endcomment -%}
-              <input type="hidden" name="selling_plan" value="{{ section.settings.selling_plan_id | strip }}" data-fpv2-selling-plan>
+              <input
+                type="hidden"
+                name="selling_plan"
+                value="{{ section.settings.selling_plan_id | strip }}"
+                data-fpv2-selling-plan
+              >
             {%- endif -%}
 
             <div class="fpv2__qty-row-{{ section_id }}">
@@ -1401,7 +1437,12 @@
               endif
             -%}
             {% if fpv2_show_buy_now %}
-              <div class="fpv2__dynamic-{{ section_id }}"{% if section.settings.enable_subscription %} style="display:none;"{% endif %}>
+              <div
+                class="fpv2__dynamic-{{ section_id }}"
+                {% if section.settings.enable_subscription %}
+                  style="display:none;"
+                {% endif %}
+              >
                 {{ form | payment_button }}
               </div>
             {% endif %}
@@ -1568,12 +1609,7 @@
 </section>
 
 {%- comment -%} Motor de cupones automaticos (multi-codigo). Debe ir a nivel HTML, nunca dentro de <script>. {%- endcomment -%}
-{% render 'fpv2-discounts',
-  section: section,
-  section_id: section_id,
-  now_ts: now_ts,
-  shop_offset: shop_offset
-%}
+{% render 'fpv2-discounts', section: section, section_id: section_id, now_ts: now_ts, shop_offset: shop_offset %}
 
 <script>
   (function () {
