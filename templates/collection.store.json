@@ -798,7 +798,7 @@
         "tab_content_align": "left",
         "justify_on_mobile": false,
         "details_gap": 20,
-        "title_size": 36,
+        "title_size": 32,
         "title_weight": "700",
         "description_size": 16,
         "description_color": "#35115c",
