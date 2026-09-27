@@ -115,7 +115,12 @@
       endunless
     endif
   endfor
-  assign fpv2_chain_codes = fpv2_chain_arr | append: fpv2_ship_arr | remove_first: ','
+  assign _code2 = section.settings.promo_code_2 | strip
+  if _code2 != blank
+    assign fpv2_chain_arr = fpv2_chain_arr | append: ',' | append: _code2
+  endif
+   assign fpv2_chain_codes = fpv2_chain_arr | append: fpv2_ship_arr | remove_first: ','
+
 %}
 
 {% style %}
@@ -1147,19 +1152,24 @@
               if section.settings.promo_code != blank
                 assign has_legacy_code = true
               endif
+              assign has_code2 = false
+              if section.settings.promo_code_2 != blank
+                assign has_code2 = true
+              endif
               assign total_codes = code_blocks.size
               if has_legacy_code
+                assign total_codes = total_codes | plus: 1
+              endif
+              if has_code2
                 assign total_codes = total_codes | plus: 1
               endif
             -%}
             {% if total_codes > 0 %}
               <div class="fpv2__promo-codes-{{ section_id }}" data-fpv2-codes>
-                {%- for i in (0..code_blocks.size) -%}
+                {%- assign fpv2_loop_max = code_blocks.size | plus: 1 -%}
+                {%- for i in (0..fpv2_loop_max) -%}
                   {%- liquid
-                    if forloop.first
-                      unless has_legacy_code
-                        continue
-                      endunless
+                    if forloop.index0 == 0
                       assign c_code = section.settings.promo_code | strip
                       assign c_label = section.settings.promo_code_label
                       assign c_note = section.settings.promo_code_note
@@ -1167,8 +1177,16 @@
                       assign c_end_raw = section.settings.promo_code_ends_at | strip
                       assign c_attrs = ''
                       assign c_hidden = false
+                    elsif forloop.index0 == 1
+                      assign c_code = section.settings.promo_code_2 | strip
+                      assign c_label = section.settings.promo_code_label
+                      assign c_note = ''
+                      assign c_start_raw = ''
+                      assign c_end_raw = section.settings.promo_code_2_ends_at | strip
+                      assign c_attrs = ''
+                      assign c_hidden = false
                     else
-                      assign b_index = forloop.index0 | minus: 1
+                      assign b_index = forloop.index0 | minus: 2
                       assign blk = code_blocks[b_index]
                       assign c_code = blk.settings.code | strip
                       assign c_label = blk.settings.label | default: section.settings.promo_code_label
@@ -1431,8 +1449,12 @@
             </div>
 
             {%- liquid
+              assign _codes_active = false
+              if code_blocks.size > 0 or section.settings.promo_code_2 != blank
+                assign _codes_active = true
+              endif
               assign fpv2_show_buy_now = section.settings.show_buy_now
-              if section.settings.buy_now_hide_with_codes and section.settings.auto_apply_enabled and code_blocks.size > 0
+              if section.settings.buy_now_hide_with_codes and section.settings.auto_apply_enabled and _codes_active
                 assign fpv2_show_buy_now = false
               endif
             -%}
@@ -2336,6 +2358,19 @@
       "id": "promo_code",
       "label": "Discount code",
       "info": "Optional coupon code users can copy. Leave empty to hide. For more codes, add 'Discount code' blocks."
+    },
+    {
+      "type": "text",
+      "id": "promo_code_2",
+      "label": "2nd discount code",
+      "info": "Second code auto-applied alongside the first (same engine as the block codes). Must be set as combinable in Shopify Admin → Discounts, or Shopify will apply only one."
+    },
+    {
+      "type": "text",
+      "id": "promo_code_2_ends_at",
+      "label": "2nd code expires at (optional)",
+      "placeholder": "2026-12-31 23:59",
+      "info": "Format YYYY-MM-DD HH:MM, store time zone. The code disappears automatically at that moment."
     },
     {
       "type": "text",
