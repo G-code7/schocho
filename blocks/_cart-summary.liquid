@@ -62,7 +62,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--gap-2xl);
+    /* Mitad del gap original (--gap-2xl): acerca el botón de checkout
+       al "Estimated total" y acorta el resumen. */
+    gap: calc(var(--gap-2xl) / 2);
     container-type: inline-size;
     padding: 0;
     position: sticky;
