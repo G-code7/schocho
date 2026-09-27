@@ -806,7 +806,7 @@
         "description_text_align": "justify",
         "price_size": 22,
         "price_weight": "500",
-        "section_bg": "#FAF7FE",
+        "section_bg": "#faf7fe",
         "title_color": "#311a48",
         "price_color": "#3d2258",
         "accent_color": "#35115c",
@@ -973,6 +973,8 @@
         "cd_mins_label": "Min",
         "cd_secs_label": "Sec",
         "promo_code": "CHOCHOFUEL15",
+        "promo_code_2": "FUELSHIPPING",
+        "promo_code_2_ends_at": "",
         "promo_code_ends_at": "",
         "promo_code_note": "",
         "promo_code_copyable": true,
@@ -1065,6 +1067,7 @@
         "sub_badge_text": "Most Popular",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "Standard delivery",
+        "show_price_when_subscription": false,
         "padding_top": 80,
         "padding_bottom": 80
       }
@@ -1205,6 +1208,8 @@
         "cd_mins_label": "Min",
         "cd_secs_label": "Sec",
         "promo_code": "CHOCHOFUEL15",
+        "promo_code_2": "FUELSHIPPING",
+        "promo_code_2_ends_at": "",
         "promo_code_ends_at": "",
         "promo_code_note": "",
         "promo_code_copyable": true,
@@ -1297,6 +1302,7 @@
         "sub_badge_text": "Most Popular",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "Standard delivery",
+        "show_price_when_subscription": false,
         "padding_top": 60,
         "padding_bottom": 60
       }
