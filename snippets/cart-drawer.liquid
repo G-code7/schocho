@@ -674,15 +674,10 @@
     }
 
     /* =====================================================
-       El summary no puede comerse la pantalla: se le pone
-       techo para que la lista de productos conserve sitio.
-       Si su contenido excede el techo, scrollea internamente.
+       Una sola zona de scroll en el drawer: la lista de
+       productos. El summary se muestra completo, sin scroll
+       propio, para no tener dos scrolls anidados.
     ===================================================== */
-    .cart-drawer__summary {
-      max-height: 58%;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
 
     /* Descuento compacto */
     .cart-actions .disclosure-trigger {
