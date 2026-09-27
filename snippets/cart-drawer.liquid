@@ -607,6 +607,12 @@
     font-size: 0.72rem;
   }
 
+  /* Banner de cuotas de Shopify: texto discreto */
+  #shopify-installments > p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
   .cart-drawer__summary .cart__ctas {
     display: flex;
     flex-direction: column;
@@ -679,23 +685,36 @@
        propio, para no tener dos scrolls anidados.
     ===================================================== */
 
-    /* Descuento compacto */
+    /* Descuento: proporciones equilibradas en móvil.
+       Input y botón comparten altura y el botón no se come la fila. */
     .cart-actions .disclosure-trigger {
       padding-block: 6px;
+    }
+
+    .disclosure-trigger__label {
+      font-size: 0.78rem;
     }
 
     .cart-discount__form {
       gap: 6px;
       margin-top: 6px;
+      align-items: stretch;
     }
 
     .cart-discount__input {
-      padding: 8px 10px;
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 38px;
+      padding: 0 10px;
       font-size: 0.78rem;
     }
 
     .cart-discount__button {
-      padding-inline: 12px;
+      flex: 0 0 auto;
+      height: 38px;
+      padding-inline: 14px;
+      font-size: 0.74rem;
+      white-space: nowrap;
     }
 
     .cart-discount__codes {
@@ -706,6 +725,10 @@
     .cart-discount__pill {
       padding: 3px 8px;
       font-size: 0.68rem;
+    }
+
+    #shopify-installments > p {
+      font-size: 8px;
     }
 
     /* Totales y CTAs un punto más apretados */
