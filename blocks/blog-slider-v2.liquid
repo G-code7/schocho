@@ -80,9 +80,34 @@
     background-color: var(--bs-bg);
     color: var(--bs-fg);
     padding: {{ block.settings.padding_top }}px 0 {{ block.settings.padding_bottom }}px;
+
+    /* Contención: el bloque nunca puede empujar el ancho del documento */
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-x: clip;
+  }
+
+  /* border-box en todo el subárbol: evita que paddings sumen ancho */
+  #bs-{{ bid }} *,
+  #bs-{{ bid }} *::before,
+  #bs-{{ bid }} *::after { box-sizing: border-box; }
+
+  /* Nada dentro del bloque puede exceder su caja */
+  #bs-{{ bid }} img,
+  #bs-{{ bid }} svg,
+  #bs-{{ bid }} video { max-width: 100%; }
+
+  /* Títulos/URLs largos sin espacios no ensanchan la tarjeta */
+  #bs-{{ bid }} .bs__section-title,
+  #bs-{{ bid }} .bs__title,
+  #bs-{{ bid }} .bs__excerpt,
+  #bs-{{ bid }} .bs__meta { overflow-wrap: anywhere; word-break: break-word;
   }
 
   #bs-{{ bid }} .bs__container {
+    width: 100%;
     max-width: var(--page-width, 1200px);
     margin: 0 auto;
     padding: 0 {{ block.settings.horizontal_padding }}px;
@@ -145,6 +170,8 @@
   #bs-{{ bid }} .bs__card {
     position: relative;
     height: 100%;
+    min-width: 0;
+    max-width: 100%;
     display: grid;
     border-radius: var(--bs-radius);
     overflow: hidden;
@@ -163,6 +190,7 @@
 
   #bs-{{ bid }} .bs__media {
     position: relative;
+    min-width: 0;
     overflow: hidden;
     background: var(--bs-img-bg);
     aspect-ratio: {{ block.settings.image_ratio }};
@@ -183,6 +211,7 @@
   #bs-{{ bid }} .bs__content {
     display: flex;
     flex-direction: column;
+    min-width: 0;
     justify-content: center;
     gap: {{ block.settings.content_spacing }}px;
     padding: {{ block.settings.content_padding }}px;
@@ -213,7 +242,10 @@
 
   #bs-{{ bid }} .bs__excerpt {
     font-size: {{ block.settings.description_size }}px; line-height: 1.7; opacity: .8; margin: 0;
-    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: {{ block.settings.excerpt_lines }}; overflow: hidden;
+    display: -webkit-box; -webkit-box-orient: vertical;
+    -webkit-line-clamp: {{ block.settings.excerpt_lines }};
+    line-clamp: {{ block.settings.excerpt_lines }};
+    overflow: hidden;
   }
 
   /* ── Botón flecha animada ── */
@@ -308,8 +340,12 @@
   /* ── Responsive ────────────────────────── */
   @media screen and (max-width: 990px) {
     #bs-{{ bid }} { --bs-per: {{ per_view_tablet }}; }
+    /* Offset negativo saca las flechas fuera del contenedor: en tablet ya no hay
+       margen lateral para eso, así que se fuerza hacia adentro. */
+    #bs-{{ bid }} .bs__nav--sides [data-prev] { left: max(var(--bs-arrow-offset), 8px); }
+    #bs-{{ bid }} .bs__nav--sides [data-next] { right: max(var(--bs-arrow-offset), 8px); }
     #bs-{{ bid }} .bs__card--split { grid-template-columns: 1fr; gap: 0; }
-    #bs-{{ bid }} .bs__card--split .bs__media { order: -1; aspect-ratio: 4 / 3; border-radius: 0; }
+    #bs-{{ bid }} .bs__card--split .bs__media { order: -1; aspect-ratio: 16 / 10; border-radius: 0; }
     #bs-{{ bid }} .bs__card--split .bs__content { border-radius: 0; padding: {{ block.settings.content_padding | times: 0.7 | round }}px; }
     #bs-{{ bid }} .bs__card--split { background: var(--bs-card); overflow: hidden; }
     #bs-{{ bid }} .bs__title { font-size: {{ block.settings.article_title_size | times: 0.85 | round }}px; }
@@ -318,18 +354,36 @@
   @media screen and (max-width: 749px) {
     #bs-{{ bid }} {
       --bs-per: {{ per_view_mobile }};
-      --bs-gap: {{ block.settings.slide_gap | at_most: 16 }}px;
-      padding: {{ block.settings.padding_top | times: 0.6 | round }}px 0 {{ block.settings.padding_bottom | times: 0.6 | round }}px;
+      --bs-gap: {{ block.settings.slide_gap | at_most: 12 }}px;
+      padding: {{ block.settings.padding_top | times: 0.5 | round }}px 0 {{ block.settings.padding_bottom | times: 0.5 | round }}px;
     }
-    #bs-{{ bid }} .bs__container { padding: 0 20px; }
-    #bs-{{ bid }} .bs__header { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: {{ block.settings.header_spacing | times: 0.7 | round }}px; }
-    #bs-{{ bid }} .bs__section-title { font-size: {{ block.settings.title_size | times: 0.75 | round }}px; }
+    #bs-{{ bid }} .bs__container { padding: 0 16px; }
+    #bs-{{ bid }} .bs__header { flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: {{ block.settings.header_spacing | times: 0.55 | round }}px; }
+    #bs-{{ bid }} .bs__section-title { font-size: {{ block.settings.title_size | times: 0.72 | round }}px; }
+    #bs-{{ bid }} .bs__eyebrow { margin-bottom: 8px; }
+
+    /* Altura: imagen mas baja y contenido mas compacto */
+    #bs-{{ bid }} .bs__card--split .bs__media { aspect-ratio: 3 / 2; }
     #bs-{{ bid }} .bs__card--split .bs__content,
-    #bs-{{ bid }} .bs__card--cards .bs__content { padding: 24px; }
+    #bs-{{ bid }} .bs__card--cards .bs__content {
+      padding: 20px;
+      gap: {{ block.settings.content_spacing | at_most: 12 }}px;
+    }
     #bs-{{ bid }} .bs__title,
-    #bs-{{ bid }} .bs__card--cards .bs__title { font-size: {{ block.settings.article_title_size | times: 0.7 | round }}px; }
-    #bs-{{ bid }} .bs__excerpt { font-size: {{ block.settings.description_size | times: 0.9 | round }}px; }
-    #bs-{{ bid }} .bs__controls { justify-content: center; }
+    #bs-{{ bid }} .bs__card--cards .bs__title {
+      font-size: {{ block.settings.article_title_size | times: 0.68 | round }}px;
+      line-height: 1.25;
+    }
+    #bs-{{ bid }} .bs__excerpt {
+      font-size: {{ block.settings.description_size | times: 0.9 | round }}px;
+      line-height: 1.5;
+      -webkit-line-clamp: {{ block.settings.excerpt_lines | at_most: 3 }};
+      line-clamp: {{ block.settings.excerpt_lines | at_most: 3 }};
+    }
+    #bs-{{ bid }} .bs__foot { gap: 12px; padding-top: 2px; }
+    #bs-{{ bid }} .bs__meta { font-size: 10px; gap: 4px 8px; }
+
+    #bs-{{ bid }} .bs__controls { justify-content: center; margin-top: {{ block.settings.controls_spacing | times: 0.7 | round }}px; }
     #bs-{{ bid }} .bs__nav-btn { width: calc(var(--bs-arrow-size) * .85); height: calc(var(--bs-arrow-size) * .85); }
     {%- if arrows_pos == 'sides' %}
       {%- if arrows_mobile == 'sides' %}
@@ -345,6 +399,18 @@
     #bs-{{ bid }} .bs__controls .bs__nav { display: none; }
     {%- endif %}
     #bs-{{ bid }} .bs__view-all { align-self: flex-start; }
+    #bs-{{ bid }} .bs__empty { padding: 48px 20px; }
+  }
+
+  /* Telefonos pequenos: un punto mas de compresion */
+  @media screen and (max-width: 420px) {
+    #bs-{{ bid }} .bs__card--split .bs__media { aspect-ratio: 16 / 10; }
+    #bs-{{ bid }} .bs__card--split .bs__content,
+    #bs-{{ bid }} .bs__card--cards .bs__content { padding: 16px; }
+    #bs-{{ bid }} .bs__excerpt {
+      -webkit-line-clamp: {{ block.settings.excerpt_lines | at_most: 2 }};
+      line-clamp: {{ block.settings.excerpt_lines | at_most: 2 }};
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
