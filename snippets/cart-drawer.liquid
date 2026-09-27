@@ -208,6 +208,15 @@
   ========================================================= */
 
   .cart-drawer__items {
+    /* scroll-hint es un custom element: sin display:block no participa
+       del layout flex del contenedor y la lista queda mal repartida. */
+    display: block;
+    /* La lista es la que scrollea; el summary queda fijo abajo. */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding-inline: var(--cart-drawer-padding);
   }
 
@@ -485,6 +494,7 @@
     position: sticky;
     bottom: 0;
     z-index: 1;
+    flex: 0 0 auto;
     padding: var(--cart-drawer-padding);
     border-top: 1px solid rgba(var(--color-border-rgb), 0.08);
   }
@@ -663,6 +673,60 @@
       padding-block: 14px;
     }
 
+    /* =====================================================
+       El summary no puede comerse la pantalla: se le pone
+       techo para que la lista de productos conserve sitio.
+       Si su contenido excede el techo, scrollea internamente.
+    ===================================================== */
+    .cart-drawer__summary {
+      max-height: 58%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    /* Descuento compacto */
+    .cart-actions .disclosure-trigger {
+      padding-block: 6px;
+    }
+
+    .cart-discount__form {
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .cart-discount__input {
+      padding: 8px 10px;
+      font-size: 0.78rem;
+    }
+
+    .cart-discount__button {
+      padding-inline: 12px;
+    }
+
+    .cart-discount__codes {
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .cart-discount__pill {
+      padding: 3px 8px;
+      font-size: 0.68rem;
+    }
+
+    /* Totales y CTAs un punto más apretados */
+    .cart__total-container {
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .cart-drawer__summary .cart__ctas {
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .cart__installments {
+      margin-top: 8px;
+    }
   }
 
   /* (320–370) */
