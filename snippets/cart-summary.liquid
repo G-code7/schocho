@@ -8,12 +8,11 @@
   {% # We need to keep this node in place to allow morphing to work properly # %}
   <div class="cart__original-total-container cart-primary-typography">
     {%- if cart.cart_level_discount_applications.size > 0 -%}
-      <span class="cart__summary-item cart__original-total">
-        <span class="cart__original-total-label">{{ 'content.cart_subtotal' | t }}</span>
-        <span class="cart__original-total-value cart-secondary-typography">
-          {{- cart.original_total_price | money -}}
-        </span>
-      </span>
+      {%- comment -%}
+        Fila "Subtotal" retirada a propósito: duplicaba información con
+        "Estimated total" y alargaba el resumen en móvil. La lista de
+        descuentos aplicados SÍ se mantiene (es la que muestra el ahorro).
+      {%- endcomment -%}
       <div class="cart__summary-discounts">
         <ul
           class="discounts list-unstyled"
