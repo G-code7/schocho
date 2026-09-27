@@ -1,3 +1,36 @@
+{%- comment -%}
+  Featured Product V2
+  ------------------------------------------------------------------
+  Subscription:
+  - Purchase options selector: Subscribe & Save / One-time purchase
+    (schema group "Subscription (Purchase Options)").
+  - Hidden `selling_plan` input inside the product form, synced by JS.
+  - /cart/add.js sends `selling_plan` on the item when a subscription
+    is selected. Coupon engine, cart sections and drawer untouched.
+  - Dynamic checkout (Buy it Now) is hidden while a subscription is
+    active: native payment buttons don't carry selling plans.
+  - Headline price is hidden when the selector is on, so the price is
+    shown once, inside the option cards. Toggle to restore it.
+  - Responsive pass for the selector on the existing 749px breakpoint.
+
+  Second discount code ("2nd discount code" setting):
+  - Applied automatically together with the first one, but kept OUT of
+    the visible copy list, so the section doesn't get crowded.
+  - Rendered as a visually-hidden [data-fpv2-code] node so fpv2Discounts
+    picks it up if it scans the DOM, PLUS a JS fallback that applies it
+    via /discount/<code> when the engine didn't. The fallback never
+    double-requests a code the engine already applied.
+  - Shopify still applies one discount per class (product / order /
+    shipping). Both codes must be marked combinable in
+    Admin -> Discounts or only one will stick.
+
+  Theme-check:
+  - No leading-underscore variable names (VariableName).
+  - Conditionals reduced to filters where possible (LiquidComplexity).
+  - All image tags carry width/height (ImgWidthAndHeight, also cuts CLS).
+
+  CSS naming stays `fpv2__*`: renaming would break existing custom CSS.
+{%- endcomment -%}
 {% liquid
   assign section_id = section.id
   assign product = section.settings.product
@@ -67,7 +100,6 @@
 
   assign code_blocks = section.blocks | where: 'type', 'discount_code'
 
-
   # ---- Multi-código: cadena para el CTA de checkout directo ----
   # Nota: shipping SIEMPRE al final (Shopify lo evalúa último). El orden
   # entre product/order aquí es el de los bloques; si necesitas prioridad
@@ -75,32 +107,33 @@
   assign fpv2_chain_arr = ''
   assign fpv2_ship_arr = ''
   for blk in code_blocks
-    assign _code = blk.settings.code | strip
-    assign _auto = blk.settings.auto_apply
-    assign _kind = blk.settings.kind | default: 'order'
+    assign blk_code = blk.settings.code | strip
+    assign blk_auto = blk.settings.auto_apply
+    assign blk_kind = blk.settings.kind | default: 'order'
 
-    assign _end = 0
+    assign blk_end = 0
     if blk.settings.ends_at != blank
-      assign _tmp = blk.settings.ends_at | strip | append: ' ' | append: shop_offset
-      assign _tmp_p = _tmp | date: '%s'
-      if _tmp_p != _tmp
-        assign _end = _tmp_p | plus: 0
+      assign blk_end_raw = blk.settings.ends_at | strip | append: ' ' | append: shop_offset
+      assign blk_end_parsed = blk_end_raw | date: '%s'
+      if blk_end_parsed != blk_end_raw
+        assign blk_end = blk_end_parsed | plus: 0
       endif
     endif
 
-    if _code != blank and _auto != false
-      unless _end > 0 and now_ts >= _end
-        if _kind == 'shipping'
-          assign fpv2_ship_arr = fpv2_ship_arr | append: ',' | append: _code
+    if blk_code != blank and blk_auto != false
+      unless blk_end > 0 and now_ts >= blk_end
+        if blk_kind == 'shipping'
+          assign fpv2_ship_arr = fpv2_ship_arr | append: ',' | append: blk_code
         else
-          assign fpv2_chain_arr = fpv2_chain_arr | append: ',' | append: _code
+          assign fpv2_chain_arr = fpv2_chain_arr | append: ',' | append: blk_code
         endif
       endunless
     endif
   endfor
-  assign fpv2_chain_codes = fpv2_chain_arr | append: fpv2_ship_arr | remove_first: ','
+  assign code_2 = section.settings.promo_code_2 | strip
+  assign fpv2_chain_codes = fpv2_chain_arr | append: ',' | append: code_2 | append: fpv2_ship_arr | replace: ',,', ',' | remove_first: ',' | strip
+  assign fpv2_chain_codes = fpv2_chain_codes | split: ',' | join: ','
 %}
-
 
 {% style %}
   .fpv2-{{ section_id }} {
@@ -772,12 +805,36 @@
       width: {{ section.settings.badge_icon_size_mobile }}px;
       height: {{ section.settings.badge_icon_size_mobile }}px;
     }
+
+    /* Purchase options: tighten spacing/type on small screens, keep the row layout */
+    .fpv2__po-option-{{ section_id }} { padding: 14px 12px; gap: 10px; }
+    .fpv2__po-option-{{ section_id }}[data-po-type="subscription"][data-badge]::before { left: 12px; }
+    .fpv2__po-head-{{ section_id }} { gap: 10px; }
+    .fpv2__po-title-{{ section_id }} { font-size: 14px; }
+    .fpv2__po-subtitle-{{ section_id }} { font-size: 12px; }
+    .fpv2__po-price-{{ section_id }} { font-size: 15px; }
+    .fpv2__po-compare-{{ section_id }} { font-size: 12px; }
+    .fpv2__po-radio-{{ section_id }} { width: 18px; height: 18px; }
   }
 
   .fpv2__promo-code-status-{{ section_id }} { font-size: 12px; opacity: .8; }
   [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-status-{{ section_id }} { color: #0a7d32; }
   [data-fpv2-code][data-fpv2-state="not-applicable"] .fpv2__promo-code-status-{{ section_id }} { color: #a33; }
   [data-fpv2-code][data-fpv2-state="applied"] .fpv2__promo-code-copy-{{ section_id }} { display: none; }
+
+  /* Second code: engine-only node, kept out of the visual list */
+  .fpv2__promo-code-silent-{{ section_id }} {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
   /* ===== Purchase options (Subscribe & Save / One-time) ===== */
   .fpv2__po-{{ section_id }} {
     display: flex;
@@ -904,7 +961,6 @@
   /* Safeguard: hidden price parts stay hidden inside the flex price row */
   .fpv2__price-compare-{{ section_id }}[hidden],
   .fpv2__price-save-{{ section_id }}[hidden] { display: none; }
-
 {% endstyle %}
 
 <section
@@ -949,7 +1005,13 @@
                   data-thumb="{{ forloop.index0 }}"
                   aria-label="Ver imagen {{ forloop.index }}"
                 >
-                  <img src="{{ img | image_url: width: 200 }}" alt="" loading="lazy">
+                  <img
+                    src="{{ img | image_url: width: 200 }}"
+                    alt=""
+                    loading="lazy"
+                    width="200"
+                    height="{{ 200 | divided_by: img.aspect_ratio | round }}"
+                  >
                 </button>
               {% endfor %}
             </div>
@@ -999,24 +1061,35 @@
           if fpv2_has_compare
             assign pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
           endif
+
+          assign fpv2_show_price = true
+          if fpv2_sub_enabled and section.settings.show_price_when_subscription == false
+            assign fpv2_show_price = false
+          endif
         -%}
-        <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}" data-fpv2-price>
-          {%- if fpv2_sub_enabled -%}
-            {%- comment -%} Default active option is subscription → render its price server-side {%- endcomment -%}
-            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ fpv2_sub_price | money }}</span>
-            <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.price | money }}</span>
-            <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ fpv2_sub_discount }}%</span>
-          {%- else -%}
-            <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ v.price | money }}</span>
-            {%- if fpv2_has_compare -%}
-              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.compare_at_price | money }}</span>
-              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ pct }}%</span>
+        {%- if fpv2_show_price -%}
+          <div class="fpv2__price-{{ section_id }}" data-align="{{ align_price }}" data-fpv2-price>
+            {%- if fpv2_sub_enabled -%}
+              {%- comment -%} Default active option is subscription → render its price server-side {%- endcomment -%}
+              <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>
+                {{- fpv2_sub_price | money -}}
+              </span>
+              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>{{ v.price | money }}</span>
+              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ fpv2_sub_discount }}%</span>
             {%- else -%}
-              <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare hidden></span>
-              <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save hidden></span>
+              <span class="fpv2__price-current-{{ section_id }}" data-fpv2-price-current>{{ v.price | money }}</span>
+              {%- if fpv2_has_compare -%}
+                <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare>
+                  {{- v.compare_at_price | money -}}
+                </span>
+                <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save>-{{ pct }}%</span>
+              {%- else -%}
+                <span class="fpv2__price-compare-{{ section_id }}" data-fpv2-price-compare hidden></span>
+                <span class="fpv2__price-save-{{ section_id }}" data-fpv2-price-save hidden></span>
+              {%- endif -%}
             {%- endif -%}
-          {%- endif -%}
-        </div>
+          </div>
+        {%- endif -%}
 
         {%- comment -%} Free-shipping CTA (adds N units → checkout) {%- endcomment -%}
         {% if section.settings.show_freeship and v != blank and v.available %}
@@ -1107,29 +1180,24 @@
               si la página estaba en caché, el JS los retira en el segundo exacto.
             {%- endcomment -%}
             {%- liquid
-              assign has_legacy_code = false
-              if section.settings.promo_code != blank
-                assign has_legacy_code = true
-              endif
+              assign visible_codes_probe = section.settings.promo_code | strip
               assign total_codes = code_blocks.size
-              if has_legacy_code
+              unless visible_codes_probe == blank
                 assign total_codes = total_codes | plus: 1
-              endif
+              endunless
             -%}
             {% if total_codes > 0 %}
               <div class="fpv2__promo-codes-{{ section_id }}" data-fpv2-codes>
                 {%- for i in (0..code_blocks.size) -%}
                   {%- liquid
-                    if forloop.first
-                      unless has_legacy_code
-                        continue
-                      endunless
+                    if forloop.index0 == 0
                       assign c_code = section.settings.promo_code | strip
                       assign c_label = section.settings.promo_code_label
                       assign c_note = section.settings.promo_code_note
                       assign c_start_raw = ''
                       assign c_end_raw = section.settings.promo_code_ends_at | strip
                       assign c_attrs = ''
+                      assign c_hidden = false
                     else
                       assign b_index = forloop.index0 | minus: 1
                       assign blk = code_blocks[b_index]
@@ -1139,10 +1207,18 @@
                       assign c_start_raw = blk.settings.starts_at | strip
                       assign c_end_raw = blk.settings.ends_at | strip
                       assign c_attrs = blk.shopify_attributes
+                      assign c_hidden = blk.settings.is_hidden
                     endif
+
                     if c_code == blank
                       continue
                     endif
+
+                    if c_hidden
+                      continue
+                    endif
+
+                    assign c_start = 0
 
                     assign c_start = 0
                     if c_start_raw != blank
@@ -1234,6 +1310,51 @@
                     {% endif %}
                   </div>
                 {%- endfor -%}
+
+                {%- comment -%}
+                  Second code: engine-only. Rendered as a [data-fpv2-code] node so
+                  fpv2Discounts picks it up, but visually hidden so it doesn't add
+                  another copy card to the UI.
+                {%- endcomment -%}
+                {%- assign code_2_val = section.settings.promo_code_2 | strip -%}
+                {%- unless code_2_val == blank -%}
+                  {%- liquid
+                    assign c2_end = 0
+                    assign c2_end_raw = section.settings.promo_code_2_ends_at | strip
+                    unless c2_end_raw == blank
+                      assign tmp2 = c2_end_raw | append: ' ' | append: shop_offset
+                      assign tmp2_p = tmp2 | date: '%s'
+                      unless tmp2_p == tmp2
+                        assign c2_end = tmp2_p | plus: 0
+                      endunless
+                    endunless
+                  -%}
+                  {%- unless c2_end > 0 and now_ts >= c2_end -%}
+                    <div
+                      class="fpv2__promo-code-silent-{{ section_id }}"
+                      data-fpv2-code
+                      data-fpv2-silent
+                      data-start="0"
+                      data-end="{{ c2_end }}"
+                      aria-hidden="true"
+                    >
+                      <code class="fpv2__promo-code-value-{{ section_id }}"
+                        ><span
+                          class="fpv2__promo-code-status-{{ section_id }}"
+                          data-fpv2-code-status
+                        ></span>
+                        {{- code_2_val | escape -}}
+                      </code>
+                      <button
+                        type="button"
+                        class="fpv2__promo-code-copy-{{ section_id }}"
+                        data-promo-code="{{ code_2_val | escape }}"
+                        tabindex="-1"
+                        aria-hidden="true"
+                      ></button>
+                    </div>
+                  {%- endunless -%}
+                {%- endunless -%}
               </div>
             {% endif %}
           </div>
@@ -1275,15 +1396,27 @@
                 <label
                   class="fpv2__po-option-{{ section_id }} is-active"
                   data-po-type="subscription"
-                  {%- if section.settings.sub_badge_text != blank %} data-badge="{{ section.settings.sub_badge_text }}"{% endif -%}
+                  {%- if section.settings.sub_badge_text != blank %}
+                    data-badge="{{ section.settings.sub_badge_text }}"
+                  {% endif -%}
                 >
-                  <input type="radio" name="fpv2_po_{{ section_id }}" value="subscription" class="fpv2__po-radio-input-{{ section_id }}" checked>
+                  <input
+                    type="radio"
+                    name="fpv2_po_{{ section_id }}"
+                    value="subscription"
+                    class="fpv2__po-radio-input-{{ section_id }}"
+                    checked
+                  >
                   <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
                   <span class="fpv2__po-body-{{ section_id }}">
                     <span class="fpv2__po-head-{{ section_id }}">
                       <span class="fpv2__po-titles-{{ section_id }}">
-                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.sub_title | default: 'Subscribe & Save' }}</span>
-                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.sub_subtitle | default: '15 servings per bag' }}</span>
+                        <span class="fpv2__po-title-{{ section_id }}">
+                          {{- section.settings.sub_title | default: 'Subscribe & Save' -}}
+                        </span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">
+                          {{- section.settings.sub_subtitle | default: '15 servings per bag' -}}
+                        </span>
                       </span>
                       <span class="fpv2__po-prices-{{ section_id }}">
                         <s class="fpv2__po-compare-{{ section_id }}">{{ v.price | money }}</s>
@@ -1298,13 +1431,22 @@
                   class="fpv2__po-option-{{ section_id }}"
                   data-po-type="onetime"
                 >
-                  <input type="radio" name="fpv2_po_{{ section_id }}" value="onetime" class="fpv2__po-radio-input-{{ section_id }}">
+                  <input
+                    type="radio"
+                    name="fpv2_po_{{ section_id }}"
+                    value="onetime"
+                    class="fpv2__po-radio-input-{{ section_id }}"
+                  >
                   <span class="fpv2__po-radio-{{ section_id }}" aria-hidden="true"></span>
                   <span class="fpv2__po-body-{{ section_id }}">
                     <span class="fpv2__po-head-{{ section_id }}">
                       <span class="fpv2__po-titles-{{ section_id }}">
-                        <span class="fpv2__po-title-{{ section_id }}">{{ section.settings.onetime_title | default: 'One-time purchase' }}</span>
-                        <span class="fpv2__po-subtitle-{{ section_id }}">{{ section.settings.onetime_subtitle | default: 'Standard delivery' }}</span>
+                        <span class="fpv2__po-title-{{ section_id }}">
+                          {{- section.settings.onetime_title | default: 'One-time purchase' -}}
+                        </span>
+                        <span class="fpv2__po-subtitle-{{ section_id }}">
+                          {{- section.settings.onetime_subtitle | default: 'Standard delivery' -}}
+                        </span>
                       </span>
                       <span class="fpv2__po-prices-{{ section_id }}">
                         <span class="fpv2__po-price-{{ section_id }}">{{ v.price | money }}</span>
@@ -1315,7 +1457,12 @@
               </div>
 
               {%- comment -%} Selling plan pre-set to subscription (default active) {%- endcomment -%}
-              <input type="hidden" name="selling_plan" value="{{ section.settings.selling_plan_id | strip }}" data-fpv2-selling-plan>
+              <input
+                type="hidden"
+                name="selling_plan"
+                value="{{ section.settings.selling_plan_id | strip }}"
+                data-fpv2-selling-plan
+              >
             {%- endif -%}
 
             <div class="fpv2__qty-row-{{ section_id }}">
@@ -1360,13 +1507,21 @@
             </div>
 
             {%- liquid
+              assign codes_probe = section.settings.promo_code_2 | strip | append: code_blocks.size
               assign fpv2_show_buy_now = section.settings.show_buy_now
-              if section.settings.buy_now_hide_with_codes and section.settings.auto_apply_enabled and code_blocks.size > 0
-                assign fpv2_show_buy_now = false
-              endif
+              unless codes_probe == '0'
+                if section.settings.buy_now_hide_with_codes and section.settings.auto_apply_enabled
+                  assign fpv2_show_buy_now = false
+                endif
+              endunless
             -%}
             {% if fpv2_show_buy_now %}
-              <div class="fpv2__dynamic-{{ section_id }}"{% if section.settings.enable_subscription %} style="display:none;"{% endif %}>
+              <div
+                class="fpv2__dynamic-{{ section_id }}"
+                {% if section.settings.enable_subscription %}
+                  style="display:none;"
+                {% endif %}
+              >
                 {{ form | payment_button }}
               </div>
             {% endif %}
@@ -1390,6 +1545,8 @@
                         src="{{ block.settings.icon_image | image_url: width: 80 }}"
                         alt="{{ block.settings.text | escape }}"
                         loading="lazy"
+                        width="80"
+                        height="{{ 80 | divided_by: block.settings.icon_image.aspect_ratio | round }}"
                       >
                     </span>
                   {% endif %}
@@ -1533,12 +1690,7 @@
 </section>
 
 {%- comment -%} Motor de cupones automaticos (multi-codigo). Debe ir a nivel HTML, nunca dentro de <script>. {%- endcomment -%}
-{% render 'fpv2-discounts',
-  section: section,
-  section_id: section_id,
-  now_ts: now_ts,
-  shop_offset: shop_offset
-%}
+{% render 'fpv2-discounts', section: section, section_id: section_id, now_ts: now_ts, shop_offset: shop_offset %}
 
 <script>
   (function () {
@@ -1831,6 +1983,37 @@
       if (active) setOption(active.dataset.poType);
     })();
 
+    /* ===== Second discount code: engine-agnostic fallback ===== */
+    const FPV2_CODE_2 = {{ section.settings.promo_code_2 | strip | json }};
+
+    // Applies the 2nd code via /discount/<code>, which is what sets Shopify's
+    // discount cookie. Only runs when fpv2Discounts didn't already apply it,
+    // so we never double-request the same code.
+    async function applySecondCodeFallback(engineResult) {
+      if (!FPV2_CODE_2) return false;
+      if ({{ section.settings.auto_apply_enabled | json }} === false) return false;
+
+      const node = section.querySelector('[data-fpv2-code][data-fpv2-silent]');
+      if (!node) return false;
+
+      const alreadyApplied =
+        node.dataset.fpv2State === 'applied' ||
+        (engineResult &&
+          Array.isArray(engineResult.applied) &&
+          engineResult.applied.some((c) => String(c).toUpperCase() === FPV2_CODE_2.toUpperCase()));
+      if (alreadyApplied) return false;
+
+      try {
+        const url = '/discount/' + encodeURIComponent(FPV2_CODE_2) + '?redirect=/cart.js';
+        const res = await fetch(url, { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+        if (!res.ok) return false;
+        node.dataset.fpv2State = 'applied';
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
     /* ===== Cart sections + drawer (reused, proven) ===== */
     function getCartSectionIds() {
       const ids = new Set();
@@ -1914,8 +2097,11 @@
             discountResult = await window.fpv2Discounts.applyAll({ requireCart: true });
           }
 
+          // Fallback del 2º código: si el motor no lo cubrió, se aplica por /discount.
+          const code2Applied = await applySecondCodeFallback(discountResult);
+
           // Los totales cambiaron: re-render de las secciones de carrito DESPUÉS de aplicar.
-          if (discountResult && discountResult.applied.length) {
+          if ((discountResult && discountResult.applied.length) || code2Applied) {
             const ids = getCartSectionIds().join(',');
             if (ids) {
               const r = await fetch(`${window.location.pathname}?sections=${ids}`, { headers: { Accept: 'application/json' } });
@@ -2265,6 +2451,19 @@
       "id": "promo_code",
       "label": "Discount code",
       "info": "Optional coupon code users can copy. Leave empty to hide. For more codes, add 'Discount code' blocks."
+    },
+    {
+      "type": "text",
+      "id": "promo_code_2",
+      "label": "2nd discount code",
+      "info": "Auto-applied together with the first one, but hidden from the copy list to keep the section clean. Must be combinable in Shopify Admin → Discounts, or Shopify applies only one."
+    },
+    {
+      "type": "text",
+      "id": "promo_code_2_ends_at",
+      "label": "2nd code expires at (optional)",
+      "placeholder": "2026-12-31 23:59",
+      "info": "Format YYYY-MM-DD HH:MM, store time zone. The code disappears automatically at that moment."
     },
     {
       "type": "text",
@@ -2755,6 +2954,13 @@
     { "type": "text", "id": "sub_badge_text", "label": "Subscription badge", "default": "Most Popular" },
     { "type": "text", "id": "onetime_title", "label": "One-time title", "default": "One-time purchase" },
     { "type": "text", "id": "onetime_subtitle", "label": "One-time subtitle", "default": "Standard delivery" },
+    {
+      "type": "checkbox",
+      "id": "show_price_when_subscription",
+      "label": "Also show the headline price above",
+      "default": false,
+      "info": "Off by default: with the selector on, the price lives in the option cards to avoid showing it twice."
+    },
 
     { "type": "header", "content": "Section Spacing" },
     {
