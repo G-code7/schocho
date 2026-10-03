@@ -508,6 +508,112 @@
         "padding-block-end": 10
       }
     },
+    "reviews_product_tbUqrQ": {
+      "type": "reviews-product",
+      "blocks": {
+        "review_mkPpEC": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"100% recommend! Great product with clean, healthy, organic ingredients. It tastes really good and is a great\noption.\"",
+            "author": "MARIA A. VALLEJO",
+            "verified": true,
+            "date": "26 Aug  2026"
+          }
+        },
+        "review_p6hfER": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"100% recommended! Not only does this protein taste amazing in smoothies, but it has also become my secret\ningredient for arepas... \"",
+            "author": "ISABELLA FERREIRA",
+            "verified": true,
+            "date": "3 mar 2026"
+          }
+        },
+        "review_QbnB7f": {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "review_text": "\"An amazing and great tasting protein that you can basically mix with anything. Not many protein products like\nthis on the market!\"",
+            "author": "DANIEL KANE",
+            "verified": true,
+            "date": "28 feb 2026"
+          }
+        }
+      },
+      "block_order": [
+        "review_mkPpEC",
+        "review_p6hfER",
+        "review_QbnB7f"
+      ],
+      "name": "Reviews de producto",
+      "settings": {
+        "max_width": 1280,
+        "bg_color": "#F5F4ED",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_x": 60,
+        "title": "Customer Reviews",
+        "subtitle": "",
+        "header_align": "center",
+        "header_margin_bottom": 40,
+        "title_size": 36,
+        "title_weight": "700",
+        "title_color": "#3e2563",
+        "title_uppercase": false,
+        "title_margin_bottom": 12,
+        "subtitle_size": 16,
+        "subtitle_color": "#3e2563",
+        "show_summary": true,
+        "star_color": "#9B84B2",
+        "star_empty_color": "#e2e2e2",
+        "verified_text": "Verified Purchase",
+        "visible_cards": 3,
+        "visible_cards_tablet": 2,
+        "visible_cards_mobile": 2,
+        "card_width_mobile": 85,
+        "card_gap": 20,
+        "transition_duration": 350,
+        "card_bg": "#ffffff",
+        "card_border_width": 0,
+        "card_border_color": "#e0e0e0",
+        "card_radius": 12,
+        "card_padding": 20,
+        "image_bg": "#f0f0f0",
+        "image_ratio": 100,
+        "image_position": "center center",
+        "review_text_size": 14,
+        "review_text_color": "#3e2563",
+        "review_text_lh": 1.6,
+        "text_margin_bottom": 16,
+        "author_size": 13,
+        "author_weight": "700",
+        "author_color": "#3e2563",
+        "author_uppercase": true,
+        "arrow_size": 44,
+        "arrow_icon_size": 20,
+        "arrow_offset": 24,
+        "arrow_opacity": 90,
+        "arrow_radius": 60,
+        "arrow_border_width": 1,
+        "arrow_border_color": "#3e2563",
+        "arrow_bg": "#ffffff",
+        "arrow_bg_hover": "#f5f0fc",
+        "arrow_icon_color": "#3e2563",
+        "hide_arrows_mobile": false,
+        "show_dots": true,
+        "dots_margin_top": 24,
+        "dots_gap": 8,
+        "dot_size": 10,
+        "dot_color": "#c4b1ca",
+        "dot_opacity": 50,
+        "dot_active_color": "#3e2563",
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40,
+        "padding_x_mobile": 20
+      }
+    },
     "blocks_wy8CWj": {
       "type": "_blocks",
       "blocks": {
@@ -1432,6 +1538,7 @@
   "order": [
     "main",
     "section_tqBxMY",
+    "reviews_product_tbUqrQ",
     "blocks_wy8CWj",
     "hero_8wt9xX",
     "section_BhP8Fy",
