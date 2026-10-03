@@ -1,6 +1,7 @@
 {% doc %}
-  Pronto-Chocho Multi-Product Selector v3 - FINAL FIX
-  Integración perfecta con component-cart-items.js y section rendering
+  Pronto-Chocho Multi-Product Selector v5
+  Suscripción / compra única + código de descuento auto-aplicado en compra única.
+  Integración con component-cart-items.js y section rendering.
 {% enddoc %}
 {% assign block_id = block.id | replace: '_', '' | downcase %}
 
@@ -25,7 +26,7 @@
     border-radius: 12px;
     padding: 20px 16px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
     background: {{ block.settings.option_bg | default: '#FFFCF8' }};
   }
 
@@ -38,13 +39,19 @@
     background: {{ block.settings.active_bg | default: '#FCF3EC' }};
   }
 
-  .chocho-selector__option-{{ block_id }}.active::before {
-    content: 'Most Popular';
+  .chocho-selector__option-{{ block_id }}:has(input:focus-visible) {
+    outline: 2px solid {{ block.settings.active_border | default: '#4A6B1A' }};
+    outline-offset: 2px;
+  }
+
+  {%- if block.settings.badge_label != blank %}
+  .chocho-selector__option-{{ block_id }}[data-option="subscription"]::before {
+    content: {{ block.settings.badge_label | json }};
     position: absolute;
     top: -10px;
     left: 16px;
     background: {{ block.settings.badge_bg | default: '#4A6B1A' }};
-    color: white;
+    color: {{ block.settings.badge_text | default: '#ffffff' }};
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
@@ -52,6 +59,7 @@
     border-radius: 20px;
     letter-spacing: 0.5px;
   }
+  {%- endif %}
 
   .chocho-selector__option-inner-{{ block_id }} {
     display: flex;
@@ -68,7 +76,7 @@
     margin-top: 2px;
     position: relative;
     background: white;
-    transition: all 0.2s;
+    transition: border-color 0.2s ease;
   }
 
   .chocho-selector__option-{{ block_id }}.active .chocho-selector__radio-{{ block_id }} {
@@ -116,6 +124,8 @@
     display: block;
     font-size: 18px;
     font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
     color: {{ block.settings.price_color | default: '#4A6B1A' }};
     line-height: 1.2;
   }
@@ -146,12 +156,33 @@
   }
 
   .chocho-selector__benefits-{{ block_id }} li::before {
-    content: '✓';
+    content: '';
     position: absolute;
     left: 0;
-    color: {{ block.settings.check_color | default: '#4A6B1A' }};
-    font-weight: 700;
+    top: 0.2em;
+    width: 12px;
+    height: 12px;
+    background: {{ block.settings.check_color | default: '#4A6B1A' }};
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
   }
+
+  /* Pastilla del código de compra única */
+  .chocho-selector__code-{{ block_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 3px 10px 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: {{ block.settings.price_color | default: '#4A6B1A' }};
+    background: color-mix(in srgb, {{ block.settings.price_color | default: '#4A6B1A' }} 10%, transparent);
+  }
+  .chocho-selector__code-{{ block_id }} svg { width: 12px; height: 12px; flex-shrink: 0; }
+  .chocho-selector__code-{{ block_id }} b { font-weight: 800; letter-spacing: 0.3px; }
 
   .chocho-selector__products-{{ block_id }} { margin-bottom: 20px; }
 
@@ -174,7 +205,7 @@
     background: white;
     border: 1px solid {{ block.settings.product_border | default: '#E8E4DF' }};
     border-radius: 10px;
-    transition: all 0.2s;
+    transition: border-color 0.2s ease;
   }
 
   .chocho-selector__product-{{ block_id }}:hover {
@@ -223,7 +254,16 @@
     cursor: pointer;
     font-size: 16px;
     color: {{ block.settings.qty_color | default: '#1a1a1a' }};
-    transition: all 0.15s;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chocho-selector__qty-btn-{{ block_id }}:focus-visible {
+    outline: 2px solid {{ block.settings.active_border | default: '#4A6B1A' }};
+    outline-offset: 2px;
+  }
+
+  @media (pointer: coarse) {
+    .chocho-selector__qty-btn-{{ block_id }} { width: 40px; height: 40px; }
   }
 
   .chocho-selector__qty-btn-{{ block_id }}:hover:not(:disabled) {
@@ -238,6 +278,7 @@
     text-align: center;
     font-size: 15px;
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
     color: {{ block.settings.qty_color | default: '#1a1a1a' }};
   }
 
@@ -261,6 +302,8 @@
 
   .chocho-selector__savings-price-{{ block_id }} {
     font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
     color: {{ block.settings.title_color | default: '#1a1a1a' }};
   }
 
@@ -296,8 +339,13 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     position: relative;
+  }
+
+  .chocho-selector__submit-{{ block_id }}:focus-visible {
+    outline: 2px solid {{ block.settings.button_bg | default: '#1a1a1a' }};
+    outline-offset: 3px;
   }
 
   .chocho-selector__submit-{{ block_id }}:hover:not(:disabled) {
@@ -355,6 +403,11 @@
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chocho-selector__submit-{{ block_id }}:hover:not(:disabled) { transform: none; }
+    .chocho-notification-{{ block_id }} { transition: none; }
   }
 
   @media (max-width: 749px) {
@@ -424,9 +477,20 @@
               <p class="chocho-selector__option-subtitle-{{ block_id }}">
                 {{ block.settings.onetime_subtitle | default: '15 servings per bag' }}
               </p>
+              {%- assign ot_code = block.settings.onetime_discount_code | strip -%}
+              {%- if ot_code != blank and block.settings.onetime_code_label != blank %}
+                {%- capture ot_code_html %}<b>{{ ot_code | escape }}</b>{% endcapture -%}
+                <p class="chocho-selector__code-{{ block_id }}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><circle cx="7" cy="7" r="1.5"/></svg>
+                  <span>{{ block.settings.onetime_code_label | escape | replace: '[code]', ot_code_html }}</span>
+                </p>
+              {%- endif %}
             </div>
             <div class="chocho-selector__option-price-{{ block_id }}">
-              <span class="chocho-selector__price-main-{{ block_id }}" data-onetime-price>—</span>
+              <span class="chocho-selector__price-main-{{ block_id }}">
+                <s data-onetime-compare hidden>—</s>
+                <span data-onetime-price>—</span>
+              </span>
               {% if block.settings.show_per_serving != false %}
               <span class="chocho-selector__price-per-{{ block_id }}">
                 <span data-onetime-per>—</span> / {{ block.settings.per_text | default: 'serving' }}
@@ -484,9 +548,9 @@
                 </span>
               </div>
               <div class="chocho-selector__quantity-{{ block_id }}">
-                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="minus" aria-label="Decrease">−</button>
-                <span class="chocho-selector__qty-display-{{ block_id }}" data-quantity>0</span>
-                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="plus" aria-label="Increase">+</button>
+                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="minus" aria-label="Decrease {{ product.title | escape }}" disabled>−</button>
+                <span class="chocho-selector__qty-display-{{ block_id }}" data-quantity aria-live="polite">0</span>
+                <button type="button" class="chocho-selector__qty-btn-{{ block_id }}" data-qty="plus" aria-label="Increase {{ product.title | escape }}">+</button>
               </div>
             </div>
           {% endif %}
@@ -494,7 +558,7 @@
       </div>
     </div>
 
-    <div class="chocho-selector__savings-{{ block_id }}">
+    <div class="chocho-selector__savings-{{ block_id }}" aria-live="polite">
       <span class="chocho-selector__savings-text-{{ block_id }}">
         {{ block.settings.savings_label | default: "You're saving" }}
         <span class="chocho-selector__savings-amount-{{ block_id }}" data-savings>$0.00</span>
@@ -516,7 +580,7 @@
   {% endif %}
 </div>
 
-<div class="chocho-notification-{{ block_id }}" data-chocho-notification></div>
+<div class="chocho-notification-{{ block_id }}" data-chocho-notification role="status" aria-live="polite"></div>
 
 <input
   type="hidden"
@@ -539,7 +603,18 @@
     const n   = parseInt(raw, 10);
     return Number.isFinite(n) && n > 0 ? n : null;
   })();
+  const DEBUG = false;
+  const log   = DEBUG ? console.log.bind(console) : () => {};
+
   const discountPercent  = {{ block.settings.subscription_discount | default: 15 }};
+  const otCode           = {{ block.settings.onetime_discount_code | strip | json }};
+  const otPercent        = Number({{ block.settings.onetime_discount_percent | default: 0 }}) || 0;
+  const btnText          = {{ block.settings.button_text | default: 'Add to Cart' | json }};
+  const notifText        = {{ block.settings.notification_text | default: '¡Productos agregados!' | json }};
+  const moneyFmt         = new Intl.NumberFormat({{ request.locale.iso_code | json }}, {
+    style: 'currency',
+    currency: {{ cart.currency.iso_code | default: 'USD' | json }},
+  });
   const servingsPerUnit  = {{ block.settings.servings_per_unit | default: 15 }};
   const autoOpenDrawer   = {{ block.settings.auto_open_cart_drawer | default: true }};
   const showPerServing   = {{ block.settings.show_per_serving | default: true }};
@@ -560,6 +635,7 @@
   const pricePerEl     = container.querySelector('[data-price-per]');
   const onetimePriceEl = container.querySelector('[data-onetime-price]');
   const onetimePerEl   = container.querySelector('[data-onetime-per]');
+  const onetimeCmpEl   = container.querySelector('[data-onetime-compare]');
   const submitBtn      = container.querySelector('[data-add-to-cart]');
   const notification   = document.querySelector(`.chocho-notification-${blockId}`);
   const ownSellingPlanInput = document.querySelector(`.chocho-selling-plan-${blockId}`);
@@ -626,7 +702,12 @@
    * HELPERS
    * ───────────────────────────────────────────────────────────────────────── */
   function formatMoney(cents) {
-    return '$' + (cents / 100).toFixed(2);
+    return moneyFmt.format((cents || 0) / 100);
+  }
+
+  /** Precio de compra única con el código aplicado (solo para mostrar). */
+  function onetimePrice(cents) {
+    return otCode && otPercent > 0 ? Math.round(cents * (1 - otPercent / 100)) : cents;
   }
 
   function showNotification(message, isError = false) {
@@ -677,15 +758,18 @@
       } else if (isSubscription) {
         totalDiscounted += Math.round(price * (1 - discountPercent / 100)) * qty;
       } else {
-        totalDiscounted += price * qty;
+        totalDiscounted += onetimePrice(price) * qty;
       }
     });
 
+    const onetimeUnit = onetimePrice(baseOnetimePrice);
+
     return {
       subUnit          : subUnitPrice,
-      onetimeUnit      : baseOnetimePrice,
+      onetimeUnit,
+      onetimeCompare   : Math.max(baseComparePrice, baseOnetimePrice),
       subPerServing    : subUnitPrice / servingsPerUnit,
-      onetimePerServing: baseOnetimePrice / servingsPerUnit,
+      onetimePerServing: onetimeUnit / servingsPerUnit,
       refComparePrice,
       totalQty,
       totalRegular,
@@ -702,6 +786,11 @@
     if (comparePriceEl) comparePriceEl.textContent = formatMoney(prices.refComparePrice);
     if (pricePerEl && showPerServing)     pricePerEl.textContent     = formatMoney(prices.subPerServing);
     if (onetimePriceEl) onetimePriceEl.textContent = formatMoney(prices.onetimeUnit);
+    if (onetimeCmpEl) {
+      const showCmp = prices.onetimeCompare > prices.onetimeUnit;
+      onetimeCmpEl.hidden = !showCmp;
+      if (showCmp) onetimeCmpEl.textContent = formatMoney(prices.onetimeCompare);
+    }
     if (onetimePerEl && showPerServing)   onetimePerEl.textContent   = formatMoney(prices.onetimePerServing);
     if (savingsEl)      savingsEl.textContent      = formatMoney(prices.savings);
     if (totalCompareEl) totalCompareEl.textContent = formatMoney(prices.totalRegular);
@@ -710,8 +799,8 @@
     const hasItems = prices.totalQty > 0;
     submitBtn.disabled = !hasItems || isProcessing;
     submitBtn.textContent = hasItems
-      ? `{{ block.settings.button_text | default: "Add to Cart" }} — ${formatMoney(prices.totalDiscounted)}`
-      : '{{ block.settings.button_text | default: "Add to Cart" }}';
+      ? `${btnText} · ${formatMoney(prices.totalDiscounted)}`
+      : btnText;
   }
 
   function syncSellingPlanInputs(planId) {
@@ -771,7 +860,7 @@
       return;
     }
 
-    console.log('Pronto-Chocho v3: Actualizando sections →', Object.keys(sections));
+    log('Pronto-Chocho v3: Actualizando sections →', Object.keys(sections));
 
     // Estrategia 1: Usar sectionRenderer del tema (preferido)
     const sectionRenderer = window.theme?.sectionRenderer || window.sectionRenderer;
@@ -780,7 +869,7 @@
       Object.keys(sections).forEach(sectionId => {
         try {
           sectionRenderer.renderSection(sectionId, { cache: false });
-          console.log('Pronto-Chocho v3: Section renderizada →', sectionId);
+          log('Pronto-Chocho v3: Section renderizada →', sectionId);
         } catch (err) {
           console.error('Pronto-Chocho v3: Error renderizando section →', sectionId, err);
         }
@@ -829,7 +918,7 @@
           if (newContent) {
             // Actualizar el HTML interno
             targetComponent.innerHTML = newContent.innerHTML;
-            console.log('Pronto-Chocho v3: cart-items-component actualizado manualmente');
+            log('Pronto-Chocho v3: cart-items-component actualizado manualmente');
           }
         } else {
           // Para otros elementos, reemplazo simple
@@ -886,14 +975,43 @@
     return 'no-method-found';
   }
 
+  /* ─────────────────────────────────────────────────────────────────────────
+   * CÓDIGO DE DESCUENTO (compra única)
+   * /cart/update.js con `discount` REEMPLAZA los códigos del carrito,
+   * así que se fusiona con los existentes para no borrar otros cupones.
+   * ───────────────────────────────────────────────────────────────────────── */
+  async function applyOnetimeCode(sectionIds) {
+    const cart  = await fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(r => r.json());
+    const codes = new Map((cart.discount_codes || []).map(d => [String(d.code).toUpperCase(), d.code]));
+    codes.set(otCode.toUpperCase(), otCode);
+
+    const res = await fetch('/cart/update.js', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body   : JSON.stringify({
+        discount    : [...codes.values()].join(','),
+        sections    : sectionIds.join(','),
+        sections_url: window.location.pathname,
+      }),
+    });
+    if (!res.ok) throw new Error(`update.js ${res.status}`);
+
+    const updated = await res.json();
+    const ok = (updated.discount_codes || []).some(
+      d => String(d.code).toUpperCase() === otCode.toUpperCase() && d.applicable
+    );
+    if (!ok) console.warn(`Pronto-Chocho: el código ${otCode} no aplica a este carrito (revisa Combinations / Purchase type en Admin).`);
+    return updated;
+  }
+
   function getActivePlanId() {
     const pluginData = readPluginPlan();
     if (pluginData) {
-      console.log(`Pronto-Chocho v3: Plan leído del plugin → ${pluginData.planId}`);
+      log(`Pronto-Chocho v3: Plan leído del plugin → ${pluginData.planId}`);
       return pluginData.planId;
     }
     if (fallbackPlanId) {
-      console.log(`Pronto-Chocho v3: Plan manual (fallback) → ${fallbackPlanId}`);
+      log(`Pronto-Chocho v3: Plan manual (fallback) → ${fallbackPlanId}`);
       return fallbackPlanId;
     }
     console.warn('Pronto-Chocho v3: No se encontró un selling_plan_id válido.');
@@ -960,7 +1078,7 @@
 
     // CRÍTICO: Obtener section IDs para el rendering
     const sectionIds = getCartSectionIds();
-    console.log('Pronto-Chocho v3: Section IDs →', sectionIds);
+    log('Pronto-Chocho v3: Section IDs →', sectionIds);
 
     // Sincronizar inputs antes del fetch
     syncSellingPlanInputs(planId);
@@ -977,7 +1095,7 @@
         sections_url: window.location.pathname
       };
 
-      console.log('Pronto-Chocho v3: Enviando →', JSON.stringify(requestBody, null, 2));
+      log('Pronto-Chocho v3: Enviando →', JSON.stringify(requestBody, null, 2));
 
       const response = await fetch('/cart/add.js', {
         method : 'POST',
@@ -1005,11 +1123,23 @@
 
       /* ── ÉXITO: Procesar respuesta con sections ───────────────────────── */
       const responseData = await response.json();
-      console.log('Pronto-Chocho v3: Respuesta →', responseData);
+      log('Pronto-Chocho v3: Respuesta →', responseData);
+
+      // Compra única + código: aplicarlo ANTES de refrescar el drawer,
+      // así el carrito ya se pinta con el descuento.
+      let sections = responseData.sections;
+      if (!isSubscription && otCode) {
+        try {
+          const updated = await applyOnetimeCode(sectionIds);
+          if (updated.sections) sections = updated.sections;
+        } catch (err) {
+          console.warn('Pronto-Chocho: no se pudo aplicar el código', err);
+        }
+      }
 
       // CRÍTICO: Actualizar las secciones del carrito con el HTML devuelto
-      if (responseData.sections) {
-        refreshCartSections(responseData.sections);
+      if (sections) {
+        refreshCartSections(sections);
       }
 
       /* ── DISPARAR EVENTOS DEL TEMA - ESTRUCTURA CORREGIDA ───────────── */
@@ -1027,13 +1157,13 @@
             {                       // data (tercer parámetro)
               source: 'pronto-chocho-v3',
               itemCount: totalItemCount,
-              sections: responseData.sections,  // ← AQUÍ está la clave
+              sections: sections,  // ← AQUÍ está la clave
               didError: false
             }
           );
           
           // Asegurar que la estructura sea correcta
-          console.log('Pronto-Chocho v3: Disparando CartAddEvent →', {
+          log('Pronto-Chocho v3: Disparando CartAddEvent →', {
             resource: cartAddEvent.detail.resource ? 'present' : 'missing',
             sourceId: cartAddEvent.detail.sourceId,
             data: cartAddEvent.detail.data
@@ -1050,7 +1180,7 @@
         cart: responseData,
         items: items,
         source: 'pronto-chocho-v3',
-        sections: responseData.sections,
+        sections: sections,
         itemCount: totalItemCount
       });
 
@@ -1060,7 +1190,7 @@
         bubbles: true,
         detail: {
           data: {                          // ← data wrapper CRÍTICO
-            sections: responseData.sections  // ← sections dentro de data
+            sections: sections  // ← sections dentro de data
           },
           source: 'pronto-chocho-v3',
           itemCount: totalItemCount
@@ -1073,18 +1203,18 @@
         bubbles: true,
         detail: { 
           source: 'pronto-chocho-v3',
-          sections: responseData.sections,
+          sections: sections,
           cart: responseData
         }
       }));
 
       /* ── ABRIR DRAWER ─────────────────────────────────────────────────── */
       const drawerResult = openCartDrawer();
-      console.log('Pronto-Chocho v3: Drawer result →', drawerResult);
+      log('Pronto-Chocho v3: Drawer result →', drawerResult);
 
       // Notificación solo si no se abrió el drawer
       if (drawerResult === 'not-found' || drawerResult === 'disabled') {
-        showNotification('{{ block.settings.notification_text | default: "¡Productos agregados!" }}');
+        showNotification(notifText);
       }
 
       /* ── RESET Y LIMPIEZA ───────────────────────────────────────────── */
@@ -1123,22 +1253,20 @@
   /* ─────────────────────────────────────────────────────────────────────────
    * LISTENERS
    * ───────────────────────────────────────────────────────────────────────── */
+  // `change` cubre clic, tap y flechas de teclado; el div solo reenvía clics en su padding.
   options.forEach(opt => {
-    opt.addEventListener('click', function (e) {
-      if (e.target.tagName === 'INPUT') return;
+    const radio = opt.querySelector('input[type="radio"]');
+    if (!radio) return;
 
-      currentOption = this.dataset.option;
-      options.forEach(o => {
-        const isActive = o === this;
-        o.classList.toggle('active', isActive);
-        const input = o.querySelector('input');
-        if (input) input.checked = isActive;
-      });
-
-      const planToSync = currentOption === 'subscription' ? getActivePlanId() : null;
-      syncSellingPlanInputs(planToSync);
-
+    radio.addEventListener('change', () => {
+      currentOption = radio.value;
+      options.forEach(o => o.classList.toggle('active', o.dataset.option === currentOption));
+      syncSellingPlanInputs(currentOption === 'subscription' ? getActivePlanId() : null);
       updateDisplay();
+    });
+
+    opt.addEventListener('click', e => {
+      if (!e.target.closest('label') && !radio.checked) radio.click();
     });
   });
 
@@ -1176,7 +1304,7 @@
   const pluginBootObserver = new MutationObserver(() => {
     const pluginData = readPluginPlan();
     if (pluginData) {
-      console.log('Pronto-Chocho v3: Plugin detectado post-carga');
+      log('Pronto-Chocho v3: Plugin detectado post-carga');
       if (currentOption === 'subscription') {
         syncSellingPlanInputs(pluginData.planId);
       }
@@ -1188,7 +1316,7 @@
   pluginBootObserver.observe(document.body, { childList: true, subtree: true });
   setTimeout(() => pluginBootObserver.disconnect(), 10000);
 
-  console.log(
+  log(
     `%cPronto-Chocho v3 (FINAL FIX)%c | Block: ${blockId} | ` +
     `ThemeEvents: ${ThemeEvents ? '✓' : '✗'} | ` +
     `CartAddEvent: ${window.CartAddEvent ? '✓' : '✗'} | ` +
@@ -1220,6 +1348,13 @@
       "id": "sub_subtitle",
       "label": "Subtitle",
       "default": "15 servings per bag"
+    },
+    {
+      "type": "text",
+      "id": "badge_label",
+      "label": "Badge label",
+      "default": "Most Popular",
+      "info": "Se muestra siempre sobre la suscripción. Vacío = sin badge."
     },
     {
       "type": "range",
@@ -1276,6 +1411,30 @@
       "id": "onetime_subtitle",
       "label": "Subtitle",
       "default": "15 servings per bag"
+    },
+    {
+      "type": "text",
+      "id": "onetime_discount_code",
+      "label": "Discount code",
+      "info": "Se aplica solo al agregar como compra única. Debe existir en Shopify Admin → Discounts. Vacío = sin código."
+    },
+    {
+      "type": "range",
+      "id": "onetime_discount_percent",
+      "label": "Code discount (price preview)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 0,
+      "info": "Solo para mostrar el precio tachado. Debe coincidir con el % del código en Admin. 0 = sin tachado."
+    },
+    {
+      "type": "text",
+      "id": "onetime_code_label",
+      "label": "Code label",
+      "default": "Includes code [code]",
+      "info": "[code] se reemplaza por el código. Vacío = ocultar la etiqueta."
     },
     {
       "type": "header",
