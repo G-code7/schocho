@@ -335,7 +335,7 @@
             <svg class="rc-star-{{ section_id }}{% if i <= rating_avg_round %} is-full{% endif %}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/></svg>
           {% endfor %}
         </span>
-        <span class="rc-summary-count-{{ section_id }}">Basado en {{ rating_count }} {% if rating_count == 1 %}reseña{% else %}reseñas{% endif %}</span>
+        <span class="rc-summary-count-{{ section_id }}">Based on {{ rating_count }} {% if rating_count == 1 %}review{% else %}reviews{% endif %}</span>
       </div>
     {% endif %}
 
