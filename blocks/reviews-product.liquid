@@ -231,7 +231,7 @@
     var avgEl = box.querySelector('[data-rc-avg]');
     if (avgEl) avgEl.textContent = avgStr;
     var cntEl = box.querySelector('[data-rc-count]');
-    if (cntEl) cntEl.textContent = 'Basado en ' + n + (n === 1 ? ' reseña' : ' reseñas');
+    if (cntEl) cntEl.textContent = 'Based on ' + n + (n === 1 ? ' review' : ' reviews');
     var wrap = box.querySelector('[data-rc-summary-stars]');
     if (wrap) {
       wrap.setAttribute('aria-label', avgStr + ' de 5 estrellas');
