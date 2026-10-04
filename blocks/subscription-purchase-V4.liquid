@@ -608,6 +608,8 @@
 
   const discountPercent  = {{ block.settings.subscription_discount | default: 15 }};
   const otCode           = {{ block.settings.onetime_discount_code | strip | json }};
+  // Códigos que se aplican en compra única (el 2º es silencioso, p. ej. envío gratis).
+  const otCodes          = [otCode, {{ block.settings.onetime_discount_code_2 | strip | json }}].filter(Boolean);
   const otPercent        = Number({{ block.settings.onetime_discount_percent | default: 0 }}) || 0;
   const btnText          = {{ block.settings.button_text | default: 'Add to Cart' | json }};
   const notifText        = {{ block.settings.notification_text | default: '¡Productos agregados!' | json }};
@@ -983,7 +985,7 @@
   async function applyOnetimeCode(sectionIds) {
     const cart  = await fetch('/cart.js', { headers: { Accept: 'application/json' } }).then(r => r.json());
     const codes = new Map((cart.discount_codes || []).map(d => [String(d.code).toUpperCase(), d.code]));
-    codes.set(otCode.toUpperCase(), otCode);
+    otCodes.forEach(c => codes.set(c.toUpperCase(), c));
 
     const res = await fetch('/cart/update.js', {
       method : 'POST',
@@ -997,10 +999,12 @@
     if (!res.ok) throw new Error(`update.js ${res.status}`);
 
     const updated = await res.json();
-    const ok = (updated.discount_codes || []).some(
-      d => String(d.code).toUpperCase() === otCode.toUpperCase() && d.applicable
+    const applied = new Set(
+      (updated.discount_codes || []).filter(d => d.applicable).map(d => String(d.code).toUpperCase())
     );
-    if (!ok) console.warn(`Pronto-Chocho: el código ${otCode} no aplica a este carrito (revisa Combinations / Purchase type en Admin).`);
+    otCodes
+      .filter(c => !applied.has(c.toUpperCase()))
+      .forEach(c => console.warn(`Pronto-Chocho: el código ${c} no aplica a este carrito (revisa Combinations / Purchase type en Admin).`));
     return updated;
   }
 
@@ -1128,7 +1132,7 @@
       // Compra única + código: aplicarlo ANTES de refrescar el drawer,
       // así el carrito ya se pinta con el descuento.
       let sections = responseData.sections;
-      if (!isSubscription && otCode) {
+      if (!isSubscription && otCodes.length) {
         try {
           const updated = await applyOnetimeCode(sectionIds);
           if (updated.sections) sections = updated.sections;
@@ -1417,6 +1421,12 @@
       "id": "onetime_discount_code",
       "label": "Discount code",
       "info": "Se aplica solo al agregar como compra única. Debe existir en Shopify Admin → Discounts. Vacío = sin código."
+    },
+    {
+      "type": "text",
+      "id": "onetime_discount_code_2",
+      "label": "2nd discount code",
+      "info": "Se aplica junto con el primero al agregar como compra única, sin mostrarse en la etiqueta (ideal para envío gratis). Debe ser combinable en Shopify Admin → Discounts, o Shopify aplica solo uno."
     },
     {
       "type": "range",
