@@ -229,6 +229,7 @@
                   "settings": {
                     "sub_title": "Subscribe & Save",
                     "sub_subtitle": "16 servings per bag",
+                    "badge_label": "Most Popular",
                     "subscription_discount": 20,
                     "show_benefits": true,
                     "benefit_1": "Save 20%/bag on every subscription order",
@@ -237,6 +238,10 @@
                     "benefit_4": "Cancel any time",
                     "onetime_title": "One-time purchase",
                     "onetime_subtitle": "16 servings per bag",
+                    "onetime_discount_code": "",
+                    "onetime_discount_code_2": "",
+                    "onetime_discount_percent": 0,
+                    "onetime_code_label": "Includes code [code]",
                     "show_per_serving": false,
                     "flavors_label": "Choose your ChochoFuel",
                     "product_1": "chocho-cacao-spirulina-maca",
@@ -422,6 +427,150 @@
         "gradient_direction": "to top",
         "padding-block-start": 10,
         "padding-block-end": 10
+      }
+    },
+    "reviews_product_mQeVGE": {
+      "type": "reviews-product",
+      "blocks": {
+        "review_wtnWcL": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"100% recommend! Great product with clean, healthy, organic ingredients. It tastes really good and is a great\noption.\"",
+            "author": "MARIA A. VALLEJO",
+            "verified": true,
+            "date": "26 Aug  2026"
+          }
+        },
+        "review_dikEkm": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"100% recommended! Not only does this protein taste amazing in smoothies, but it has also become my secret\ningredient for arepas. It blends effortlessly into the dough without ruining the texture, and the result is\nspectacular. It&#39;s divine and super versatile! \"",
+            "author": "ISABELLA FERREIRA",
+            "verified": true,
+            "date": "28 Jul 2026"
+          }
+        },
+        "review_bzRY49": {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "review_text": "\"An amazing and great tasting protein that you can basically mix with anything. Not many protein products like\nthis on the market!\"",
+            "author": "DANIEL KANE",
+            "verified": true,
+            "date": "5 Sep 2026"
+          }
+        },
+        "review_4Y8qdA": {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "review_text": "\"Pronto Chocho has been such a game changer!! I am a full-time college student who also has a part time job,\nso making time for meals is hard. After being consistent with Pronto Chocho, I already feel like I have more\nenergy and overall more strength to push through my days. With a bit of experimenting, I finally made my\nfavorite combination (which includes almond milk) and I love it. I am so grateful to have found this brand!!\"",
+            "author": "CRISTINA GARCIA",
+            "verified": true,
+            "date": "15 Sep 2026"
+          }
+        },
+        "review_RAfd7j": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"I ordered the plain (one pure and whole food ingredient) Pronto Chocho and have been loving it in baked goods,\npancakes, overnight oats, and smoothies. I also tried it in coffee but didn’t care for the grittiness so wouldn’t\nrecommend it if that would be the only purpose for your protein powder. I will definitely order more and look\nforward to trying other flavors, too!\"",
+            "author": "MARY AVALOS",
+            "verified": true,
+            "date": ""
+          }
+        },
+        "review_Nmhqmw": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"Pronto Chocho has honestly been a game changer for my diet. I can add it to pretty much any meal, it has no\nnoticeable flavor, and it doesn’t leave my stomach feeling weird or heavy. Please keep launching incredible\nproducts like this!!!!\"",
+            "author": "PEDRO GONZALEZ",
+            "verified": true,
+            "date": ""
+          }
+        }
+      },
+      "block_order": [
+        "review_wtnWcL",
+        "review_dikEkm",
+        "review_bzRY49",
+        "review_4Y8qdA",
+        "review_RAfd7j",
+        "review_Nmhqmw"
+      ],
+      "name": "Reviews de producto",
+      "settings": {
+        "max_width": 1280,
+        "bg_color": "#f5f4ed",
+        "padding_top": 60,
+        "padding_bottom": 60,
+        "padding_x": 60,
+        "title": "Customer Reviews",
+        "subtitle": "",
+        "header_align": "center",
+        "header_margin_bottom": 40,
+        "title_size": 36,
+        "title_weight": "700",
+        "title_color": "#3e2563",
+        "title_uppercase": false,
+        "title_margin_bottom": 12,
+        "subtitle_size": 16,
+        "subtitle_color": "#3e2563",
+        "show_summary": true,
+        "star_color": "#603D83",
+        "star_empty_color": "#e2e2e2",
+        "verified_text": "Verified Purchase",
+        "reviews_product": "",
+        "json_metafield": "custom.reviews",
+        "json_limit": 24,
+        "visible_cards": 3,
+        "visible_cards_tablet": 2,
+        "visible_cards_mobile": 2,
+        "card_width_mobile": 85,
+        "card_gap": 20,
+        "transition_duration": 350,
+        "card_bg": "#ffffff",
+        "card_border_width": 0,
+        "card_border_color": "#e0e0e0",
+        "card_radius": 12,
+        "card_padding": 20,
+        "image_bg": "#f0f0f0",
+        "image_ratio": 100,
+        "image_position": "center center",
+        "review_text_size": 14,
+        "review_text_color": "#3e2563",
+        "review_text_lh": 1.6,
+        "text_margin_bottom": 16,
+        "text_limit": 220,
+        "read_more_text": "Read more",
+        "author_size": 13,
+        "author_weight": "700",
+        "author_color": "#3e2563",
+        "author_uppercase": true,
+        "arrow_size": 44,
+        "arrow_icon_size": 20,
+        "arrow_offset": 24,
+        "arrow_opacity": 90,
+        "arrow_radius": 60,
+        "arrow_border_width": 1,
+        "arrow_border_color": "#3e2563",
+        "arrow_bg": "#ffffff",
+        "arrow_bg_hover": "#f5f0fc",
+        "arrow_icon_color": "#3e2563",
+        "hide_arrows_mobile": false,
+        "show_dots": true,
+        "dots_margin_top": 24,
+        "dots_gap": 8,
+        "dot_size": 10,
+        "dot_color": "#c4b1ca",
+        "dot_opacity": 50,
+        "dot_active_color": "#3e2563",
+        "padding_top_mobile": 40,
+        "padding_bottom_mobile": 40,
+        "padding_x_mobile": 20
       }
     },
     "blocks_wy8CWj": {
@@ -1446,6 +1595,7 @@
   "order": [
     "main",
     "section_BNjpcx",
+    "reviews_product_mQeVGE",
     "blocks_wy8CWj",
     "hero_8wt9xX",
     "blocks_mDqfJD",
