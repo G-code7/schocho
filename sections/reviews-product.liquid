@@ -282,20 +282,104 @@
     color: {{ section.settings.subtitle_color }};
   }
 
+  /* ── Texto recortado + "Read more" ── */
+  .rc-card-text-{{ section_id }}.is-truncated { flex: none; margin-bottom: 6px; }
+  .rc-card-meta-{{ section_id }} { margin-top: auto; }
+  .rc-more-{{ section_id }} {
+    align-self: flex-start;
+    margin: 0 0 {{ section.settings.text_margin_bottom }}px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: {{ section.settings.author_color }};
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .rc-more-{{ section_id }}:hover { color: {{ section.settings.star_color }}; }
+  .rc-more-{{ section_id }}:focus-visible { outline: 2px solid {{ section.settings.star_color }}; outline-offset: 3px; border-radius: 2px; }
+
+  /* ── Modal (dialog nativo) ── */
+  html:has(.rc-modal-{{ section_id }}[open]) { overflow: hidden; }
+  .rc-modal-{{ section_id }} {
+    width: min(560px, calc(100vw - 32px));
+    max-height: min(80vh, 720px);
+    padding: 0;
+    border: 0;
+    border-radius: {{ section.settings.card_radius }}px;
+    background: {{ section.settings.card_bg }};
+    color: {{ section.settings.review_text_color }};
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+  }
+  .rc-modal-{{ section_id }}[open] {
+    display: flex;
+    flex-direction: column;
+    animation: rc-modal-in-{{ section_id }} 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .rc-modal-{{ section_id }}::backdrop { background: rgba(17, 17, 17, 0.55); }
+  .rc-modal-head-{{ section_id }} { display: flex; justify-content: flex-end; padding: 12px 12px 0; }
+  .rc-modal-close-{{ section_id }} {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: {{ section.settings.author_color }};
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .rc-modal-close-{{ section_id }}:hover { background: rgba(0, 0, 0, 0.06); }
+  .rc-modal-close-{{ section_id }}:focus-visible { outline: 2px solid {{ section.settings.star_color }}; outline-offset: 2px; }
+  .rc-modal-close-{{ section_id }} svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+  .rc-modal-body-{{ section_id }} { overflow-y: auto; padding: 0 28px 28px; }
+  .rc-modal-body-{{ section_id }} .rc-card-text-{{ section_id }} { flex: none; margin-bottom: 18px; }
+  @keyframes rc-modal-in-{{ section_id }} { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+  @media (prefers-reduced-motion: reduce) { .rc-modal-{{ section_id }}[open] { animation: none; } }
+
 {% endstyle %}
 
 {%- liquid
+  # Fuente 1: bloques "Reseña" del editor. Fuente 2: metafield JSON del producto.
+  assign review_blocks = section.blocks | where: 'type', 'review'
+  assign rp = section.settings.reviews_product | default: product
+  assign mf_path = section.settings.json_metafield | default: 'custom.reviews' | strip | split: '.'
+  assign json_reviews = nil
+  if rp and mf_path.size == 2
+    assign mf = rp.metafields[mf_path[0]][mf_path[1]]
+    assign json_reviews = mf.value.reviews | default: mf.value
+  endif
+  assign json_limit = section.settings.json_limit | default: 24
+  assign text_limit = section.settings.text_limit | default: 220
+
   assign total_slides = 0
   assign rating_sum = 0
   assign rating_count = 0
-  for block in section.blocks
-    if block.type == 'review'
+  for src in (1..2)
+    if src == 1
+      assign list = review_blocks
+      assign lim = 50
+    else
+      assign list = json_reviews
+      assign lim = json_limit
+    endif
+    for item in list limit: lim
+      if src == 1
+        assign r_rating = item.settings.rating | plus: 0
+      else
+        assign r_rating = item.rating | plus: 0 | at_most: 5 | at_least: 0
+      endif
       assign total_slides = total_slides | plus: 1
-      if block.settings.rating > 0
-        assign rating_sum = rating_sum | plus: block.settings.rating
+      if r_rating > 0
+        assign rating_sum = rating_sum | plus: r_rating
         assign rating_count = rating_count | plus: 1
       endif
-    endif
+    endfor
   endfor
 
   assign rating_avg = 0
@@ -356,61 +440,102 @@
       <div class="rc-carousel-viewport-{{ section_id }}">
         <div class="rc-carousel-track-{{ section_id }}" data-rc-track>
 
-          {% for block in section.blocks %}
-            {% if block.type == 'review' %}
-              <div class="rc-card-{{ section_id }}" {{ block.shopify_attributes }}>
+          {%- for src in (1..2) -%}
+            {%- liquid
+              if src == 1
+                assign list = review_blocks
+                assign lim = 50
+              else
+                assign list = json_reviews
+                assign lim = json_limit
+              endif
+            -%}
+            {%- for item in list limit: lim -%}
+              {%- liquid
+                if src == 1
+                  assign r = item.settings
+                  assign r_text = r.review_text
+                  assign r_author = r.author
+                else
+                  assign r = item
+                  assign r_text = r.text | default: r.review_text | default: r.body
+                  assign r_author = r.author | default: r.name
+                endif
+                assign r_rating = r.rating | plus: 0 | at_most: 5 | at_least: 0
+                assign r_text = r_text | strip
 
-                <!-- Imagen (solo si existe) -->
-                {% if block.settings.image != blank %}
+                # Recorte en palabra completa
+                assign is_long = false
+                if r_text.size > text_limit
+                  assign is_long = true
+                  assign r_short = r_text | strip_newlines | truncate: text_limit, ''
+                  if r_short contains ' '
+                    assign r_tail = r_short | split: ' ' | last
+                    assign r_short = r_short | remove_last: r_tail | strip
+                  endif
+                  assign r_short = r_short | append: '…'
+                endif
+              -%}
+              <div class="rc-card-{{ section_id }}" data-rc-card {% if src == 1 %}{{ item.shopify_attributes }}{% endif %}>
+
+                {%- if r.image != blank -%}
                   <div class="rc-card-media-{{ section_id }}">
-                    <img
-                      src="{{ block.settings.image | image_url: width: 800 }}"
-                      srcset="
-                        {{ block.settings.image | image_url: width: 400 }} 400w,
-                        {{ block.settings.image | image_url: width: 600 }} 600w,
-                        {{ block.settings.image | image_url: width: 800 }} 800w"
-                      sizes="(max-width: 640px) 90vw, (max-width: 990px) 50vw, 33vw"
-                      alt="{{ block.settings.image.alt | default: block.settings.author | escape }}"
-                      loading="lazy"
-                      width="{{ block.settings.image.width }}"
-                      height="{{ block.settings.image.height }}"
-                    >
+                    {%- if src == 1 -%}
+                      <img
+                        src="{{ r.image | image_url: width: 800 }}"
+                        srcset="{{ r.image | image_url: width: 400 }} 400w, {{ r.image | image_url: width: 600 }} 600w, {{ r.image | image_url: width: 800 }} 800w"
+                        sizes="(max-width: 640px) 90vw, (max-width: 990px) 50vw, 33vw"
+                        alt="{{ r.image.alt | default: r_author | escape }}"
+                        loading="lazy"
+                        width="{{ r.image.width }}"
+                        height="{{ r.image.height }}"
+                      >
+                    {%- else -%}
+                      <img src="{{ r.image | escape }}" alt="{{ r_author | escape }}" loading="lazy">
+                    {%- endif -%}
                   </div>
-                {% endif %}
+                {%- endif -%}
 
-                <!-- Cuerpo -->
                 <div class="rc-card-body-{{ section_id }}">
-                  {% if block.settings.rating > 0 %}
-                    <span class="rc-stars-{{ section_id }}" role="img" aria-label="{{ block.settings.rating }} de 5 estrellas">
-                      {% for i in (1..5) %}
-                        <svg class="rc-star-{{ section_id }}{% if i <= block.settings.rating %} is-full{% endif %}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                      {% endfor %}
+                  {% if r_rating > 0 %}
+                    <span class="rc-stars-{{ section_id }}" role="img" aria-label="{{ r_rating }} de 5 estrellas">
+                      {% for i in (1..5) %}<svg class="rc-star-{{ section_id }}{% if i <= r_rating %} is-full{% endif %}" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17.27l6.18 3.73-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"/></svg>{% endfor %}
                     </span>
                   {% endif %}
-                  {% if block.settings.review_text != blank %}
-                    <p class="rc-card-text-{{ section_id }}">{{ block.settings.review_text }}</p>
-                  {% endif %}
-                  <div class="rc-card-meta-{{ section_id }}">
-                    {% if block.settings.author != blank %}
-                      <p class="rc-card-author-{{ section_id }}">{{ block.settings.author }}</p>
+
+                  {% if r_text != blank %}
+                    {% if is_long %}
+                      <p class="rc-card-text-{{ section_id }} is-truncated">{{ r_short | escape }}</p>
+                      <div class="rc-card-text-{{ section_id }}" data-rc-full hidden>{{ r_text | escape | newline_to_br }}</div>
+                      <button type="button" class="rc-more-{{ section_id }}" data-rc-more aria-haspopup="dialog">
+                        {{- section.settings.read_more_text | default: 'Read more' -}}
+                      </button>
+                    {% else %}
+                      <p class="rc-card-text-{{ section_id }}">{{ r_text | escape | newline_to_br }}</p>
                     {% endif %}
-                    {% if block.settings.verified %}
+                  {% endif %}
+
+                  <div class="rc-card-meta-{{ section_id }}">
+                    {% if r_author != blank %}
+                      <p class="rc-card-author-{{ section_id }}">{{ r_author | escape }}</p>
+                    {% endif %}
+                    {% if r.verified %}
                       <span class="rc-verified-{{ section_id }}">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                         {{ section.settings.verified_text | default: 'Compra verificada' }}
                       </span>
                     {% endif %}
                   </div>
-                  {% if block.settings.date != blank %}
-                    <p class="rc-card-date-{{ section_id }}">{{ block.settings.date }}</p>
+                  {% if r.date != blank %}
+                    <p class="rc-card-date-{{ section_id }}">{{ r.date | escape }}</p>
                   {% endif %}
                 </div>
 
               </div>
-            {% endif %}
-          {% endfor %}
+            {%- endfor -%}
+          {%- endfor -%}
 
-          {% if section.blocks.size == 0 %}
+          {% if total_slides == 0 %}
             {% for i in (1..3) %}
               <div class="rc-card-{{ section_id }}">
                 <div class="rc-card-media-{{ section_id }}">
@@ -469,6 +594,15 @@
     {% endif %}
 
   </div>
+
+  <dialog class="rc-modal-{{ section_id }}" data-rc-modal aria-label="{{ section.settings.title | default: 'Review' | escape }}">
+    <div class="rc-modal-head-{{ section_id }}">
+      <button type="button" class="rc-modal-close-{{ section_id }}" data-rc-close aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="rc-modal-body-{{ section_id }}" data-rc-modal-body></div>
+  </dialog>
 </section>
 
 <script>
@@ -537,6 +671,7 @@
 
   /* Teclado */
   section.addEventListener('keydown', e => {
+    if (e.target.closest('dialog')) return;
     if (e.key === 'ArrowLeft')  goTo(current - 1);
     if (e.key === 'ArrowRight') goTo(current + 1);
   });
@@ -547,6 +682,31 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => goTo(Math.min(current, maxIndex())), 150);
   });
+
+  /* Modal "Read more": clona estrellas, texto completo, autor y fecha de la tarjeta */
+  const modal     = section.querySelector('[data-rc-modal]');
+  const modalBody = modal && modal.querySelector('[data-rc-modal-body]');
+  if (modal && typeof modal.showModal === 'function') {
+    track.addEventListener('click', e => {
+      const btn = e.target.closest('[data-rc-more]');
+      if (!btn) return;
+      const card  = btn.closest('[data-rc-card]');
+      const parts = ['.rc-stars-{{ section_id }}', '[data-rc-full]', '.rc-card-meta-{{ section_id }}', '.rc-card-date-{{ section_id }}']
+        .map(sel => card.querySelector(sel))
+        .filter(Boolean)
+        .map(node => {
+          const copy = node.cloneNode(true);
+          copy.hidden = false;
+          copy.removeAttribute('data-rc-full');
+          return copy;
+        });
+      modalBody.replaceChildren(...parts);
+      modalBody.scrollTop = 0;
+      modal.showModal();
+    });
+    modal.querySelector('[data-rc-close]').addEventListener('click', () => modal.close());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+  }
 
   /* Inicializar */
   goTo(0);
@@ -630,9 +790,18 @@
       "id": "header_align",
       "label": "Alineación header",
       "options": [
-        { "value": "left",   "label": "Izquierda" },
-        { "value": "center", "label": "Centro"    },
-        { "value": "right",  "label": "Derecha"   }
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
       ],
       "default": "center"
     },
@@ -661,9 +830,18 @@
       "id": "title_weight",
       "label": "Peso título",
       "options": [
-        { "value": "400", "label": "Normal"    },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold"      }
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
       ],
       "default": "700"
     },
@@ -733,6 +911,35 @@
       "id": "verified_text",
       "label": "Texto de compra verificada",
       "default": "Compra verificada"
+    },
+    {
+      "type": "header",
+      "content": "── Reseñas desde JSON ──"
+    },
+    {
+      "type": "paragraph",
+      "content": "Pega un JSON en un metafield de tipo JSON del producto (Admin → Productos → Metafields). Cada reseña admite: author, rating (1-5), text, date, verified (true/false), image (URL). Se muestran después de los bloques manuales."
+    },
+    {
+      "type": "product",
+      "id": "reviews_product",
+      "label": "Producto (opcional)",
+      "info": "Vacío = el producto de la página actual."
+    },
+    {
+      "type": "text",
+      "id": "json_metafield",
+      "label": "Metafield (namespace.key)",
+      "default": "custom.reviews"
+    },
+    {
+      "type": "range",
+      "id": "json_limit",
+      "label": "Máximo de reseñas del JSON",
+      "min": 4,
+      "max": 60,
+      "step": 4,
+      "default": 24
     },
     {
       "type": "header",
@@ -866,11 +1073,26 @@
       "id": "image_position",
       "label": "Foco imagen",
       "options": [
-        { "value": "center center", "label": "Centro"    },
-        { "value": "top center",    "label": "Arriba"    },
-        { "value": "bottom center", "label": "Abajo"     },
-        { "value": "center left",   "label": "Izquierda" },
-        { "value": "center right",  "label": "Derecha"   }
+        {
+          "value": "center center",
+          "label": "Centro"
+        },
+        {
+          "value": "top center",
+          "label": "Arriba"
+        },
+        {
+          "value": "bottom center",
+          "label": "Abajo"
+        },
+        {
+          "value": "center left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center right",
+          "label": "Derecha"
+        }
       ],
       "default": "center center"
     },
@@ -914,6 +1136,22 @@
       "default": 16
     },
     {
+      "type": "range",
+      "id": "text_limit",
+      "label": "Caracteres antes de recortar",
+      "min": 80,
+      "max": 600,
+      "step": 20,
+      "default": 220,
+      "info": "Las reseñas más largas muestran un botón que abre el texto completo en un modal."
+    },
+    {
+      "type": "text",
+      "id": "read_more_text",
+      "label": "Texto del botón",
+      "default": "Read more"
+    },
+    {
       "type": "header",
       "content": "── Autor ──"
     },
@@ -932,9 +1170,18 @@
       "id": "author_weight",
       "label": "Peso",
       "options": [
-        { "value": "400", "label": "Normal"    },
-        { "value": "600", "label": "Semi-bold" },
-        { "value": "700", "label": "Bold"      }
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
       ],
       "default": "700"
     },
@@ -1199,10 +1446,45 @@
         "show_summary": true
       },
       "blocks": [
-        { "type": "review", "settings": { "rating": 5, "author": "María G.", "verified": true, "date": "12 mar 2026", "review_text": "\"Este producto superó todas mis expectativas. La calidad es increíble y lo recomiendo a todo el mundo.\"" } },
-        { "type": "review", "settings": { "rating": 5, "author": "Carlos R.", "verified": true, "date": "3 mar 2026", "review_text": "\"Me encanta la atención al detalle. Definitivamente volveré a comprar.\"" } },
-        { "type": "review", "settings": { "rating": 4, "author": "Ana M.",   "verified": true, "date": "28 feb 2026", "review_text": "\"Producto de alta calidad y entrega rápida. Muy satisfecha con mi compra.\"" } },
-        { "type": "review", "settings": { "rating": 5, "author": "Laura P.", "verified": false, "review_text": "\"Una experiencia de compra excelente de principio a fin. ¡Totalmente recomendado!\"" } }
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "author": "María G.",
+            "verified": true,
+            "date": "12 mar 2026",
+            "review_text": "\"Este producto superó todas mis expectativas. La calidad es increíble y lo recomiendo a todo el mundo.\""
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "author": "Carlos R.",
+            "verified": true,
+            "date": "3 mar 2026",
+            "review_text": "\"Me encanta la atención al detalle. Definitivamente volveré a comprar.\""
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "author": "Ana M.",
+            "verified": true,
+            "date": "28 feb 2026",
+            "review_text": "\"Producto de alta calidad y entrega rápida. Muy satisfecha con mi compra.\""
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "author": "Laura P.",
+            "verified": false,
+            "review_text": "\"Una experiencia de compra excelente de principio a fin. ¡Totalmente recomendado!\""
+          }
+        }
       ]
     }
   ]
