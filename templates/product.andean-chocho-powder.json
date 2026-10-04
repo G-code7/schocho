@@ -555,13 +555,35 @@
             "verified": true,
             "date": "15 Sep 2026"
           }
+        },
+        "review_bYKDBq": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"I ordered the plain (one pure and whole food ingredient) Pronto Chocho and have been loving it in baked goods,\npancakes, overnight oats, and smoothies. I also tried it in coffee but didn’t care for the grittiness so wouldn’t\nrecommend it if that would be the only purpose for your protein powder. I will definitely order more and look\nforward to trying other flavors, too!\"",
+            "author": "MARY AVALOS",
+            "verified": true,
+            "date": ""
+          }
+        },
+        "review_kcctqy": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "review_text": "\"Pronto Chocho has honestly been a game changer for my diet. I can add it to pretty much any meal, it has no\nnoticeable flavor, and it doesn’t leave my stomach feeling weird or heavy. Please keep launching incredible\nproducts like this!!!!\"",
+            "author": "PEDRO GONZALEZ",
+            "verified": true,
+            "date": ""
+          }
         }
       },
       "block_order": [
         "review_mkPpEC",
         "review_p6hfER",
         "review_QbnB7f",
-        "review_f8Ufmx"
+        "review_f8Ufmx",
+        "review_bYKDBq",
+        "review_kcctqy"
       ],
       "name": "Reviews de producto",
       "settings": {
@@ -585,6 +607,9 @@
         "star_color": "#9b84b2",
         "star_empty_color": "#e2e2e2",
         "verified_text": "Verified Purchase",
+        "reviews_product": "",
+        "json_metafield": "custom.reviews",
+        "json_limit": 24,
         "visible_cards": 3,
         "visible_cards_tablet": 2,
         "visible_cards_mobile": 2,
@@ -603,6 +628,8 @@
         "review_text_color": "#3e2563",
         "review_text_lh": 1.6,
         "text_margin_bottom": 16,
+        "text_limit": 220,
+        "read_more_text": "Read more",
         "author_size": 13,
         "author_weight": "700",
         "author_color": "#3e2563",
