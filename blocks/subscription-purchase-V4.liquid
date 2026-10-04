@@ -31,16 +31,16 @@
   }
 
   .chocho-selector__option-{{ block_id }}:hover {
-    border-color: {{ block.settings.border_hover | default: '#4A6B1A' }};
+    border-color: {{ block.settings.border_hover | default: '#3e2563' }};
   }
 
   .chocho-selector__option-{{ block_id }}.active {
-    border-color: {{ block.settings.active_border | default: '#4A6B1A' }};
+    border-color: {{ block.settings.active_border | default: '#3e2563' }};
     background: {{ block.settings.active_bg | default: '#FCF3EC' }};
   }
 
   .chocho-selector__option-{{ block_id }}:has(input:focus-visible) {
-    outline: 2px solid {{ block.settings.active_border | default: '#4A6B1A' }};
+    outline: 2px solid {{ block.settings.active_border | default: '#3e2563' }};
     outline-offset: 2px;
   }
 
@@ -50,7 +50,7 @@
     position: absolute;
     top: -10px;
     left: 16px;
-    background: {{ block.settings.badge_bg | default: '#4A6B1A' }};
+    background: {{ block.settings.badge_bg | default: '#3e2563' }};
     color: {{ block.settings.badge_text | default: '#ffffff' }};
     font-size: 10px;
     font-weight: 700;
@@ -80,7 +80,7 @@
   }
 
   .chocho-selector__option-{{ block_id }}.active .chocho-selector__radio-{{ block_id }} {
-    border-color: {{ block.settings.active_radio | default: '#4A6B1A' }};
+    border-color: {{ block.settings.active_radio | default: '#3e2563' }};
   }
 
   .chocho-selector__option-{{ block_id }}.active .chocho-selector__radio-{{ block_id }}::after {
@@ -91,7 +91,7 @@
     transform: translate(-50%, -50%);
     width: 10px;
     height: 10px;
-    background: {{ block.settings.active_radio | default: '#4A6B1A' }};
+    background: {{ block.settings.active_radio | default: '#3e2563' }};
     border-radius: 50%;
   }
 
@@ -126,7 +126,7 @@
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    color: {{ block.settings.price_color | default: '#4A6B1A' }};
+    color: {{ block.settings.price_color | default: '#3e2563' }};
     line-height: 1.2;
   }
 
@@ -162,7 +162,7 @@
     top: 0.2em;
     width: 12px;
     height: 12px;
-    background: {{ block.settings.check_color | default: '#4A6B1A' }};
+    background: {{ block.settings.check_color | default: '#3e2563' }};
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
             mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
   }
@@ -178,8 +178,8 @@
     font-size: 12px;
     font-weight: 600;
     line-height: 1.4;
-    color: {{ block.settings.price_color | default: '#4A6B1A' }};
-    background: color-mix(in srgb, {{ block.settings.price_color | default: '#4A6B1A' }} 10%, transparent);
+    color: {{ block.settings.price_color | default: '#3e2563' }};
+    background: color-mix(in srgb, {{ block.settings.price_color | default: '#3e2563' }} 10%, transparent);
   }
   .chocho-selector__code-{{ block_id }} svg { width: 12px; height: 12px; flex-shrink: 0; }
   .chocho-selector__code-{{ block_id }} b { font-weight: 800; letter-spacing: 0.3px; }
@@ -209,7 +209,7 @@
   }
 
   .chocho-selector__product-{{ block_id }}:hover {
-    border-color: {{ block.settings.border_hover | default: '#4A6B1A' }};
+    border-color: {{ block.settings.border_hover | default: '#3e2563' }};
   }
 
   .chocho-selector__product-image-{{ block_id }} {
@@ -258,7 +258,7 @@
   }
 
   .chocho-selector__qty-btn-{{ block_id }}:focus-visible {
-    outline: 2px solid {{ block.settings.active_border | default: '#4A6B1A' }};
+    outline: 2px solid {{ block.settings.active_border | default: '#3e2563' }};
     outline-offset: 2px;
   }
 
@@ -268,7 +268,7 @@
 
   .chocho-selector__qty-btn-{{ block_id }}:hover:not(:disabled) {
     background: {{ block.settings.qty_hover_bg | default: '#f5f5f5' }};
-    border-color: {{ block.settings.border_hover | default: '#4A6B1A' }};
+    border-color: {{ block.settings.border_hover | default: '#3e2563' }};
   }
 
   .chocho-selector__qty-btn-{{ block_id }}:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -296,7 +296,7 @@
   .chocho-selector__savings-text-{{ block_id }} { color: {{ block.settings.savings_text_color | default: '#666666' }}; }
 
   .chocho-selector__savings-amount-{{ block_id }} {
-    color: {{ block.settings.savings_amount_color | default: '#4A6B1A' }};
+    color: {{ block.settings.savings_amount_color | default: '#3e2563' }};
     font-weight: 700;
   }
 
@@ -318,7 +318,7 @@
     align-items: center;
     gap: 6px;
     font-size: 11px;
-    color: {{ block.settings.savings_amount_color | default: '#4A6B1A' }};
+    color: {{ block.settings.savings_amount_color | default: '#3e2563' }};
     margin-bottom: 8px;
     font-weight: 600;
   }
@@ -378,7 +378,7 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    background: {{ block.settings.notification_bg | default: '#4A6B1A' }};
+    background: {{ block.settings.notification_bg | default: '#3e2563' }};
     color: white;
     padding: 16px 20px;
     border-radius: 8px;
@@ -715,7 +715,7 @@
     notification.textContent = message;
     notification.style.background = isError
       ? '#c0392b'
-      : '{{ block.settings.notification_bg | default: "#4A6B1A" }}';
+      : '{{ block.settings.notification_bg | default: "#3e2563" }}';
     notification.classList.add('show');
     setTimeout(() => notification.classList.remove('show'), isError ? 6000 : 3000);
   }
@@ -1321,7 +1321,7 @@
     `ThemeEvents: ${ThemeEvents ? '✓' : '✗'} | ` +
     `CartAddEvent: ${window.CartAddEvent ? '✓' : '✗'} | ` +
     `Section Renderer: ${window.theme?.sectionRenderer ? '✓' : '✗'}`,
-    'font-weight:bold;color:#4A6B1A',
+    'font-weight:bold;color:#3e2563',
     'color:inherit'
   );
 
@@ -1554,7 +1554,7 @@
       "type": "color",
       "id": "notification_bg",
       "label": "Notification background",
-      "default": "#4A6B1A"
+      "default": "#3e2563"
     },
     {
       "type": "header",
@@ -1564,7 +1564,7 @@
       "type": "color",
       "id": "badge_bg",
       "label": "Badge background",
-      "default": "#4A6B1A"
+      "default": "#3e2563"
     },
     {
       "type": "color",
@@ -1576,7 +1576,7 @@
       "type": "color",
       "id": "active_border",
       "label": "Active border",
-      "default": "#4A6B1A"
+      "default": "#3e2563"
     },
     {
       "type": "color",
@@ -1588,7 +1588,7 @@
       "type": "color",
       "id": "price_color",
       "label": "Price color",
-      "default": "#4A6B1A"
+      "default": "#3e2563"
     },
     {
       "type": "color",
