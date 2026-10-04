@@ -306,7 +306,7 @@
                     "benefit_3": "Easily change your quantities",
                     "benefit_4": "Cancel any time",
                     "onetime_title": "One-time purchase",
-                    "onetime_subtitle": "15% Off + Free Shipping on your first order.",
+                    "onetime_subtitle": "15% Off + Free Shipping on your first order",
                     "onetime_discount_code": "CHOCHOFUEL15",
                     "onetime_discount_code_2": "FUELSHIPPING",
                     "onetime_discount_percent": 15,
@@ -545,12 +545,23 @@
             "verified": true,
             "date": "5 Sep 2026"
           }
+        },
+        "review_f8Ufmx": {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "review_text": "\"Pronto Chocho has been such a game changer!! I am a full-time college student who also has a part time job,\nso making time for meals is hard. After being consistent with Pronto Chocho,\"",
+            "author": "CRISTINA GARCIA",
+            "verified": true,
+            "date": "15 Sep 2026"
+          }
         }
       },
       "block_order": [
         "review_mkPpEC",
         "review_p6hfER",
-        "review_QbnB7f"
+        "review_QbnB7f",
+        "review_f8Ufmx"
       ],
       "name": "Reviews de producto",
       "settings": {
