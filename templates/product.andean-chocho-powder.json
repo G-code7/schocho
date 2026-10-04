@@ -308,6 +308,7 @@
                     "onetime_title": "One-time purchase",
                     "onetime_subtitle": "15% Off + Free Shipping",
                     "onetime_discount_code": "CHOCHOFUEL15",
+                    "onetime_discount_code_2": "FUELSHIPPING",
                     "onetime_discount_percent": 15,
                     "onetime_code_label": "Includes code [code]",
                     "show_per_serving": false,
