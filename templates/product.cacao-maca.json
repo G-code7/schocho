@@ -298,6 +298,7 @@
                   "settings": {
                     "sub_title": "Subscribe & Save",
                     "sub_subtitle": "16 servings per bag",
+                    "badge_label": "Most Popular",
                     "subscription_discount": 20,
                     "show_benefits": true,
                     "benefit_1": "Save 20%/bag on every subscription order",
@@ -306,6 +307,10 @@
                     "benefit_4": "Cancel any time",
                     "onetime_title": "One-time purchase",
                     "onetime_subtitle": "16 servings per bag",
+                    "onetime_discount_code": "FUELSHIPPING",
+                    "onetime_discount_code_2": "CHOCHOFUEL15",
+                    "onetime_discount_percent": 0,
+                    "onetime_code_label": "Includes code [code]",
                     "show_per_serving": false,
                     "flavors_label": "Choose your ChochoFuel",
                     "product_1": "chocho-ginger-turmeric-black-pepper-powder-blend",
