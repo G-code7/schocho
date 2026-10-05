@@ -485,6 +485,7 @@
         "recipe_HPc9eA",
         "recipe_JHtxn9"
       ],
+      "disabled": true,
       "name": "Featured Product V2",
       "settings": {
         "product": "chocho-pure-ingredient",
@@ -620,6 +621,277 @@
         "sub_title": "Subscribe & Save 20%",
         "sub_subtitle": "Monthly delivery · Cancel anytime",
         "sub_badge_text": "Most Popular",
+        "onetime_title": "One-time purchase",
+        "onetime_subtitle": "",
+        "show_price_when_subscription": false,
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "featured_product_v3_BBGdrY": {
+      "type": "featured-product-v3",
+      "blocks": {
+        "badge_ahKQ6k": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_54_3x_91ebdbda-2193-47aa-82c2-910fe7f130fc.png",
+            "text": ""
+          }
+        },
+        "badge_CGgDXT": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_53_3x_870a52ff-08c5-4652-b8e7-77e133d1cd16.png",
+            "text": ""
+          }
+        },
+        "badge_Yc4rkd": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_52_3x_bb7e566f-9402-44d4-86c1-dda61241aa9a.png",
+            "text": ""
+          }
+        },
+        "badge_CMYHdp": {
+          "type": "badge",
+          "settings": {
+            "icon_svg": "",
+            "icon_image": "shopify://shop_images/Recurso_51_3x_45ae6b01-4eb9-4f91-a20f-bf4d234275e7.png",
+            "text": ""
+          }
+        },
+        "tab_GYRzcd": {
+          "type": "tab",
+          "settings": {
+            "title": "Ingredients",
+            "content": "<p>100% Andean Chocho (Andean Pearl Lupin, Lupinus mutabilis).<br/><br/>We partner directly with smallholder farmers in the Ecuadorian highlands who grow and harvest chocho using traditional methods. The beans are then carefully debittered and gently milled into a pure, nutrient-rich powder, preserving the integrity of the seed from soil to scoop.</p>"
+          }
+        },
+        "tab_h4GtLq": {
+          "type": "tab",
+          "settings": {
+            "title": "Flavor",
+            "content": "<p>A neutral, slightly nutty flavor that blends easily into both sweet and savory recipes, adding whole-food nutrition without overpowering the flavors you already enjoy.<br/>Blend it. Stir it. Bake it. Cook with it.</p>"
+          }
+        },
+        "tab_qBYnTM": {
+          "type": "tab",
+          "settings": {
+            "title": "Product Info",
+            "content": "<ul><li><strong>Net Weight</strong>:&nbsp;26.5 oz (750 g)</li><li><strong>Servings</strong>:&nbsp;~16 per container</li><li><strong>Serving Size</strong>:&nbsp;2 scoops (48 g)</li></ul>"
+          }
+        },
+        "recipe_iMynfc": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Apple_Cinnamon_Overnight_Oats.jpg",
+            "name": "Apple Cinnamon Overnight Oats",
+            "link": ""
+          }
+        },
+        "recipe_JHgjra": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/freepik__professional-food-photography-shot-on-kodak-portra__15678.jpg",
+            "name": "Tomato Basil Protein Marinara",
+            "link": ""
+          }
+        },
+        "recipe_GKtVr3": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/High-Protein_Pesto_Sauce.webp",
+            "name": "High-Protein Pesto Sauce",
+            "link": ""
+          }
+        },
+        "recipe_gEFLGb": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Green_Plantain_Chocho_Tortillas.webp",
+            "name": "Green Plantain Chocho Tortillas",
+            "link": ""
+          }
+        },
+        "recipe_MjDMg7": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Andean_Aji_Verde_Protein_Sauce.webp",
+            "name": "Andean Aji Verde Protein Sauce",
+            "link": ""
+          }
+        },
+        "recipe_Xc8JXh": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/Vegan_Protein_Wrap.webp",
+            "name": "Mediterranean Vegan Protein Wrap",
+            "link": ""
+          }
+        },
+        "recipe_d6Gxm9": {
+          "type": "recipe",
+          "settings": {
+            "image": "shopify://shop_images/GuacamoleChochoProteinDip.webp",
+            "name": "Guacamole Chocho Protein Dip",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "badge_ahKQ6k",
+        "badge_CGgDXT",
+        "badge_Yc4rkd",
+        "badge_CMYHdp",
+        "tab_GYRzcd",
+        "tab_h4GtLq",
+        "tab_qBYnTM",
+        "recipe_iMynfc",
+        "recipe_JHgjra",
+        "recipe_GKtVr3",
+        "recipe_gEFLGb",
+        "recipe_MjDMg7",
+        "recipe_Xc8JXh",
+        "recipe_d6Gxm9"
+      ],
+      "name": "Featured Product V3",
+      "settings": {
+        "product": "chocho-pure-ingredient",
+        "variant_id": "",
+        "custom_title": "Andean Chocho Powder <br>\n<span style=\"color:#6c4d6e; font-style: italic; font-weight: 600;\">One</span> pure ingredient",
+        "description": "<p>The foundation of <strong>PRONTO CHOCHO</strong>.&nbsp;<br/>Made from a single ingredient, 100% Andean Chocho, an ancient legume regeneratively grown high in the Andes. This minimally processed whole-food powder naturally provides complete plant protein, fiber, healthy fats, and naturally occurring nutrients. No gums, fillers,<br/>isolates, sweeteners, or unnecessary additives.</p>",
+        "use_product_description": false,
+        "media_text_ratio": "3fr 2fr",
+        "column_gap": 52,
+        "vertical_align": "start",
+        "sticky_media": true,
+        "sticky_offset": 40,
+        "max_width": 1200,
+        "enable_animation": true,
+        "section_border_bottom_width": 0,
+        "section_border_bottom_color": "#3e1d65",
+        "image_max_width": 600,
+        "gallery_nav": "thumbnails",
+        "image_aspect_ratio": "1/1",
+        "image_fit": "contain",
+        "image_bg": "rgba(0,0,0,0)",
+        "media_border_radius": 0,
+        "media_shadow": false,
+        "thumb_size": 64,
+        "dot_color": "#311a48",
+        "show_promo": true,
+        "promo_badge": "15% Off + Free Shipping",
+        "promo_text": "For your first one-time purchase. Copy the code, add to cart, and apply it at checkout.",
+        "countdown_enabled": false,
+        "promo_hide_on_expiry": true,
+        "promo_hide_when_no_codes": true,
+        "promo_padding": 12,
+        "promo_radius": 12,
+        "cd_year": 2026,
+        "cd_month": 9,
+        "cd_day": 30,
+        "cd_hour": 23,
+        "cd_minute": 59,
+        "cd_days_label": "Days",
+        "cd_hours_label": "Hrs",
+        "cd_mins_label": "Min",
+        "cd_secs_label": "Sec",
+        "promo_code": "CHOCHOFUEL15",
+        "promo_code_2": "FUELSHIPPING",
+        "promo_code_2_ends_at": "",
+        "promo_code_ends_at": "",
+        "promo_code_note": "",
+        "promo_code_copyable": true,
+        "auto_apply_enabled": true,
+        "auto_apply_mode": "on_load",
+        "promo_auto_apply": true,
+        "buy_now_hide_with_codes": false,
+        "code_applied_text": "✓",
+        "code_applying_text": "…",
+        "code_na_text": "No aplica a este carrito",
+        "promo_code_label": "Your code:",
+        "promo_code_copy_text": "Copy",
+        "promo_code_copied_text": "Copied!",
+        "promo_code_show_expiry": false,
+        "promo_code_expiry_prefix": "Valid until",
+        "promo_code_expiry_format": "%b %d",
+        "atc_text": "Add to Cart",
+        "added_text": "Added!",
+        "sold_out_text": "Sold Out",
+        "show_buy_now": true,
+        "button_radius": 40,
+        "button_text_transform": "none",
+        "button_letter_spacing": 0,
+        "show_freeship": true,
+        "freeship_width": "100",
+        "freeship_text": "Buy 2 & get FREE shipping",
+        "freeship_subtext": "Straight to checkout",
+        "freeship_icon": true,
+        "freeship_qty": 2,
+        "freeship_extra_variant": "",
+        "freeship_extra_qty": 1,
+        "freeship_bg": "#c0c0c0",
+        "freeship_color": "#3d3d3d",
+        "freeship_color_hover": "#ffffff",
+        "freeship_bg_hover": "#35115c",
+        "freeship_border": "#f0f0f0",
+        "show_badges": true,
+        "badge_icon_size": 78,
+        "badge_icon_size_mobile": 58,
+        "show_tabs": true,
+        "show_recipes": true,
+        "recipes_title": "Recipes with this product",
+        "recipes_show_name": true,
+        "recipes_per_view": 3,
+        "recipes_per_view_mobile": 1.5,
+        "recipe_aspect_ratio": "1/1",
+        "recipes_title_size": 18,
+        "recipes_autoplay": true,
+        "recipes_autoplay_speed": 4000,
+        "text_align": "left",
+        "text_align_mobile": "inherit",
+        "title_align": "inherit",
+        "price_align": "inherit",
+        "promo_align": "inherit",
+        "badges_align": "inherit",
+        "tab_content_align": "left",
+        "justify_on_mobile": false,
+        "details_gap": 20,
+        "title_size": 32,
+        "title_weight": "700",
+        "description_size": 16,
+        "description_color": "#35115c",
+        "description_max_width": 500,
+        "description_text_align": "justify",
+        "price_size": 22,
+        "price_weight": "500",
+        "section_bg": "#faf7fe",
+        "title_color": "#311a48",
+        "price_color": "#3d2258",
+        "accent_color": "#35115c",
+        "accent_soft": "#efe7f0",
+        "promo_bg": "#f1edf2",
+        "promo_border": "#cfc3dd",
+        "promo_text_color": "#311a48",
+        "promo_badge_color": "#ffffff",
+        "cd_box_bg": "#ffffff",
+        "cd_num_color": "#311a48",
+        "cd_label_color": "#35115c",
+        "qty_bg": "#ffffff",
+        "qty_border": "#cfc3dd",
+        "qty_color": "#311a48",
+        "atc_bg": "#311a48",
+        "atc_color": "#ffffff",
+        "atc_bg_hover": "#4e3468",
+        "enable_subscription": true,
+        "selling_plan_id": "3233841344",
+        "subscription_discount": 20,
+        "sub_title": "Subscribe & Save 20%",
+        "sub_subtitle": "Monthly delivery · Cancel anytime",
+        "sub_badge_text": "",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "",
         "show_price_when_subscription": false,
@@ -1241,6 +1513,7 @@
     "media_with_gallery_pDADnd",
     "main",
     "featured_product_v2_hgtnfd",
+    "featured_product_v3_BBGdrY",
     "featured_product_v2_JTB7i3",
     "featured_product_v2_YiaTjm",
     "17722383868c1baea3",
