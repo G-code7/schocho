@@ -832,6 +832,7 @@
         "sub_badge_text": "",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "",
+        "onetime_discount_percent": 15,
         "show_price_when_subscription": false,
         "padding_top": 60,
         "padding_bottom": 60
@@ -1067,6 +1068,7 @@
         "sub_badge_text": "",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "",
+        "onetime_discount_percent": 15,
         "show_price_when_subscription": false,
         "padding_top": 80,
         "padding_bottom": 80
@@ -1302,6 +1304,7 @@
         "sub_badge_text": "",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "",
+        "onetime_discount_percent": 15,
         "show_price_when_subscription": false,
         "padding_top": 60,
         "padding_bottom": 60
