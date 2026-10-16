@@ -1366,7 +1366,7 @@
         "sub_badge_text": "",
         "onetime_title": "One-time purchase",
         "onetime_subtitle": "",
-        "onetime_discount_percent": 0,
+        "onetime_discount_percent": 15,
         "show_price_when_subscription": false,
         "padding_top": 60,
         "padding_bottom": 60
