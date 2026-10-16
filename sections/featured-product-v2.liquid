@@ -1380,6 +1380,23 @@
                 if po_has_compare
                   assign po_orig_pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
                 endif
+
+                # Compra única: precio con el % del código (solo visual, igual que en el selector de suscripción)
+                assign po_ot_pct = section.settings.onetime_discount_percent | default: 0
+                assign po_ot_keep = 100 | minus: po_ot_pct
+                assign po_ot_price = v.price | times: po_ot_keep | divided_by: 100
+                assign po_ot_compare = v.price
+                if po_has_compare
+                  assign po_ot_compare = v.compare_at_price
+                endif
+                assign po_ot_show_cmp = false
+                if po_ot_compare > po_ot_price
+                  assign po_ot_show_cmp = true
+                endif
+                assign po_ot_save_pct = 0
+                if po_ot_show_cmp
+                  assign po_ot_save_pct = po_ot_compare | minus: po_ot_price | times: 100.0 | divided_by: po_ot_compare | round
+                endif
               -%}
               <div
                 class="fpv2__po-{{ section_id }}"
@@ -1390,6 +1407,10 @@
                 data-has-compare="{{ po_has_compare }}"
                 data-sub-pct="{{ po_discount }}"
                 data-orig-pct="{{ po_orig_pct }}"
+                data-onetime-price="{{ po_ot_price | money }}"
+                data-onetime-compare="{{ po_ot_compare | money }}"
+                data-onetime-show-compare="{{ po_ot_show_cmp }}"
+                data-onetime-pct="{{ po_ot_save_pct }}"
                 data-plan="{{ section.settings.selling_plan_id | strip }}"
               >
                 {%- comment -%} Option 1: Subscription (active by default) {%- endcomment -%}
@@ -1449,7 +1470,10 @@
                         </span>
                       </span>
                       <span class="fpv2__po-prices-{{ section_id }}">
-                        <span class="fpv2__po-price-{{ section_id }}">{{ v.price | money }}</span>
+                        {%- if po_ot_show_cmp -%}
+                          <s class="fpv2__po-compare-{{ section_id }}">{{ po_ot_compare | money }}</s>
+                        {%- endif -%}
+                        <span class="fpv2__po-price-{{ section_id }}">{{ po_ot_price | money }}</span>
                       </span>
                     </span>
                   </span>
@@ -1935,6 +1959,10 @@
         hasCompare: root.dataset.hasCompare === 'true',
         subPct    : root.dataset.subPct || '',
         origPct   : root.dataset.origPct || '',
+        otPrice   : root.dataset.onetimePrice || root.dataset.regularPrice || '',
+        otCompare : root.dataset.onetimeCompare || '',
+        otShowCmp : root.dataset.onetimeShowCompare === 'true',
+        otPct     : root.dataset.onetimePct || '',
         plan      : (root.dataset.plan || '').trim()
       };
 
@@ -1963,9 +1991,9 @@
           if (priceCompare) { priceCompare.textContent = data.regular; toggleHidden(priceCompare, !!data.regular); }
           if (priceSave)    { priceSave.textContent = '-' + data.subPct + '%'; toggleHidden(priceSave, !!data.subPct); }
         } else {
-          if (priceCurrent) priceCurrent.textContent = data.regular;
-          if (priceCompare) { priceCompare.textContent = data.compare; toggleHidden(priceCompare, data.hasCompare); }
-          if (priceSave)    { priceSave.textContent = '-' + data.origPct + '%'; toggleHidden(priceSave, data.hasCompare); }
+          if (priceCurrent) priceCurrent.textContent = data.otPrice;
+          if (priceCompare) { priceCompare.textContent = data.otCompare; toggleHidden(priceCompare, data.otShowCmp); }
+          if (priceSave)    { priceSave.textContent = '-' + data.otPct + '%'; toggleHidden(priceSave, data.otShowCmp); }
         }
 
         // Native dynamic checkout can't carry a selling plan → hide it on subscription
@@ -2222,8 +2250,15 @@
   "tag": "section",
   "class": "featured-product-v2-section",
   "settings": [
-    { "type": "header", "content": "Product" },
-    { "type": "product", "id": "product", "label": "Product" },
+    {
+      "type": "header",
+      "content": "Product"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
     {
       "type": "text",
       "id": "variant_id",
@@ -2248,18 +2283,35 @@
       "label": "Fall back to product description",
       "default": false
     },
-
-    { "type": "header", "content": "Layout" },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
     {
       "type": "select",
       "id": "media_text_ratio",
       "label": "Image / details split (desktop)",
       "options": [
-        { "value": "1fr 1fr", "label": "50 / 50" },
-        { "value": "55fr 45fr", "label": "55 / 45" },
-        { "value": "45fr 55fr", "label": "45 / 55" },
-        { "value": "3fr 2fr", "label": "60 / 40" },
-        { "value": "2fr 3fr", "label": "40 / 60" }
+        {
+          "value": "1fr 1fr",
+          "label": "50 / 50"
+        },
+        {
+          "value": "55fr 45fr",
+          "label": "55 / 45"
+        },
+        {
+          "value": "45fr 55fr",
+          "label": "45 / 55"
+        },
+        {
+          "value": "3fr 2fr",
+          "label": "60 / 40"
+        },
+        {
+          "value": "2fr 3fr",
+          "label": "40 / 60"
+        }
       ],
       "default": "55fr 45fr"
     },
@@ -2278,12 +2330,23 @@
       "id": "vertical_align",
       "label": "Vertical alignment",
       "options": [
-        { "value": "start", "label": "Top" },
-        { "value": "center", "label": "Center" }
+        {
+          "value": "start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
       ],
       "default": "start"
     },
-    { "type": "checkbox", "id": "sticky_media", "label": "Sticky image on scroll (desktop)", "default": false },
+    {
+      "type": "checkbox",
+      "id": "sticky_media",
+      "label": "Sticky image on scroll (desktop)",
+      "default": false
+    },
     {
       "type": "range",
       "id": "sticky_offset",
@@ -2304,9 +2367,16 @@
       "label": "Section max width",
       "default": 1200
     },
-    { "type": "checkbox", "id": "enable_animation", "label": "Fade-in on scroll", "default": true },
-
-    { "type": "header", "content": "Section Separator" },
+    {
+      "type": "checkbox",
+      "id": "enable_animation",
+      "label": "Fade-in on scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Section Separator"
+    },
     {
       "type": "range",
       "id": "section_border_bottom_width",
@@ -2323,8 +2393,10 @@
       "label": "Bottom separator color",
       "default": "#ece3d7"
     },
-
-    { "type": "header", "content": "Image Gallery" },
+    {
+      "type": "header",
+      "content": "Image Gallery"
+    },
     {
       "type": "range",
       "id": "image_max_width",
@@ -2341,8 +2413,14 @@
       "id": "gallery_nav",
       "label": "Gallery navigation",
       "options": [
-        { "value": "dots", "label": "Dots (below)" },
-        { "value": "thumbnails", "label": "Thumbnails (left column)" }
+        {
+          "value": "dots",
+          "label": "Dots (below)"
+        },
+        {
+          "value": "thumbnails",
+          "label": "Thumbnails (left column)"
+        }
       ],
       "default": "thumbnails"
     },
@@ -2351,10 +2429,22 @@
       "id": "image_aspect_ratio",
       "label": "Image aspect ratio",
       "options": [
-        { "value": "1/1", "label": "Square (1:1)" },
-        { "value": "4/5", "label": "Portrait (4:5)" },
-        { "value": "3/4", "label": "Portrait (3:4)" },
-        { "value": "4/3", "label": "Landscape (4:3)" }
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape (4:3)"
+        }
       ],
       "default": "1/1"
     },
@@ -2363,12 +2453,23 @@
       "id": "image_fit",
       "label": "Image fit",
       "options": [
-        { "value": "cover", "label": "Cover" },
-        { "value": "contain", "label": "Contain" }
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
       ],
       "default": "cover"
     },
-    { "type": "color", "id": "image_bg", "label": "Image background", "default": "#f2efe9" },
+    {
+      "type": "color",
+      "id": "image_bg",
+      "label": "Image background",
+      "default": "#f2efe9"
+    },
     {
       "type": "range",
       "id": "media_border_radius",
@@ -2379,7 +2480,12 @@
       "label": "Image border radius",
       "default": 16
     },
-    { "type": "checkbox", "id": "media_shadow", "label": "Soft shadow under image", "default": true },
+    {
+      "type": "checkbox",
+      "id": "media_shadow",
+      "label": "Soft shadow under image",
+      "default": true
+    },
     {
       "type": "range",
       "id": "thumb_size",
@@ -2390,10 +2496,22 @@
       "label": "Thumbnail size",
       "default": 64
     },
-    { "type": "color", "id": "dot_color", "label": "Dot color", "default": "#370c07" },
-
-    { "type": "header", "content": "Discount & Countdown" },
-    { "type": "checkbox", "id": "show_promo", "label": "Show discount block", "default": true },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot color",
+      "default": "#370c07"
+    },
+    {
+      "type": "header",
+      "content": "Discount & Countdown"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_promo",
+      "label": "Show discount block",
+      "default": true
+    },
     {
       "type": "text",
       "id": "promo_badge",
@@ -2401,9 +2519,24 @@
       "default": "20% OFF",
       "info": "Short label, e.g. 20% OFF"
     },
-    { "type": "text", "id": "promo_text", "label": "Discount text", "default": "Limited-time launch offer" },
-    { "type": "checkbox", "id": "countdown_enabled", "label": "Show countdown", "default": true },
-    { "type": "checkbox", "id": "promo_hide_on_expiry", "label": "Hide block when countdown ends", "default": true },
+    {
+      "type": "text",
+      "id": "promo_text",
+      "label": "Discount text",
+      "default": "Limited-time launch offer"
+    },
+    {
+      "type": "checkbox",
+      "id": "countdown_enabled",
+      "label": "Show countdown",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "promo_hide_on_expiry",
+      "label": "Hide block when countdown ends",
+      "default": true
+    },
     {
       "type": "checkbox",
       "id": "promo_hide_when_no_codes",
@@ -2435,17 +2568,79 @@
       "type": "paragraph",
       "content": "Set the end date/time below (store local time)."
     },
-    { "type": "range", "id": "cd_year", "min": 2025, "max": 2030, "step": 1, "label": "End year", "default": 2026 },
-    { "type": "range", "id": "cd_month", "min": 1, "max": 12, "step": 1, "label": "End month", "default": 12 },
-    { "type": "range", "id": "cd_day", "min": 1, "max": 31, "step": 1, "label": "End day", "default": 31 },
-    { "type": "range", "id": "cd_hour", "min": 0, "max": 23, "step": 1, "label": "End hour (24h)", "default": 23 },
-    { "type": "range", "id": "cd_minute", "min": 0, "max": 59, "step": 1, "label": "End minute", "default": 59 },
-    { "type": "text", "id": "cd_days_label", "label": "Days label", "default": "Days" },
-    { "type": "text", "id": "cd_hours_label", "label": "Hours label", "default": "Hrs" },
-    { "type": "text", "id": "cd_mins_label", "label": "Minutes label", "default": "Min" },
-    { "type": "text", "id": "cd_secs_label", "label": "Seconds label", "default": "Sec" },
-
-    { "type": "header", "content": "Discount Code (Copy to Clipboard)" },
+    {
+      "type": "range",
+      "id": "cd_year",
+      "min": 2025,
+      "max": 2030,
+      "step": 1,
+      "label": "End year",
+      "default": 2026
+    },
+    {
+      "type": "range",
+      "id": "cd_month",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "label": "End month",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "cd_day",
+      "min": 1,
+      "max": 31,
+      "step": 1,
+      "label": "End day",
+      "default": 31
+    },
+    {
+      "type": "range",
+      "id": "cd_hour",
+      "min": 0,
+      "max": 23,
+      "step": 1,
+      "label": "End hour (24h)",
+      "default": 23
+    },
+    {
+      "type": "range",
+      "id": "cd_minute",
+      "min": 0,
+      "max": 59,
+      "step": 1,
+      "label": "End minute",
+      "default": 59
+    },
+    {
+      "type": "text",
+      "id": "cd_days_label",
+      "label": "Days label",
+      "default": "Days"
+    },
+    {
+      "type": "text",
+      "id": "cd_hours_label",
+      "label": "Hours label",
+      "default": "Hrs"
+    },
+    {
+      "type": "text",
+      "id": "cd_mins_label",
+      "label": "Minutes label",
+      "default": "Min"
+    },
+    {
+      "type": "text",
+      "id": "cd_secs_label",
+      "label": "Seconds label",
+      "default": "Sec"
+    },
+    {
+      "type": "header",
+      "content": "Discount Code (Copy to Clipboard)"
+    },
     {
       "type": "text",
       "id": "promo_code",
@@ -2478,9 +2673,16 @@
       "label": "Code note (optional)",
       "placeholder": "15% off your first order"
     },
-    { "type": "checkbox", "id": "promo_code_copyable", "label": "Show copy-to-clipboard button", "default": true },
-
-    { "type": "header", "content": "Cupones automáticos" },
+    {
+      "type": "checkbox",
+      "id": "promo_code_copyable",
+      "label": "Show copy-to-clipboard button",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Cupones automáticos"
+    },
     {
       "type": "paragraph",
       "content": "Requiere que cada código tenga habilitadas las Combinaciones en Shopify Admin → Discounts. Máximo 5 códigos de producto/pedido + 1 de envío por orden. Los descuentos automáticos no combinan con códigos."
@@ -2496,9 +2698,18 @@
       "id": "auto_apply_mode",
       "label": "Cuándo aplicarlos",
       "options": [
-        { "value": "on_load", "label": "Al cargar la página (cubre Buy it Now)" },
-        { "value": "on_atc", "label": "Al agregar al carrito (recomendado)" },
-        { "value": "on_checkout", "label": "Solo al ir al checkout" }
+        {
+          "value": "on_load",
+          "label": "Al cargar la página (cubre Buy it Now)"
+        },
+        {
+          "value": "on_atc",
+          "label": "Al agregar al carrito (recomendado)"
+        },
+        {
+          "value": "on_checkout",
+          "label": "Solo al ir al checkout"
+        }
       ],
       "default": "on_atc"
     },
@@ -2516,37 +2727,106 @@
       "default": false,
       "info": "El checkout dinámico se salta el carrito y puede perder los cupones apilados."
     },
-    { "type": "text", "id": "code_applied_text", "label": "Texto: aplicado", "default": "Aplicado ✓" },
-    { "type": "text", "id": "code_applying_text", "label": "Texto: aplicando", "default": "Aplicando…" },
-    { "type": "text", "id": "code_na_text", "label": "Texto: no aplicable", "default": "No aplica a este carrito" },
-    { "type": "text", "id": "promo_code_label", "label": "Code label", "default": "Your code:" },
-    { "type": "text", "id": "promo_code_copy_text", "label": "Copy button text", "default": "Copy" },
-    { "type": "text", "id": "promo_code_copied_text", "label": "Copied feedback text", "default": "Copied!" },
+    {
+      "type": "text",
+      "id": "code_applied_text",
+      "label": "Texto: aplicado",
+      "default": "Aplicado ✓"
+    },
+    {
+      "type": "text",
+      "id": "code_applying_text",
+      "label": "Texto: aplicando",
+      "default": "Aplicando…"
+    },
+    {
+      "type": "text",
+      "id": "code_na_text",
+      "label": "Texto: no aplicable",
+      "default": "No aplica a este carrito"
+    },
+    {
+      "type": "text",
+      "id": "promo_code_label",
+      "label": "Code label",
+      "default": "Your code:"
+    },
+    {
+      "type": "text",
+      "id": "promo_code_copy_text",
+      "label": "Copy button text",
+      "default": "Copy"
+    },
+    {
+      "type": "text",
+      "id": "promo_code_copied_text",
+      "label": "Copied feedback text",
+      "default": "Copied!"
+    },
     {
       "type": "checkbox",
       "id": "promo_code_show_expiry",
       "label": "Show expiry date under each code",
       "default": false
     },
-    { "type": "text", "id": "promo_code_expiry_prefix", "label": "Expiry prefix", "default": "Valid until" },
+    {
+      "type": "text",
+      "id": "promo_code_expiry_prefix",
+      "label": "Expiry prefix",
+      "default": "Valid until"
+    },
     {
       "type": "select",
       "id": "promo_code_expiry_format",
       "label": "Expiry date format",
       "options": [
-        { "value": "%b %d", "label": "Dec 31" },
-        { "value": "%b %d, %H:%M", "label": "Dec 31, 23:59" },
-        { "value": "%d/%m/%Y", "label": "31/12/2026" },
-        { "value": "%m/%d/%Y", "label": "12/31/2026" }
+        {
+          "value": "%b %d",
+          "label": "Dec 31"
+        },
+        {
+          "value": "%b %d, %H:%M",
+          "label": "Dec 31, 23:59"
+        },
+        {
+          "value": "%d/%m/%Y",
+          "label": "31/12/2026"
+        },
+        {
+          "value": "%m/%d/%Y",
+          "label": "12/31/2026"
+        }
       ],
       "default": "%b %d"
     },
-
-    { "type": "header", "content": "Buy Buttons" },
-    { "type": "text", "id": "atc_text", "label": "Add to cart text", "default": "Add to Cart" },
-    { "type": "text", "id": "added_text", "label": "Added text", "default": "Added!" },
-    { "type": "text", "id": "sold_out_text", "label": "Sold out text", "default": "Sold Out" },
-    { "type": "checkbox", "id": "show_buy_now", "label": "Show Buy it Now (dynamic checkout)", "default": true },
+    {
+      "type": "header",
+      "content": "Buy Buttons"
+    },
+    {
+      "type": "text",
+      "id": "atc_text",
+      "label": "Add to cart text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "text",
+      "id": "added_text",
+      "label": "Added text",
+      "default": "Added!"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_text",
+      "label": "Sold out text",
+      "default": "Sold Out"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_buy_now",
+      "label": "Show Buy it Now (dynamic checkout)",
+      "default": true
+    },
     {
       "type": "range",
       "id": "button_radius",
@@ -2562,8 +2842,14 @@
       "id": "button_text_transform",
       "label": "Button text transform",
       "options": [
-        { "value": "none", "label": "None" },
-        { "value": "uppercase", "label": "Uppercase" }
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        }
       ],
       "default": "none"
     },
@@ -2576,28 +2862,62 @@
       "label": "Button letter spacing",
       "default": 0
     },
-
-    { "type": "header", "content": "Free-shipping CTA" },
+    {
+      "type": "header",
+      "content": "Free-shipping CTA"
+    },
     {
       "type": "paragraph",
       "content": "Adds the units below to the cart and goes straight to checkout (for a 2+ items free-shipping offer)."
     },
-    { "type": "checkbox", "id": "show_freeship", "label": "Show free-shipping CTA", "default": false },
+    {
+      "type": "checkbox",
+      "id": "show_freeship",
+      "label": "Show free-shipping CTA",
+      "default": false
+    },
     {
       "type": "select",
       "id": "freeship_width",
       "label": "CTA width",
       "options": [
-        { "value": "100", "label": "Full width (100%)" },
-        { "value": "80", "label": "Full width (80%)" },
-        { "value": "60", "label": "Full width (60%)" },
-        { "value": "auto", "label": "Auto width (aligned)" }
+        {
+          "value": "100",
+          "label": "Full width (100%)"
+        },
+        {
+          "value": "80",
+          "label": "Full width (80%)"
+        },
+        {
+          "value": "60",
+          "label": "Full width (60%)"
+        },
+        {
+          "value": "auto",
+          "label": "Auto width (aligned)"
+        }
       ],
       "default": "100"
     },
-    { "type": "text", "id": "freeship_text", "label": "CTA text", "default": "Buy 2 & get FREE shipping" },
-    { "type": "text", "id": "freeship_subtext", "label": "CTA sub-text (optional)", "default": "Straight to checkout" },
-    { "type": "checkbox", "id": "freeship_icon", "label": "Show truck icon", "default": true },
+    {
+      "type": "text",
+      "id": "freeship_text",
+      "label": "CTA text",
+      "default": "Buy 2 & get FREE shipping"
+    },
+    {
+      "type": "text",
+      "id": "freeship_subtext",
+      "label": "CTA sub-text (optional)",
+      "default": "Straight to checkout"
+    },
+    {
+      "type": "checkbox",
+      "id": "freeship_icon",
+      "label": "Show truck icon",
+      "default": true
+    },
     {
       "type": "range",
       "id": "freeship_qty",
@@ -2622,14 +2942,46 @@
       "label": "Units of the extra product",
       "default": 1
     },
-    { "type": "color", "id": "freeship_bg", "label": "CTA background", "default": "#2e7d32" },
-    { "type": "color", "id": "freeship_color", "label": "CTA text color", "default": "#ffffff" },
-    { "type": "color", "id": "freeship_color_hover", "label": "CTA hover color", "default": "#256628" },
-    { "type": "color", "id": "freeship_bg_hover", "label": "CTA hover background", "default": "#256628" },
-    { "type": "color", "id": "freeship_border", "label": "CTA border", "default": "#2e7d32" },
-
-    { "type": "header", "content": "Badges (add Badge blocks below)" },
-    { "type": "checkbox", "id": "show_badges", "label": "Show badges row", "default": true },
+    {
+      "type": "color",
+      "id": "freeship_bg",
+      "label": "CTA background",
+      "default": "#2e7d32"
+    },
+    {
+      "type": "color",
+      "id": "freeship_color",
+      "label": "CTA text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "freeship_color_hover",
+      "label": "CTA hover color",
+      "default": "#256628"
+    },
+    {
+      "type": "color",
+      "id": "freeship_bg_hover",
+      "label": "CTA hover background",
+      "default": "#256628"
+    },
+    {
+      "type": "color",
+      "id": "freeship_border",
+      "label": "CTA border",
+      "default": "#2e7d32"
+    },
+    {
+      "type": "header",
+      "content": "Badges (add Badge blocks below)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badges",
+      "label": "Show badges row",
+      "default": true
+    },
     {
       "type": "paragraph",
       "content": "Add each badge as a Badge block at the bottom of this section (icon + text). Shows in a row after the buy buttons."
@@ -2654,18 +3006,42 @@
       "label": "Badge icon size (mobile)",
       "default": 58
     },
-
-    { "type": "header", "content": "Tabs (add Tab blocks below)" },
-    { "type": "checkbox", "id": "show_tabs", "label": "Show info tabs", "default": true },
+    {
+      "type": "header",
+      "content": "Tabs (add Tab blocks below)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tabs",
+      "label": "Show info tabs",
+      "default": true
+    },
     {
       "type": "paragraph",
       "content": "Add each tab as a Tab block (title + content), e.g. Shipping, Flavor, Servings."
     },
-
-    { "type": "header", "content": "Recipes (add manually below)" },
-    { "type": "checkbox", "id": "show_recipes", "label": "Show recipes carousel", "default": true },
-    { "type": "text", "id": "recipes_title", "label": "Recipes heading", "default": "Recipes with this product" },
-    { "type": "checkbox", "id": "recipes_show_name", "label": "Show recipe name", "default": true },
+    {
+      "type": "header",
+      "content": "Recipes (add manually below)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recipes",
+      "label": "Show recipes carousel",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "recipes_title",
+      "label": "Recipes heading",
+      "default": "Recipes with this product"
+    },
+    {
+      "type": "checkbox",
+      "id": "recipes_show_name",
+      "label": "Show recipe name",
+      "default": true
+    },
     {
       "type": "paragraph",
       "content": "Add each recipe as a block at the bottom of this section (image, name, link). Extra recipes stay reachable via the slider."
@@ -2693,9 +3069,18 @@
       "id": "recipe_aspect_ratio",
       "label": "Recipe image ratio",
       "options": [
-        { "value": "1/1", "label": "Square (1:1)" },
-        { "value": "4/5", "label": "Portrait (4:5)" },
-        { "value": "4/3", "label": "Landscape (4:3)" }
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape (4:3)"
+        }
       ],
       "default": "1/1"
     },
@@ -2709,7 +3094,12 @@
       "label": "Recipes heading size",
       "default": 18
     },
-    { "type": "checkbox", "id": "recipes_autoplay", "label": "Autoplay recipes carousel", "default": true },
+    {
+      "type": "checkbox",
+      "id": "recipes_autoplay",
+      "label": "Autoplay recipes carousel",
+      "default": true
+    },
     {
       "type": "range",
       "id": "recipes_autoplay_speed",
@@ -2720,16 +3110,27 @@
       "label": "Autoplay interval",
       "default": 4000
     },
-
-    { "type": "header", "content": "Details Typography & Spacing" },
+    {
+      "type": "header",
+      "content": "Details Typography & Spacing"
+    },
     {
       "type": "select",
       "id": "text_align",
       "label": "Text alignment",
       "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "left",
       "info": "Base alignment. Each element below can override it."
@@ -2739,10 +3140,22 @@
       "id": "text_align_mobile",
       "label": "Text alignment (mobile)",
       "options": [
-        { "value": "inherit", "label": "Same as desktop" },
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "inherit",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "inherit",
       "info": "Overrides every element on screens under 750px."
@@ -2752,10 +3165,22 @@
       "id": "title_align",
       "label": "Title alignment",
       "options": [
-        { "value": "inherit", "label": "Same as general" },
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "inherit",
+          "label": "Same as general"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "inherit"
     },
@@ -2764,10 +3189,22 @@
       "id": "price_align",
       "label": "Price alignment",
       "options": [
-        { "value": "inherit", "label": "Same as general" },
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "inherit",
+          "label": "Same as general"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "inherit"
     },
@@ -2776,10 +3213,22 @@
       "id": "promo_align",
       "label": "Discount block alignment",
       "options": [
-        { "value": "inherit", "label": "Same as general" },
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "inherit",
+          "label": "Same as general"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "inherit"
     },
@@ -2788,10 +3237,22 @@
       "id": "badges_align",
       "label": "Badges alignment",
       "options": [
-        { "value": "inherit", "label": "Same as general" },
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
+        {
+          "value": "inherit",
+          "label": "Same as general"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
       ],
       "default": "inherit"
     },
@@ -2800,10 +3261,22 @@
       "id": "tab_content_align",
       "label": "Tab content alignment",
       "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" },
-        { "value": "justify", "label": "Justified" }
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justified"
+        }
       ],
       "default": "left"
     },
@@ -2839,10 +3312,22 @@
       "id": "title_weight",
       "label": "Title weight",
       "options": [
-        { "value": "400", "label": "Regular" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi Bold" },
-        { "value": "700", "label": "Bold" }
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
       ],
       "default": "700"
     },
@@ -2856,7 +3341,12 @@
       "label": "Description size",
       "default": 16
     },
-    { "type": "color", "id": "description_color", "label": "Description color", "default": "#5a4a3a" },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#5a4a3a"
+    },
     {
       "type": "range",
       "id": "description_max_width",
@@ -2872,11 +3362,26 @@
       "id": "description_text_align",
       "label": "Description alignment",
       "options": [
-        { "value": "inherit", "label": "Same as general" },
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" },
-        { "value": "justify", "label": "Justified" }
+        {
+          "value": "inherit",
+          "label": "Same as general"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "justify",
+          "label": "Justified"
+        }
       ],
       "default": "justify"
     },
@@ -2895,37 +3400,141 @@
       "id": "price_weight",
       "label": "Price weight",
       "options": [
-        { "value": "400", "label": "Regular" },
-        { "value": "500", "label": "Medium" },
-        { "value": "600", "label": "Semi Bold" },
-        { "value": "700", "label": "Bold" }
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi Bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
       ],
       "default": "600"
     },
-
-    { "type": "header", "content": "Colors" },
-    { "type": "color", "id": "section_bg", "label": "Section background", "default": "#ffffff" },
-    { "type": "color", "id": "title_color", "label": "Title color", "default": "#370c07" },
-    { "type": "color", "id": "price_color", "label": "Price color", "default": "#370c07" },
-    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#6c4d6e" },
-    { "type": "color", "id": "accent_soft", "label": "Accent soft (save pill bg)", "default": "#efe7f0" },
-
-    { "type": "color", "id": "promo_bg", "label": "Discount block background", "default": "#faf6f0" },
-    { "type": "color", "id": "promo_border", "label": "Discount block border", "default": "#ece3d7" },
-    { "type": "color", "id": "promo_text_color", "label": "Discount text color", "default": "#5a4a3a" },
-    { "type": "color", "id": "promo_badge_color", "label": "Badge text color", "default": "#ffffff" },
-    { "type": "color", "id": "cd_box_bg", "label": "Countdown box background", "default": "#ffffff" },
-    { "type": "color", "id": "cd_num_color", "label": "Countdown number color", "default": "#370c07" },
-    { "type": "color", "id": "cd_label_color", "label": "Countdown label color", "default": "#8a7a6a" },
-
-    { "type": "color", "id": "qty_bg", "label": "Quantity background", "default": "#ffffff" },
-    { "type": "color", "id": "qty_border", "label": "Quantity / arrow border", "default": "#d8d2c8" },
-    { "type": "color", "id": "qty_color", "label": "Quantity text color", "default": "#370c07" },
-    { "type": "color", "id": "atc_bg", "label": "Add to cart background", "default": "#370c07" },
-    { "type": "color", "id": "atc_color", "label": "Add to cart text", "default": "#ffffff" },
-    { "type": "color", "id": "atc_bg_hover", "label": "Add to cart hover", "default": "#54130b" },
-
-    { "type": "header", "content": "Subscription (Purchase Options)" },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#370c07"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#370c07"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#6c4d6e"
+    },
+    {
+      "type": "color",
+      "id": "accent_soft",
+      "label": "Accent soft (save pill bg)",
+      "default": "#efe7f0"
+    },
+    {
+      "type": "color",
+      "id": "promo_bg",
+      "label": "Discount block background",
+      "default": "#faf6f0"
+    },
+    {
+      "type": "color",
+      "id": "promo_border",
+      "label": "Discount block border",
+      "default": "#ece3d7"
+    },
+    {
+      "type": "color",
+      "id": "promo_text_color",
+      "label": "Discount text color",
+      "default": "#5a4a3a"
+    },
+    {
+      "type": "color",
+      "id": "promo_badge_color",
+      "label": "Badge text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cd_box_bg",
+      "label": "Countdown box background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cd_num_color",
+      "label": "Countdown number color",
+      "default": "#370c07"
+    },
+    {
+      "type": "color",
+      "id": "cd_label_color",
+      "label": "Countdown label color",
+      "default": "#8a7a6a"
+    },
+    {
+      "type": "color",
+      "id": "qty_bg",
+      "label": "Quantity background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "qty_border",
+      "label": "Quantity / arrow border",
+      "default": "#d8d2c8"
+    },
+    {
+      "type": "color",
+      "id": "qty_color",
+      "label": "Quantity text color",
+      "default": "#370c07"
+    },
+    {
+      "type": "color",
+      "id": "atc_bg",
+      "label": "Add to cart background",
+      "default": "#370c07"
+    },
+    {
+      "type": "color",
+      "id": "atc_color",
+      "label": "Add to cart text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "atc_bg_hover",
+      "label": "Add to cart hover",
+      "default": "#54130b"
+    },
+    {
+      "type": "header",
+      "content": "Subscription (Purchase Options)"
+    },
     {
       "type": "checkbox",
       "id": "enable_subscription",
@@ -2949,11 +3558,47 @@
       "default": 15,
       "info": "Used for the on-page price calculation only. The real discount comes from the Selling Plan."
     },
-    { "type": "text", "id": "sub_title", "label": "Subscription title", "default": "Subscribe & Save" },
-    { "type": "text", "id": "sub_subtitle", "label": "Subscription subtitle", "default": "15 servings per bag" },
-    { "type": "text", "id": "sub_badge_text", "label": "Subscription badge", "default": "Most Popular" },
-    { "type": "text", "id": "onetime_title", "label": "One-time title", "default": "One-time purchase" },
-    { "type": "text", "id": "onetime_subtitle", "label": "One-time subtitle", "default": "Standard delivery" },
+    {
+      "type": "text",
+      "id": "sub_title",
+      "label": "Subscription title",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "sub_subtitle",
+      "label": "Subscription subtitle",
+      "default": "15 servings per bag"
+    },
+    {
+      "type": "text",
+      "id": "sub_badge_text",
+      "label": "Subscription badge",
+      "default": "Most Popular"
+    },
+    {
+      "type": "text",
+      "id": "onetime_title",
+      "label": "One-time title",
+      "default": "One-time purchase"
+    },
+    {
+      "type": "text",
+      "id": "onetime_subtitle",
+      "label": "One-time subtitle",
+      "default": "Standard delivery"
+    },
+    {
+      "type": "range",
+      "id": "onetime_discount_percent",
+      "label": "One-time code discount (price preview)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 0,
+      "info": "Solo para mostrar el precio tachado en compra única. Debe coincidir con el % del código en Admin. 0 = sin descuento."
+    },
     {
       "type": "checkbox",
       "id": "show_price_when_subscription",
@@ -2961,8 +3606,10 @@
       "default": false,
       "info": "Off by default: with the selector on, the price lives in the option cards to avoid showing it twice."
     },
-
-    { "type": "header", "content": "Section Spacing" },
+    {
+      "type": "header",
+      "content": "Section Spacing"
+    },
     {
       "type": "range",
       "id": "padding_top",
@@ -2989,16 +3636,35 @@
       "type": "discount_code",
       "name": "Discount code",
       "settings": [
-        { "type": "text", "id": "code", "label": "Code", "default": "WELCOME15" },
-        { "type": "checkbox", "id": "auto_apply", "label": "Aplicar automáticamente", "default": true },
+        {
+          "type": "text",
+          "id": "code",
+          "label": "Code",
+          "default": "WELCOME15"
+        },
+        {
+          "type": "checkbox",
+          "id": "auto_apply",
+          "label": "Aplicar automáticamente",
+          "default": true
+        },
         {
           "type": "select",
           "id": "kind",
           "label": "Tipo de descuento",
           "options": [
-            { "value": "product", "label": "Producto (% o monto sobre ítems)" },
-            { "value": "order", "label": "Pedido (% o monto sobre el total)" },
-            { "value": "shipping", "label": "Envío gratis" }
+            {
+              "value": "product",
+              "label": "Producto (% o monto sobre ítems)"
+            },
+            {
+              "value": "order",
+              "label": "Pedido (% o monto sobre el total)"
+            },
+            {
+              "value": "shipping",
+              "label": "Envío gratis"
+            }
           ],
           "default": "order",
           "info": "Define el orden de aplicación. Los de envío siempre van al final."
@@ -3019,7 +3685,12 @@
           "label": "Label (optional)",
           "info": "Leave empty to use the section's code label."
         },
-        { "type": "text", "id": "note", "label": "Note (optional)", "placeholder": "15% off your first order" },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Note (optional)",
+          "placeholder": "15% off your first order"
+        },
         {
           "type": "text",
           "id": "starts_at",
@@ -3040,9 +3711,21 @@
       "type": "recipe",
       "name": "Recipe",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Recipe image" },
-        { "type": "text", "id": "name", "label": "Recipe name" },
-        { "type": "url", "id": "link", "label": "Recipe link (optional)" }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Recipe image"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Recipe name"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Recipe link (optional)"
+        }
       ]
     },
     {
@@ -3055,16 +3738,35 @@
           "label": "Icon (SVG code)",
           "info": "Paste inline SVG. Takes priority over the image below."
         },
-        { "type": "image_picker", "id": "icon_image", "label": "Icon image (fallback)" },
-        { "type": "text", "id": "text", "label": "Badge text", "default": "Free shipping 2+" }
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon image (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Badge text",
+          "default": "Free shipping 2+"
+        }
       ]
     },
     {
       "type": "tab",
       "name": "Tab",
       "settings": [
-        { "type": "text", "id": "title", "label": "Tab title", "default": "Shipping" },
-        { "type": "richtext", "id": "content", "label": "Tab content", "default": "<p>Add your info here.</p>" }
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Tab title",
+          "default": "Shipping"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Tab content",
+          "default": "<p>Add your info here.</p>"
+        }
       ]
     }
   ],
@@ -3073,15 +3775,33 @@
     {
       "name": "Featured Product V2",
       "blocks": [
-        { "type": "badge" },
-        { "type": "badge" },
-        { "type": "badge" },
-        { "type": "tab" },
-        { "type": "tab" },
-        { "type": "tab" },
-        { "type": "recipe" },
-        { "type": "recipe" },
-        { "type": "recipe" }
+        {
+          "type": "badge"
+        },
+        {
+          "type": "badge"
+        },
+        {
+          "type": "badge"
+        },
+        {
+          "type": "tab"
+        },
+        {
+          "type": "tab"
+        },
+        {
+          "type": "tab"
+        },
+        {
+          "type": "recipe"
+        },
+        {
+          "type": "recipe"
+        },
+        {
+          "type": "recipe"
+        }
       ]
     }
   ]
