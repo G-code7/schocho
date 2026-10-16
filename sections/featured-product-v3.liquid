@@ -1365,6 +1365,23 @@
                 if po_has_compare
                   assign po_orig_pct = v.compare_at_price | minus: v.price | times: 100.0 | divided_by: v.compare_at_price | round
                 endif
+
+                # Compra única: precio con el % del código (solo visual)
+                assign po_ot_pct = section.settings.onetime_discount_percent | default: 0
+                assign po_ot_keep = 100 | minus: po_ot_pct
+                assign po_ot_price = v.price | times: po_ot_keep | divided_by: 100
+                assign po_ot_compare = v.price
+                if po_has_compare
+                  assign po_ot_compare = v.compare_at_price
+                endif
+                assign po_ot_show_cmp = false
+                if po_ot_compare > po_ot_price
+                  assign po_ot_show_cmp = true
+                endif
+                assign po_ot_save_pct = 0
+                if po_ot_show_cmp
+                  assign po_ot_save_pct = po_ot_compare | minus: po_ot_price | times: 100.0 | divided_by: po_ot_compare | round
+                endif
               -%}
               <div
                 class="fpv2__po-{{ section_id }}"
@@ -1375,6 +1392,10 @@
                 data-has-compare="{{ po_has_compare }}"
                 data-sub-pct="{{ po_discount }}"
                 data-orig-pct="{{ po_orig_pct }}"
+                data-onetime-price="{{ po_ot_price | money }}"
+                data-onetime-compare="{{ po_ot_compare | money }}"
+                data-onetime-show-compare="{{ po_ot_show_cmp }}"
+                data-onetime-pct="{{ po_ot_save_pct }}"
                 data-plan="{{ section.settings.selling_plan_id | strip }}"
               >
                 {%- comment -%} Option 1: Subscription (active by default) {%- endcomment -%}
@@ -1434,7 +1455,10 @@
                         </span>
                       </span>
                       <span class="fpv2__po-prices-{{ section_id }}">
-                        <span class="fpv2__po-price-{{ section_id }}">{{ v.price | money }}</span>
+                        {%- if po_ot_show_cmp -%}
+                          <s class="fpv2__po-compare-{{ section_id }}">{{ po_ot_compare | money }}</s>
+                        {%- endif -%}
+                        <span class="fpv2__po-price-{{ section_id }}">{{ po_ot_price | money }}</span>
                       </span>
                     </span>
                   </span>
@@ -1920,6 +1944,10 @@
         hasCompare: root.dataset.hasCompare === 'true',
         subPct    : root.dataset.subPct || '',
         origPct   : root.dataset.origPct || '',
+        otPrice   : root.dataset.onetimePrice || root.dataset.regularPrice || '',
+        otCompare : root.dataset.onetimeCompare || '',
+        otShowCmp : root.dataset.onetimeShowCompare === 'true',
+        otPct     : root.dataset.onetimePct || '',
         plan      : (root.dataset.plan || '').trim()
       };
 
@@ -1948,9 +1976,9 @@
           if (priceCompare) { priceCompare.textContent = data.regular; toggleHidden(priceCompare, !!data.regular); }
           if (priceSave)    { priceSave.textContent = '-' + data.subPct + '%'; toggleHidden(priceSave, !!data.subPct); }
         } else {
-          if (priceCurrent) priceCurrent.textContent = data.regular;
-          if (priceCompare) { priceCompare.textContent = data.compare; toggleHidden(priceCompare, data.hasCompare); }
-          if (priceSave)    { priceSave.textContent = '-' + data.origPct + '%'; toggleHidden(priceSave, data.hasCompare); }
+          if (priceCurrent) priceCurrent.textContent = data.otPrice;
+          if (priceCompare) { priceCompare.textContent = data.otCompare; toggleHidden(priceCompare, data.otShowCmp); }
+          if (priceSave)    { priceSave.textContent = '-' + data.otPct + '%'; toggleHidden(priceSave, data.otShowCmp); }
         }
 
         // Native dynamic checkout can't carry a selling plan → hide it on subscription
@@ -2939,6 +2967,17 @@
     { "type": "text", "id": "sub_badge_text", "label": "Subscription badge", "default": "Most Popular" },
     { "type": "text", "id": "onetime_title", "label": "One-time title", "default": "One-time purchase" },
     { "type": "text", "id": "onetime_subtitle", "label": "One-time subtitle", "default": "Standard delivery" },
+    {
+      "type": "range",
+      "id": "onetime_discount_percent",
+      "label": "One-time code discount (price preview)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 0,
+      "info": "Solo para mostrar el precio tachado en compra única. Debe coincidir con el % del código en Admin. 0 = sin descuento."
+    },
     {
       "type": "checkbox",
       "id": "show_price_when_subscription",
