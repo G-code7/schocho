@@ -840,6 +840,9 @@
     },
     "reviews_store_hafGdx": {
       "type": "reviews-store",
+      "custom_css": [
+        ".rc-avatar-template {display: none;}"
+      ],
       "name": "Reviews de la tienda",
       "settings": {
         "max_width": 1280,
