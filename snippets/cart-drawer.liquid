@@ -111,7 +111,7 @@
             <div
               class="cart-drawer__summary"
             >
-              {% render 'cart-summary' %}
+              {% render 'cart-summary', accelerated_checkout_buttons_layout: 'horizontal' %}
             </div>
           </div>
         {%- endif -%}
@@ -119,6 +119,36 @@
     </div>
   </dialog>
 </cart-drawer-component>
+
+<script>
+  // Reubica el bloque de cuotas (Shop Pay Installments) al final del
+  // summary, como nota pequeña debajo de los botones de pago.
+  (function () {
+    function moveInstallments(root) {
+      var scope = root || document;
+      scope.querySelectorAll('.cart-drawer__summary').forEach(function (summary) {
+        var installments = summary.querySelector('.cart__installments');
+        if (installments && installments.parentElement !== summary) {
+          summary.appendChild(installments);
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      moveInstallments();
+    });
+
+    var observer = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        if (mutations[i].addedNodes.length) {
+          moveInstallments();
+          break;
+        }
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  })();
+</script>
 
 {% stylesheet %}
   .cart-items-component {
@@ -172,10 +202,560 @@
     flex-direction: column;
   }
 
+  /* =========================================================
+     CART ITEMS — Layout de una sola fila
+     imagen | info (título) | columna derecha (precio + qty + remove)
+  ========================================================= */
+
+  .cart-drawer__items {
+    /* scroll-hint es un custom element: sin display:block no participa
+       del layout flex del contenedor y la lista queda mal repartida. */
+    display: block;
+    /* La lista es la que scrollea; el summary queda fijo abajo. */
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-inline: var(--cart-drawer-padding);
+  }
+
+  @media screen and (min-width: 750px) {
+    .cart-drawer__items {
+      padding-inline: var(--cart-drawer-padding-desktop);
+    }
+  }
+
+  .cart-drawer__items .cart-items__table {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cart-drawer__items .cart-items__table tbody {
+    display: block;
+  }
+
+  /* Layout objetivo:
+       fila 1:  [imagen] [título + info]   [precio]
+       fila 2:  [imagen] [quantity]         [remove]
+     El remove ya vive en su propia celda (.cart-items__remove-cell),
+     separado del quantity en el snippet cart-products. */
+  .cart-drawer__items .cart-items__table-row {
+    display: grid;
+    grid-template-columns: 60px minmax(0, 1fr) auto;
+    grid-template-areas:
+      'media details  price'
+      'media quantity remove'
+      'media error    error';
+    column-gap: 12px;
+    row-gap: 8px;
+    padding-block: 16px;
+    border-bottom: 1px solid rgba(var(--color-border-rgb), 0.08);
+    align-items: start;
+    margin-bottom: 0; /* mata el var(--margin-lg) del snippet base */
+  }
+
+  .cart-drawer__items .cart-items__table-row:first-child {
+    padding-top: 4px;
+  }
+
+  .cart-drawer__items .cart-items__table-row > td {
+    display: block;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Error ocupa todo el ancho al final */
+  .cart-drawer__items .cart-items__error {
+    grid-area: error;
+    margin-top: 6px;
+    font-size: 0.8rem;
+  }
+
+  .cart-drawer__items .cart-items__error.hidden {
+    display: none;
+  }
+
+  /* ----- Media (imagen) ----- */
+  .cart-drawer__items .cart-items__media {
+    grid-area: media;
+    align-self: start;
+  }
+
+  .cart-drawer__items .cart-items__media-container {
+    display: block;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: rgba(var(--color-border-rgb), 0.06);
+  }
+
+  .cart-drawer__items .cart-items__media-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px !important;
+  }
+
+  /* ----- Details (título + info) ----- */
+  .cart-drawer__items .cart-items__details {
+    grid-area: details;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding-top: 1px;
+  }
+
+  /* El snippet base separa los hijos de details con margin; lo anulamos (usamos gap) */
+  .cart-drawer__items .cart-items__details > * + * {
+    margin-block-start: 0;
+  }
+
+  .cart-drawer__items .cart-items__title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    color: var(--color-foreground);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Texto de suscripción / opción de entrega */
+  .cart-drawer__items .cart-items__details > p {
+    font-size: 0.72rem;
+    opacity: 0.6;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .cart-drawer__items .cart-items__details .list-unstyled {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cart-drawer__items .cart-items__details .list-unstyled li {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: rgba(var(--color-foreground-rgb, var(--color-foreground)), 0.75);
+    background-color: rgba(var(--color-border-rgb), 0.08);
+    padding: 2px 7px;
+    border-radius: 5px;
+    width: fit-content;
+    line-height: 1.4;
+  }
+
+  /* Precio unitario dentro de details (más tenue y pequeño) */
+  .cart-drawer__items .cart-items__details > div:last-child {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-top: 1px;
+  }
+
+  .cart-drawer__items .cart-items__details > div:last-child span:not(.visually-hidden) {
+    font-size: 0.78rem;
+    opacity: 0.55;
+  }
+
+  .cart-items__details .compare-at-price {
+    font-size: 0.75rem;
+    opacity: 0.4;
+    text-decoration: line-through;
+  }
+
+  /* ----- Fila 1 derecha: precio ----- */
+  .cart-drawer__items .cart-items__price {
+    grid-area: price;
+    min-width: 0; /* base fuerza 6rem */
+    align-self: start;
+    justify-self: end;
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-foreground);
+    line-height: 1.3;
+  }
+
+  /* ----- Fila 2 izquierda: quantity (alineado bajo el título) ----- */
+  .cart-drawer__items .cart-items__quantity {
+    grid-area: quantity;
+    align-self: center;
+    justify-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  /* ----- Fila 2 derecha: remove ----- */
+  .cart-drawer__items .cart-items__remove-cell {
+    grid-area: remove;
+    align-self: center;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  .cart-drawer__items .quantity-selector {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(var(--color-border-rgb), 0.15);
+    border-radius: 999px;
+    padding: 2px;
+    background-color: rgba(var(--color-border-rgb), 0.03);
+  }
+
+  .cart-drawer__items .quantity-selector button {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .cart-drawer__items .quantity-selector button:hover:not([disabled]) {
+    background-color: rgba(var(--color-border-rgb), 0.12);
+  }
+
+  .cart-drawer__items .quantity-selector button[disabled] {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .cart-drawer__items .quantity-selector input {
+    width: 26px;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-foreground);
+    -moz-appearance: textfield;
+  }
+
+  .cart-drawer__items .quantity-selector input::-webkit-outer-spin-button,
+  .cart-drawer__items .quantity-selector input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .cart-drawer__items .cart-items__remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    opacity: 0.4;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-foreground);
+    transition: opacity 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .cart-drawer__items .cart-items__remove:hover {
+    opacity: 0.85;
+  }
+
+  .cart-drawer__items .cart-items__remove svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* =========================================================
+     Summary — Descuento / Totales / CTAs
+  ========================================================= */
+
   .cart-drawer__summary {
     background-color: var(--color-background);
     position: sticky;
     bottom: 0;
     z-index: 1;
+    flex: 0 0 auto;
+    padding: var(--cart-drawer-padding);
+    border-top: 1px solid rgba(var(--color-border-rgb), 0.08);
+  }
+
+  @media screen and (min-width: 750px) {
+    .cart-drawer__summary {
+      padding: var(--cart-drawer-padding-desktop);
+    }
+  }
+
+  .cart-actions .disclosure-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 8px;
+    border: none;
+    background: none;
+  }
+
+  .disclosure-trigger__label {
+    font-weight: 600;
+    font-size: 0.82rem;
+  }
+
+  .cart-discount__form {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .cart-discount__input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid rgba(var(--color-border-rgb), 0.18);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+
+  .cart-discount__button {
+    border-radius: 8px;
+    padding-inline: 16px;
+    font-size: 0.78rem;
+  }
+
+  .cart-discount__codes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cart-discount__codes:empty {
+    margin-top: 0;
+  }
+
+  .cart-discount__pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(var(--color-border-rgb), 0.07);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  .cart__total-container {
+    padding-top: 12px;
+    margin-top: 4px;
+    border-top: 1px solid rgba(var(--color-border-rgb), 0.08);
+  }
+
+  .cart__total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .cart__total-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  .cart__total-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .tax-note {
+    opacity: 0.5;
+    font-size: 0.72rem;
+    margin-top: 4px;
+  }
+
+  /* Installments reubicado al final (ver script) */
+  .cart__installments {
+    display: block;
+    margin-top: 12px;
+    text-align: center;
+    font-size: 0.72rem;
+    opacity: 0.7;
+  }
+
+  .cart__installments shopify-payment-terms {
+    font-size: 0.72rem;
+  }
+
+  /* Banner de cuotas de Shopify: texto discreto */
+  #shopify-installments > p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .cart-drawer__summary .cart__ctas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Mitad del valor anterior (16px): el drawer no usa
+       .cart__summary-inner, así que su separación equivalente
+       entre el total y el checkout es este margin-top. */
+    margin-top: 8px;
+  }
+
+  .cart__checkout-button {
+    width: 100%;
+    border-radius: 999px;
+    padding-block: 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  /* =========================================================
+     Wallets — variables que SÍ cruzan el shadow DOM cerrado
+     La dirección (row/column) la decide un container-query interno
+     de Shopify segun el ancho del wrapper: con 3 wallets pasa a
+     columna cuando el wrapper mide <= 320px. Por eso ensanchamos
+     el contenedor en mobile (romper el padding) para mantener row.
+  ========================================================= */
+
+  .additional-checkout-buttons {
+    margin-top: 2px;
+    --shopify-accelerated-checkout-button-block-size: 44px;
+    --shopify-accelerated-checkout-button-inline-size: 44px;
+    --shopify-accelerated-checkout-inline-alignment: stretch;
+    --shopify-accelerated-checkout-row-gap: 10px;
+  }
+
+  /* Consentimiento de suscripción: compacto y discreto */
+  #shopify-buyer-consent {
+    display: none;
+    margin-top: 10px;
+    font-size: 0.66rem;
+    line-height: 1.4;
+    opacity: 0.55;
+    text-align: left;
+  }
+
+  #shopify-subscription-policy-button {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* =========================================================
+     Mobile
+  ========================================================= */
+
+  @media screen and (max-width: 749px) {
+    .cart-drawer__items .cart-items__table-row {
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      column-gap: 10px;
+      padding-block: 14px;
+    }
+
+    .cart-drawer__items .cart-items__media-container {
+      width: 56px;
+      height: 56px;
+    }
+
+    .cart__checkout-button {
+      padding-block: 14px;
+    }
+
+    /* =====================================================
+       Una sola zona de scroll en el drawer: la lista de
+       productos. El summary se muestra completo, sin scroll
+       propio, para no tener dos scrolls anidados.
+    ===================================================== */
+
+    /* Descuento: proporciones equilibradas en móvil.
+       Input y botón comparten altura y el botón no se come la fila. */
+    .cart-actions .disclosure-trigger {
+      padding-block: 6px;
+    }
+
+    .disclosure-trigger__label {
+      font-size: 0.78rem;
+    }
+
+    .cart-discount__form {
+      gap: 6px;
+      margin-top: 6px;
+      align-items: stretch;
+    }
+
+    .cart-discount__input {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 38px;
+      padding: 0 10px;
+      font-size: 0.78rem;
+    }
+
+    .cart-discount__button {
+      flex: 0 0 auto;
+      height: 38px;
+      padding-inline: 14px;
+      font-size: 0.74rem;
+      white-space: nowrap;
+    }
+
+    .cart-discount__codes {
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .cart-discount__pill {
+      padding: 3px 8px;
+      font-size: 0.68rem;
+    }
+
+    #shopify-installments > p {
+      font-size: 8px;
+    }
+
+    /* Totales y CTAs un punto más apretados */
+    .cart__total-container {
+      padding-top: 10px;
+      margin-top: 2px;
+    }
+
+    .cart-drawer__summary .cart__ctas {
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .cart__installments {
+      margin-top: 8px;
+    }
+  }
+
+  /* (320–370) */
+  @media screen and (max-width: 370px) {
+    .additional-checkout-buttons {
+      --shopify-accelerated-checkout-button-block-size: 42px;
+      --shopify-accelerated-checkout-button-inline-size: 42px;
+      --shopify-accelerated-checkout-row-gap: 8px;
+    }
   }
 {% endstylesheet %}

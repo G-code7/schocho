@@ -1,0 +1,176 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "ocultar_elementos_globales": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<style>#shopify-section-header, #shopify-section-footer, .shopify-section-group-header-group, .shopify-section-group-footer-group, header, footer { display: none !important; } .sections-header-group, .sections-footer-group { display: none !important; }</style>",
+        "color_scheme": "",
+        "section_width": "page-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "section_quiz": {
+      "type": "section",
+      "blocks": {
+        "group_quiz_col": {
+          "type": "group",
+          "name": "Quiz column",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "pc_quiz_btrf": {
+              "type": "pc-quiz-form",
+              "name": "PC Quiz — Back to Real Food",
+              "settings": {
+                "webhook_url": "https://hook.us2.make.com/1inzm0j77a5y8po2ns71ghwvhohikk4h",
+                "source_tag": "pronto-chocho-quiz-btrf",
+                "discount_code": "CHOCHOFUEL20",
+                "show_header": true,
+                "logo_override": "shopify://shop_images/logo_color_final.png",
+                "logo_height": 44,
+                "logo_align": "center",
+                "logo_links_home": false,
+                "show_brand": true,
+                "hide_brand_mobile": false,
+                "brand_image_opacity": 100,
+                "brand_eyebrow": "ANCIENT FOOD. MODERN LIFE.",
+                "brand_headline": "Real food.  Real fuel.",
+                "brand_sub": "Andean chocho, the whole food behind every blend. Naturally rich in complete plant protein + fiber. Find the one that fits your routine.",
+                "brand_bg": "#371e54",
+                "brand_text": "#fbf9f9",
+                "product_pure": "chocho-pure-ingredient",
+                "product_kalpa": "chocho-cacao-spirulina-maca",
+                "product_root": "chocho-ginger-turmeric-black-pepper-powder-blend",
+                "show_intro": true,
+                "intro_heading": "Which Pronto chocho fits your routine?",
+                "intro_sub": "Find your PRONTO CHOCHO\n3 quick questions. \nOne delicious match.\nPlus 20% off your first order.",
+                "intro_btn": " <strong>FIND MY MATCH →</strong>",
+                "intro_meta": "Takes 30 seconds · No spam",
+                "q1_heading": "<strong>Which sounds more like you?</strong>",
+                "q2_heading": "<strong>What are you looking for the most?</strong>",
+                "q3_heading": "<strong>How would you use it the most?</strong>",
+                "gate_heading": "Ready to meet your match?",
+                "gate_subtitle": "Enter your email to reveal your PRONTO CHOCHO match + get 20% off your first order. No spam, ever.",
+                "email_label": "Your email",
+                "email_placeholder": "your@email.com",
+                "gate_btn_label": "Reveal my match",
+                "show_consent": true,
+                "consent_text": "I agree to receive emails from PRONTO CHOCHO.",
+                "error_message": "Please enter a valid email and accept to continue.",
+                "desc_pure": "The versatile base. One clean ingredient that folds into anything — smoothies, oats, sauces. Start here.",
+                "desc_kalpa": "For sweet routines and steady energy. Made for smoothies, oats and baking that actually carry you through the morning.",
+                "desc_root": "For savory cooking and everyday wellness. Golden milk, soups and warm dishes, rooted in real food.",
+                "show_footer": true,
+                "footer_numbered": true,
+                "footer_step1": "Start the quiz",
+                "footer_step2": "Answer",
+                "footer_step3": "Meet your match",
+                "max_width": 560,
+                "heading_size": 32,
+                "heading_weight": 500,
+                "subtitle_size": 16,
+                "label_size": 12,
+                "input_font_size": 16,
+                "bg_color": "#fbf9f9",
+                "text_color": "#371e54",
+                "input_border_color": "#3e2563",
+                "input_border_width": 1,
+                "error_color": "#ba1a1a",
+                "btn_bg": "#371e54",
+                "btn_text": "#ffffff",
+                "btn_hover_bg": "#513280",
+                "btn_radius": 40,
+                "btn_padding_v": 18,
+                "btn_padding_h": 40
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "pc_quiz_btrf"
+          ]
+        }
+      },
+      "block_order": [
+        "group_quiz_col"
+      ],
+      "name": "quiz-back-to-real-food",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "custom_background_color": "#f5f5f5",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    }
+  },
+  "order": [
+    "ocultar_elementos_globales",
+    "section_quiz"
+  ]
+}

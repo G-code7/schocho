@@ -270,7 +270,12 @@
                     class: 'cart-primary-typography',
                     can_update_quantity: can_update_quantity
                   %}
-
+                </td>
+                <td
+                  class="cart-items__remove-cell"
+                  role="cell"
+                  headers="quantity"
+                >
                   <button
                     class="button button--tertiary cart-items__remove"
                     type="button"
@@ -360,15 +365,22 @@
     --cart-item-price-width: 6rem;
 
     display: grid;
-    grid-template-columns: clamp(2.5rem, 15cqi, 7.5rem) minmax(0, 1fr) minmax(var(--cart-item-price-width), auto);
+    grid-template-columns: clamp(2.5rem, 15cqi, 7.5rem) minmax(0, 1fr) auto minmax(var(--cart-item-price-width), auto);
     grid-template-areas:
-      'media details price'
-      'media quantity price'
-      'media error error';
+      'media details details price'
+      'media quantity remove  price'
+      'media error   error    error';
     column-gap: var(--gap-md);
     align-items: start;
     padding-bottom: var(--cart-items-gap);
     margin-bottom: var(--margin-lg);
+  }
+
+  .cart-items__remove-cell {
+    grid-area: remove;
+    display: flex;
+    align-items: center;
+    margin-block-start: var(--margin-xs);
   }
 
   .cart-items__table-row.cart-items__nested-line td:first-child {
@@ -555,23 +567,31 @@
     .cart-items__table-row {
       --cart-item-price-width: 6rem;
 
-      grid-template-columns: 7.5rem 1fr 1fr minmax(var(--cart-item-price-width), auto);
+      grid-template-columns: 7.5rem 1fr auto auto minmax(var(--cart-item-price-width), auto);
       grid-template-rows: min-content 1fr;
       grid-template-areas:
-        'media details quantity price'
-        'media details error error';
+        'media details quantity remove price'
+        'media details error    error  error';
     }
 
     .cart-items__quantity,
+    .cart-items__remove-cell,
     .cart-items__price {
       grid-area: initial;
     }
 
     .cart-items__quantity {
+      grid-area: quantity;
+      margin-top: 0;
+    }
+
+    .cart-items__remove-cell {
+      grid-area: remove;
       margin-top: 0;
     }
 
     .cart-items__price {
+      grid-area: price;
       min-height: var(--minimum-touch-target);
       display: flex;
       flex-direction: column;

@@ -1,0 +1,1116 @@
+{% comment %}
+  FAQ Section - JSON Powered (Corregido)
+  Procesa el JSON mediante JavaScript ya que Shopify Liquid no tiene parse_json
+{% endcomment %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  {% comment %} Importación de fuentes {% endcomment %}
+  {% assign font_family_question = block.settings.font_family_question %}
+  {% assign font_family_answer = block.settings.font_family_answer %}
+  {% assign font_family_title = block.settings.font_family_title %}
+  
+  {% unless font_family_title == 'inherit' %}
+    @import url('https://fonts.googleapis.com/css2?family={{ font_family_title | replace: ' ', '+' }}:wght@300;400;500;600;700;800&display=swap');
+  {% endunless %}
+  
+  {% unless font_family_question == 'inherit' %}
+    @import url('https://fonts.googleapis.com/css2?family={{ font_family_question | replace: ' ', '+' }}:wght@300;400;500;600;700;800&display=swap');
+  {% endunless %}
+  
+  {% unless font_family_answer == font_family_question %}
+    @import url('https://fonts.googleapis.com/css2?family={{ font_family_answer | replace: ' ', '+' }}:wght@300;400;500;600;700;800&display=swap');
+  {% endunless %}
+
+  .ai-faq-section-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    padding: {{ block.settings.section_padding }}px 20px;
+    background-color: {{ block.settings.background_color }};
+    {% if block.settings.background_gradient != blank %}
+      background: {{ block.settings.background_gradient }};
+    {% endif %}
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-faq-title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0 0 {{ block.settings.title_spacing }}px 0;
+    font-weight: {{ block.settings.title_weight }};
+    {% if font_family_title != 'inherit' %}
+      font-family: '{{ font_family_title }}', sans-serif;
+    {% endif %}
+    {% if block.settings.title_line_height != 0 %}
+      line-height: {{ block.settings.title_line_height }};
+    {% endif %}
+    {% if block.settings.title_letter_spacing != 0 %}
+      letter-spacing: {{ block.settings.title_letter_spacing }}px;
+    {% endif %}
+    {% if block.settings.title_transform != 'none' %}
+      text-transform: {{ block.settings.title_transform }};
+    {% endif %}
+  }
+
+  .ai-faq-subtitle-{{ ai_gen_id }} {
+    color: {{ block.settings.subtitle_color }};
+    font-size: {{ block.settings.subtitle_size }}px;
+    margin: 0;
+    font-weight: {{ block.settings.subtitle_weight }};
+    {% if block.settings.subtitle_line_height != 0 %}
+      line-height: {{ block.settings.subtitle_line_height }};
+    {% endif %}
+    {% if block.settings.subtitle_letter_spacing != 0 %}
+      letter-spacing: {{ block.settings.subtitle_letter_spacing }}px;
+    {% endif %}
+  }
+
+  .ai-faq-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.item_spacing }}px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }} {
+    position: relative;
+    {% unless block.settings.show_dividers %}
+      border: {{ block.settings.item_border_width }}px solid {{ block.settings.item_border_color }};
+    {% endunless %}
+    border-radius: {{ block.settings.item_border_radius }}px;
+    background-color: {{ block.settings.item_background_color }};
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    {% if block.settings.show_shadow %}
+      box-shadow: {{ block.settings.shadow_x }}px {{ block.settings.shadow_y }}px {{ block.settings.shadow_blur }}px {{ block.settings.shadow_color }};
+    {% endif %}
+  }
+
+  {% if block.settings.show_dividers %}
+    .ai-faq-item-{{ ai_gen_id }}::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: {{ block.settings.divider_indent }}px;
+      right: {{ block.settings.divider_indent }}px;
+      height: {{ block.settings.divider_height }}px;
+      background-color: {{ block.settings.divider_color }};
+      opacity: {{ block.settings.divider_opacity | divided_by: 100.0 }};
+    }
+    .ai-faq-item-{{ ai_gen_id }}:last-child::after {
+      display: none;
+    }
+  {% endif %}
+
+  .ai-faq-item-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.item_hover_background }};
+    {% if block.settings.show_shadow %}
+      box-shadow: {{ block.settings.shadow_x }}px {{ block.settings.shadow_y | plus: 2 }}px {{ block.settings.shadow_blur | plus: 4 }}px {{ block.settings.shadow_color }};
+    {% endif %}
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.question_padding }}px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: {% if block.settings.enable_accordion %}pointer{% else %}default{% endif %};
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    color: {{ block.settings.question_color }};
+    font-size: {{ block.settings.question_size }}px;
+    font-weight: {{ block.settings.question_weight }};
+    {% if font_family_question != 'inherit' %}
+      font-family: '{{ font_family_question }}', sans-serif;
+    {% endif %}
+    {% if block.settings.question_line_height != 0 %}
+      line-height: {{ block.settings.question_line_height }};
+    {% endif %}
+    {% if block.settings.question_letter_spacing != 0 %}
+      letter-spacing: {{ block.settings.question_letter_spacing }}px;
+    {% endif %}
+    transition: color 0.3s ease;
+  }
+
+  {% if block.settings.enable_accordion %}
+    .ai-faq-question-{{ ai_gen_id }}:hover {
+      color: {{ block.settings.question_hover_color }};
+    }
+  {% endif %}
+
+  .ai-faq-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: {{ block.settings.icon_color }};
+    {% unless block.settings.enable_accordion %}
+      display: none;
+    {% endunless %}
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    {% if block.settings.enable_accordion %}
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                  padding 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.3s ease;
+      opacity: 0;
+      padding: 0 {{ block.settings.question_padding }}px;
+    {% else %}
+      max-height: none;
+      overflow: visible;
+      padding: 0 {{ block.settings.question_padding }}px {{ block.settings.question_padding }}px;
+      opacity: 1;
+    {% endif %}
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 2000px;
+    padding: 0 {{ block.settings.question_padding }}px {{ block.settings.question_padding }}px;
+    opacity: 1;
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} {
+    color: {{ block.settings.answer_color }};
+    margin-bottom: 20px;
+    font-size: {{ block.settings.answer_size }}px;
+    font-weight: {{ block.settings.answer_weight }};
+    {% if font_family_answer != 'inherit' %}
+      font-family: '{{ font_family_answer }}', sans-serif;
+    {% endif %}
+    line-height: {{ block.settings.answer_line_height }};
+    {% if block.settings.answer_letter_spacing != 0 %}
+      letter-spacing: {{ block.settings.answer_letter_spacing }}px;
+    {% endif %}
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} p:first-child {
+    margin-top: 0;
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-faq-empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 80px 20px;
+    color: {{ block.settings.subtitle_color }};
+    font-size: 16px;
+    opacity: 0.6;
+  }
+
+  /* Variantes de estilo */
+  {% if block.settings.style_variant == 'minimal' %}
+    .ai-faq-item-{{ ai_gen_id }} {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+    }
+    .ai-faq-item-{{ ai_gen_id }}:hover {
+      background: transparent;
+    }
+  {% elsif block.settings.style_variant == 'card' %}
+    .ai-faq-item-{{ ai_gen_id }} {
+      {% if block.settings.show_dividers %}
+        border: {{ block.settings.item_border_width }}px solid {{ block.settings.item_border_color }};
+      {% endif %}
+    }
+  {% endif %}
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding | times: 0.6 }}px 16px;
+    }
+
+    .ai-faq-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size_mobile }}px;
+    }
+
+    .ai-faq-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size_mobile }}px;
+    }
+
+    .ai-faq-question-{{ ai_gen_id }} {
+      font-size: {{ block.settings.question_size_mobile }}px;
+      padding: {{ block.settings.question_padding | times: 0.85 }}px;
+    }
+
+    .ai-faq-answer-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.question_padding | times: 0.85 }}px;
+    }
+
+    .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.question_padding | times: 0.85 }}px {{ block.settings.question_padding | times: 0.85 }}px;
+    }
+
+    .ai-faq-answer-content-{{ ai_gen_id }} {
+      font-size: {{ block.settings.answer_size_mobile }}px;
+    }
+
+    .ai-faq-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size | times: 0.9 }}px;
+      height: {{ block.settings.icon_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    {% if block.settings.title != blank or block.settings.subtitle != blank %}
+      <div class="ai-faq-header-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h2 class="ai-faq-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+        {% endif %}
+        {% if block.settings.subtitle != blank %}
+          <div class="ai-faq-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% assign faqs_json = block.settings.faqs_json | strip %}
+    
+    {% if faqs_json != blank %}
+      <div class="ai-faq-list-{{ ai_gen_id }}" id="faq-list-{{ ai_gen_id }}">
+        {% comment %} El contenido se renderizará vía JavaScript {% endcomment %}
+      </div>
+      
+      <div class="ai-faq-empty-state-{{ ai_gen_id }}" id="faq-empty-{{ ai_gen_id }}" style="display: none;">
+        Error al cargar las preguntas. Verifica el formato JSON.
+      </div>
+    {% else %}
+      <div class="ai-faq-empty-state-{{ ai_gen_id }}">
+        Agrega tus preguntas y respuestas en formato JSON para comenzar
+      </div>
+    {% endif %}
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    // JSON de FAQs escapado correctamente para JavaScript
+    const faqsData = {{ block.settings.faqs_json | json }};
+    const containerId = 'faq-list-{{ ai_gen_id }}';
+    const emptyId = 'faq-empty-{{ ai_gen_id }}';
+    const enableAccordion = {{ block.settings.enable_accordion | json }};
+    const expandFirst = {{ block.settings.expand_first | json }};
+    const allowMultiple = {{ block.settings.allow_multiple_open | json }};
+    const iconStyle = {{ block.settings.icon_style | json }};
+    const questionPadding = {{ block.settings.question_padding | json }};
+
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.renderFAQs();
+        this.setupEventListeners();
+      }
+
+      renderFAQs() {
+        const container = this.querySelector('#' + containerId);
+        const emptyState = this.querySelector('#' + emptyId);
+        
+        if (!container) return;
+
+        try {
+          // Parsear el JSON si es string, o usar directamente si ya es objeto
+          let faqs = faqsData;
+          if (typeof faqsData === 'string') {
+            faqs = JSON.parse(faqsData);
+          }
+
+          if (!Array.isArray(faqs) || faqs.length === 0) {
+            throw new Error('No hay FAQs válidas');
+          }
+
+          let html = '';
+          
+          faqs.forEach((faq, index) => {
+            if (!faq.question || !faq.answer) return;
+            
+            const isActive = (index === 0 && expandFirst) ? 'active' : '';
+            const ariaExpanded = (index === 0 && expandFirst) ? 'true' : 'false';
+            const disabledAttr = enableAccordion ? '' : 'disabled';
+            
+            let iconSvg = '';
+            if (iconStyle === 'chevron') {
+              iconSvg = `<svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+            } else if (iconStyle === 'plus') {
+              iconSvg = `<svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line class="icon-plus" x1="12" y1="5" x2="12" y2="19"></line><line class="icon-plus" x1="5" y1="12" x2="19" y2="12"></line><line class="icon-minus" x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+            } else if (iconStyle === 'arrow') {
+              iconSvg = `<svg class="ai-faq-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+            }
+
+            html += `
+              <div class="ai-faq-item-{{ ai_gen_id }} ${isActive}" data-faq-item>
+                <button 
+                  class="ai-faq-question-{{ ai_gen_id }}"
+                  aria-expanded="${ariaExpanded}"
+                  ${disabledAttr}
+                  data-faq-button
+                >
+                  <span>${this.escapeHtml(faq.question)}</span>
+                  ${iconSvg}
+                </button>
+                <div class="ai-faq-answer-{{ ai_gen_id }}" data-faq-answer>
+                  <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+                    ${faq.answer}
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+
+          container.innerHTML = html;
+          
+          // Si expandFirst está activo, ajustar el primer item
+          if (expandFirst && enableAccordion) {
+            const firstItem = container.querySelector('[data-faq-item]');
+            if (firstItem) {
+              const answer = firstItem.querySelector('[data-faq-answer]');
+              answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+          }
+
+        } catch (error) {
+          console.error('Error cargando FAQs:', error);
+          container.style.display = 'none';
+          if (emptyState) emptyState.style.display = 'block';
+        }
+      }
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      setupEventListeners() {
+        if (!enableAccordion) return;
+        
+        this.items = this.querySelectorAll('[data-faq-item]');
+        
+        this.items.forEach((item) => {
+          const button = item.querySelector('[data-faq-button]');
+          
+          button.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            if (!allowMultiple && !isActive) {
+              this.items.forEach((otherItem) => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                  this.toggleItem(otherItem, false);
+                }
+              });
+            }
+            
+            this.toggleItem(item, !isActive);
+          });
+        });
+      }
+
+      toggleItem(item, expand) {
+        const button = item.querySelector('[data-faq-button]');
+        const answer = item.querySelector('[data-faq-answer]');
+        
+        if (expand) {
+          item.classList.add('active');
+          button.setAttribute('aria-expanded', 'true');
+          answer.style.maxHeight = answer.scrollHeight + 'px';
+        } else {
+          item.classList.remove('active');
+          button.setAttribute('aria-expanded', 'false');
+          answer.style.maxHeight = '0px';
+        }
+      }
+    }
+
+    if (!customElements.get('faq-accordion-{{ ai_gen_id }}')) {
+      customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ JSON Pro",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido JSON"
+    },
+    {
+      "type": "textarea",
+      "id": "faqs_json",
+      "label": "Preguntas y Respuestas (JSON)",
+      "info": "Formato: [{\"question\": \"¿Pregunta?\", \"answer\": \"Respuesta\"}]",
+      "default": "[\n  {\n    \"question\": \"¿Cuál es el tiempo de envío?\",\n    \"answer\": \"El tiempo de envío estándar es de <strong>3-5 días hábiles</strong>.\"\n  },\n  {\n    \"question\": \"¿Ofrecen garantía?\",\n    \"answer\": \"Sí, garantía de 12 meses.\"\n  }\n]"
+    },
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Título",
+      "default": "Preguntas frecuentes"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtítulo",
+      "default": "Encuentra respuestas a las preguntas más comunes"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alineación del texto",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Espaciado del encabezado",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Comportamiento"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_accordion",
+      "label": "Habilitar acordeón",
+      "default": true,
+      "info": "Desactivar para mostrar todas las respuestas visibles"
+    },
+    {
+      "type": "checkbox",
+      "id": "expand_first",
+      "label": "Expandir primera pregunta",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_multiple_open",
+      "label": "Permitir múltiples abiertos",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Estilo visual"
+    },
+    {
+      "type": "select",
+      "id": "style_variant",
+      "label": "Variante de diseño",
+      "options": [
+        { "value": "default", "label": "Por defecto" },
+        { "value": "minimal", "label": "Minimalista" },
+        { "value": "card", "label": "Tarjeta" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shadow",
+      "label": "Mostrar sombra",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "shadow_x",
+      "label": "Sombra - Posición X",
+      "min": -10,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "shadow_y",
+      "label": "Sombra - Posición Y",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "label": "Sombra - Desenfoque",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "shadow_color",
+      "label": "Sombra - Color",
+      "default": "rgba(0,0,0,0.08)"
+    },
+    {
+      "type": "header",
+      "content": "Separadores"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dividers",
+      "label": "Mostrar líneas divisorias",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Color de la línea",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "range",
+      "id": "divider_height",
+      "label": "Grosor de la línea",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "divider_opacity",
+      "label": "Opacidad de la línea",
+      "min": 10,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "divider_indent",
+      "label": "Indentación de la línea",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Tipografía - Título"
+    },
+    {
+      "type": "select",
+      "id": "font_family_title",
+      "label": "Fuente del título",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Inter", "label": "Inter" },
+        { "value": "Playfair Display", "label": "Playfair Display" },
+        { "value": "Montserrat", "label": "Montserrat" },
+        { "value": "Poppins", "label": "Poppins" },
+        { "value": "Roboto", "label": "Roboto" },
+        { "value": "Open Sans", "label": "Open Sans" },
+        { "value": "Lato", "label": "Lato" },
+        { "value": "DM Sans", "label": "DM Sans" },
+        { "value": "Source Sans Pro", "label": "Source Sans Pro" },
+        { "value": "Work Sans", "label": "Work Sans" },
+        { "value": "Space Grotesk", "label": "Space Grotesk" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño (Desktop)",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 42
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño (Mobile)",
+      "min": 18,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Peso (Grosor)",
+      "options": [
+        { "value": "300", "label": "Light (300)" },
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semibold (600)" },
+        { "value": "700", "label": "Bold (700)" },
+        { "value": "800", "label": "Extra Bold (800)" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "title_line_height",
+      "label": "Altura de línea",
+      "min": 0.8,
+      "max": 2,
+      "step": 0.1,
+      "unit": "px",
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "title_letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": -2,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": -0.5
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "title_transform",
+      "label": "Transformación de texto",
+      "options": [
+        { "value": "none", "label": "Ninguna" },
+        { "value": "uppercase", "label": "Mayúsculas" },
+        { "value": "lowercase", "label": "Minúsculas" },
+        { "value": "capitalize", "label": "Capitalizar" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía - Subtítulo"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "label": "Tamaño (Desktop)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size_mobile",
+      "label": "Tamaño (Mobile)",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "subtitle_weight",
+      "label": "Peso (Grosor)",
+      "options": [
+        { "value": "300", "label": "Light (300)" },
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semibold (600)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_line_height",
+      "label": "Altura de línea",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "unit": "px",
+      "default": 1.6
+    },
+    {
+      "type": "range",
+      "id": "subtitle_letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": -1,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Tipografía - Preguntas"
+    },
+    {
+      "type": "select",
+      "id": "font_family_question",
+      "label": "Fuente de preguntas",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Inter", "label": "Inter" },
+        { "value": "Playfair Display", "label": "Playfair Display" },
+        { "value": "Montserrat", "label": "Montserrat" },
+        { "value": "Poppins", "label": "Poppins" },
+        { "value": "Roboto", "label": "Roboto" },
+        { "value": "Open Sans", "label": "Open Sans" },
+        { "value": "Lato", "label": "Lato" },
+        { "value": "DM Sans", "label": "DM Sans" },
+        { "value": "Source Sans Pro", "label": "Source Sans Pro" },
+        { "value": "Work Sans", "label": "Work Sans" },
+        { "value": "Space Grotesk", "label": "Space Grotesk" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "question_size",
+      "label": "Tamaño (Desktop)",
+      "min": 14,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "default": 17
+    },
+    {
+      "type": "range",
+      "id": "question_size_mobile",
+      "label": "Tamaño (Mobile)",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "question_weight",
+      "label": "Peso (Grosor)",
+      "options": [
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" },
+        { "value": "600", "label": "Semibold (600)" },
+        { "value": "700", "label": "Bold (700)" }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "question_line_height",
+      "label": "Altura de línea",
+      "min": 1.2,
+      "max": 2,
+      "step": 0.1,
+      "unit": "px",
+      "default": 1.4
+    },
+    {
+      "type": "range",
+      "id": "question_letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": -1,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Tipografía - Respuestas"
+    },
+    {
+      "type": "select",
+      "id": "font_family_answer",
+      "label": "Fuente de respuestas",
+      "options": [
+        { "value": "inherit", "label": "Heredar del tema" },
+        { "value": "Inter", "label": "Inter" },
+        { "value": "Playfair Display", "label": "Playfair Display" },
+        { "value": "Montserrat", "label": "Montserrat" },
+        { "value": "Poppins", "label": "Poppins" },
+        { "value": "Roboto", "label": "Roboto" },
+        { "value": "Open Sans", "label": "Open Sans" },
+        { "value": "Lato", "label": "Lato" },
+        { "value": "DM Sans", "label": "DM Sans" },
+        { "value": "Source Sans Pro", "label": "Source Sans Pro" },
+        { "value": "Work Sans", "label": "Work Sans" },
+        { "value": "Space Grotesk", "label": "Space Grotesk" }
+      ],
+      "default": "inherit"
+    },
+    {
+      "type": "range",
+      "id": "answer_size",
+      "label": "Tamaño (Desktop)",
+      "min": 13,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "answer_size_mobile",
+      "label": "Tamaño (Mobile)",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "answer_weight",
+      "label": "Peso (Grosor)",
+      "options": [
+        { "value": "300", "label": "Light (300)" },
+        { "value": "400", "label": "Regular (400)" },
+        { "value": "500", "label": "Medium (500)" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "answer_line_height",
+      "label": "Altura de línea",
+      "min": 1.4,
+      "max": 2.2,
+      "step": 0.1,
+      "unit": "px",
+      "default": 1.7
+    },
+    {
+      "type": "range",
+      "id": "answer_letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": -0.5,
+      "max": 2,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Diseño general"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Ancho en escritorio",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 900
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Espaciado de la sección",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Espaciado entre preguntas",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "item_border_radius",
+      "label": "Radio del borde",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "item_border_width",
+      "label": "Ancho del borde",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "question_padding",
+      "label": "Espaciado interno",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Fondo de la sección",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Gradiente de fondo (opcional)"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Color del subtítulo",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "item_background_color",
+      "label": "Fondo de pregunta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "item_hover_background",
+      "label": "Fondo al pasar el cursor",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "item_border_color",
+      "label": "Color del borde",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Color de la pregunta",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "question_hover_color",
+      "label": "Color al pasar el cursor",
+      "default": "#0066cc"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Color de la respuesta",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Color del icono",
+      "default": "#999999"
+    },
+    {
+      "type": "header",
+      "content": "Icono"
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Estilo del icono",
+      "options": [
+        { "value": "chevron", "label": "Chevron" },
+        { "value": "plus", "label": "Plus/Minus" },
+        { "value": "arrow", "label": "Flecha" }
+      ],
+      "default": "chevron"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del icono",
+      "min": 16,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ JSON Pro"
+    }
+  ]
+}
+{% endschema %}

@@ -3,13 +3,19 @@
 {% style %}
   .ai-blog-header-{{ ai_gen_id }} {
     display: block;
-    width: 1020px;
+    width: 100%;
+    max-width: {{ block.settings.max_width | default: 1020 }}px;
+    margin-inline: auto;
     align-self: center;
+    box-sizing: border-box;
   }
+  .ai-blog-header-{{ ai_gen_id }} *,
+  .ai-blog-header-{{ ai_gen_id }} *::before,
+  .ai-blog-header-{{ ai_gen_id }} *::after { box-sizing: border-box; }
 
   .ai-blog-header__container-{{ ai_gen_id }} {
     display: grid;
-    grid-template-columns: {{ block.settings.left_width }}% 1fr;
+    grid-template-columns: minmax(0, {{ block.settings.left_width }}fr) minmax(0, {{ 100 | minus: block.settings.left_width }}fr);
     gap: {{ block.settings.columns_gap }}px;
     width: 100%;
     align-items: {{ block.settings.columns_vertical_align }};
@@ -25,6 +31,7 @@
     position: relative;
     border-radius: {{ block.settings.border_radius }}px;
     min-height: {{ block.settings.content_height }}px;
+    min-width: 0;
   }
 
   .ai-blog-header__title-{{ ai_gen_id }} {
@@ -35,6 +42,10 @@
     margin: 0 0 {{ block.settings.title_margin_bottom }}px 0;
     line-height: {{ block.settings.title_line_height }};
     letter-spacing: {{ block.settings.title_letter_spacing }}em;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: auto;
+    text-wrap: balance;
   }
 
   .ai-blog-header__excerpt-{{ ai_gen_id }} {
@@ -45,6 +56,8 @@
     margin: 0;
     line-height: 1.6;
     max-width: {{ block.settings.excerpt_max_width }}ch;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
   }
 
   .ai-blog-header__date-{{ ai_gen_id }} {
@@ -101,18 +114,19 @@
   /* Tablet */
   @media screen and (max-width: 1024px) {
     .ai-blog-header__container-{{ ai_gen_id }} {
-      grid-template-columns: {{ block.settings.left_width_tablet }}% 1fr;
+      grid-template-columns: minmax(0, {{ block.settings.left_width_tablet }}fr) minmax(0, {{ 100 | minus: block.settings.left_width_tablet }}fr);
       gap: {{ block.settings.columns_gap_tablet }}px;
     }
 
     .ai-blog-header__content-{{ ai_gen_id }} {
-      padding: {{ block.settings.content_padding_vertical }}px {{ block.settings.content_padding_horizontal }}px;
+      padding: {{ block.settings.content_padding_vertical | times: 0.75 | round }}px {{ block.settings.content_padding_horizontal | times: 0.7 | round }}px;
       min-height: {{ block.settings.content_height_tablet }}px;
       border-radius: {{ block.settings.border_radius_tablet }}px;
     }
 
     .ai-blog-header__title-{{ ai_gen_id }} {
       font-size: {{ block.settings.title_size_tablet }}px;
+      letter-spacing: {{ block.settings.title_letter_spacing | times: 0.5 }}em;
     }
 
     .ai-blog-header__image-wrapper-{{ ai_gen_id }} {
@@ -137,17 +151,32 @@
 
     .ai-blog-header__title-{{ ai_gen_id }} {
       font-size: {{ block.settings.title_size_mobile }}px;
+      letter-spacing: {{ block.settings.title_letter_spacing | times: 0.25 }}em;
+      margin-bottom: {{ block.settings.title_margin_bottom | times: 0.75 | round }}px;
     }
 
     .ai-blog-header__excerpt-{{ ai_gen_id }} {
-      font-size: {{ block.settings.excerpt_size | minus: 2 }}px;
+      font-size: {{ block.settings.excerpt_size | minus: 1 | at_least: 14 }}px;
       max-width: 100%;
     }
 
     .ai-blog-header__image-wrapper-{{ ai_gen_id }} {
+      {%- if block.settings.mobile_image_ratio == 'height' %}
       height: {{ block.settings.image_height_mobile }}px;
+      {%- else %}
+      height: auto;
+      aspect-ratio: {{ block.settings.mobile_image_ratio }};
+      {%- endif %}
       order: {% if block.settings.mobile_content_first %}2{% else %}1{% endif %};
       border-radius: {{ block.settings.border_radius_mobile }}px;
+    }
+  }
+  @media screen and (max-width: 380px) {
+    .ai-blog-header__content-{{ ai_gen_id }} {
+      padding: {{ block.settings.content_padding_mobile | times: 0.75 | round | at_least: 16 }}px;
+    }
+    .ai-blog-header__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size_mobile | times: 0.88 | round }}px;
     }
   }
 {% endstyle %}
@@ -166,7 +195,7 @@
       {% endif %}
 
       {% if block.settings.show_date and block.settings.date != blank %}
-        <time class="ai-blog-header__date-{{ ai_gen_id }}" datetime="{{ block.settings.date }}">
+        <time class="ai-blog-header__date-{{ ai_gen_id }}">
           {{ block.settings.date }}
         </time>
       {% endif %}
@@ -175,14 +204,23 @@
     <!-- Columna de Imagen -->
     <div class="ai-blog-header__image-wrapper-{{ ai_gen_id }}">
       {% if block.settings.image %}
-        <img
-          src="{{ block.settings.image | image_url: width: 2000 }}"
-          alt="{{ block.settings.image.alt | default: block.settings.title | escape }}"
-          loading="eager"
-          width="{{ block.settings.image.width }}"
-          height="{{ block.settings.image.height }}"
-          class="ai-blog-header__image-{{ ai_gen_id }}"
-        >
+        {%- liquid
+          assign img_alt = block.settings.image.alt | default: block.settings.title | escape
+          assign img_class = 'ai-blog-header__image-' | append: ai_gen_id
+          assign right_vw = 100 | minus: block.settings.left_width
+          assign img_sizes = '(max-width: 749px) 100vw, ' | append: right_vw | append: 'vw'
+        -%}
+        {{
+          block.settings.image
+          | image_url: width: 2000
+          | image_tag:
+            widths: '400, 600, 800, 1000, 1200, 1600, 2000',
+            sizes: img_sizes,
+            loading: 'eager',
+            fetchpriority: 'high',
+            alt: img_alt,
+            class: img_class
+        }}
       {% else %}
         <div class="ai-blog-header__placeholder-{{ ai_gen_id }}">
           {{ 'image' | placeholder_svg_tag }}
@@ -234,6 +272,17 @@
     {
       "type": "header",
       "content": "═══ LAYOUT - DESKTOP ═══"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho máximo",
+      "default": 1020,
+      "info": "Se adapta al ancho de la pantalla; nunca desborda."
     },
     {
       "type": "range",
@@ -384,6 +433,19 @@
       "default": 8
     },
     {
+      "type": "select",
+      "id": "mobile_image_ratio",
+      "label": "Imagen en mobile",
+      "options": [
+        { "value": "4 / 3", "label": "Proporción 4:3" },
+        { "value": "1 / 1", "label": "Cuadrada 1:1" },
+        { "value": "16 / 9", "label": "Panorámica 16:9" },
+        { "value": "height", "label": "Altura fija (abajo)" }
+      ],
+      "default": "4 / 3",
+      "info": "Una proporción se ve igual en cualquier teléfono; la altura fija puede recortar demasiado."
+    },
+    {
       "type": "range",
       "id": "image_height_mobile",
       "min": 150,
@@ -523,7 +585,7 @@
       "min": 0,
       "max": 2,
       "step": 0.1,
-      "unit": "px",
+      "unit": "em",
       "label": "Espaciado de letras",
       "default": 0.4
     },

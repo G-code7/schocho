@@ -11,7 +11,7 @@
       width: 100%;
       padding: {{ section.settings.section_padding_top }}px 0 {{ section.settings.section_padding_bottom }}px;
       background-color: {{ section.settings.background_color }};
-      overflow: hidden;
+      /* overflow: hidden; */
     }
 
     .comparison-table-v3__container-{{ section_id }} {
@@ -205,7 +205,7 @@
     }
 
     .comparison-table-v3__icon-{{ section_id }}.check {
-      background-color: {{ section.settings.check_bg_color }};
+      background-color:rgba(255, 255, 255, 0);
       border: {{ section.settings.check_border_width }}px solid {{ section.settings.check_border_color }};
     }
 
@@ -399,6 +399,44 @@
         font-size: calc({{ section.settings.row_subtitle_size | default: 12 }}px * 0.9);
         }
     }
+
+    /* Negative aspect rows - what Chocho doesn't contain */
+  
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative {
+      background-color: {{ section.settings.negative_row_background }} !important;
+      /* border-left: 4px solid {{ section.settings.negative_row_label }}; */ 
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main {
+      color: {{ section.settings.negative_row_label }};
+      font-weight: 600;
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-subtitle {
+      color: {{ section.settings.negative_row_subtitle }};
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__cell-{{ section_id }}.highlight {
+      background-color: transparent !important;
+    }
+
+    /* Ajuste para no desplazar contenido */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__cell-{{ section_id }}:first-child {
+      position: relative;
+    }
+
+    /* Ícono de advertencia opcional */
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comparison-table-v3__row-{{ section_id }}.comparison-table-v3__row--negative .comparison-table-v3__row-label-main:before {
+      content: "⚠";
+      font-size: 0.9em;
+      opacity: 0.7;
+    }
 {% endstyle %}
 
 <section
@@ -494,12 +532,14 @@
             {% for i in (1..12) %}
               {% liquid
                 assign row_label_key = 'row_' | append: i | append: '_label'
+                assign row_negative_key = 'row_' | append: i | append: '_negative'
                 assign row_subtitle_key = 'row_' | append: i | append: '_subtitle'
                 assign row_col1_key = 'row_' | append: i | append: '_col1'
                 assign row_col2_key = 'row_' | append: i | append: '_col2'
                 assign row_col3_key = 'row_' | append: i | append: '_col3'
 
                 assign row_label = section.settings[row_label_key]
+                assign row_negative = section.settings[row_negative_key]
                 assign row_subtitle = section.settings[row_subtitle_key]
                 assign row_col1 = section.settings[row_col1_key]
                 assign row_col2 = section.settings[row_col2_key]
@@ -507,7 +547,7 @@
               %}
 
               {% if row_label != blank %}
-                <tr class="comparison-table-v3__row-{{ section_id }}">
+                <tr class="comparison-table-v3__row-{{ section_id }} {% if row_negative %}comparison-table-v3__row--negative{% endif %}">
                   <td class="comparison-table-v3__cell-{{ section_id }}">
                     <div class="comparison-table-v3__row-content">
                       <div class="comparison-table-v3__row-label-main">{{ row_label }}</div>
@@ -527,13 +567,6 @@
                         >
                       </span>
                     {% elsif row_col1 == 'empty' %}
-                      <span class="comparison-table-v3__icon-{{ section_id }} empty">
-                        <img
-                          src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/x-icon.png?v=1769206764"
-                          alt="X"
-                          loading="lazy"
-                        >
-                      </span>
                     {% else %}
                       {{ row_col1 }}
                     {% endif %}
@@ -549,13 +582,6 @@
                         >
                       </span>
                     {% elsif row_col2 == 'empty' %}
-                      <span class="comparison-table-v3__icon-{{ section_id }} empty">
-                        <img
-                          src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/x-icon.png?v=1769206764"
-                          alt="X"
-                          loading="lazy"
-                        >
-                      </span>
                     {% else %}
                       {{ row_col2 }}
                     {% endif %}
@@ -571,13 +597,6 @@
                         >
                       </span>
                     {% elsif row_col3 == 'empty' %}
-                      <span class="comparison-table-v3__icon-{{ section_id }} empty">
-                        <img
-                          src="https://cdn.shopify.com/s/files/1/0740/1675/1808/files/x-icon.png?v=1769206764"
-                          alt="X"
-                          loading="lazy"
-                        >
-                      </span>
                     {% else %}
                       {{ row_col3 }}
                     {% endif %}
@@ -1155,6 +1174,12 @@
       "default": "MICRONUTRIENTS"
     },
     {
+      "type": "text",
+      "id": "row_4_subtitle",
+      "label": "Row 4 Subtitle",
+      "default": "lorem 4"
+    },
+    {
       "type": "select",
       "id": "row_4_col1",
       "label": "Row 4 - Column 1",
@@ -1189,6 +1214,12 @@
       "id": "row_5_label",
       "label": "Row 5 Label",
       "default": "DIGESTIBILITY"
+    },
+    {
+      "type": "text",
+      "id": "row_5_subtitle",
+      "label": "Row 5 Subtitle",
+      "default": "lorem 5"
     },
     {
       "type": "select",
@@ -1227,6 +1258,12 @@
       "default": "PROCESSING"
     },
     {
+      "type": "text",
+      "id": "row_6_subtitle",
+      "label": "Row 6 Subtitle",
+      "default": "lorem 6"
+    },
+    {
       "type": "select",
       "id": "row_6_col1",
       "label": "Row 6 - Column 1",
@@ -1262,6 +1299,12 @@
       "label": "Row 7 Label"
     },
     {
+      "type": "text",
+      "id": "row_7_subtitle",
+      "label": "Row 7 Subtitle",
+      "default": "lorem 7"
+    },
+    {
       "type": "select",
       "id": "row_7_col1",
       "label": "Row 7 - Column 1",
@@ -1295,6 +1338,12 @@
       "type": "text",
       "id": "row_8_label",
       "label": "Row 8 Label"
+    },
+    {
+      "type": "text",
+      "id": "row_8_subtitle",
+      "label": "Row 8 Subtitle",
+      "default": "lorem 8"
     },
     {
       "type": "select",
@@ -1333,6 +1382,19 @@
       "label": "Row 9 Label"
     },
     {
+      "type": "checkbox",
+      "id": "row_9_negative",
+      "label": "Mark as negative aspect",
+      "default": true,
+      "info": "Applies a special background to highlight what Chocho doesn't contain"
+    },
+    {
+      "type": "text",
+      "id": "row_9_subtitle",
+      "label": "Row 9 Subtitle",
+      "default": "lorem 9"
+    },
+    {
       "type": "select",
       "id": "row_9_col1",
       "label": "Row 9 - Column 1",
@@ -1367,6 +1429,19 @@
       "type": "text",
       "id": "row_10_label",
       "label": "Row 10 Label"
+    },
+    {
+      "type": "checkbox",
+      "id": "row_10_negative",
+      "label": "Mark as negative aspect",
+      "default": true,
+      "info": "Applies a special background to highlight what Chocho doesn't contain"
+    },
+    {
+      "type": "text",
+      "id": "row_10_subtitle",
+      "label": "Row 10 Subtitle",
+      "default": "lorem 10"
     },
     {
       "type": "select",
@@ -1404,6 +1479,19 @@
       "label": "Row 11 Label"
     },
     {
+      "type": "checkbox",
+      "id": "row_11_negative",
+      "label": "Mark as negative aspect",
+      "default": true,
+      "info": "Applies a special background to highlight what Chocho doesn't contain"
+    },
+    {
+      "type": "text",
+      "id": "row_11_subtitle",
+      "label": "Row 11 Subtitle",
+      "default": "lorem 11"
+    },
+    {
       "type": "select",
       "id": "row_11_col1",
       "label": "Row 11 - Column 1",
@@ -1437,6 +1525,19 @@
       "type": "text",
       "id": "row_12_label",
       "label": "Row 12 Label"
+    },
+    {
+      "type": "checkbox",
+      "id": "row_12_negative",
+      "label": "Mark as negative aspect",
+      "default": true,
+      "info": "Applies a special background to highlight what Chocho doesn't contain"
+    },
+    {
+      "type": "text",
+      "id": "row_12_subtitle",
+      "label": "Row 12 Subtitle",
+      "default": "lorem 12"
     },
     {
       "type": "select",
@@ -1827,6 +1928,31 @@
       "id": "empty_border_color",
       "label": "Empty circle border",
       "default": "#d4d4d4"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_background",
+      "label": "Negative aspect row background",
+      "default": "#fff5f5",
+      "info": "Background for rows highlighting what Chocho doesn't contain"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_border",
+      "label": "Negative aspect row border",
+      "default": "#ffd6d6"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_label",
+      "label": "Negative aspect label color",
+      "default": "#cc3333"
+    },
+    {
+      "type": "color",
+      "id": "negative_row_subtitle",
+      "label": "Negative aspect subtitle color",
+      "default": "#994444"
     },
     {
       "type": "header",

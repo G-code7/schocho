@@ -1,0 +1,214 @@
+{% comment %}
+  Formulario de producto estilo Pronto Chocho con integración al cart drawer nativo
+{% endcomment %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+<form 
+  action="/cart/add" 
+  method="post" 
+  enctype="multipart/form-data" 
+  class="product-form"
+  data-product-form
+>
+  <input type="hidden" name="form_type" value="product">
+  <input type="hidden" name="utf8" value="✓">
+  <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+  <input type="hidden" name="quantity" value="1" data-quantity-input>
+  
+  {%- comment -%}
+    El selling_plan se maneja dinámicamente según selección
+  {%- endcomment -%}
+  <input 
+    type="hidden" 
+    name="selling_plan" 
+    value="" 
+    data-selling-plan-input
+    disabled
+  >
+
+  {% comment %} Aquí va tu selector de variantes pills {% endcomment %}
+  {% render 'variant-picker-pills', product: product, block: block %}
+
+  {% comment %} Aquí va quantity breaks si lo tienes {% endcomment %}
+  {% render 'quantity-breaks', product: product %}
+
+  {% comment %} El widget de Shopify Subscriptions se inyecta aquí {% endcomment %}
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when '@app' %}
+        {% render block %}
+    {% endcase %}
+  {% endfor %}
+
+  {% comment %} Botón de agregar al carrito {% endcomment %}
+  <button 
+    type="submit" 
+    class="product-form__add-button"
+    data-add-to-cart
+    {% unless current_variant.available %}disabled{% endunless %}
+  >
+    <span data-add-to-cart-text>
+      {%- if current_variant.available -%}
+        Add to Cart - {{ current_variant.price | money }}
+      {%- else -%}
+        Sold Out
+      {%- endif -%}
+    </span>
+    <span data-loader style="display: none;">Adding...</span>
+  </button>
+
+  {% comment %} Shop Pay (nativo de Shopify) {% endcomment %}
+  {{ form | payment_button }}
+</form>
+
+<script>
+(function() {
+  const form = document.querySelector('[data-product-form]');
+  if (!form) return;
+  
+  const variantInput = form.querySelector('[data-variant-id]');
+  const qtyInput = form.querySelector('[data-quantity-input]');
+  const sellingPlanInput = form.querySelector('[data-selling-plan-input]');
+  const addBtn = form.querySelector('[data-add-to-cart]');
+  const addText = form.querySelector('[data-add-to-cart-text]');
+  const loader = form.querySelector('[data-loader]');
+  
+  let currentVariantId = '{{ current_variant.id }}';
+  let currentSellingPlanId = '';
+  
+  // Escuchar cambio de variante
+  document.addEventListener('variant:change', function(e) {
+    currentVariantId = e.detail.variantId;
+    variantInput.value = currentVariantId;
+    
+    // Actualizar precio en botón
+    const price = parseInt(e.detail.price);
+    addText.textContent = 'Add to Cart - ' + formatMoney(price);
+  });
+  
+  // Escuchar selección de suscripción (del widget de Shopify)
+  // El widget de Shopify Subscriptions cambiará el input selling_plan
+  const checkSellingPlan = () => {
+    const shopifyInputs = document.querySelectorAll('input[name="selling_plan"]');
+    shopifyInputs.forEach(input => {
+      if (input !== sellingPlanInput && input.checked) {
+        currentSellingPlanId = input.value;
+        sellingPlanInput.value = currentSellingPlanId;
+        sellingPlanInput.disabled = false;
+      }
+    });
+  };
+  
+  // MutationObserver para detectar cuando el widget de Shopify se inyecta
+  const observer = new MutationObserver((mutations) => {
+    checkSellingPlan();
+  });
+  
+  observer.observe(form, { childList: true, subtree: true });
+  
+  // Manejar submit del formulario
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (addBtn.disabled) return;
+    
+    // UI de loading
+    addBtn.disabled = true;
+    addText.style.display = 'none';
+    loader.style.display = 'inline';
+    
+    // Preparar datos
+    const formData = new FormData(form);
+    
+    // Debug
+    console.log('Enviando:', {
+      id: formData.get('id'),
+      quantity: formData.get('quantity'),
+      selling_plan: formData.get('selling_plan')
+    });
+    
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const cart = await response.json();
+        
+        // IMPORTANTE: Disparar evento para que el cart drawer se abra
+        // Intentar múltiples eventos por compatibilidad
+        document.dispatchEvent(new CustomEvent('cart:add', { 
+          detail: { cart: cart } 
+        }));
+        
+        document.dispatchEvent(new CustomEvent('cart:updated', { 
+          detail: { cart: cart } 
+        }));
+        
+        // Si tu tema usa el evento específico de CartAddEvent
+        if (window.CartAddEvent) {
+          document.dispatchEvent(new CartAddEvent());
+        }
+        
+        // Forzar apertura del cart drawer si tiene método open
+        const cartDrawer = document.querySelector('cart-drawer-component');
+        if (cartDrawer && cartDrawer.open) {
+          cartDrawer.open();
+        }
+        
+      } else {
+        const error = await response.json();
+        alert(error.description || 'Error adding to cart');
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Network error. Please try again.');
+    } finally {
+      addBtn.disabled = false;
+      addText.style.display = 'inline';
+      loader.style.display = 'none';
+    }
+  });
+  
+  function formatMoney(cents) {
+    return new Intl.NumberFormat('{{ shop.locale }}', {
+      style: 'currency',
+      currency: '{{ shop.currency }}'
+    }).format(cents / 100);
+  }
+})();
+</script>
+
+<style>
+  .product-form {
+    margin-top: 24px;
+  }
+  
+  .product-form__add-button {
+    width: 100%;
+    padding: 18px 32px;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+  }
+  
+  .product-form__add-button:hover:not(:disabled) {
+    background: #333;
+    transform: translateY(-2px);
+  }
+  
+  .product-form__add-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+</style>

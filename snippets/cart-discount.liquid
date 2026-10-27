@@ -16,12 +16,17 @@
 
   assign discount_codes = discount_codes | uniq
 
-  # Evaluate the boolean expression for the disclosure state
-  if discount_codes.size == 0
-    assign disclosure_expanded = false
-  else
-    assign disclosure_expanded = true
-  endif
+  # Estado del disclosure.
+  #
+  # Antes: se abría solo cuando ya había códigos aplicados, para mostrar
+  # las pills. Con los cupones automáticos el carrito casi siempre trae
+  # códigos, así que en la práctica quedaba SIEMPRE abierto y alargaba
+  # el resumen en móvil.
+  #
+  # Ahora: cerrado por defecto, siempre. Los descuentos aplicados siguen
+  # siendo visibles fuera del dropdown, en la lista de descuentos del
+  # resumen de totales (cart-summary), así que no se pierde feedback.
+  assign disclosure_expanded = false
 %}
 <disclosure-custom class="cart-discount">
   {% render 'disclosure-trigger',

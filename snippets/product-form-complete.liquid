@@ -1,0 +1,513 @@
+{% comment %}
+  Formulario completo: variantes pills + suscripción + cart drawer
+{% endcomment %}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+{% comment %} BUSCAR SELLING PLAN MENSUAL {% endcomment %}
+{%- assign selling_plan_id = '' -%}
+{%- assign selling_plan_discount = 0 -%}
+
+{%- for group in product.selling_plan_groups -%}
+  {%- for plan in group.selling_plans -%}
+    {%- assign plan_name = plan.name | downcase -%}
+    {%- if plan_name contains 'month' or plan_name contains 'mes' or selling_plan_id == '' -%}
+      {%- assign selling_plan_id = plan.id -%}
+      {%- if plan.price_adjustments[0].value -%}
+        {%- assign selling_plan_discount = plan.price_adjustments[0].value -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+<form 
+  action="/cart/add" 
+  method="post" 
+  enctype="multipart/form-data" 
+  class="product-form"
+  id="product-form-{{ section.id }}"
+>
+  {% comment %} VARIANT ID {% endcomment %}
+  <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+  {% comment %} SELLING PLAN - Se activa/desactiva con JS {% endcomment %}
+  <input 
+    type="hidden" 
+    name="selling_plan" 
+    value="{{ selling_plan_id }}" 
+    data-selling-plan-input
+    {% if selling_plan_id == '' %}disabled{% endif %}
+  >
+
+  {% comment %} CANTIDAD {% endcomment %}
+  <input type="hidden" name="quantity" value="1" data-quantity-input>
+
+  {% comment %} ===== SELECTOR DE VARIANTES TIPO PILLS ===== {% endcomment %}
+  {%- unless product.has_only_default_variant -%}
+    <div class="variant-pills">
+      <p class="variant-pills__label">Choose your flavor</p>
+      <div class="variant-pills__grid">
+        {%- for variant in product.variants -%}
+          <label 
+            class="variant-pills__option{% if variant == current_variant %} selected{% endif %}{% unless variant.available %} soldout{% endunless %}"
+            data-variant-id="{{ variant.id }}"
+            data-variant-price="{{ variant.price }}"
+            data-variant-compare="{{ variant.compare_at_price | default: variant.price }}"
+          >
+            <input 
+              type="radio" 
+              name="variant_id" 
+              value="{{ variant.id }}"
+              {% if variant == current_variant %}checked{% endif %}
+              {% unless variant.available %}disabled{% endunless %}
+              class="visually-hidden"
+            >
+            
+            {%- if variant.image -%}
+              <img src="{{ variant.image | image_url: width: 100, height: 100, crop: 'center' }}" alt="" class="variant-pills__image">
+            {%- endif -%}
+            
+            <span class="variant-pills__name">{{ variant.title }}</span>
+            <span class="variant-pills__price">{{ variant.price | money }}</span>
+          </label>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endunless -%}
+
+  {% comment %} ===== OPCIONES DE COMPRA: SUSCRIPCIÓN VS UNA VEZ ===== {% endcomment %}
+  {%- if selling_plan_id != '' -%}
+    <div class="purchase-options">
+      
+      {% comment %} Badge Most Popular {% endcomment %}
+      <div class="purchase-options__badge">Most Popular</div>
+      
+      {% comment %} Opción Suscripción {% endcomment %}
+      <label class="purchase-options__box purchase-options__box--active" data-option="subscription">
+        <input 
+          type="radio" 
+          name="purchase_type" 
+          value="subscription" 
+          checked 
+          class="visually-hidden"
+          data-purchase-type="subscription"
+        >
+        <span class="purchase-options__radio"></span>
+        <div class="purchase-options__content">
+          <div class="purchase-options__header">
+            <div>
+              <strong class="purchase-options__title">Subscribe & Save</strong>
+              <span class="purchase-options__subtitle">Delivered monthly</span>
+            </div>
+            <div class="purchase-options__price-wrap">
+              <span class="purchase-options__price" data-subscription-price></span>
+              <span class="purchase-options__compare" data-compare-price>{{ current_variant.price | money }}</span>
+            </div>
+          </div>
+          <ul class="purchase-options__benefits">
+            <li>Save {{ selling_plan_discount }}% every order</li>
+            <li>Free shipping</li>
+            <li>Cancel anytime</li>
+            <li>Skip or pause anytime</li>
+          </ul>
+        </div>
+      </label>
+      
+      {% comment %} Opción Una Vez {% endcomment %}
+      <label class="purchase-options__box" data-option="onetime">
+        <input 
+          type="radio" 
+          name="purchase_type" 
+          value="onetime" 
+          class="visually-hidden"
+          data-purchase-type="onetime"
+        >
+        <span class="purchase-options__radio"></span>
+        <div class="purchase-options__content">
+          <div class="purchase-options__header">
+            <div>
+              <strong class="purchase-options__title">One-time purchase</strong>
+              <span class="purchase-options__subtitle">No commitment</span>
+            </div>
+            <div class="purchase-options__price-wrap">
+              <span class="purchase-options__price">{{ current_variant.price | money }}</span>
+            </div>
+          </div>
+        </div>
+      </label>
+      
+      {% comment %} Barra de ahorro {% endcomment %}
+      <div class="purchase-options__savings">
+        <span>You're saving <strong data-savings-amount></strong></span>
+        <span data-total-price></span>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {% comment %} ===== BOTÓN AGREGAR AL CARRITO ===== {% endcomment %}
+  <button 
+    type="submit" 
+    class="add-to-cart-btn"
+    data-add-to-cart
+    {% unless current_variant.available %}disabled{% endunless %}
+  >
+    {%- if current_variant.available -%}
+      <span data-btn-text>Add to Cart - {{ current_variant.price | money }}</span>
+    {%- else -%}
+      Sold Out
+    {%- endif -%}
+    <span data-btn-loader style="display: none;">Adding...</span>
+  </button>
+
+  {% comment %} Shop Pay (aparece automático) {% endcomment %}
+  {{ form | payment_button }}
+
+</form>
+
+<style>
+  /* ===== VARIANT PILLS ===== */
+  .variant-pills { margin: 20px 0; }
+  .variant-pills__label { 
+    font-weight: 600; 
+    font-size: 14px; 
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .variant-pills__grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .variant-pills__option {
+    border: 2px solid #e6e6e6;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .variant-pills__option:hover:not(.soldout) { border-color: #4A6B1A; }
+  .variant-pills__option.selected { 
+    border-color: #4A6B1A; 
+    background: #FCF3EC;
+  }
+  .variant-pills__option.soldout { 
+    opacity: 0.5; 
+    cursor: not-allowed;
+  }
+  .variant-pills__image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+  }
+  .variant-pills__name {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .variant-pills__price {
+    font-size: 12px;
+    color: #4A6B1A;
+    font-weight: 700;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    border: 0;
+  }
+
+  /* ===== PURCHASE OPTIONS ===== */
+  .purchase-options { margin: 24px 0; }
+  .purchase-options__badge {
+    display: inline-block;
+    background: #4A6B1A;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .purchase-options__box {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid #e6e6e6;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #FFFCF8;
+    opacity: 0.7;
+  }
+  .purchase-options__box:hover { opacity: 1; }
+  .purchase-options__box--active,
+  .purchase-options__box:has(input:checked) {
+    border-color: #4A6B1A;
+    background: #FCF3EC;
+    opacity: 1;
+  }
+  .purchase-options__radio {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+  }
+  .purchase-options__box--active .purchase-options__radio,
+  .purchase-options__box:has(input:checked) .purchase-options__radio {
+    border-color: #4A6B1A;
+  }
+  .purchase-options__box--active .purchase-options__radio::after,
+  .purchase-options__box:has(input:checked) .purchase-options__radio::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: #4A6B1A;
+    border-radius: 50%;
+  }
+  .purchase-options__content { flex: 1; }
+  .purchase-options__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .purchase-options__title { 
+    display: block; 
+    font-size: 15px;
+    color: #1a1a1a;
+  }
+  .purchase-options__subtitle {
+    font-size: 12px;
+    color: #666;
+  }
+  .purchase-options__price-wrap { text-align: right; }
+  .purchase-options__price {
+    display: block;
+    font-size: 18px;
+    font-weight: 800;
+    color: #4A6B1A;
+  }
+  .purchase-options__compare {
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+  }
+  .purchase-options__benefits {
+    margin: 12px 0 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+    color: #555;
+  }
+  .purchase-options__benefits li {
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .purchase-options__benefits li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #4A6B1A;
+    font-weight: 700;
+  }
+  .purchase-options__savings {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  /* ===== BOTÓN ===== */
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 18px 32px;
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.2s;
+  }
+  .add-to-cart-btn:hover:not(:disabled) {
+    background: #333;
+    transform: translateY(-2px);
+  }
+  .add-to-cart-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+(function() {
+  const form = document.getElementById('product-form-{{ section.id }}');
+  if (!form) return;
+  
+  const variantInput = form.querySelector('[data-variant-id]');
+  const sellingPlanInput = form.querySelector('[data-selling-plan-input]');
+  const qtyInput = form.querySelector('[data-quantity-input]');
+  const btn = form.querySelector('[data-add-to-cart]');
+  const btnText = form.querySelector('[data-btn-text]');
+  const btnLoader = form.querySelector('[data-btn-loader]');
+  
+  // Precios
+  const basePrice = {{ current_variant.price }};
+  const comparePrice = {{ current_variant.compare_at_price | default: current_variant.price }};
+  const discountPercent = {{ selling_plan_discount | default: 0 }};
+  
+  // Elementos de precio
+  const subPriceEl = form.querySelector('[data-subscription-price]');
+  const savingsEl = form.querySelector('[data-savings-amount]');
+  const totalEl = form.querySelector('[data-total-price]');
+  
+  // Calcular y mostrar precios
+  function updatePrices() {
+    const subPrice = Math.round(basePrice * (1 - discountPercent / 100));
+    const savings = basePrice - subPrice;
+    
+    if (subPriceEl) subPriceEl.textContent = formatMoney(subPrice);
+    if (savingsEl) savingsEl.textContent = formatMoney(savings);
+    if (totalEl) totalEl.textContent = formatMoney(subPrice);
+  }
+  
+  function formatMoney(cents) {
+    return new Intl.NumberFormat('{{ shop.locale }}', {
+      style: 'currency',
+      currency: '{{ shop.currency }}'
+    }).format(cents / 100);
+  }
+  
+  // Selección de variantes
+  const variantOptions = form.querySelectorAll('.variant-pills__option');
+  variantOptions.forEach(opt => {
+    opt.addEventListener('click', function() {
+      if (this.classList.contains('soldout')) return;
+      
+      variantOptions.forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+      
+      const radio = this.querySelector('input');
+      radio.checked = true;
+      
+      variantInput.value = this.dataset.variantId;
+      
+      // Actualizar precio en botón
+      const price = parseInt(this.dataset.variantPrice);
+      if (btnText) btnText.textContent = 'Add to Cart - ' + formatMoney(price);
+    });
+  });
+  
+  // Selección suscripción vs una vez
+  const purchaseOptions = form.querySelectorAll('[data-option]');
+  purchaseOptions.forEach(opt => {
+    opt.addEventListener('click', function() {
+      purchaseOptions.forEach(o => {
+        o.classList.remove('purchase-options__box--active');
+        o.querySelector('input').checked = false;
+      });
+      
+      this.classList.add('purchase-options__box--active');
+      this.querySelector('input').checked = true;
+      
+      const type = this.dataset.option;
+      if (type === 'subscription' && sellingPlanInput) {
+        sellingPlanInput.disabled = false;
+      } else {
+        sellingPlanInput.disabled = true;
+      }
+    });
+  });
+  
+  // Submit del formulario
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (btn.disabled) return;
+    
+    btn.disabled = true;
+    if (btnText) btnText.style.display = 'none';
+    if (btnLoader) btnLoader.style.display = 'inline';
+    
+    const formData = new FormData(form);
+    
+    // Debug
+    console.log('Enviando:', Object.fromEntries(formData));
+    
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (response.ok) {
+        const cart = await response.json();
+        console.log('Carrito actualizado:', cart);
+        
+        // ABRIR CART DRAWER - Intentar múltiples métodos
+        const cartDrawer = document.querySelector('cart-drawer-component');
+        
+        if (cartDrawer) {
+          // Método 1: Usar método open() si existe
+          if (typeof cartDrawer.open === 'function') {
+            cartDrawer.open();
+          } 
+          // Método 2: Disparar evento cart:add
+          else {
+            document.dispatchEvent(new CustomEvent('cart:add', {
+              detail: { cart: cart }
+            }));
+          }
+        }
+        
+        // Método 3: Disparar eventos adicionales por compatibilidad
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
+        
+        // Si tiene auto-open, esto también debería funcionar
+        if (cartDrawer && cartDrawer.hasAttribute('auto-open')) {
+          cartDrawer.showDialog?.();
+        }
+        
+      } else {
+        const error = await response.json();
+        alert(error.description || 'Error adding to cart');
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      alert('Network error. Please try again.');
+    } finally {
+      btn.disabled = false;
+      if (btnText) btnText.style.display = 'inline';
+      if (btnLoader) btnLoader.style.display = 'none';
+    }
+  });
+  
+  updatePrices();
+})();
+</script>
