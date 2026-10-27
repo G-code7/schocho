@@ -2181,24 +2181,38 @@
         const extraId = parseInt(freeship.dataset.extraId, 10);
         const extraQty = Math.max(1, parseInt(freeship.dataset.extraQty, 10) || 1);
 
-        const items = [{ id: mainId, quantity: mainQty }];
+        const wanted = [{ id: mainId, quantity: mainQty }];
         if (extraId && !Number.isNaN(extraId) && extraId !== mainId) {
-          items.push({ id: extraId, quantity: extraQty });
+          wanted.push({ id: extraId, quantity: extraQty });
         }
 
         freeship.classList.add('is-loading');
         freeship.disabled = true;
 
         try {
-          const res = await fetch('/cart/add.js', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ items })
-          });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.description || data.message || 'Error');
-          // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
           const root = window.Shopify?.routes?.root || '/';
+          // FIX conversión: completar HASTA la cantidad objetivo en vez de sumar.
+          // Antes, cada clic (p. ej. al volver del checkout) añadía N unidades más
+          // y el cliente llegaba al checkout con 4, 6… unidades.
+          const cart = await fetch(root + 'cart.js', { headers: { Accept: 'application/json' } }).then((r) => r.json());
+          const inCart = (id) =>
+            (cart.items || [])
+              .filter((it) => it.variant_id === id && !it.selling_plan_allocation)
+              .reduce((n, it) => n + it.quantity, 0);
+          const items = wanted
+            .map((w) => ({ id: w.id, quantity: w.quantity - inCart(w.id) }))
+            .filter((w) => w.quantity > 0);
+
+          if (items.length) {
+            const res = await fetch(root + 'cart/add.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+              body: JSON.stringify({ items })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.description || data.message || 'Error');
+          }
+          // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
           const dest = root + 'checkout';
           window.location.href = window.fpv2Discounts
             ? window.fpv2Discounts.chainUrl(dest)               // motor: prioridad + límites

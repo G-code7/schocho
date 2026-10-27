@@ -214,6 +214,7 @@
       (e) => {
         const el = e.target;
         if (!(el instanceof HTMLInputElement) || el.type !== 'radio' || !el.checked) return;
+        if (el.closest('[data-pc-tracked]')) return; // el componente publica su propio evento
         const hint = `${el.name} ${el.value} ${el.id}`.toLowerCase();
         if (!/selling|subscri|suscrip|purchase|one[-_ ]?time/.test(hint)) return;
         const oneTime = /one[-_ ]?time|single|once|unica/.test(hint) || (/selling/.test(el.name) && !el.value);

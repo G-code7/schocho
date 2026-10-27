@@ -1,0 +1,386 @@
+{%- doc -%}
+  Pronto Chocho — Buy box único (suscripción / compra única).
+  Reemplaza subscription-purchase-V4, ai_gen_block_057fc56 y los bloques
+  sueltos price / quantity / add-to-cart / buy-buttons del PDP.
+
+  - Precios y planes REALES desde variant.selling_plan_allocations
+    (nada de IDs ni porcentajes escritos a mano).
+  - Cantidad 1 preseleccionada: el botón está activo desde el primer render.
+  - Sabores extra opcionales (empiezan en 0) en la misma petición.
+  - Integración Horizon: refresca cart-items-component y abre el drawer.
+
+  @param {product} product - Producto principal (obligatorio)
+  @param {string} uid - ID único de la instancia (block.id / section.id)
+  @param {string} [attrs] - block.shopify_attributes
+  @param {string} [default_option] - 'subscription' | 'onetime'
+  @param {string} [sub_title]
+  @param {string} [sub_subtitle]
+  @param {string} [sub_badge] - Admite [percent], p. ej. "Save [percent]%"
+  @param {string} [benefits] - Un beneficio por línea
+  @param {string} [onetime_title]
+  @param {string} [onetime_subtitle]
+  @param {string} [onetime_codes] - Códigos separados por coma, solo compra única
+  @param {boolean} [show_per_serving]
+  @param {number} [servings] - Fallback si no existe el metafield custom.servings
+  @param {string} [per_label]
+  @param {boolean} [show_quantity]
+  @param {string} [atc_text]
+  @param {boolean} [show_dynamic_checkout]
+  @param {boolean} [open_drawer]
+  @param {boolean} [sticky_mobile]
+  @param {boolean} [update_url] - Solo en el producto principal del PDP
+  @param {product[]} [extras] - Otros sabores para combinar
+  @param {string} [extras_label]
+  @param {string} [style] - Variables CSS (--pc-*) ya serializadas
+{%- enddoc -%}
+{%- if product != blank -%}
+  {%- liquid
+    assign uid = uid | default: product.id | replace: '_', '-' | downcase
+    assign sv = product.selected_or_first_available_variant
+    assign allocs = sv.selling_plan_allocations
+    assign has_plans = false
+    if allocs.size > 0
+      assign has_plans = true
+    endif
+
+    assign sel_alloc = allocs.first
+    if product.selected_selling_plan
+      for a in allocs
+        if a.selling_plan.id == product.selected_selling_plan.id
+          assign sel_alloc = a
+          break
+        endif
+      endfor
+    endif
+
+    assign type = default_option | default: 'subscription'
+    unless has_plans
+      assign type = 'onetime'
+    endunless
+    if product.requires_selling_plan and has_plans
+      assign type = 'subscription'
+    endif
+
+    assign servings_n = product.metafields.custom.servings.value | default: servings | default: 0 | plus: 0
+
+    assign ref = sv.price
+    if sv.compare_at_price > sv.price
+      assign ref = sv.compare_at_price
+    endif
+
+    assign save_pct = 0
+    if has_plans and ref > sel_alloc.price
+      assign save_pct = ref | minus: sel_alloc.price | times: 100.0 | divided_by: ref | round
+    endif
+
+    assign unit = sv.price
+    if type == 'subscription'
+      assign unit = sel_alloc.price
+    endif
+
+    assign badge = sub_badge | default: 'Save [percent]%'
+    if badge contains '[percent]'
+      if save_pct > 0
+        assign badge = badge | replace: '[percent]', save_pct
+      else
+        assign badge = ''
+      endif
+    endif
+
+    assign atc_label = atc_text | default: 'Add to cart'
+    assign show_variants = true
+    if product.has_only_default_variant
+      assign show_variants = false
+    endif
+  -%}
+
+  {{ 'pc-buy-box.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'pc-buy-box.js' | asset_url }}" type="module" defer></script>
+
+  <pc-buy-box
+    class="pc-bb"
+    id="pc-bb-{{ uid }}"
+    data-pc-tracked
+    {% if style != blank %}style="{{ style }}"{% endif %}
+    {{ attrs }}
+  >
+    {%- comment -%} Datos para el JS: variantes + planes con precios reales {%- endcomment -%}
+    <script type="application/json" data-pc-data>
+      {
+        "productId": {{ product.id }},
+        "title": {{ product.title | json }},
+        "locale": {{ request.locale.iso_code | json }},
+        "currency": {{ cart.currency.iso_code | default: shop.currency | json }},
+        "servings": {{ servings_n }},
+        "perLabel": {{ per_label | default: 'serving' | json }},
+        "requiresPlan": {{ product.requires_selling_plan | json }},
+        "type": {{ type | json }},
+        "variantId": {{ sv.id }},
+        "planId": {% if has_plans %}{{ sel_alloc.selling_plan.id }}{% else %}null{% endif %},
+        "badge": {{ sub_badge | default: 'Save [percent]%' | json }},
+        "atcText": {{ atc_label | json }},
+        "openDrawer": {% if open_drawer == false %}false{% else %}true{% endif %},
+        "updateUrl": {% if update_url %}true{% else %}false{% endif %},
+        "codes": {{ onetime_codes | default: '' | remove: ' ' | split: ',' | json }},
+        "routes": {
+          "add": {{ routes.cart_add_url | append: '.js' | json }},
+          "update": {{ routes.cart_update_url | append: '.js' | json }},
+          "cart": {{ routes.cart_url | append: '.js' | json }},
+          "cartPage": {{ routes.cart_url | json }}
+        },
+        "texts": {
+          "adding": {{ 'Adding…' | json }},
+          "added": {{ 'Added ✓' | json }},
+          "soldOut": {{ 'Sold out' | json }},
+          "error": {{ 'Something went wrong. Please try again.' | json }},
+          "save": {{ 'You save' | json }}
+        },
+        "variants": [
+          {%- for v in product.variants -%}
+            {
+              "id": {{ v.id }},
+              "available": {{ v.available | json }},
+              "price": {{ v.price }},
+              "compare": {{ v.compare_at_price | default: 0 }},
+              "plans": [
+                {%- for a in v.selling_plan_allocations -%}
+                  {"id": {{ a.selling_plan.id }}, "name": {{ a.selling_plan.name | json }}, "price": {{ a.price }}}
+                  {%- unless forloop.last -%},{%- endunless -%}
+                {%- endfor -%}
+              ]
+            }
+            {%- unless forloop.last -%},{%- endunless -%}
+          {%- endfor -%}
+        ],
+        "extras": [
+          {%- assign first_extra = true -%}
+          {%- for xp in extras -%}
+            {%- assign xv = xp.selected_or_first_available_variant -%}
+            {%- if xp.id != product.id and xv.available -%}
+              {%- unless first_extra -%},{%- endunless -%}
+              {%- assign first_extra = false -%}
+              {
+                "id": {{ xv.id }},
+                "title": {{ xp.title | json }},
+                "price": {{ xv.price }},
+                "compare": {{ xv.compare_at_price | default: 0 }},
+                "plans": [
+                  {%- for a in xv.selling_plan_allocations -%}
+                    {"id": {{ a.selling_plan.id }}, "name": {{ a.selling_plan.name | json }}, "price": {{ a.price }}}
+                    {%- unless forloop.last -%},{%- endunless -%}
+                  {%- endfor -%}
+                ]
+              }
+            {%- endif -%}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+
+    {%- if show_variants -%}
+      <fieldset class="pc-bb__variants">
+        <legend class="pc-bb__label">{{ product.options | join: ' / ' }}</legend>
+        <div class="pc-bb__pills">
+          {%- for v in product.variants -%}
+            <label class="pc-bb__pill">
+              <input
+                type="radio"
+                name="pc-bb-variant-{{ uid }}"
+                value="{{ v.id }}"
+                data-pc-variant
+                {% if v.id == sv.id %}checked{% endif %}
+              >
+              <span{% unless v.available %} class="is-unavailable"{% endunless %}>{{ v.title }}</span>
+            </label>
+          {%- endfor -%}
+        </div>
+      </fieldset>
+    {%- endif -%}
+
+    <fieldset class="pc-bb__options">
+      <legend class="pc-bb__visually-hidden">Purchase options</legend>
+
+      {%- comment -%} Suscripción {%- endcomment -%}
+      <div
+        class="pc-bb__option{% if type == 'subscription' %} is-active{% endif %}"
+        data-pc-option="subscription"
+        {% unless has_plans %}hidden{% endunless %}
+      >
+        <label class="pc-bb__option-main">
+          <input
+            type="radio"
+            class="pc-bb__visually-hidden"
+            name="pc-bb-type-{{ uid }}"
+            value="subscription"
+            data-pc-type
+            {% if type == 'subscription' %}checked{% endif %}
+          >
+          <span class="pc-bb__radio" aria-hidden="true"></span>
+          <span class="pc-bb__option-body">
+            <span class="pc-bb__option-head">
+              <span class="pc-bb__option-title">
+                {{- sub_title | default: 'Subscribe & Save' -}}
+                <span class="pc-bb__badge" data-pc-badge{% if badge == blank %} hidden{% endif %}>{{ badge }}</span>
+              </span>
+              <span class="pc-bb__price">
+                <s data-pc-sub-compare{% unless ref > sel_alloc.price %} hidden{% endunless %}>{{ ref | money }}</s>
+                <strong data-pc-sub-price>{{ sel_alloc.price | money }}</strong>
+              </span>
+            </span>
+            <span class="pc-bb__meta">
+              {%- if sub_subtitle != blank -%}<span>{{ sub_subtitle }}</span>{%- endif -%}
+              {%- if show_per_serving != false and servings_n > 0 -%}
+                <span data-pc-sub-per>{{ sel_alloc.price | divided_by: servings_n | money }} / {{ per_label | default: 'serving' }}</span>
+              {%- endif -%}
+            </span>
+          </span>
+        </label>
+
+        {%- comment -%} Frecuencia: solo si el producto tiene más de un plan {%- endcomment -%}
+        <div class="pc-bb__plan" data-pc-plan-wrap{% if allocs.size < 2 %} hidden{% endif %}>
+          <label class="pc-bb__visually-hidden" for="pc-bb-plan-{{ uid }}">Delivery frequency</label>
+          <select id="pc-bb-plan-{{ uid }}" class="pc-bb__select" data-pc-plan>
+            {%- for a in allocs -%}
+              <option value="{{ a.selling_plan.id }}"{% if a.selling_plan.id == sel_alloc.selling_plan.id %} selected{% endif %}>
+                {{- a.selling_plan.name -}}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+
+        {%- if benefits != blank -%}
+          {%- assign benefit_lines = benefits | newline_to_br | split: '<br />' -%}
+          <ul class="pc-bb__benefits">
+            {%- for line in benefit_lines -%}
+              {%- assign line = line | strip -%}
+              {%- if line != blank -%}<li>{{ line }}</li>{%- endif -%}
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Compra única {%- endcomment -%}
+      <div
+        class="pc-bb__option{% if type == 'onetime' %} is-active{% endif %}"
+        data-pc-option="onetime"
+        {% if product.requires_selling_plan %}hidden{% endif %}
+      >
+        <label class="pc-bb__option-main">
+          <input
+            type="radio"
+            class="pc-bb__visually-hidden"
+            name="pc-bb-type-{{ uid }}"
+            value="onetime"
+            data-pc-type
+            {% if type == 'onetime' %}checked{% endif %}
+          >
+          <span class="pc-bb__radio" aria-hidden="true"></span>
+          <span class="pc-bb__option-body">
+            <span class="pc-bb__option-head">
+              <span class="pc-bb__option-title">{{ onetime_title | default: 'One-time purchase' }}</span>
+              <span class="pc-bb__price">
+                <s data-pc-ot-compare{% unless sv.compare_at_price > sv.price %} hidden{% endunless %}>{{ sv.compare_at_price | money }}</s>
+                <strong data-pc-ot-price>{{ sv.price | money }}</strong>
+              </span>
+            </span>
+            <span class="pc-bb__meta">
+              {%- if onetime_subtitle != blank -%}<span>{{ onetime_subtitle }}</span>{%- endif -%}
+              {%- if show_per_serving != false and servings_n > 0 -%}
+                <span data-pc-ot-per>{{ sv.price | divided_by: servings_n | money }} / {{ per_label | default: 'serving' }}</span>
+              {%- endif -%}
+            </span>
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
+    {%- if extras.size > 0 -%}
+      <div class="pc-bb__extras">
+        <p class="pc-bb__label">{{ extras_label | default: 'Add another flavor' }}</p>
+        {%- for xp in extras -%}
+          {%- assign xv = xp.selected_or_first_available_variant -%}
+          {%- if xp.id != product.id and xv.available -%}
+            <div class="pc-bb__extra" data-pc-extra="{{ xv.id }}">
+              {%- if xp.featured_image -%}
+                {{
+                  xp.featured_image
+                  | image_url: width: 112, height: 112, crop: 'center'
+                  | image_tag: width: 56, height: 56, loading: 'lazy', alt: xp.title, class: 'pc-bb__extra-img'
+                }}
+              {%- endif -%}
+              <span class="pc-bb__extra-info">
+                <span class="pc-bb__extra-title">{{ xp.title }}</span>
+                <span class="pc-bb__extra-price" data-pc-extra-price>{{ xv.price | money }}</span>
+              </span>
+              <span class="pc-bb__stepper">
+                <button type="button" data-pc-extra-step="-1" aria-label="Remove one {{ xp.title | escape }}" disabled>−</button>
+                <span data-pc-extra-qty aria-live="polite">0</span>
+                <button type="button" data-pc-extra-step="1" aria-label="Add one {{ xp.title | escape }}">+</button>
+              </span>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="pc-bb__buy">
+      {%- if show_quantity != false -%}
+        <span class="pc-bb__stepper pc-bb__stepper--main">
+          <button type="button" data-pc-qty-step="-1" aria-label="Decrease quantity" disabled>−</button>
+          <input
+            type="number"
+            inputmode="numeric"
+            min="1"
+            value="1"
+            data-pc-qty
+            aria-label="Quantity"
+          >
+          <button type="button" data-pc-qty-step="1" aria-label="Increase quantity">+</button>
+        </span>
+      {%- endif -%}
+      <button
+        type="button"
+        class="pc-bb__atc"
+        data-pc-add
+        {% unless sv.available %}disabled{% endunless %}
+      >
+        <span data-pc-add-label>
+          {%- if sv.available -%}
+            {{ atc_label }} · {{ unit | money }}
+          {%- else -%}
+            Sold out
+          {%- endif -%}
+        </span>
+      </button>
+    </div>
+
+    <p class="pc-bb__savings" data-pc-savings hidden></p>
+    <p class="pc-bb__error" data-pc-error role="alert" hidden></p>
+
+    {%- comment -%}
+      Pago acelerado: solo compra única de un producto (los botones nativos
+      no llevan selling plan ni varias líneas). El JS lo oculta en esos casos.
+    {%- endcomment -%}
+    {%- if show_dynamic_checkout != false -%}
+      <div class="pc-bb__dynamic" data-pc-dynamic{% if type == 'subscription' %} hidden{% endif %}>
+        {%- form 'product', product -%}
+          <input type="hidden" name="id" value="{{ sv.id }}" data-pc-form-variant>
+          <input type="hidden" name="quantity" value="1" data-pc-form-qty>
+          {{ form | payment_button }}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+
+    {%- if sticky_mobile != false -%}
+      <div class="pc-bb-sticky" data-pc-sticky style="{{ style }}">
+        <span class="pc-bb-sticky__info">
+          <span class="pc-bb-sticky__title">{{ product.title }}</span>
+          <span class="pc-bb-sticky__price" data-pc-sticky-price>{{ unit | money }}</span>
+        </span>
+        <button type="button" class="pc-bb__atc" data-pc-sticky-add{% unless sv.available %} disabled{% endunless %}>
+          {{- atc_label -}}
+        </button>
+      </div>
+    {%- endif -%}
+  </pc-buy-box>
+{%- endif -%}

@@ -1,0 +1,145 @@
+{%- doc -%}
+  Theme block del buy box único. Va dentro de "Product information"
+  (o cualquier sección que acepte @theme y tenga contexto de producto).
+  Toda la lógica vive en snippets/pc-buy-box.liquid + assets/pc-buy-box.js.
+{%- enddoc -%}
+{%- liquid
+  assign p = closest.product | default: product
+  if block.settings.product != blank
+    assign p = block.settings.product
+  endif
+
+  assign is_main = false
+  if template.name == 'product' and p.id == product.id
+    assign is_main = true
+  endif
+
+  capture style
+    echo '--pc-accent:' | append: block.settings.accent | append: ';'
+    echo '--pc-surface:' | append: block.settings.surface | append: ';'
+    echo '--pc-surface-active:' | append: block.settings.surface_active | append: ';'
+    echo '--pc-border:' | append: block.settings.border | append: ';'
+    echo '--pc-btn:' | append: block.settings.button_bg | append: ';'
+    echo '--pc-btn-text:' | append: block.settings.button_text | append: ';'
+    echo '--pc-radius:' | append: block.settings.radius | append: 'px;'
+  endcapture
+-%}
+{%- if p != blank -%}
+  {%- render 'pc-buy-box',
+    product: p,
+    uid: block.id,
+    attrs: block.shopify_attributes,
+    default_option: block.settings.default_option,
+    sub_title: block.settings.sub_title,
+    sub_subtitle: block.settings.sub_subtitle,
+    sub_badge: block.settings.sub_badge,
+    benefits: block.settings.benefits,
+    onetime_title: block.settings.onetime_title,
+    onetime_subtitle: block.settings.onetime_subtitle,
+    onetime_codes: block.settings.onetime_codes,
+    show_per_serving: block.settings.show_per_serving,
+    servings: block.settings.servings,
+    per_label: block.settings.per_label,
+    show_quantity: block.settings.show_quantity,
+    atc_text: block.settings.atc_text,
+    show_dynamic_checkout: block.settings.show_dynamic_checkout,
+    open_drawer: block.settings.open_drawer,
+    sticky_mobile: block.settings.sticky_mobile,
+    update_url: is_main,
+    extras: block.settings.extras,
+    extras_label: block.settings.extras_label,
+    style: style
+  -%}
+{%- elsif request.design_mode -%}
+  <p {{ block.shopify_attributes }}>Buy box: selecciona un producto o usa el bloque dentro de una página de producto.</p>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Buy box (Pronto Chocho)",
+  "tag": null,
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto",
+      "info": "Vacío = producto de la página. Útil fuera del PDP."
+    },
+    { "type": "header", "content": "Opciones de compra" },
+    {
+      "type": "select",
+      "id": "default_option",
+      "label": "Opción preseleccionada",
+      "options": [
+        { "value": "subscription", "label": "Suscripción" },
+        { "value": "onetime", "label": "Compra única" }
+      ],
+      "default": "subscription",
+      "info": "Si el producto no tiene planes de suscripción, se muestra solo compra única."
+    },
+    { "type": "text", "id": "sub_title", "label": "Título suscripción", "default": "Subscribe & Save" },
+    { "type": "text", "id": "sub_subtitle", "label": "Subtítulo suscripción" },
+    {
+      "type": "text",
+      "id": "sub_badge",
+      "label": "Badge suscripción",
+      "default": "Save [percent]%",
+      "info": "[percent] = ahorro real del plan. Texto fijo también vale, p. ej. \"Most popular\"."
+    },
+    {
+      "type": "textarea",
+      "id": "benefits",
+      "label": "Beneficios de la suscripción",
+      "default": "Cancel or skip anytime\nFree shipping on every delivery",
+      "info": "Uno por línea. Que sean ciertos: se muestran junto al precio."
+    },
+    { "type": "text", "id": "onetime_title", "label": "Título compra única", "default": "One-time purchase" },
+    { "type": "text", "id": "onetime_subtitle", "label": "Subtítulo compra única" },
+    {
+      "type": "text",
+      "id": "onetime_codes",
+      "label": "Códigos para compra única",
+      "info": "Separados por coma. Se aplican al carrito solo en compra única. Mejor opción: un descuento automático en Admin, que siempre coincide con el precio mostrado."
+    },
+    { "type": "header", "content": "Precio por porción" },
+    { "type": "checkbox", "id": "show_per_serving", "label": "Mostrar precio por porción", "default": true },
+    {
+      "type": "number",
+      "id": "servings",
+      "label": "Porciones por unidad",
+      "default": 15,
+      "info": "El metafield de producto custom.servings tiene prioridad."
+    },
+    { "type": "text", "id": "per_label", "label": "Texto por porción", "default": "serving" },
+    { "type": "header", "content": "Compra" },
+    { "type": "checkbox", "id": "show_quantity", "label": "Mostrar selector de cantidad", "default": true },
+    { "type": "text", "id": "atc_text", "label": "Texto del botón", "default": "Add to cart" },
+    {
+      "type": "checkbox",
+      "id": "show_dynamic_checkout",
+      "label": "Botones de pago rápido (compra única)",
+      "default": true
+    },
+    { "type": "checkbox", "id": "open_drawer", "label": "Abrir el carrito al agregar", "default": true },
+    { "type": "checkbox", "id": "sticky_mobile", "label": "Botón fijo en móvil", "default": true },
+    { "type": "header", "content": "Combinar sabores" },
+    {
+      "type": "product_list",
+      "id": "extras",
+      "label": "Otros sabores",
+      "limit": 4,
+      "info": "Opcional. Empiezan en 0 y se agregan junto al producto principal con el mismo plan."
+    },
+    { "type": "text", "id": "extras_label", "label": "Título", "default": "Add another flavor" },
+    { "type": "header", "content": "Estilo" },
+    { "type": "color", "id": "accent", "label": "Acento", "default": "#3e2563" },
+    { "type": "color", "id": "surface", "label": "Fondo opción", "default": "#FFFCF8" },
+    { "type": "color", "id": "surface_active", "label": "Fondo opción activa", "default": "#FCF3EC" },
+    { "type": "color", "id": "border", "label": "Borde", "default": "#E8E4DF" },
+    { "type": "color", "id": "button_bg", "label": "Botón", "default": "#1a1a1a" },
+    { "type": "color", "id": "button_text", "label": "Texto del botón", "default": "#ffffff" },
+    { "type": "range", "id": "radius", "label": "Radio", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 12 }
+  ],
+  "presets": [{ "name": "Buy box (Pronto Chocho)" }]
+}
+{% endschema %}
