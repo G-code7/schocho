@@ -31,7 +31,12 @@
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
-    {% if template == 'product' %}
+    {%- comment -%}
+      FIX: `template` incluye el sufijo (p. ej. "product.cacao-maca"), así que
+      `template == 'product'` fallaba en los templates alternativos que usan
+      subscription-purchase-v4. `template.name` es solo el tipo ("product").
+    {%- endcomment -%}
+    {% if template.name == 'product' %}
       {{ 'subscription-widget.css' | asset_url | stylesheet_tag }}
     {% endif %}
     {{ content_for_header }}
@@ -68,5 +73,7 @@
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}
+
+    {%- render 'pc-analytics' -%}
   </body>
 </html>
