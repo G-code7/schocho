@@ -1,0 +1,229 @@
+{%- comment -%}
+  pc-analytics — eventos custom de conversión (Pronto Chocho)
+  ------------------------------------------------------------------
+  Publica eventos con Shopify.analytics.publish para que el Custom Pixel
+  (Admin → Settings → Customer events) los reenvíe a GA4.
+
+  No depende del markup de cada widget de compra:
+  - Intercepta fetch a /cart/add (éxito / error, suscripción vs única)
+    y a /cart/update cuando lleva descuento (código aplicable o no).
+  - Delegación de clics para CTAs que van a checkout (incluye el botón
+    free-shipping de featured-product-v2/v3: [data-fpv2-freeship]).
+  - Expone window.pcTrack(nombre, datos) para los componentes propios.
+
+  Render: una sola vez en layout/theme.liquid, antes de </body>.
+  Debug: añade ?pc_debug=1 a cualquier URL (queda en sessionStorage) y
+  mira la consola. En el editor de temas solo loguea, no publica.
+{%- endcomment -%}
+<script>
+  (() => {
+    if (window.pcTrack) return;
+
+    const CONTEXT = {
+      template: {{ template.name | json }},
+      template_suffix: {{ template.suffix | default: '' | json }}
+    };
+    const IN_EDITOR = {{ request.design_mode | json }};
+
+    let debug = false;
+    try {
+      if (new URLSearchParams(location.search).has('pc_debug')) sessionStorage.setItem('pc_debug', '1');
+      debug = sessionStorage.getItem('pc_debug') === '1';
+    } catch (_) {}
+
+    const publish = (name, data = {}) => {
+      const payload = { ...CONTEXT, page_path: location.pathname, ...data };
+      if (debug || IN_EDITOR) console.info('[pc-analytics]', name, payload);
+      if (IN_EDITOR) return;
+      try {
+        window.Shopify?.analytics?.publish?.(name, payload);
+      } catch (_) {}
+    };
+    window.pcTrack = publish;
+
+    /* ---------- Origen del clic (qué sección/botón disparó la acción) ---------- */
+    const describe = (el) => {
+      if (!el) return { source_section: null, source_label: null };
+      const section = el.closest('.shopify-section');
+      const label = (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim();
+      return {
+        source_section: section ? section.id.replace('shopify-section-', '') : null,
+        source_label: label ? label.slice(0, 60) : null
+      };
+    };
+
+    let lastSource = null;
+    document.addEventListener(
+      'click',
+      (e) => {
+        const el = e.target.closest('button, a, [role="button"], input[type="submit"]');
+        if (el) lastSource = { ...describe(el), at: Date.now() };
+      },
+      true
+    );
+    const currentSource = () =>
+      lastSource && Date.now() - lastSource.at < 10000
+        ? { source_section: lastSource.source_section, source_label: lastSource.source_label }
+        : { source_section: null, source_label: null };
+
+    /* ---------- Lectura del body de /cart/add ---------- */
+    const readBody = (body) => {
+      if (!body) return null;
+      if (typeof body === 'string') {
+        try {
+          return { json: JSON.parse(body) };
+        } catch (_) {
+          return { params: new URLSearchParams(body) };
+        }
+      }
+      if (body instanceof FormData || body instanceof URLSearchParams) return { params: body };
+      return null;
+    };
+
+    const normItem = (i) => ({
+      variant_id: i.id != null ? String(i.id) : null,
+      quantity: Number(i.quantity || 1),
+      purchase_type: i.selling_plan ? 'subscription' : 'one_time',
+      selling_plan_id: i.selling_plan ? String(i.selling_plan) : null
+    });
+
+    const itemsFromBody = (body) => {
+      const parsed = readBody(body);
+      if (!parsed) return [];
+      if (parsed.json) {
+        const j = parsed.json;
+        return (Array.isArray(j.items) ? j.items : [j]).filter((i) => i && i.id != null).map(normItem);
+      }
+      const p = parsed.params;
+      if (p.get('id')) {
+        return [normItem({ id: p.get('id'), quantity: p.get('quantity'), selling_plan: p.get('selling_plan') })];
+      }
+      const byIndex = {};
+      for (const [key, value] of p.entries()) {
+        const m = key.match(/^items\[(\d+)\]\[(\w+)\]$/);
+        if (m) (byIndex[m[1]] ||= {})[m[2]] = value;
+      }
+      return Object.values(byIndex).filter((i) => i.id).map(normItem);
+    };
+
+    const summarize = (items) => {
+      const subs = items.filter((i) => i.purchase_type === 'subscription').length;
+      return {
+        items,
+        units: items.reduce((n, i) => n + i.quantity, 0),
+        purchase_type:
+          items.length === 0 ? 'unknown' : subs === items.length ? 'subscription' : subs > 0 ? 'mixed' : 'one_time'
+      };
+    };
+
+    /* ---------- Interceptor de fetch: add to cart + descuentos ---------- */
+    const ADD_RE = /\/cart\/add(\.js)?(\?|$)/;
+    const UPDATE_RE = /\/cart\/update(\.js)?(\?|$)/;
+    const nativeFetch = window.fetch.bind(window);
+
+    window.fetch = (input, init) => {
+      const url = typeof input === 'string' ? input : input?.url || String(input);
+      const isAdd = ADD_RE.test(url);
+      const isUpdate = UPDATE_RE.test(url);
+      if (!isAdd && !isUpdate) return nativeFetch(input, init);
+
+      const body = init?.body;
+      const source = currentSource();
+      const request = nativeFetch(input, init);
+
+      if (isAdd) {
+        const info = { ...summarize(itemsFromBody(body)), ...source, via: 'ajax' };
+        request.then(
+          (res) => {
+            if (res.ok) return publish('pc_add_to_cart', info);
+            res
+              .clone()
+              .json()
+              .catch(() => ({}))
+              .then((j) =>
+                publish('pc_add_to_cart_error', {
+                  ...info,
+                  status: res.status,
+                  message: String(j.description || j.message || '').slice(0, 200)
+                })
+              );
+          },
+          (err) => publish('pc_add_to_cart_error', { ...info, status: 0, message: String(err).slice(0, 200) })
+        );
+      }
+
+      if (isUpdate) {
+        const parsed = readBody(body);
+        const code = parsed?.json?.discount ?? parsed?.params?.get?.('discount');
+        if (code) {
+          request
+            .then((res) => (res.ok ? res.clone().json() : null))
+            .then((cart) => {
+              if (!cart) return;
+              const codes = Array.isArray(cart.discount_codes) ? cart.discount_codes : [];
+              publish('pc_discount_attempt', {
+                codes: codes.map((c) => ({ code: c.code, applicable: !!c.applicable })),
+                any_not_applicable: codes.some((c) => !c.applicable),
+                ...source
+              });
+            })
+            .catch(() => {});
+        }
+      }
+
+      return request;
+    };
+
+    /* ---------- Formularios /cart/add sin AJAX (submit nativo) ---------- */
+    window.addEventListener('submit', (e) => {
+      const form = e.target;
+      if (!(form instanceof HTMLFormElement) || e.defaultPrevented) return;
+      if (!ADD_RE.test(form.getAttribute('action') || '')) return;
+      publish('pc_add_to_cart', {
+        ...summarize(itemsFromBody(new FormData(form))),
+        ...describe(e.submitter || form),
+        via: 'form_submit'
+      });
+    });
+
+    /* ---------- CTAs que llevan al checkout ---------- */
+    document.addEventListener(
+      'click',
+      (e) => {
+        const el = e.target.closest(
+          '[data-fpv2-freeship], a[href*="/checkout"], a[href*="/discount/"], button[name="checkout"], input[name="checkout"]'
+        );
+        if (!el) return;
+        const cta_type = el.matches('[data-fpv2-freeship]')
+          ? 'freeship_direct'
+          : el.matches('[name="checkout"]')
+            ? 'cart_checkout'
+            : el.matches('a[href*="/discount/"]')
+              ? 'discount_link'
+              : 'direct_link';
+        publish('pc_checkout_cta_click', { cta_type, ...describe(el) });
+      },
+      true
+    );
+
+    /* ---------- Opción de compra (heurística provisional) ----------
+       Cuando exista el componente único de compra, este bloque se
+       reemplaza por una llamada explícita a window.pcTrack(). */
+    document.addEventListener(
+      'change',
+      (e) => {
+        const el = e.target;
+        if (!(el instanceof HTMLInputElement) || el.type !== 'radio' || !el.checked) return;
+        const hint = `${el.name} ${el.value} ${el.id}`.toLowerCase();
+        if (!/selling|subscri|suscrip|purchase|one[-_ ]?time/.test(hint)) return;
+        const oneTime = /one[-_ ]?time|single|once|unica/.test(hint) || (/selling/.test(el.name) && !el.value);
+        publish('pc_purchase_option_selected', {
+          option: oneTime ? 'one_time' : 'subscription',
+          input_name: el.name,
+          ...describe(el)
+        });
+      },
+      true
+    );
+  })();
+</script>
