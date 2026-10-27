@@ -13,8 +13,8 @@
    - Eventos custom publicados por snippets/pc-analytics.liquid.
    ================================================================== */
 
-const GA4_ID = 'G-XXXXXXXXXX'; // ← reemplazar por el Measurement ID real
-const SEND_PAGE_VIEWS = true; // false si esta misma propiedad ya recibe page_view de otra integración
+const GA4_ID = 'G-TNQ0TD6GRC'; // ← reemplazar por el Measurement ID real
+const SEND_PAGE_VIEWS = false; // false si esta misma propiedad ya recibe page_view de otra integración
 const DEBUG = false; // true = log en consola + debug_mode en GA4 (DebugView)
 
 /* ---------- gtag dentro del sandbox del pixel ---------- */
