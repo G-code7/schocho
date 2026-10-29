@@ -27,37 +27,46 @@ class PcBuyBox extends HTMLElement {
   }
 
   connectedCallback() {
-    const raw = this.querySelector('script[data-pc-data]');
-    if (!raw) return;
-    try {
-      this.data = JSON.parse(raw.textContent);
-    } catch (err) {
-      console.error('[pc-buy-box] JSON inválido', err);
-      return;
-    }
-    const d = this.data;
-    d.codes = (d.codes || []).filter(Boolean);
-    this.money = new Intl.NumberFormat(d.locale || 'en', { style: 'currency', currency: d.currency || 'USD' });
+    if (this.init()) return;
+    // Horizon (morph del editor, transiciones de página) puede insertar el elemento
+    // VACÍO y llenarlo después: se espera a que llegue el contenido.
+    this.mo = new MutationObserver(() => this.init() && this.mo.disconnect());
+    this.mo.observe(this, { childList: true, subtree: true });
+  }
 
-    if (!this.state) {
+  disconnectedCallback() {
+    this.mo?.disconnect();
+    this.io?.disconnect();
+    this.sticky?.remove();
+  }
+
+  /** Lee los datos y pinta. Idempotente; false si el contenido todavía no está. */
+  init() {
+    if (!this.data) {
+      const raw = this.querySelector('script[data-pc-data]');
+      if (!raw) return false;
+      let data;
+      try {
+        data = JSON.parse(raw.textContent);
+      } catch {
+        return false; // contenido a medio insertar: el observer reintenta
+      }
+      data.codes = (data.codes || []).filter(Boolean);
+      this.data = data;
+      this.money = new Intl.NumberFormat(data.locale || 'en', { style: 'currency', currency: data.currency || 'USD' });
       const asked = new URLSearchParams(window.location.search).get('purchase');
-      this.state = {
-        flavor: d.selected,
-        type: asked === 'subscription' || asked === 'onetime' ? asked : d.type,
-        planId: d.planId,
+      this.state = this.state || {
+        flavor: data.selected,
+        type: asked === 'subscription' || asked === 'onetime' ? asked : data.type,
+        planId: data.planId,
         qty: 1
       };
     }
-
     this.$ = (sel) => this.querySelector(sel);
     this.addButton = this.$('[data-pc-add]');
     this.attachSticky();
     this.render();
-  }
-
-  disconnectedCallback() {
-    this.io?.disconnect();
-    this.sticky?.remove();
+    return true;
   }
 
   get flavor() {
@@ -84,6 +93,7 @@ class PcBuyBox extends HTMLElement {
   /* ---------------- Eventos ---------------- */
 
   onChange(e) {
+    if (!this.data && !this.init()) return;
     const t = e.target;
     if (t.matches('[data-pc-flavor]')) {
       const index = Number(t.value);
@@ -122,6 +132,7 @@ class PcBuyBox extends HTMLElement {
   }
 
   onClick(e) {
+    if (!this.data && !this.init()) return;
     const btn = e.target.closest('button');
     if (!btn || !this.contains(btn)) return;
     if (btn.matches('[data-pc-add]')) {
