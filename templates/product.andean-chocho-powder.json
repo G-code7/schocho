@@ -292,42 +292,45 @@
                 "padding-inline-end": 0
               },
               "blocks": {
-                "pc_buy_box_3RKkCc": {
-                  "type": "pc-buy-box",
-                  "name": "Selector de compra",
+                "chocho_plan_picker_v1_TWdrpR": {
+                  "type": "chocho-plan-picker-v1",
+                  "name": "Chocho Plan Picker v1",
                   "settings": {
-                    "flavors": [
+                    "plan_heading": "Choose your plan",
+                    "default_option": "subscription",
+                    "sub_title": "Subscribe & Save",
+                    "sub_badge": "Save [percent]%",
+                    "benefits": "Save money on every order\nEasily change your quantities\nCancel any time\nPre-shipment reminders",
+                    "selling_plan_id": "3233841344",
+                    "onetime_title": "One-time purchase",
+                    "onetime_codes": "FUELSHIPPING,  CHOCHOFUEL15",
+                    "onetime_percent": 15,
+                    "onetime_perk": "[percent]% off, applied in your cart",
+                    "flavors_heading": "Choose your flavors",
+                    "products": [
                       "chocho-pure-ingredient",
                       "chocho-cacao-spirulina-maca",
                       "chocho-ginger-turmeric-black-pepper-powder-blend"
                     ],
-                    "flavor_label": "Choose your flavor",
-                    "product": "",
-                    "plan_label": "Choose your plan",
-                    "default_option": "subscription",
-                    "sub_title": "Subscribe & Save",
-                    "sub_badge": "Save [percent]%",
-                    "benefits": "Save 20%/bag on every subscription order\nFree shipping with 2+ bags \nEasily change your quantities\nCancel any time",
-                    "onetime_title": "One-time purchase",
-                    "onetime_subtitle": "",
-                    "onetime_codes": "",
+                    "preselect": true,
+                    "servings_text": "16 servings",
+                    "servings_per_unit": 16,
+                    "show_per_serving": false,
+                    "per_text": "serving",
+                    "savings_label": "You save",
+                    "button_text": "Add to cart",
+                    "empty_text": "Add a flavor to continue",
                     "note_sub": "",
                     "note_onetime": "",
-                    "show_per_serving": false,
-                    "servings": 16,
-                    "per_label": "serving",
-                    "show_quantity": true,
-                    "atc_text": "Add to cart",
-                    "show_dynamic_checkout": false,
                     "open_drawer": true,
-                    "sticky_mobile": true,
+                    "added_text": "Added to your cart",
                     "accent": "#3e2563",
-                    "surface": "#fffcf8",
-                    "surface_active": "#fcf3ec",
-                    "border": "#e8e4df",
+                    "surface": "#FFFCF8",
+                    "surface_active": "#FCF3EC",
+                    "border": "#E8E4DF",
                     "button_bg": "#3e2563",
-                    "button_text": "#ffffff",
-                    "radius": 24
+                    "button_text_color": "#FFFFFF",
+                    "radius": 12
                   },
                   "blocks": {}
                 },
@@ -346,7 +349,7 @@
                     "benefit_4": "Cancel any time",
                     "onetime_title": "One-time purchase",
                     "onetime_subtitle": "15% Off + Free Shipping on your first order",
-                    "onetime_discount_code": "CHOCHOFUEL15",
+                    "onetime_discount_code": "",
                     "onetime_discount_code_2": "FUELSHIPPING",
                     "onetime_discount_percent": 15,
                     "onetime_code_label": "Includes code [code]",
@@ -379,7 +382,7 @@
                 }
               },
               "block_order": [
-                "pc_buy_box_3RKkCc",
+                "chocho_plan_picker_v1_TWdrpR",
                 "subscription_purchase_v4_Tgy4r6"
               ]
             },
