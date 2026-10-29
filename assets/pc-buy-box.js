@@ -48,8 +48,13 @@ class PcBuyBox extends HTMLElement {
       let data;
       try {
         data = JSON.parse(raw.textContent);
-      } catch {
-        return false; // contenido a medio insertar: el observer reintenta
+      } catch (err) {
+        // Puede ser contenido a medio insertar (el observer reintenta); si persiste, se avisa una vez.
+        if (!this.warned && raw.textContent.trim().endsWith('}')) {
+          this.warned = true;
+          console.error('[pc-buy-box] Los datos del selector no son JSON válido:', err.message, raw.textContent.slice(0, 300));
+        }
+        return false;
       }
       data.codes = (data.codes || []).filter(Boolean);
       this.data = data;

@@ -74,6 +74,12 @@
       {% render 'quick-add-modal' %}
     {% endif %}
 
+    {%- comment -%}
+      Selector de compra: se carga desde el layout (como los componentes de Horizon)
+      para que funcione aunque el bloque llegue por el editor o por una transición de
+      página: los <script> insertados así no se ejecutan.
+    {%- endcomment -%}
+    <script src="{{ 'pc-buy-box.js' | asset_url }}" type="module"></script>
     {%- render 'pc-analytics' -%}
   </body>
 </html>
