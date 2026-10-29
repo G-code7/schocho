@@ -1,16 +1,15 @@
 /**
- * <pc-buy-box> — buy box único de Pronto Chocho.
+ * <pc-buy-box> — selector de compra en 2 pasos (sabor → plan).
  * Markup y datos: snippets/pc-buy-box.liquid.
  *
  * - Listeners delegados en el constructor: sobrevive a re-renders del editor
  *   y al morph de Horizon sin duplicar handlers.
- * - Una sola petición /cart/add.js (principal + sabores extra).
- * - Integra con Horizon vía CartAddEvent de '@theme/events' (fallback a
- *   CustomEvent con la misma forma) y refresca cart-items-component.
+ * - En el PDP (data.navigate) cambiar de sabor va a la página de ese producto
+ *   conservando el plan (?purchase=). Fuera del PDP cambia en el mismo lugar.
+ * - Integra con Horizon vía CartAddEvent de '@theme/events'.
  */
 
 const themeEvents = import('@theme/events').catch(() => null);
-
 const clampQty = (n) => Math.max(1, Math.min(99, Number.parseInt(n, 10) || 1));
 
 class PcBuyBox extends HTMLElement {
@@ -30,17 +29,19 @@ class PcBuyBox extends HTMLElement {
       console.error('[pc-buy-box] JSON inválido', err);
       return;
     }
-
     const d = this.data;
     d.codes = (d.codes || []).filter(Boolean);
     this.money = new Intl.NumberFormat(d.locale || 'en', { style: 'currency', currency: d.currency || 'USD' });
-    this.state = this.state || {
-      type: d.type,
-      variantId: d.variantId,
-      planId: d.planId,
-      qty: 1,
-      extras: Object.fromEntries((d.extras || []).map((x) => [x.id, 0]))
-    };
+
+    if (!this.state) {
+      const asked = new URLSearchParams(window.location.search).get('purchase');
+      this.state = {
+        flavor: d.selected,
+        type: asked === 'subscription' || asked === 'onetime' ? asked : d.type,
+        planId: d.planId,
+        qty: 1
+      };
+    }
 
     this.$ = (sel) => this.querySelector(sel);
     this.addButton = this.$('[data-pc-add]');
@@ -53,10 +54,8 @@ class PcBuyBox extends HTMLElement {
     this.sticky?.remove();
   }
 
-  /* ---------------- Datos derivados ---------------- */
-
-  get variant() {
-    return this.data.variants.find((v) => v.id === this.state.variantId) || this.data.variants[0];
+  get flavor() {
+    return this.data.flavors[this.state.flavor];
   }
 
   get isSub() {
@@ -64,40 +63,41 @@ class PcBuyBox extends HTMLElement {
   }
 
   get plan() {
-    const plans = this.variant.plans;
+    const plans = this.flavor.plans;
     return plans.find((p) => p.id === this.state.planId) || plans[0] || null;
-  }
-
-  /** Plan equivalente para otro producto: mismo ID (mismo grupo) o mismo nombre. */
-  matchPlan(plans, ref) {
-    if (!ref || !plans?.length) return null;
-    return plans.find((p) => p.id === ref.id) || plans.find((p) => p.name === ref.name) || null;
-  }
-
-  refPrice(v) {
-    return Math.max(v.price, v.compare || 0);
   }
 
   format(cents) {
     return this.money.format((cents || 0) / 100);
   }
 
+  go(url) {
+    window.location.href = url;
+  }
+
   /* ---------------- Eventos ---------------- */
 
   onChange(e) {
     const t = e.target;
-    if (t.matches('[data-pc-type]')) {
+    if (t.matches('[data-pc-flavor]')) {
+      const index = Number(t.value);
+      if (this.data.navigate && index !== this.data.selected) {
+        const url = new URL(this.data.flavors[index].url, window.location.origin);
+        url.searchParams.set('purchase', this.state.type);
+        this.go(url.toString());
+        return;
+      }
+      const prev = this.plan;
+      this.state.flavor = index;
+      const plans = this.flavor.plans;
+      this.state.planId = (prev && (plans.find((p) => p.id === prev.id) || plans.find((p) => p.name === prev.name)))?.id ?? null;
+    } else if (t.matches('[data-pc-type]')) {
       this.state.type = t.value;
       window.pcTrack?.('pc_purchase_option_selected', {
         option: t.value,
-        product_id: String(this.data.productId),
+        product_id: String(this.flavor.productId),
         source_section: this.closest('.shopify-section')?.id.replace('shopify-section-', '') || null
       });
-    } else if (t.matches('[data-pc-variant]')) {
-      const prev = this.plan;
-      this.state.variantId = Number(t.value);
-      this.state.planId = this.matchPlan(this.variant.plans, prev)?.id ?? null;
-      this.syncUrl();
     } else if (t.matches('[data-pc-plan]')) {
       this.state.planId = Number(t.value);
     } else if (t.matches('[data-pc-qty]')) {
@@ -111,52 +111,49 @@ class PcBuyBox extends HTMLElement {
   onClick(e) {
     const btn = e.target.closest('button');
     if (!btn || !this.contains(btn)) return;
-
     if (btn.matches('[data-pc-add]')) {
       this.add();
     } else if (btn.dataset.pcQtyStep) {
       this.state.qty = clampQty(this.state.qty + Number(btn.dataset.pcQtyStep));
       this.render();
-    } else if (btn.dataset.pcExtraStep) {
-      const id = Number(btn.closest('[data-pc-extra]').dataset.pcExtra);
-      this.state.extras[id] = Math.max(0, Math.min(99, (this.state.extras[id] || 0) + Number(btn.dataset.pcExtraStep)));
-      this.render();
     }
-  }
-
-  syncUrl() {
-    if (!this.data.updateUrl) return;
-    const url = new URL(window.location.href);
-    url.searchParams.set('variant', this.state.variantId);
-    history.replaceState(history.state, '', url);
   }
 
   /* ---------------- Render ---------------- */
 
   render() {
     const d = this.data;
-    const v = this.variant;
-    const hasPlans = v.plans.length > 0;
-
+    const f = this.flavor;
+    const hasPlans = f.plans.length > 0;
     if (!hasPlans) this.state.type = 'onetime';
-    if (d.requiresPlan && hasPlans) this.state.type = 'subscription';
+    if (f.requiresPlan && hasPlans) this.state.type = 'subscription';
 
     const plan = hasPlans ? this.plan : null;
     this.state.planId = plan?.id ?? null;
     const isSub = this.isSub;
-    const ref = this.refPrice(v);
+    const ref = Math.max(f.price, f.compare || 0);
     const set = (sel, text, show = true) => {
       const el = this.$(sel);
       if (!el) return;
       if (text != null) el.textContent = text;
       el.hidden = !show;
     };
+    const perServing = (cents) => (f.servings > 0 ? `${this.format(cents / f.servings)} per ${d.perLabel}` : '');
 
-    /* Opciones */
+    /* Paso 1: sabor */
+    this.querySelectorAll('[data-pc-flavor]').forEach((radio) => {
+      const on = Number(radio.value) === this.state.flavor;
+      radio.checked = on;
+      radio.closest('.pc-bb__flavor')?.classList.toggle('is-active', on);
+    });
+    set('[data-pc-flavor-title]', f.title);
+    set('[data-pc-flavor-nutrition]', f.nutrition, Boolean(f.nutrition));
+
+    /* Paso 2: plan */
     const subOpt = this.$('[data-pc-option="subscription"]');
     const otOpt = this.$('[data-pc-option="onetime"]');
     if (subOpt) subOpt.hidden = !hasPlans;
-    if (otOpt) otOpt.hidden = Boolean(d.requiresPlan && hasPlans);
+    if (otOpt) otOpt.hidden = Boolean(f.requiresPlan && hasPlans);
     this.querySelectorAll('[data-pc-option]').forEach((opt) => {
       const on = opt.dataset.pcOption === this.state.type;
       opt.classList.toggle('is-active', on);
@@ -164,79 +161,53 @@ class PcBuyBox extends HTMLElement {
       if (radio) radio.checked = on;
     });
 
-    /* Tarjeta suscripción */
     if (plan) {
       const pct = ref > plan.price ? Math.round(((ref - plan.price) / ref) * 100) : 0;
       set('[data-pc-sub-price]', this.format(plan.price));
       set('[data-pc-sub-compare]', this.format(ref), ref > plan.price);
-      if (d.servings > 0) set('[data-pc-sub-per]', `${this.format(plan.price / d.servings)} / ${d.perLabel}`);
-      const badge = d.badge || '';
-      if (badge.includes('[percent]')) {
-        set('[data-pc-badge]', badge.replace('[percent]', pct), pct > 0);
-      }
-      this.renderPlanSelect(v.plans, plan);
+      set('[data-pc-frequency]', plan.name.split(',')[0].trim());
+      set('[data-pc-sub-per]', perServing(plan.price), f.servings > 0);
+      if ((d.badge || '').includes('[percent]')) set('[data-pc-badge]', d.badge.replace('[percent]', pct), pct > 0);
+      this.renderPlanSelect(f.plans, plan);
     }
+    set('[data-pc-ot-price]', this.format(f.price));
+    set('[data-pc-ot-compare]', this.format(f.compare), f.compare > f.price);
+    set('[data-pc-ot-per]', perServing(f.price), f.servings > 0);
 
-    /* Tarjeta compra única */
-    set('[data-pc-ot-price]', this.format(v.price));
-    set('[data-pc-ot-compare]', this.format(v.compare), v.compare > v.price);
-    if (d.servings > 0) set('[data-pc-ot-per]', `${this.format(v.price / d.servings)} / ${d.perLabel}`);
+    /* Totales y botón */
+    const unit = isSub && plan ? plan.price : f.price;
+    const total = unit * this.state.qty;
+    const savings = (ref - unit) * this.state.qty;
 
-    /* Totales */
-    const unit = isSub && plan ? plan.price : v.price;
-    let total = unit * this.state.qty;
-    let regular = ref * this.state.qty;
-    let extraUnits = 0;
-
-    this.querySelectorAll('[data-pc-extra]').forEach((row) => {
-      const x = d.extras.find((e) => e.id === Number(row.dataset.pcExtra));
-      if (!x) return;
-      const xPlan = isSub ? this.matchPlan(x.plans, plan) : null;
-      const xUnit = xPlan ? xPlan.price : x.price;
-      const q = this.state.extras[x.id] || 0;
-      total += xUnit * q;
-      regular += this.refPrice(x) * q;
-      extraUnits += q;
-      row.querySelector('[data-pc-extra-price]').textContent = this.format(xUnit);
-      row.querySelector('[data-pc-extra-qty]').textContent = q;
-      row.querySelector('[data-pc-extra-step="-1"]').disabled = q === 0;
-      row.classList.toggle('is-selected', q > 0);
-    });
-
-    /* Cantidad */
     const qtyInput = this.$('[data-pc-qty]');
     if (qtyInput) qtyInput.value = this.state.qty;
     const minus = this.$('[data-pc-qty-step="-1"]');
     if (minus) minus.disabled = this.state.qty <= 1;
 
-    /* Botón */
-    const available = v.available;
     if (this.addButton && !this.busy) {
-      this.addButton.disabled = !available;
-      this.$('[data-pc-add-label]').textContent = available ? `${d.atcText} · ${this.format(total)}` : d.texts.soldOut;
+      this.addButton.disabled = !f.available;
+      set('[data-pc-add-label]', f.available ? d.atcText : d.texts.soldOut);
+      set('[data-pc-add-price]', this.format(total), f.available);
     }
+    set('[data-pc-savings]', `${d.texts.save} ${this.format(savings)}`, f.available && isSub && savings > 0);
+    const note = d.notes[this.state.type] || '';
+    set('[data-pc-note]', note, Boolean(note));
 
-    const savings = regular - total;
-    set('[data-pc-savings]', `${d.texts.save} ${this.format(savings)}`, available && savings > 0);
-
-    /* Pago acelerado: solo compra única, un producto */
+    /* Pago rápido: solo compra única del producto con el que cargó la página */
     const dynamic = this.$('[data-pc-dynamic]');
-    if (dynamic) dynamic.hidden = isSub || extraUnits > 0 || !available;
-    const formVariant = this.$('[data-pc-form-variant]');
-    if (formVariant) formVariant.value = v.id;
+    if (dynamic) dynamic.hidden = isSub || !f.available || this.state.flavor !== d.selected;
     const formQty = this.$('[data-pc-form-qty]');
     if (formQty) formQty.value = this.state.qty;
 
-    /* Sticky */
     if (this.sticky) {
+      this.sticky.querySelector('[data-pc-sticky-title]').textContent = f.short;
       this.sticky.querySelector('[data-pc-sticky-price]').textContent = this.format(total);
-      this.sticky.querySelector('[data-pc-sticky-add]').disabled = !available || this.busy;
+      this.sticky.querySelector('[data-pc-sticky-add]').disabled = !f.available || this.busy;
     }
   }
 
   renderPlanSelect(plans, plan) {
     const select = this.$('[data-pc-plan]');
-    const wrap = this.$('[data-pc-plan-wrap]');
     if (!select) return;
     const key = plans.map((p) => p.id).join(',');
     if (select.dataset.key !== key) {
@@ -244,37 +215,22 @@ class PcBuyBox extends HTMLElement {
       select.dataset.key = key;
     }
     select.value = String(plan.id);
+    const wrap = this.$('[data-pc-plan-wrap]');
     if (wrap) wrap.hidden = plans.length < 2;
   }
 
   /* ---------------- Carrito ---------------- */
 
-  buildItems() {
-    const plan = this.isSub ? this.plan : null;
-    const items = [{ id: this.variant.id, quantity: this.state.qty, ...(plan ? { selling_plan: plan.id } : {}) }];
-
-    for (const x of this.data.extras || []) {
-      const q = this.state.extras[x.id] || 0;
-      if (q <= 0) continue;
-      const xPlan = plan ? this.matchPlan(x.plans, plan) : null;
-      items.push({ id: x.id, quantity: q, ...(xPlan ? { selling_plan: xPlan.id } : {}) });
-    }
-    return items;
-  }
-
-  cartSectionIds() {
-    return [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
-  }
-
   setBusy(busy) {
     this.busy = busy;
-    if (!this.addButton) return;
-    this.addButton.disabled = busy || !this.variant.available;
-    this.addButton.classList.toggle('is-loading', busy);
-    this.addButton.setAttribute('aria-busy', String(busy));
-    if (busy) this.$('[data-pc-add-label]').textContent = this.data.texts.adding;
+    const available = this.flavor.available;
+    if (this.addButton) {
+      this.addButton.disabled = busy || !available;
+      this.addButton.setAttribute('aria-busy', String(busy));
+      if (busy) this.$('[data-pc-add-label]').textContent = this.data.texts.adding;
+    }
     const stickyBtn = this.sticky?.querySelector('[data-pc-sticky-add]');
-    if (stickyBtn) stickyBtn.disabled = busy || !this.variant.available;
+    if (stickyBtn) stickyBtn.disabled = busy || !available;
   }
 
   showError(message) {
@@ -285,34 +241,30 @@ class PcBuyBox extends HTMLElement {
   }
 
   async add() {
-    if (this.busy || !this.variant.available) return;
+    const f = this.flavor;
+    if (this.busy || !f.available) return;
     const { routes, texts } = this.data;
-    const items = this.buildItems();
-    const units = items.reduce((n, i) => n + i.quantity, 0);
-    const sectionIds = this.cartSectionIds();
+    const plan = this.isSub ? this.plan : null;
+    const item = { id: f.variantId, quantity: this.state.qty, ...(plan ? { selling_plan: plan.id } : {}) };
+    const sectionIds = [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
+    const sectionsParams = sectionIds.length ? { sections: sectionIds.join(','), sections_url: window.location.pathname } : {};
 
     this.showError('');
     this.setBusy(true);
-
     try {
       const res = await fetch(routes.add, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          items,
-          ...(sectionIds.length ? { sections: sectionIds.join(','), sections_url: window.location.pathname } : {})
-        })
+        body: JSON.stringify({ items: [item], ...sectionsParams })
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.description || json.message || texts.error);
 
       let sections = json.sections;
-      if (!this.isSub && this.data.codes.length) {
-        sections = (await this.applyCodes(sectionIds)) || sections;
-      }
+      if (!plan && this.data.codes.length) sections = (await this.applyCodes(sectionsParams)) || sections;
 
-      await this.announce(sections, units);
-      this.afterAdd();
+      await this.announce(sections, item.quantity);
+      this.state.qty = 1;
     } catch (err) {
       console.error('[pc-buy-box]', err);
       this.showError(err.message || texts.error);
@@ -322,30 +274,21 @@ class PcBuyBox extends HTMLElement {
     }
   }
 
-  /**
-   * /cart/update.js con `discount` REEMPLAZA los códigos del carrito:
-   * se fusiona con los existentes para no borrar cupones del cliente.
-   */
-  async applyCodes(sectionIds) {
+  /** /cart/update.js con `discount` REEMPLAZA los códigos: se fusiona con los del cliente. */
+  async applyCodes(sectionsParams) {
     const { routes, codes } = this.data;
     try {
       const cart = await fetch(routes.cart, { headers: { Accept: 'application/json' } }).then((r) => r.json());
       const merged = new Map((cart.discount_codes || []).map((c) => [String(c.code).toUpperCase(), c.code]));
       codes.forEach((c) => merged.set(c.toUpperCase(), c));
-
       const res = await fetch(routes.update, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          discount: [...merged.values()].join(','),
-          ...(sectionIds.length ? { sections: sectionIds.join(','), sections_url: window.location.pathname } : {})
-        })
+        body: JSON.stringify({ discount: [...merged.values()].join(','), ...sectionsParams })
       });
       if (!res.ok) return null;
       const updated = await res.json();
-      const applied = new Set(
-        (updated.discount_codes || []).filter((c) => c.applicable).map((c) => String(c.code).toUpperCase())
-      );
+      const applied = new Set((updated.discount_codes || []).filter((c) => c.applicable).map((c) => String(c.code).toUpperCase()));
       codes
         .filter((c) => !applied.has(c.toUpperCase()))
         .forEach((c) => console.warn(`[pc-buy-box] El código ${c} no aplica (revisa Combinations / Purchase type).`));
@@ -359,30 +302,17 @@ class PcBuyBox extends HTMLElement {
   async announce(sections, units) {
     const data = { source: 'pc-buy-box', itemCount: units, sections, didError: false };
     const mod = await themeEvents;
-    const event = mod?.CartAddEvent
-      ? new mod.CartAddEvent({}, this.id, data)
-      : new CustomEvent('cart:update', { bubbles: true, detail: { resource: {}, sourceId: this.id, data } });
-    this.dispatchEvent(event);
+    this.dispatchEvent(
+      mod?.CartAddEvent
+        ? new mod.CartAddEvent({}, this.id, data)
+        : new CustomEvent('cart:update', { bubbles: true, detail: { resource: {}, sourceId: this.id, data } })
+    );
 
     if (!this.data.openDrawer) return;
     const drawer = document.querySelector('cart-drawer-component');
-    if (!drawer) {
-      window.location.href = this.data.routes.cartPage;
-      return;
-    }
+    if (!drawer) return this.go(this.data.routes.cartPage);
     const isOpen = drawer.hasAttribute('open') || drawer.querySelector('dialog[open]');
     if (!isOpen) (drawer.open || drawer.showDialog)?.call(drawer);
-  }
-
-  afterAdd() {
-    this.state.qty = 1;
-    Object.keys(this.state.extras).forEach((id) => (this.state.extras[id] = 0));
-    if (!this.data.openDrawer) {
-      const label = this.$('[data-pc-add-label]');
-      this.render();
-      label.textContent = this.data.texts.added;
-      setTimeout(() => this.render(), 1800);
-    }
   }
 
   /* ---------------- Sticky móvil ---------------- */
@@ -394,8 +324,7 @@ class PcBuyBox extends HTMLElement {
       this.sticky.querySelector('[data-pc-sticky-add]').addEventListener('click', () => this.add());
     }
     if (!this.addButton || !('IntersectionObserver' in window)) return;
-
-    // Se mueve a <body> para que ningún ancestro con transform/overflow rompa el position:fixed.
+    // A <body> para que ningún ancestro con transform/overflow rompa el position:fixed.
     document.body.append(this.sticky);
     this.sticky.inert = true;
     this.io = new IntersectionObserver(([entry]) => {

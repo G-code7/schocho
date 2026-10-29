@@ -1,29 +1,29 @@
-/* Buy box único — Pronto Chocho. Variables por instancia vía style="--pc-*" */
+/* Selector de compra en 2 pasos — Pronto Chocho. Variables por instancia vía style="--pc-*" */
 .pc-bb,
 .pc-bb-sticky {
   --pc-accent: #3e2563;
   --pc-surface: #fffcf8;
   --pc-surface-active: #fcf3ec;
   --pc-border: #e8e4df;
-  --pc-btn: #1a1a1a;
+  --pc-btn: #3e2563;
   --pc-btn-text: #ffffff;
   --pc-radius: 12px;
-  --pc-muted: color-mix(in srgb, currentColor 62%, transparent);
+  --pc-muted: color-mix(in srgb, currentColor 64%, transparent);
 }
 
 .pc-bb {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   width: 100%;
   max-width: 520px;
 }
 
 .pc-bb fieldset {
-  border: 0;
+  min-width: 0;
   margin: 0;
   padding: 0;
-  min-width: 0;
+  border: 0;
 }
 
 .pc-bb__visually-hidden {
@@ -38,65 +38,125 @@
   border: 0;
 }
 
-.pc-bb__label {
-  margin: 0 0 8px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-/* ---------- Variantes ---------- */
-.pc-bb__pills {
+/* ---------- Pasos ---------- */
+.pc-bb__step-title {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.pc-bb__pill input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-.pc-bb__pill span {
-  display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1.5px solid var(--pc-border);
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.pc-bb__pill input:checked + span {
-  border-color: var(--pc-accent);
-  background: var(--pc-surface-active);
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 0;
+  font-size: 15px;
   font-weight: 700;
 }
-.pc-bb__pill input:focus-visible + span {
-  outline: 2px solid var(--pc-accent);
-  outline-offset: 2px;
-}
-.pc-bb__pill .is-unavailable {
-  text-decoration: line-through;
-  opacity: 0.55;
+.pc-bb__step-num {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--pc-accent);
+  color: #fff;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Opciones de compra ---------- */
-.pc-bb__options {
+/* ---------- Paso 1: sabores (el elemento protagonista) ---------- */
+.pc-bb__flavors {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 10px;
+}
+.pc-bb__flavor {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.pc-bb__option {
-  position: relative;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px 12px;
   border: 2px solid var(--pc-border);
   border-radius: var(--pc-radius);
   background: var(--pc-surface);
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.pc-bb__flavor:hover {
+  border-color: color-mix(in srgb, var(--pc-accent) 50%, var(--pc-border));
+}
+.pc-bb__flavor.is-active {
+  border-color: var(--pc-accent);
+  background: var(--pc-surface-active);
+}
+.pc-bb__flavor:has(input:focus-visible) {
+  outline: 2px solid var(--pc-accent);
+  outline-offset: 2px;
+}
+.pc-bb__flavor:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+/* Marca de selección: confirma la elección sin depender solo del color */
+.pc-bb__flavor.is-active::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--pc-accent)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")
+    center / 12px no-repeat;
+}
+.pc-bb__flavor-img {
+  display: block;
+  width: 100%;
+  max-width: 96px;
+  aspect-ratio: 1;
+}
+.pc-bb__flavor-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pc-bb__flavor-name {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+.pc-bb__flavor-out {
+  font-size: 12px;
+  color: var(--pc-muted);
+}
+/* Nombre completo del sabor elegido: sin recortes */
+.pc-bb__flavor-title {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.pc-bb__flavor-nutrition {
+  margin: 2px 0 0;
+  color: var(--pc-muted);
+  font-size: 13px;
+}
+
+/* ---------- Paso 2: planes ---------- */
+.pc-bb__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pc-bb__option {
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius);
+  background: var(--pc-surface);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 .pc-bb__option:hover {
-  border-color: color-mix(in srgb, var(--pc-accent) 55%, var(--pc-border));
+  border-color: color-mix(in srgb, var(--pc-accent) 50%, var(--pc-border));
 }
 .pc-bb__option.is-active {
   border-color: var(--pc-accent);
@@ -106,15 +166,13 @@
   outline: 2px solid var(--pc-accent);
   outline-offset: 2px;
 }
-
 .pc-bb__option-main {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 16px;
+  padding: 14px 16px;
   cursor: pointer;
 }
-
 .pc-bb__radio {
   position: relative;
   flex-shrink: 0;
@@ -135,7 +193,6 @@
   border-radius: 50%;
   background: var(--pc-accent);
 }
-
 .pc-bb__option-body {
   display: flex;
   flex: 1;
@@ -159,16 +216,13 @@
   line-height: 1.3;
 }
 .pc-bb__badge {
-  padding: 3px 10px;
+  padding: 2px 9px;
   border-radius: 999px;
   background: var(--pc-accent);
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
 }
-
 .pc-bb__price {
   display: flex;
   flex-direction: column;
@@ -177,24 +231,24 @@
   font-variant-numeric: tabular-nums;
 }
 .pc-bb__price strong {
-  color: var(--pc-accent);
   font-size: 18px;
   font-weight: 800;
+}
+.pc-bb__option.is-active .pc-bb__price strong {
+  color: var(--pc-accent);
 }
 .pc-bb__price s {
   color: var(--pc-muted);
   font-size: 13px;
 }
-
 .pc-bb__meta {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 4px 12px;
+  gap: 2px 12px;
   color: var(--pc-muted);
   font-size: 13px;
 }
-
 .pc-bb__plan {
   padding: 0 16px 12px 48px;
 }
@@ -208,10 +262,9 @@
   font: inherit;
   font-size: 14px;
 }
-
 .pc-bb__benefits {
   margin: 0;
-  padding: 0 16px 16px 48px;
+  padding: 0 16px 14px 48px;
   list-style: none;
   font-size: 13px;
 }
@@ -223,69 +276,28 @@
 .pc-bb__benefits li::before {
   content: '';
   position: absolute;
-  left: 0;
   top: 0.35em;
+  left: 0;
   width: 12px;
   height: 12px;
   background: var(--pc-accent);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-/* Beneficios y frecuencia solo cuando la suscripción está activa: menos ruido */
 .pc-bb__option:not(.is-active) .pc-bb__benefits,
 .pc-bb__option:not(.is-active) .pc-bb__plan {
   display: none;
 }
 
-/* ---------- Sabores extra ---------- */
-.pc-bb__extras {
+/* ---------- Compra ---------- */
+.pc-bb__buy {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
-.pc-bb__extra {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius);
-  background: #fff;
-}
-.pc-bb__extra.is-selected {
-  border-color: var(--pc-accent);
-}
-.pc-bb__extra-img {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-.pc-bb__extra-info {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-width: 0;
-}
-.pc-bb__extra-title {
-  overflow: hidden;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.pc-bb__extra-price {
-  color: var(--pc-muted);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---------- Stepper ---------- */
 .pc-bb__stepper {
   display: inline-flex;
-  align-items: center;
   flex-shrink: 0;
+  align-items: center;
   border: 1.5px solid var(--pc-border);
   border-radius: calc(var(--pc-radius) * 0.6);
   background: #fff;
@@ -293,7 +305,7 @@
 }
 .pc-bb__stepper button {
   width: 40px;
-  height: 44px;
+  height: 52px;
   border: 0;
   background: transparent;
   color: inherit;
@@ -308,36 +320,30 @@
   outline: 2px solid var(--pc-accent);
   outline-offset: -2px;
 }
-.pc-bb__stepper > span,
 .pc-bb__stepper input {
-  min-width: 28px;
-  font-weight: 700;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
-.pc-bb__stepper input {
-  width: 40px;
-  height: 44px;
+  width: 36px;
+  height: 52px;
   border: 0;
   background: transparent;
   font: inherit;
   font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
   -moz-appearance: textfield;
 }
 .pc-bb__stepper input::-webkit-outer-spin-button,
 .pc-bb__stepper input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
   margin: 0;
+  -webkit-appearance: none;
 }
 
-/* ---------- Compra ---------- */
-.pc-bb__buy {
-  display: flex;
-  gap: 10px;
-}
+/* Botón: acción a la izquierda, total a la derecha */
 .pc-bb__atc {
-  position: relative;
+  display: flex;
   flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   min-height: 52px;
   padding: 0 20px;
   border: 0;
@@ -347,12 +353,11 @@
   font: inherit;
   font-size: 16px;
   font-weight: 700;
-  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: filter 0.15s ease;
 }
 .pc-bb__atc:hover:not(:disabled) {
-  transform: translateY(-1px);
+  filter: brightness(1.12);
 }
 .pc-bb__atc:focus-visible {
   outline: 2px solid var(--pc-btn);
@@ -362,16 +367,31 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-.pc-bb__atc.is-loading {
-  opacity: 0.8;
+.pc-bb__atc[aria-busy='true'] {
+  justify-content: center;
+}
+.pc-bb__atc[aria-busy='true'] .pc-bb__atc-price {
+  display: none;
+}
+.pc-bb__atc-price {
+  font-variant-numeric: tabular-nums;
 }
 
-.pc-bb__savings {
-  margin: -4px 0 0;
-  color: var(--pc-accent);
+.pc-bb__savings,
+.pc-bb__note {
+  margin: -10px 0 0;
   font-size: 14px;
-  font-weight: 700;
   text-align: center;
+}
+.pc-bb__savings {
+  color: var(--pc-accent);
+  font-weight: 700;
+}
+.pc-bb__savings + .pc-bb__note {
+  margin-top: -16px;
+}
+.pc-bb__note {
+  color: var(--pc-muted);
 }
 .pc-bb__error {
   margin: 0;
@@ -381,17 +401,14 @@
   color: #8a1c13;
   font-size: 14px;
 }
-.pc-bb__dynamic:empty {
-  display: none;
-}
 
 /* ---------- Sticky móvil ---------- */
 .pc-bb-sticky {
   position: fixed;
   z-index: 50;
-  left: 0;
   right: 0;
   bottom: 0;
+  left: 0;
   display: none;
   align-items: center;
   gap: 12px;
@@ -409,17 +426,16 @@
   min-width: 0;
 }
 .pc-bb-sticky__title {
-  overflow: hidden;
   font-size: 13px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  font-weight: 800;
 }
 .pc-bb-sticky__price {
-  font-weight: 800;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 .pc-bb-sticky .pc-bb__atc {
   flex: 0 0 auto;
+  justify-content: center;
   min-height: 48px;
 }
 
