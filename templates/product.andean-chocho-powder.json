@@ -292,6 +292,43 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "pc_buy_box_3RKkCc": {
+                  "type": "pc-buy-box",
+                  "name": "Selector de compra",
+                  "settings": {
+                    "flavors": [
+                      "chocho-pure-ingredient"
+                    ],
+                    "flavor_label": "Choose your flavor",
+                    "product": "chocho-pure-ingredient",
+                    "plan_label": "Choose your plan",
+                    "default_option": "subscription",
+                    "sub_title": "Subscribe & Save",
+                    "sub_badge": "Save [percent]%",
+                    "benefits": "Cancel or skip anytime",
+                    "onetime_title": "One-time purchase",
+                    "onetime_subtitle": "",
+                    "onetime_codes": "",
+                    "note_sub": "",
+                    "note_onetime": "",
+                    "show_per_serving": true,
+                    "servings": 15,
+                    "per_label": "serving",
+                    "show_quantity": true,
+                    "atc_text": "Add to cart",
+                    "show_dynamic_checkout": false,
+                    "open_drawer": true,
+                    "sticky_mobile": true,
+                    "accent": "#3e2563",
+                    "surface": "#FFFCF8",
+                    "surface_active": "#FCF3EC",
+                    "border": "#E8E4DF",
+                    "button_bg": "#3e2563",
+                    "button_text": "#ffffff",
+                    "radius": 12
+                  },
+                  "blocks": {}
+                },
                 "subscription_purchase_v4_Tgy4r6": {
                   "type": "subscription-purchase-v4",
                   "name": "Pronto-Chocho Selector v4",
@@ -340,6 +377,7 @@
                 }
               },
               "block_order": [
+                "pc_buy_box_3RKkCc",
                 "subscription_purchase_v4_Tgy4r6"
               ]
             },
