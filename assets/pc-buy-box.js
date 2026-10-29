@@ -18,6 +18,12 @@ class PcBuyBox extends HTMLElement {
     this.busy = false;
     this.addEventListener('change', (e) => this.onChange(e));
     this.addEventListener('click', (e) => this.onClick(e));
+    // Al volver con "atrás" el navegador restaura la página tal cual: se deshace el feedback de navegación.
+    window.addEventListener('pageshow', (e) => {
+      if (!e.persisted || !this.data) return;
+      this.removeAttribute('aria-busy');
+      this.render();
+    });
   }
 
   connectedCallback() {
@@ -82,7 +88,14 @@ class PcBuyBox extends HTMLElement {
     if (t.matches('[data-pc-flavor]')) {
       const index = Number(t.value);
       if (this.data.navigate && index !== this.data.selected) {
+        // Feedback inmediato mientras carga la página del otro sabor.
+        this.querySelectorAll('[data-pc-flavor]').forEach((r) => r.closest('.pc-bb__flavor')?.classList.toggle('is-active', r === t));
+        this.setAttribute('aria-busy', 'true');
+        // Conserva los parámetros actuales (?view= de prueba, preview_theme_id, utm_*), salvo la variante.
         const url = new URL(this.data.flavors[index].url, window.location.origin);
+        new URLSearchParams(window.location.search).forEach((value, key) => {
+          if (key !== 'variant') url.searchParams.set(key, value);
+        });
         url.searchParams.set('purchase', this.state.type);
         this.go(url.toString());
         return;

@@ -200,6 +200,7 @@
                 name="pc-bb-flavor-{{ uid }}"
                 value="{{ forloop.index0 }}"
                 data-pc-flavor
+                autocomplete="off"
                 {% if forloop.index0 == sel %}checked{% endif %}
                 {% unless fv.available %}disabled{% endunless %}
               >
@@ -239,6 +240,7 @@
               name="pc-bb-type-{{ uid }}"
               value="subscription"
               data-pc-type
+              autocomplete="off"
               {% if type == 'subscription' %}checked{% endif %}
             >
             <span class="pc-bb__radio" aria-hidden="true"></span>
@@ -266,7 +268,7 @@
 
           <div class="pc-bb__plan" data-pc-plan-wrap{% if allocs.size < 2 %} hidden{% endif %}>
             <label class="pc-bb__visually-hidden" for="pc-bb-plan-{{ uid }}">Delivery frequency</label>
-            <select id="pc-bb-plan-{{ uid }}" class="pc-bb__select" data-pc-plan>
+            <select id="pc-bb-plan-{{ uid }}" class="pc-bb__select" data-pc-plan autocomplete="off">
               {%- for a in allocs -%}
                 <option value="{{ a.selling_plan.id }}"{% if forloop.first %} selected{% endif %}>{{ a.selling_plan.name }}</option>
               {%- endfor -%}
@@ -297,6 +299,7 @@
               name="pc-bb-type-{{ uid }}"
               value="onetime"
               data-pc-type
+              autocomplete="off"
               {% if type == 'onetime' %}checked{% endif %}
             >
             <span class="pc-bb__radio" aria-hidden="true"></span>
@@ -326,7 +329,7 @@
       {%- if show_quantity != false -%}
         <span class="pc-bb__stepper">
           <button type="button" data-pc-qty-step="-1" aria-label="Decrease quantity" disabled>−</button>
-          <input type="number" inputmode="numeric" min="1" value="1" data-pc-qty aria-label="Quantity">
+          <input type="number" inputmode="numeric" min="1" value="1" data-pc-qty autocomplete="off" aria-label="Quantity">
           <button type="button" data-pc-qty-step="1" aria-label="Increase quantity">+</button>
         </span>
       {%- endif -%}

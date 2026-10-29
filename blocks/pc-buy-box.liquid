@@ -16,8 +16,9 @@
     assign p = flavors.first
   endif
 
+  # En el editor se cambia en el mismo lugar, para poder previsualizar cada sabor.
   assign navigate = false
-  if template.name == 'product' and p.id == product.id
+  if template.name == 'product' and p.id == product.id and request.design_mode == false
     assign navigate = true
   endif
 
