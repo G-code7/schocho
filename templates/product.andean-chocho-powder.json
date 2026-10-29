@@ -327,7 +327,7 @@
                     "border": "#e8e4df",
                     "button_bg": "#3e2563",
                     "button_text": "#ffffff",
-                    "radius": 12
+                    "radius": 24
                   },
                   "blocks": {}
                 },
