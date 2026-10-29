@@ -1,0 +1,742 @@
+{% doc %}
+  Pronto-Chocho Plan Picker v1 — evolución del Selector v4.
+
+  Paso 1: plan (Subscribe & Save o compra única) con el descuento real.
+  Paso 2: sabores con cantidad. Arranca con el producto actual (o el primero) en 1.
+
+  - Precio de suscripción, % de ahorro y frecuencia salen del selling plan del
+    producto (selling_plan_allocations): no depende del widget de la app.
+  - Compra única: aplica TODOS los códigos configurados (p. ej. CHOCHOFUEL15,
+    FUELSHIPPING) sin borrar los que el cliente ya tenga en el carrito.
+  - El JS va en el bloque javascript de abajo: Shopify lo carga una vez en toda la tienda,
+    así funciona también cuando el editor inserta o re-renderiza el bloque.
+{% enddoc %}
+{%- liquid
+  assign current = closest.product | default: product
+  assign list = block.settings.products
+  assign uid = block.id | replace: '_', '' | downcase
+  assign plan_setting = block.settings.selling_plan_id | strip
+  assign servings = block.settings.servings_per_unit | default: 15 | at_least: 1
+
+  # Códigos de compra única; el % solo se muestra si hay códigos.
+  assign codes = block.settings.onetime_codes | split: ','
+  assign codes_clean = ''
+  for c in codes
+    assign cc = c | strip
+    if cc != blank
+      assign codes_clean = codes_clean | append: ',' | append: cc
+    endif
+  endfor
+  assign codes_clean = codes_clean | remove_first: ','
+  assign ot_pct = 0
+  if codes_clean != blank
+    assign ot_pct = block.settings.onetime_percent | default: 0
+  endif
+  assign ot_keep = 100 | minus: ot_pct
+
+  # Producto de referencia (precios de las tarjetas de plan y preselección):
+  # el producto de la página si está en la lista; si no, el primero.
+  assign n = list.size | default: 0
+  assign ref = list.first
+  for x in list
+    if x.id == current.id
+      assign ref = x
+      break
+    endif
+  endfor
+  if n == 0
+    assign ref = current
+    assign n = 1
+  endif
+-%}
+
+{%- if ref == blank -%}
+  {%- if request.design_mode -%}
+    <p {{ block.shopify_attributes }} style="padding:24px;text-align:center;color:#666">
+      Elige los sabores en la configuración del bloque.
+    </p>
+  {%- endif -%}
+{%- else -%}
+  {%- capture rows -%}
+    {%- for i in (1..n) -%}
+      {%- liquid
+        assign fp = ref
+        if list != blank
+          assign skip = forloop.index0
+          for x in list offset: skip limit: 1
+            assign fp = x
+          endfor
+        endif
+        assign fv = fp.selected_or_first_available_variant
+        assign alloc = nil
+        for a in fv.selling_plan_allocations
+          assign a_id = a.selling_plan.id | append: ''
+          if plan_setting == blank or a_id == plan_setting
+            assign alloc = a
+            break
+          endif
+        endfor
+        assign compare = fv.compare_at_price | default: fv.price | at_least: fv.price
+        assign qty = 0
+        if block.settings.preselect and fp.id == ref.id and fv.available
+          assign qty = 1
+        endif
+        if fp.id == ref.id
+          assign ref_v = fv
+          assign ref_alloc = alloc
+          assign ref_compare = compare
+        endif
+      -%}
+      <li
+        class="cpp__row"
+        data-row
+        data-qty="{{ qty }}"
+        data-variant-id="{{ fv.id }}"
+        data-price="{{ fv.price }}"
+        data-compare="{{ compare }}"
+        {%- if alloc %} data-plan-id="{{ alloc.selling_plan.id }}" data-plan-price="{{ alloc.price }}"{% endif %}
+        {%- unless fv.available %} data-soldout{% endunless %}
+      >
+        <span class="cpp__thumb">
+          {%- if fp.featured_image -%}
+            {{ fp.featured_image | image_url: width: 120, height: 120, crop: 'center' | image_tag: width: 56, height: 56, loading: 'lazy', alt: '' }}
+          {%- endif -%}
+        </span>
+        <span class="cpp__row-info">
+          <span class="cpp__row-name" id="cpp-{{ uid }}-{{ i }}">{{ fp.title }}</span>
+          <span class="cpp__row-meta">
+            {%- if fv.available -%}{{ block.settings.servings_text }}{%- else -%}Sold out{%- endif -%}
+          </span>
+        </span>
+        <span class="cpp__stepper" role="group" aria-labelledby="cpp-{{ uid }}-{{ i }}">
+          <button type="button" data-step="-1" aria-label="Remove one" {% if qty == 0 %}disabled{% endif %}>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9"/></svg>
+          </button>
+          <output data-qty aria-live="polite">{{ qty }}</output>
+          <button type="button" data-step="1" aria-label="Add one" {% unless fv.available %}disabled{% endunless %}>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9M8 3.5v9"/></svg>
+          </button>
+        </span>
+      </li>
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- liquid
+    assign has_sub = false
+    if ref_alloc
+      assign has_sub = true
+      assign sub_price = ref_alloc.price
+      assign sub_pct = ref_compare | minus: sub_price | times: 100.0 | divided_by: ref_compare | round
+      assign frequency = ref_alloc.selling_plan.name | split: ',' | first | strip
+      assign badge = block.settings.sub_badge | replace: '[percent]', sub_pct
+    endif
+    assign ot_price = ref_v.price | times: ot_keep | divided_by: 100.0 | round
+    assign ot_perk = block.settings.onetime_perk | replace: '[percent]', ot_pct
+    assign sub_checked = has_sub
+    if block.settings.default_option == 'onetime'
+      assign sub_checked = false
+    endif
+  -%}
+
+  <chocho-plan-picker
+    class="cpp"
+    {{ block.shopify_attributes }}
+    data-codes="{{ codes_clean | escape }}"
+    data-ot-percent="{{ ot_pct }}"
+    data-open-drawer="{{ block.settings.open_drawer }}"
+    data-locale="{{ request.locale.iso_code }}"
+    data-currency="{{ cart.currency.iso_code | default: 'USD' }}"
+    data-text-add="{{ block.settings.button_text | escape }}"
+    data-text-empty="{{ block.settings.empty_text | escape }}"
+    data-text-added="{{ block.settings.added_text | escape }}"
+    style="--cpp-accent: {{ block.settings.accent }}; --cpp-surface: {{ block.settings.surface }}; --cpp-surface-active: {{ block.settings.surface_active }}; --cpp-border: {{ block.settings.border }}; --cpp-btn: {{ block.settings.button_bg }}; --cpp-btn-text: {{ block.settings.button_text_color }}; --cpp-radius: {{ block.settings.radius }}px;"
+  >
+    <fieldset class="cpp__step">
+      <legend class="cpp__heading"><span class="cpp__num" aria-hidden="true">1</span>{{ block.settings.plan_heading }}</legend>
+
+      {%- if has_sub -%}
+        <label class="cpp__plan">
+          {%- if badge != blank -%}<span class="cpp__badge">{{ badge }}</span>{%- endif -%}
+          <input class="cpp__radio" type="radio" name="cpp-plan-{{ uid }}" value="subscription" data-plan-input {% if sub_checked %}checked{% endif %}>
+          <span class="cpp__plan-text">
+            <span class="cpp__plan-title">{{ block.settings.sub_title }}</span>
+            <span class="cpp__plan-sub">{{ frequency }}</span>
+          </span>
+          <span class="cpp__price">
+            <span class="cpp__price-now">
+              {%- if ref_compare > sub_price -%}<s>{{ ref_compare | money }}</s> {% endif -%}
+              {{ sub_price | money }}
+            </span>
+            {%- if block.settings.show_per_serving -%}
+              <span class="cpp__price-per">{{ sub_price | times: 1.0 | divided_by: servings | round | money }} / {{ block.settings.per_text }}</span>
+            {%- endif -%}
+          </span>
+          {%- assign benefits = block.settings.benefits | newline_to_br | split: '<br />' -%}
+          {%- if block.settings.benefits != blank -%}
+            <span class="cpp__benefits">
+              <span class="cpp__benefits-inner">
+                {%- for b in benefits -%}
+                  {%- assign b = b | strip -%}
+                  {%- if b != blank -%}<span class="cpp__benefit">{{ b }}</span>{%- endif -%}
+                {%- endfor -%}
+              </span>
+            </span>
+          {%- endif -%}
+        </label>
+      {%- endif -%}
+
+      <label class="cpp__plan">
+        <input class="cpp__radio" type="radio" name="cpp-plan-{{ uid }}" value="onetime" data-plan-input {% unless sub_checked %}checked{% endunless %}>
+        <span class="cpp__plan-text">
+          <span class="cpp__plan-title">{{ block.settings.onetime_title }}</span>
+          {%- if codes_clean != blank and ot_perk != blank -%}
+            <span class="cpp__plan-sub">{{ ot_perk }}</span>
+          {%- endif -%}
+        </span>
+        <span class="cpp__price">
+          <span class="cpp__price-now">
+            {%- if ref_compare > ot_price -%}<s>{{ ref_compare | money }}</s> {% endif -%}
+            {{ ot_price | money }}
+          </span>
+          {%- if block.settings.show_per_serving -%}
+            <span class="cpp__price-per">{{ ot_price | times: 1.0 | divided_by: servings | round | money }} / {{ block.settings.per_text }}</span>
+          {%- endif -%}
+        </span>
+      </label>
+    </fieldset>
+
+    <div class="cpp__step" role="group" aria-labelledby="cpp-{{ uid }}-flavors">
+      <p class="cpp__heading" id="cpp-{{ uid }}-flavors"><span class="cpp__num" aria-hidden="true">2</span>{{ block.settings.flavors_heading }}</p>
+      <ul class="cpp__rows" role="list">{{ rows }}</ul>
+    </div>
+
+    <p class="cpp__summary" data-summary hidden>
+      <span>{{ block.settings.savings_label }} <b data-savings></b></span>
+      <span class="cpp__total"><s data-regular></s> <b data-total></b></span>
+    </p>
+
+    <button type="button" class="cpp__add" data-add>
+      <span data-add-label>{{ block.settings.button_text }}</span>
+      <span class="cpp__add-price" data-add-price></span>
+    </button>
+
+    {%- liquid
+      assign note_sub = block.settings.note_sub | strip
+      assign note_ot = block.settings.note_onetime | strip
+    -%}
+    {%- if note_sub != blank -%}<p class="cpp__note" data-note="subscription">{{ note_sub }}</p>{%- endif -%}
+    {%- if note_ot != blank -%}<p class="cpp__note" data-note="onetime">{{ note_ot }}</p>{%- endif -%}
+    <p class="cpp__msg" data-msg role="status" hidden></p>
+  </chocho-plan-picker>
+{%- endif -%}
+
+{% stylesheet %}
+  .cpp {
+    --cpp-ink: #1a1a1a;
+    --cpp-muted: #5f5a66;
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 480px;
+    color: var(--cpp-ink);
+  }
+  .cpp [hidden] { display: none !important; }
+  .cpp__step { display: grid; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+  .cpp__heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 4px;
+    padding: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .cpp__num {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--cpp-accent);
+    color: #fff;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- Paso 1: planes ---- */
+  .cpp__plan {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+    column-gap: 12px;
+    padding: 16px;
+    border: 1.5px solid var(--cpp-border);
+    border-radius: var(--cpp-radius);
+    background: var(--cpp-surface);
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .cpp__plan:has(.cpp__badge) { margin-top: 8px; padding-top: 20px; }
+  .cpp__plan:hover { border-color: color-mix(in srgb, var(--cpp-accent) 45%, var(--cpp-border)); }
+  .cpp__plan:has(:checked) { border-color: var(--cpp-accent); background: var(--cpp-surface-active); }
+  .cpp__badge {
+    position: absolute;
+    top: -11px;
+    left: 16px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--cpp-accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .cpp__radio {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    margin: 1px 0 0;
+    border: 2px solid #b9b3c0;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .cpp__radio:checked { border-color: var(--cpp-accent); box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 10px var(--cpp-accent); }
+  .cpp__radio:focus-visible { outline: 2px solid var(--cpp-accent); outline-offset: 3px; }
+  .cpp__plan-text { display: grid; gap: 2px; }
+  .cpp__plan-title { font-size: 16px; font-weight: 800; line-height: 1.3; }
+  .cpp__plan-sub { font-size: 13px; color: var(--cpp-muted); line-height: 1.4; }
+  .cpp__price { display: grid; justify-items: end; gap: 2px; text-align: right; }
+  .cpp__price-now {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--cpp-accent);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .cpp s { font-size: 0.8em; font-weight: 400; color: var(--cpp-muted); }
+  .cpp__price-per { font-size: 12px; color: var(--cpp-muted); white-space: nowrap; }
+
+  /* Beneficios: se despliegan solo en el plan elegido */
+  .cpp__benefits {
+    grid-column: 2 / -1;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .cpp__plan:has(:checked) .cpp__benefits { grid-template-rows: 1fr; }
+  .cpp__benefits-inner { display: grid; gap: 6px; min-height: 0; overflow: hidden; }
+  .cpp__plan:has(:checked) .cpp__benefits-inner { padding-top: 12px; }
+  .cpp__benefit { position: relative; padding-left: 20px; font-size: 13px; line-height: 1.4; color: #4a4552; }
+  .cpp__benefit::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    width: 13px;
+    height: 13px;
+    background: var(--cpp-accent);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  /* ---- Paso 2: sabores ---- */
+  .cpp__rows { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .cpp__row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px 10px 10px;
+    border: 1.5px solid var(--cpp-border);
+    border-radius: var(--cpp-radius);
+    background: #fff;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .cpp__row[data-active] { border-color: var(--cpp-accent); }
+  .cpp__row[data-soldout] { background: var(--cpp-surface); }
+  .cpp__row[data-soldout] .cpp__thumb { opacity: 0.5; }
+  .cpp__thumb { width: 56px; height: 56px; overflow: hidden; border-radius: calc(var(--cpp-radius) * 0.6); background: #f3f0ec; }
+  .cpp__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .cpp__row-info { display: grid; gap: 2px; }
+  .cpp__row-name { font-size: 14px; font-weight: 600; line-height: 1.35; text-wrap: pretty; }
+  .cpp__row-meta { font-size: 12px; color: var(--cpp-muted); }
+  .cpp__stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--cpp-border);
+    border-radius: 999px;
+    background: #fff;
+  }
+  .cpp__stepper button {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--cpp-ink);
+    cursor: pointer;
+  }
+  .cpp__stepper svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .cpp__stepper button:hover:not(:disabled) { background: var(--cpp-surface-active); color: var(--cpp-accent); }
+  .cpp__stepper button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cpp__stepper button:focus-visible { outline: 2px solid var(--cpp-accent); outline-offset: 1px; }
+  .cpp__stepper output { min-width: 2ch; text-align: center; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  @media (pointer: coarse) {
+    .cpp__stepper button { width: 44px; height: 44px; }
+  }
+
+  /* ---- Resumen y botón ---- */
+  .cpp__summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 12px;
+    margin: 0;
+    padding: 12px 16px;
+    border-radius: var(--cpp-radius);
+    background: var(--cpp-surface-active);
+    font-size: 14px;
+  }
+  .cpp__summary b { color: var(--cpp-accent); }
+  .cpp__total { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cpp__total b { color: var(--cpp-ink); }
+  .cpp__add {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 56px;
+    margin-top: -8px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: var(--cpp-radius);
+    background: var(--cpp-btn);
+    color: var(--cpp-btn-text);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+  }
+  .cpp__add:hover:not(:disabled) { background: color-mix(in srgb, var(--cpp-btn) 86%, #000); box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--cpp-btn) 60%, transparent); }
+  .cpp__add:focus-visible { outline: 2px solid var(--cpp-btn); outline-offset: 3px; }
+  .cpp__add:disabled { cursor: not-allowed; opacity: 0.55; }
+  .cpp__add:has(.cpp__add-price:empty) { justify-content: center; }
+  .cpp__add-price { font-variant-numeric: tabular-nums; }
+  .cpp__add[aria-busy='true'] .cpp__add-price { visibility: hidden; }
+  .cpp__add[aria-busy='true']::after {
+    content: '';
+    position: absolute;
+    right: 24px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: cpp-spin 0.8s linear infinite;
+  }
+  @keyframes cpp-spin { to { transform: rotate(360deg); } }
+  .cpp__note, .cpp__msg { margin: -10px 0 0; font-size: 13px; text-align: center; color: var(--cpp-muted); }
+  .cpp:has([value='subscription']:checked) [data-note='onetime'],
+  .cpp:has([value='onetime']:checked) [data-note='subscription'] { display: none; }
+  .cpp__msg[data-error] { color: #b42318; }
+
+  /* Pantallas angostas: el precio tachado sube para dejarle ancho al título */
+  @media (max-width: 420px) {
+    .cpp__plan { padding-inline: 14px; column-gap: 10px; }
+    .cpp__price-now s { display: block; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cpp *, .cpp *::after { transition: none !important; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  /* Pronto-Chocho Plan Picker v1. Lee todo del DOM: sin JSON que se pueda romper. */
+  if (!customElements.get('chocho-plan-picker')) {
+    const themeEvents = import('@theme/events').catch(() => null);
+    const root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
+
+    const post = async (url, body) => {
+      const res = await fetch(root + url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.description || json.message || 'Could not add to cart. Try again.');
+      return json;
+    };
+
+    customElements.define(
+      'chocho-plan-picker',
+      class extends HTMLElement {
+        constructor() {
+          super();
+          // Delegados en el propio elemento: funcionan aunque el contenido llegue después.
+          this.addEventListener('change', () => this.render());
+          this.addEventListener('click', (e) => {
+            const step = e.target.closest('[data-step]');
+            if (step) this.step(step);
+            else if (e.target.closest('[data-add]')) this.add();
+          });
+        }
+
+        connectedCallback() {
+          if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => this.render(), { once: true });
+          else this.render();
+        }
+
+        get rows() { return [...this.querySelectorAll('[data-row]')]; }
+        get isSub() { return this.querySelector('[data-plan-input]:checked')?.value === 'subscription'; }
+        get codes() { return (this.dataset.codes || '').split(',').map((c) => c.trim()).filter(Boolean); }
+
+        money(cents) {
+          try {
+            return new Intl.NumberFormat(this.dataset.locale || 'en', { style: 'currency', currency: this.dataset.currency || 'USD' }).format(cents / 100);
+          } catch {
+            return '$' + (cents / 100).toFixed(2);
+          }
+        }
+
+        /** Precio por unidad según el plan elegido. Sin selling plan → precio normal. */
+        unit(row) {
+          if (this.isSub && row.dataset.planId) return +row.dataset.planPrice;
+          return Math.round(row.dataset.price * (1 - (+this.dataset.otPercent || 0) / 100));
+        }
+
+        step(btn) {
+          const row = btn.closest('[data-row]');
+          row.dataset.qty = Math.max(0, (+row.dataset.qty || 0) + +btn.dataset.step);
+          this.render();
+        }
+
+        render() {
+          const btn = this.querySelector('[data-add]');
+          if (!btn) return;
+          let qty = 0, total = 0, regular = 0;
+          for (const row of this.rows) {
+            const q = row.hasAttribute('data-soldout') ? 0 : +row.dataset.qty || 0;
+            row.querySelector('[data-qty]').textContent = q;
+            row.querySelector('[data-step="-1"]').disabled = q === 0;
+            row.toggleAttribute('data-active', q > 0);
+            qty += q;
+            total += q * this.unit(row);
+            regular += q * Math.max(+row.dataset.compare, +row.dataset.price);
+          }
+          const saving = regular - total;
+          const summary = this.querySelector('[data-summary]');
+          summary.hidden = !qty || saving <= 0;
+          summary.querySelector('[data-savings]').textContent = this.money(saving);
+          summary.querySelector('[data-regular]').textContent = this.money(regular);
+          summary.querySelector('[data-total]').textContent = this.money(total);
+
+          btn.disabled = !qty || this.busy;
+          this.querySelector('[data-add-label]').textContent = qty ? this.dataset.textAdd : this.dataset.textEmpty;
+          this.querySelector('[data-add-price]').textContent = qty ? this.money(total) : '';
+        }
+
+        message(text, isError) {
+          const el = this.querySelector('[data-msg]');
+          el.textContent = text || '';
+          el.hidden = !text;
+          el.toggleAttribute('data-error', !!isError);
+        }
+
+        setBusy(busy) {
+          this.busy = busy;
+          this.querySelector('[data-add]').setAttribute('aria-busy', String(busy));
+          this.render();
+        }
+
+        async add() {
+          if (this.busy) return;
+          const sub = this.isSub;
+          const items = this.rows
+            .filter((r) => +r.dataset.qty > 0 && !r.hasAttribute('data-soldout'))
+            .map((r) => ({
+              id: +r.dataset.variantId,
+              quantity: +r.dataset.qty,
+              ...(sub && r.dataset.planId ? { selling_plan: +r.dataset.planId } : {})
+            }));
+          if (!items.length) return;
+
+          const sections = this.cartSectionIds();
+          this.message('');
+          this.setBusy(true);
+          try {
+            await post('cart/add.js', { items });
+
+            // Compra única: suma los códigos a los que ya tenga el carrito
+            // (/cart/update.js con `discount` REEMPLAZA la lista completa).
+            const body = sections.length ? { sections: sections.join(','), sections_url: location.pathname } : {};
+            const codes = sub ? [] : this.codes;
+            if (codes.length) {
+              const cart = await fetch(root + 'cart.js', { headers: { Accept: 'application/json' } }).then((r) => r.json());
+              const merged = new Map((cart.discount_codes || []).map((d) => [String(d.code).toUpperCase(), d.code]));
+              codes.forEach((c) => merged.set(c.toUpperCase(), c));
+              body.discount = [...merged.values()].join(',');
+            }
+            // También trae el carrito completo y el HTML del drawer ya con descuentos.
+            const cart = await post('cart/update.js', body).catch(() => ({}));
+            const applied = new Set((cart.discount_codes || []).filter((d) => d.applicable).map((d) => String(d.code).toUpperCase()));
+            codes
+              .filter((c) => cart.discount_codes && !applied.has(c.toUpperCase()))
+              .forEach((c) => console.warn(`[chocho-plan-picker] El código ${c} no aplica (revisa Combinations / Purchase type en Admin).`));
+
+            await this.announce(cart);
+          } catch (err) {
+            console.error('[chocho-plan-picker]', err);
+            this.message(err.message, true);
+          } finally {
+            this.setBusy(false);
+          }
+        }
+
+        /** Secciones del carrito; respaldo: la sección del header. */
+        cartSectionIds() {
+          const ids = [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
+          if (ids.length) return [...new Set(ids)];
+          const header = document.querySelector('[id^="shopify-section-"][id$="__header_section"]');
+          return header ? [header.id.replace('shopify-section-', '')] : [];
+        }
+
+        async announce(cart) {
+          const data = { source: 'chocho-plan-picker', itemCount: cart.item_count || 0, sections: cart.sections, didError: false };
+          const mod = await themeEvents;
+          document.dispatchEvent(
+            mod?.CartAddEvent
+              ? new mod.CartAddEvent({}, this.id || 'chocho-plan-picker', data)
+              : new CustomEvent('cart:update', { bubbles: true, detail: { resource: cart, sourceId: 'chocho-plan-picker', data } })
+          );
+          // Sin el módulo del tema: pinta el carrito con el HTML devuelto.
+          if (!mod?.CartAddEvent && cart.sections) {
+            document.querySelectorAll('cart-items-component').forEach((el) => {
+              const html = cart.sections[el.dataset.sectionId];
+              const next = html && new DOMParser().parseFromString(html, 'text/html').querySelector('cart-items-component');
+              if (next) el.innerHTML = next.innerHTML;
+            });
+          }
+
+          const drawer = this.dataset.openDrawer === 'true' && document.querySelector('cart-drawer-component');
+          if (drawer && typeof drawer.open === 'function') drawer.open();
+          else this.message(this.dataset.textAdded);
+        }
+      }
+    );
+  }
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Pronto-Chocho Plan Picker v1",
+  "tag": null,
+  "settings": [
+    { "type": "header", "content": "Paso 1: plan" },
+    { "type": "text", "id": "plan_heading", "label": "Título del paso", "default": "Choose your plan" },
+    {
+      "type": "select",
+      "id": "default_option",
+      "label": "Plan elegido al cargar",
+      "options": [
+        { "value": "subscription", "label": "Subscribe & Save" },
+        { "value": "onetime", "label": "Compra única" }
+      ],
+      "default": "subscription"
+    },
+    { "type": "text", "id": "sub_title", "label": "Suscripción: título", "default": "Subscribe & Save" },
+    {
+      "type": "text",
+      "id": "sub_badge",
+      "label": "Suscripción: etiqueta",
+      "default": "Save [percent]%",
+      "info": "[percent] = ahorro real del selling plan. Vacío = sin etiqueta."
+    },
+    {
+      "type": "textarea",
+      "id": "benefits",
+      "label": "Suscripción: beneficios",
+      "default": "Save money on every order\nEasily change your quantities\nCancel any time\nPre-shipment reminders",
+      "info": "Uno por línea. Se despliegan al elegir la suscripción."
+    },
+    {
+      "type": "text",
+      "id": "selling_plan_id",
+      "label": "Selling plan ID (opcional)",
+      "info": "Vacío = el primer plan de cada producto. Ejemplo: 3233841344"
+    },
+    { "type": "text", "id": "onetime_title", "label": "Compra única: título", "default": "One-time purchase" },
+    {
+      "type": "text",
+      "id": "onetime_codes",
+      "label": "Compra única: códigos",
+      "info": "Separados por coma, p. ej. CHOCHOFUEL15, FUELSHIPPING. Se aplican todos al agregar. Deben ser combinables entre sí en Admin → Discounts."
+    },
+    {
+      "type": "range",
+      "id": "onetime_percent",
+      "label": "Compra única: % del código",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 0,
+      "info": "Solo para mostrar el precio final. Debe coincidir con el código en Admin."
+    },
+    {
+      "type": "text",
+      "id": "onetime_perk",
+      "label": "Compra única: línea de descuento",
+      "default": "[percent]% off, applied in your cart",
+      "info": "Se muestra solo si hay códigos. [percent] = el % de arriba."
+    },
+    { "type": "header", "content": "Paso 2: sabores" },
+    { "type": "text", "id": "flavors_heading", "label": "Título del paso", "default": "Choose your flavors" },
+    {
+      "type": "product_list",
+      "id": "products",
+      "label": "Sabores",
+      "limit": 6,
+      "info": "Vacío = solo el producto de la página."
+    },
+    {
+      "type": "checkbox",
+      "id": "preselect",
+      "label": "Empezar con 1 unidad del producto de la página (o el primero)",
+      "default": true
+    },
+    { "type": "text", "id": "servings_text", "label": "Texto bajo cada sabor", "default": "15 servings" },
+    { "type": "number", "id": "servings_per_unit", "label": "Porciones por unidad", "default": 15 },
+    { "type": "checkbox", "id": "show_per_serving", "label": "Mostrar precio por porción", "default": true },
+    { "type": "text", "id": "per_text", "label": "Texto por porción", "default": "serving" },
+    { "type": "header", "content": "Resumen y botón" },
+    { "type": "text", "id": "savings_label", "label": "Texto de ahorro", "default": "You save" },
+    { "type": "text", "id": "button_text", "label": "Botón", "default": "Add to cart" },
+    { "type": "text", "id": "empty_text", "label": "Botón sin sabores", "default": "Add a flavor to continue" },
+    { "type": "text", "id": "note_sub", "label": "Nota bajo el botón (suscripción)", "info": "Una línea. Vacío = nada." },
+    { "type": "text", "id": "note_onetime", "label": "Nota bajo el botón (compra única)", "info": "Una línea. Vacío = nada." },
+    { "type": "checkbox", "id": "open_drawer", "label": "Abrir el carrito al agregar", "default": true },
+    { "type": "text", "id": "added_text", "label": "Mensaje si no hay drawer", "default": "Added to your cart" },
+    { "type": "header", "content": "Colores" },
+    { "type": "color", "id": "accent", "label": "Acento", "default": "#3e2563" },
+    { "type": "color", "id": "surface", "label": "Fondo de tarjeta", "default": "#FFFCF8" },
+    { "type": "color", "id": "surface_active", "label": "Fondo de tarjeta elegida", "default": "#FCF3EC" },
+    { "type": "color", "id": "border", "label": "Borde", "default": "#E8E4DF" },
+    { "type": "color", "id": "button_bg", "label": "Botón: fondo", "default": "#3e2563" },
+    { "type": "color", "id": "button_text_color", "label": "Botón: texto", "default": "#FFFFFF" },
+    { "type": "range", "id": "radius", "label": "Radio de esquinas", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 12 }
+  ],
+  "presets": [{ "name": "Pronto-Chocho Plan Picker v1" }]
+}
+{% endschema %}
