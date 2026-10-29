@@ -48,6 +48,7 @@
     onetime_title: block.settings.onetime_title,
     onetime_subtitle: block.settings.onetime_subtitle,
     onetime_codes: block.settings.onetime_codes,
+    onetime_percent: block.settings.onetime_percent,
     note_sub: block.settings.note_sub,
     note_onetime: block.settings.note_onetime,
     show_per_serving: block.settings.show_per_serving,
@@ -122,7 +123,18 @@
       "type": "text",
       "id": "onetime_codes",
       "label": "Códigos para compra única",
-      "info": "Separados por coma. Se aplican al carrito y ocultan el pago rápido. Mejor: descuentos automáticos en Admin, que funcionan con Apple Pay."
+      "info": "Todos los que apliquen, separados por coma: CHOCHOFUEL15, FUELSHIPPING. Deben ser combinables en Admin → Descuentos. Ocultan el pago rápido."
+    },
+    {
+      "type": "range",
+      "id": "onetime_percent",
+      "label": "% del código (precio mostrado)",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%",
+      "default": 0,
+      "info": "Para mostrar el precio real de compra única ($49.99 → $42.49 con 15%). Debe coincidir con el % del código en Admin."
     },
     { "type": "header", "content": "Envío y promos (una sola línea)" },
     {

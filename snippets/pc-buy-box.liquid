@@ -26,7 +26,8 @@
   @param {string} [benefits] - Uno por línea
   @param {string} [onetime_title]
   @param {string} [onetime_subtitle]
-  @param {string} [onetime_codes] - Separados por coma
+  @param {string} [onetime_codes] - Separados por coma (p. ej. CHOCHOFUEL15, FUELSHIPPING)
+  @param {number} [onetime_percent] - % del código de compra única, para mostrar el precio real
   @param {string} [note_sub] - Una línea bajo el botón con suscripción
   @param {string} [note_onetime] - Una línea bajo el botón con compra única
   @param {boolean} [show_per_serving]
@@ -86,7 +87,21 @@
       assign save_pct = ref | minus: sel_alloc.price | times: 100.0 | divided_by: ref | round
     endif
 
-    assign unit = sv.price
+    assign codes_probe = onetime_codes | default: '' | remove: ',' | strip
+    assign ot_pct = 0
+    if codes_probe != blank
+      assign ot_pct = onetime_percent | default: 0 | plus: 0
+    endif
+    assign ot_price = sv.price
+    if ot_pct > 0
+      assign ot_keep = 100 | minus: ot_pct
+      assign ot_price = sv.price | times: ot_keep | divided_by: 100.0 | round
+    endif
+    assign ot_ref = sv.price
+    if sv.compare_at_price > sv.price
+      assign ot_ref = sv.compare_at_price
+    endif
+    assign unit = ot_price
     if type == 'subscription'
       assign unit = sel_alloc.price
     endif
@@ -105,7 +120,6 @@
     assign per = per_label | default: 'serving'
     assign atc_label = atc_text | default: 'Add to cart'
 
-    assign codes_probe = onetime_codes | default: '' | remove: ',' | strip
     assign note = note_onetime
     if type == 'subscription'
       assign note = note_sub
@@ -136,6 +150,7 @@
         "notes": { "subscription": {{ note_sub | default: '' | json }}, "onetime": {{ note_onetime | default: '' | json }} },
         "openDrawer": {% if open_drawer == false %}false{% else %}true{% endif %},
         "codes": {{ onetime_codes | default: '' | remove: ' ' | split: ',' | json }},
+        "otPercent": {{ ot_pct }},
         "routes": {
           "add": {{ routes.cart_add_url | append: '.js' | json }},
           "update": {{ routes.cart_update_url | append: '.js' | json }},
@@ -307,15 +322,15 @@
               <span class="pc-bb__option-head">
                 <span class="pc-bb__option-title">{{ onetime_title | default: 'One-time purchase' }}</span>
                 <span class="pc-bb__price">
-                  <s data-pc-ot-compare{% unless sv.compare_at_price > sv.price %} hidden{% endunless %}>{{ sv.compare_at_price | money }}</s>
-                  <strong data-pc-ot-price>{{ sv.price | money }}</strong>
+                  <s data-pc-ot-compare{% unless ot_ref > ot_price %} hidden{% endunless %}>{{ ot_ref | money }}</s>
+                  <strong data-pc-ot-price>{{ ot_price | money }}</strong>
                 </span>
               </span>
               <span class="pc-bb__meta">
                 {%- if onetime_subtitle != blank -%}<span>{{ onetime_subtitle }}</span>{%- endif -%}
                 {%- if show_per_serving != false -%}
                   <span data-pc-ot-per{% if servings_n == 0 %} hidden{% endif %}>
-                    {%- if servings_n > 0 %}{{ sv.price | divided_by: servings_n | money }} per {{ per }}{% endif -%}
+                    {%- if servings_n > 0 %}{{ ot_price | divided_by: servings_n | money }} per {{ per }}{% endif -%}
                   </span>
                 {%- endif -%}
               </span>

@@ -194,12 +194,13 @@ class PcBuyBox extends HTMLElement {
       if ((d.badge || '').includes('[percent]')) set('[data-pc-badge]', d.badge.replace('[percent]', pct), pct > 0);
       this.renderPlanSelect(f.plans, plan);
     }
-    set('[data-pc-ot-price]', this.format(f.price));
-    set('[data-pc-ot-compare]', this.format(f.compare), f.compare > f.price);
-    set('[data-pc-ot-per]', perServing(f.price), f.servings > 0);
+    const otUnit = d.otPercent > 0 ? Math.round(f.price * (1 - d.otPercent / 100)) : f.price;
+    set('[data-pc-ot-price]', this.format(otUnit));
+    set('[data-pc-ot-compare]', this.format(ref), ref > otUnit);
+    set('[data-pc-ot-per]', perServing(otUnit), f.servings > 0);
 
     /* Totales y botón */
-    const unit = isSub && plan ? plan.price : f.price;
+    const unit = isSub && plan ? plan.price : otUnit;
     const total = unit * this.state.qty;
     const savings = (ref - unit) * this.state.qty;
 
@@ -213,7 +214,7 @@ class PcBuyBox extends HTMLElement {
       set('[data-pc-add-label]', f.available ? d.atcText : d.texts.soldOut);
       set('[data-pc-add-price]', this.format(total), f.available);
     }
-    set('[data-pc-savings]', `${d.texts.save} ${this.format(savings)}`, f.available && isSub && savings > 0);
+    set('[data-pc-savings]', `${d.texts.save} ${this.format(savings)}`, f.available && savings > 0);
     const note = d.notes[this.state.type] || '';
     set('[data-pc-note]', note, Boolean(note));
 
@@ -270,7 +271,7 @@ class PcBuyBox extends HTMLElement {
     const { routes, texts } = this.data;
     const plan = this.isSub ? this.plan : null;
     const item = { id: f.variantId, quantity: this.state.qty, ...(plan ? { selling_plan: plan.id } : {}) };
-    const sectionIds = [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
+    const sectionIds = this.cartSectionIds();
     const sectionsParams = sectionIds.length ? { sections: sectionIds.join(','), sections_url: window.location.pathname } : {};
 
     this.showError('');
@@ -296,6 +297,24 @@ class PcBuyBox extends HTMLElement {
       this.setBusy(false);
       this.render();
     }
+  }
+
+  /** Secciones del carrito a re-renderizar; respaldo: la sección del header (como el V4). */
+  cartSectionIds() {
+    const ids = [...document.querySelectorAll('cart-items-component')].map((c) => c.dataset.sectionId).filter(Boolean);
+    if (ids.length) return [...new Set(ids)];
+    const header = document.querySelector('[id^="shopify-section-"][id$="__header_section"]');
+    return header ? [header.id.replace('shopify-section-', '')] : [];
+  }
+
+  /** Respaldo si el theme no expone CartAddEvent: pinta el carrito con el HTML devuelto. */
+  refreshCart(sections) {
+    if (!sections) return;
+    document.querySelectorAll('cart-items-component').forEach((el) => {
+      const html = sections[el.dataset.sectionId];
+      const next = html && new DOMParser().parseFromString(html, 'text/html').querySelector('cart-items-component');
+      if (next) el.innerHTML = next.innerHTML;
+    });
   }
 
   /** /cart/update.js con `discount` REEMPLAZA los códigos: se fusiona con los del cliente. */
@@ -326,11 +345,13 @@ class PcBuyBox extends HTMLElement {
   async announce(sections, units) {
     const data = { source: 'pc-buy-box', itemCount: units, sections, didError: false };
     const mod = await themeEvents;
-    this.dispatchEvent(
+    // En document, igual que el selector V4 (probado en esta tienda).
+    document.dispatchEvent(
       mod?.CartAddEvent
         ? new mod.CartAddEvent({}, this.id, data)
         : new CustomEvent('cart:update', { bubbles: true, detail: { resource: {}, sourceId: this.id, data } })
     );
+    if (!mod?.CartAddEvent) this.refreshCart(sections);
 
     if (!this.data.openDrawer) return;
     const drawer = document.querySelector('cart-drawer-component');
