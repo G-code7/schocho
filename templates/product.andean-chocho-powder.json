@@ -292,6 +292,45 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "pc_buy_box_3RKkCc": {
+                  "type": "pc-buy-box",
+                  "name": "Selector de compra",
+                  "settings": {
+                    "flavors": [
+                      "chocho-pure-ingredient",
+                      "chocho-cacao-spirulina-maca",
+                      "chocho-ginger-turmeric-black-pepper-powder-blend"
+                    ],
+                    "flavor_label": "Choose your flavor",
+                    "product": "",
+                    "plan_label": "Choose your plan",
+                    "default_option": "subscription",
+                    "sub_title": "Subscribe & Save",
+                    "sub_badge": "Save [percent]%",
+                    "benefits": "Save 20%/bag on every subscription order\nFree shipping with 2+ bags \nEasily change your quantities\nCancel any time",
+                    "onetime_title": "One-time purchase",
+                    "onetime_subtitle": "",
+                    "onetime_codes": "",
+                    "note_sub": "",
+                    "note_onetime": "",
+                    "show_per_serving": false,
+                    "servings": 16,
+                    "per_label": "serving",
+                    "show_quantity": true,
+                    "atc_text": "Add to cart",
+                    "show_dynamic_checkout": false,
+                    "open_drawer": true,
+                    "sticky_mobile": true,
+                    "accent": "#3e2563",
+                    "surface": "#fffcf8",
+                    "surface_active": "#fcf3ec",
+                    "border": "#e8e4df",
+                    "button_bg": "#3e2563",
+                    "button_text": "#ffffff",
+                    "radius": 24
+                  },
+                  "blocks": {}
+                },
                 "subscription_purchase_v4_Tgy4r6": {
                   "type": "subscription-purchase-v4",
                   "name": "Pronto-Chocho Selector v4",
@@ -340,6 +379,7 @@
                 }
               },
               "block_order": [
+                "pc_buy_box_3RKkCc",
                 "subscription_purchase_v4_Tgy4r6"
               ]
             },
