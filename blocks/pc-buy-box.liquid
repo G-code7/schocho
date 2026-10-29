@@ -1,6 +1,8 @@
 {%- doc -%}
   Theme block del buy box único. Va dentro de "Product information"
-  (o cualquier sección que acepte @theme y tenga contexto de producto).
+  (o cualquier sección que acepte
+
+  @theme y tenga contexto de producto).
   Toda la lógica vive en snippets/pc-buy-box.liquid + assets/pc-buy-box.js.
 {%- enddoc -%}
 {%- liquid
@@ -51,7 +53,9 @@
     style: style
   -%}
 {%- elsif request.design_mode -%}
-  <p {{ block.shopify_attributes }}>Buy box: selecciona un producto o usa el bloque dentro de una página de producto.</p>
+  <p {{ block.shopify_attributes }}>
+    Buy box: selecciona un producto o usa el bloque dentro de una página de producto.
+  </p>
 {%- endif -%}
 
 {% schema %}
@@ -99,7 +103,7 @@
       "type": "text",
       "id": "onetime_codes",
       "label": "Códigos para compra única",
-      "info": "Separados por coma. Se aplican al carrito solo en compra única. Mejor opción: un descuento automático en Admin, que siempre coincide con el precio mostrado."
+      "info": "Separados por coma. Se aplican al carrito solo en compra única y ocultan el pago rápido. Mejor opción: descuentos automáticos en Admin, que se aplican en todos los métodos de pago, Apple Pay incluido."
     },
     { "type": "header", "content": "Precio por porción" },
     { "type": "checkbox", "id": "show_per_serving", "label": "Mostrar precio por porción", "default": true },
@@ -118,7 +122,8 @@
       "type": "checkbox",
       "id": "show_dynamic_checkout",
       "label": "Botones de pago rápido (compra única)",
-      "default": true
+      "default": true,
+      "info": "Se ocultan solos si hay códigos de compra única: Apple Pay, Google Pay y Shop Pay se saltan el carrito y no aplicarían los códigos."
     },
     { "type": "checkbox", "id": "open_drawer", "label": "Abrir el carrito al agregar", "default": true },
     { "type": "checkbox", "id": "sticky_mobile", "label": "Botón fijo en móvil", "default": true },

@@ -360,8 +360,11 @@
     {%- comment -%}
       Pago acelerado: solo compra única de un producto (los botones nativos
       no llevan selling plan ni varias líneas). El JS lo oculta en esos casos.
+      Si hay códigos de compra única NO se renderiza: Buy it now / Apple Pay /
+      Google Pay se saltan el carrito y los códigos se perderían.
     {%- endcomment -%}
-    {%- if show_dynamic_checkout != false -%}
+    {%- assign codes_probe = onetime_codes | default: '' | remove: ',' | strip -%}
+    {%- if show_dynamic_checkout != false and codes_probe == blank -%}
       <div class="pc-bb__dynamic" data-pc-dynamic{% if type == 'subscription' %} hidden{% endif %}>
         {%- form 'product', product -%}
           <input type="hidden" name="id" value="{{ sv.id }}" data-pc-form-variant>

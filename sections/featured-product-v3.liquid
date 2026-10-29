@@ -2212,11 +2212,31 @@
             const data = await res.json();
             if (!res.ok) throw new Error(data.description || data.message || 'Error');
           }
-          // Cadena server-side: /discount/A?redirect=/discount/B?redirect=/checkout
+          // FIX pago rápido: los códigos se registran EN EL CARRITO (/cart/update.js),
+          // no solo en una cookie vía redirección. Así quedan en cart.discount_codes,
+          // que es de donde Shopify crea el checkout. Se fusionan con los del cliente.
           const dest = root + 'checkout';
-          window.location.href = window.fpv2Discounts
-            ? window.fpv2Discounts.chainUrl(dest)               // motor: prioridad + límites
-            : fpv2BuildChain(root, freeship.dataset.discountCodes, dest); // fallback por atributo
+          const codes = (freeship.dataset.discountCodes || '')
+            .split(',')
+            .map((c) => c.trim())
+            .filter(Boolean);
+          let attached = codes.length === 0;
+          if (codes.length) {
+            const merged = new Map((cart.discount_codes || []).map((d) => [String(d.code).toUpperCase(), d.code]));
+            codes.forEach((c) => merged.set(c.toUpperCase(), c));
+            const up = await fetch(root + 'cart/update.js', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+              body: JSON.stringify({ discount: [...merged.values()].join(',') })
+            });
+            attached = up.ok;
+          }
+          // Fallback: si la API del carrito falla, la cadena por redirección de siempre.
+          window.location.href = attached
+            ? dest
+            : window.fpv2Discounts
+              ? window.fpv2Discounts.chainUrl(dest)
+              : fpv2BuildChain(root, freeship.dataset.discountCodes, dest);
         } catch (err) {
           console.error('Featured Product V2 - Free shipping CTA error:', err);
           alert(err.message || 'Error adding to cart.');
@@ -2540,7 +2560,7 @@
       "type": "checkbox",
       "id": "buy_now_hide_with_codes",
       "label": "Ocultar Buy it Now cuando hay cupones activos",
-      "default": false,
+      "default": true,
       "info": "El checkout dinámico se salta el carrito y puede perder los cupones apilados."
     },
     { "type": "text", "id": "code_applied_text", "label": "Texto: aplicado", "default": "Aplicado ✓" },
