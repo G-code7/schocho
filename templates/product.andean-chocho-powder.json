@@ -305,8 +305,8 @@
                     "onetime_title": "One-time purchase",
                     "onetime_codes": "FUELSHIPPING,  CHOCHOFUEL15",
                     "onetime_percent": 15,
-                    "onetime_perk": "[percent]% off, applied in your cart",
-                    "flavors_heading": "Choose your flavors",
+                    "onetime_perk": "[percent]%  Off + Free Shipping on your first order",
+                    "flavors_heading": "Choose your Chocho Powder",
                     "products": [
                       "chocho-pure-ingredient",
                       "chocho-cacao-spirulina-maca",
